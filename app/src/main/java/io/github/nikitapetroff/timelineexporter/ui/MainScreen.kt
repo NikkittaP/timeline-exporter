@@ -2,15 +2,18 @@ package io.github.nikitapetroff.timelineexporter.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
@@ -25,13 +28,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.github.nikitapetroff.timelineexporter.filter.TimelineFilter
 import io.github.nikitapetroff.timelineexporter.filter.applyFilter
 import io.github.nikitapetroff.timelineexporter.parser.ParsedTimeline
+import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
@@ -85,18 +89,29 @@ fun MainScreen(
             )
 
             is TimelineUiState.Loaded -> {
+                // Compute filtered points ONCE per (data, filter) change; share
+                // with both the filter readout, the map, and the save button.
+                val filteredPoints by remember(state.result, filter) {
+                    derivedStateOf { applyFilter(state.result.pathPoints, filter) }
+                }
+
                 ResultDisplay(state.result)
+
                 HorizontalDivider()
                 FilterSection(
-                    loaded = state.result,
-                    filter = filter,
+                    totalCount = state.result.pathPoints.size,
+                    filteredCount = filteredPoints.size,
+                    currentRange = filter.dateRange,
                     onOpenDateDialog = { dateDialogOpen = true },
                     onClearRange = { viewModel.clearDateRange() },
                 )
+
+                HorizontalDivider()
+                PreviewSection(points = filteredPoints)
+
                 HorizontalDivider()
                 ExportSection(
-                    loaded = state.result,
-                    filter = filter,
+                    canSave = filteredPoints.isNotEmpty(),
                     exportState = exportState,
                     onSave = { saveGpxLauncher.launch(suggestGpxFilename(filter)) },
                 )
@@ -105,8 +120,6 @@ fun MainScreen(
     }
 
     if (dateDialogOpen) {
-        // Default the dialog to the data's own range so the user sees the
-        // available span and can narrow from there.
         val loaded = (uiState as? TimelineUiState.Loaded)?.result
         val initial = filter.dateRange ?: loaded?.let {
             it.pathPoints.firstOrNull()?.timeUtc?.let { first ->
@@ -168,35 +181,29 @@ private fun ResultDisplay(result: ParsedTimeline) {
 
 @Composable
 private fun FilterSection(
-    loaded: ParsedTimeline,
-    filter: TimelineFilter,
+    totalCount: Int,
+    filteredCount: Int,
+    currentRange: ClosedRange<Instant>?,
     onOpenDateDialog: () -> Unit,
     onClearRange: () -> Unit,
 ) {
-    // derivedStateOf: only recomputed when `loaded` or `filter` actually change,
-    // not on every recomposition of MainScreen.
-    val filteredCount by remember(loaded, filter) {
-        derivedStateOf { applyFilter(loaded.pathPoints, filter).size }
-    }
-
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text("Filter", style = MaterialTheme.typography.titleMedium)
-        val range = filter.dateRange
-        if (range == null) {
+        if (currentRange == null) {
             Text("Date range: all dates", style = MaterialTheme.typography.bodyMedium)
         } else {
             val z = ZoneId.systemDefault()
-            val from = LocalDate.ofInstant(range.start, z)
-            val to = LocalDate.ofInstant(range.endInclusive, z)
+            val from = LocalDate.ofInstant(currentRange.start, z)
+            val to = LocalDate.ofInstant(currentRange.endInclusive, z)
             Text("Date range: $from — $to", style = MaterialTheme.typography.bodyMedium)
         }
         Text(
-            text = "After filter: ${"%,d".format(filteredCount)} of ${"%,d".format(loaded.pathPoints.size)} points",
+            text = "After filter: ${"%,d".format(filteredCount)} of ${"%,d".format(totalCount)} points",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         FilterActionsRow(
-            hasFilter = range != null,
+            hasFilter = currentRange != null,
             onPick = onOpenDateDialog,
             onClear = onClearRange,
         )
@@ -216,16 +223,35 @@ private fun FilterActionsRow(hasFilter: Boolean, onPick: () -> Unit, onClear: ()
 }
 
 @Composable
+private fun PreviewSection(points: List<io.github.nikitapetroff.timelineexporter.parser.PathPoint>) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Preview", style = MaterialTheme.typography.titleMedium)
+        if (points.isEmpty()) {
+            Text(
+                "No points match the current filter — nothing to preview.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            val shape = RoundedCornerShape(8.dp)
+            TrackMap(
+                points = points,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(280.dp)
+                    .clip(shape)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
+            )
+        }
+    }
+}
+
+@Composable
 private fun ExportSection(
-    loaded: ParsedTimeline,
-    filter: TimelineFilter,
+    canSave: Boolean,
     exportState: ExportState,
     onSave: () -> Unit,
 ) {
-    val canSave by remember(loaded, filter) {
-        derivedStateOf { applyFilter(loaded.pathPoints, filter).isNotEmpty() }
-    }
-
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text("Export", style = MaterialTheme.typography.titleMedium)
         Button(
