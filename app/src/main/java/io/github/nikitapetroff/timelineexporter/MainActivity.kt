@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.content.IntentCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.github.nikitapetroff.timelineexporter.ui.TimelineExporterApp
 import io.github.nikitapetroff.timelineexporter.ui.TimelineViewModel
 import io.github.nikitapetroff.timelineexporter.ui.theme.TimelineExporterTheme
@@ -20,6 +21,10 @@ class MainActivity : ComponentActivity() {
     private val viewModel: TimelineViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // installSplashScreen MUST be called before super.onCreate. It
+        // swaps the launch theme for the post-splash theme and starts
+        // the splash dismiss animation when the first frame is drawn.
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         // Handle the intent that started us (share/view), if any.

@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Normal app theme used after the splash screen dismisses. -->
     <style name="Theme.TimelineExporter" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!--
+        Splash screen theme — applied to the launch activity in the manifest.
+        On Android 12+ the system renders this natively; on older versions
+        the androidx.core:core-splashscreen library backports the look.
+
+        windowSplashScreenAnimatedIcon must be a 288x288dp drawable with
+        actual artwork inside the inner 192x192dp circle.  Our adaptive-
+        icon foreground (108dp viewport with safe-zone artwork) renders
+        correctly here because the system scales it into the icon slot.
+    -->
+    <style name="Theme.TimelineExporter.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/brand_blue</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.TimelineExporter</item>
+    </style>
 </resources>
