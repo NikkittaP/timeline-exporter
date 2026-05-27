@@ -49,8 +49,6 @@ import io.github.nikitapetroff.timelineexporter.export.KmlExporter
 import io.github.nikitapetroff.timelineexporter.filter.applyFilter
 import io.github.nikitapetroff.timelineexporter.parser.ParsedTimeline
 import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 
 /**
  * Top-level Compose entry called from MainActivity. Hosts the Scaffold with
@@ -204,13 +202,14 @@ fun MainScreen(
 
     if (dateDialogOpen) {
         val loaded = (uiState as? TimelineUiState.Loaded)?.result
-        val initial = filter.dateRange ?: loaded?.let {
+        val dataRange = loaded?.let {
             it.pathPoints.firstOrNull()?.timeUtc?.let { first ->
                 first..it.pathPoints.last().timeUtc
             }
         }
         DateRangeDialog(
-            initialRange = initial,
+            initialRange = filter.dateRange,
+            dataRange = dataRange,
             onConfirm = { range ->
                 viewModel.setDateRange(range)
                 dateDialogOpen = false
@@ -256,8 +255,8 @@ private fun ResultDisplay(result: ParsedTimeline) {
             val first = result.pathPoints.first()
             val last = result.pathPoints.last()
             Spacer(modifier = Modifier.size(8.dp))
-            Text("First: ${first.timeUtc}")
-            Text("Last:  ${last.timeUtc}")
+            Text("First: ${formatLocalDateTime(first.timeUtc)}")
+            Text("Last:  ${formatLocalDateTime(last.timeUtc)}")
         }
     }
 }
@@ -275,9 +274,8 @@ private fun FilterSection(
         if (currentRange == null) {
             Text("Date range: all dates", style = MaterialTheme.typography.bodyMedium)
         } else {
-            val z = ZoneId.systemDefault()
-            val from = LocalDate.ofInstant(currentRange.start, z)
-            val to = LocalDate.ofInstant(currentRange.endInclusive, z)
+            val from = formatLocalDate(currentRange.start)
+            val to = formatLocalDate(currentRange.endInclusive)
             Text("Date range: $from — $to", style = MaterialTheme.typography.bodyMedium)
         }
         Text(
