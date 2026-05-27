@@ -174,4 +174,34 @@ class TimelineParserTest {
         val instant = parseIsoInstant("2025-06-09T21:58:00.000+02:00")
         assertEquals(Instant.parse("2025-06-09T19:58:00Z"), instant)
     }
+
+    @Test
+    fun `reports parser stages in the expected order`() {
+        val json = """
+            {
+              "semanticSegments": [
+                {
+                  "startTime": "2025-01-01T00:00:00Z",
+                  "endTime":   "2025-01-01T01:00:00Z",
+                  "timelinePath": [
+                    { "point": "10.0°, 20.0°", "time": "2025-01-01T00:30:00Z" }
+                  ]
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val stages = mutableListOf<ParserStage>()
+        parseTimeline(json) { stages += it }
+
+        assertEquals("First stage should be DecodingJson", ParserStage.DecodingJson, stages.first())
+        assertEquals("Last stage should be Sorting", ParserStage.Sorting, stages.last())
+        assertTrue(
+            "Should include at least one ExtractingSegments event",
+            stages.any { it is ParserStage.ExtractingSegments },
+        )
+        // Final extraction event should report done == total (UI hits 100%).
+        val lastExtract = stages.filterIsInstance<ParserStage.ExtractingSegments>().last()
+        assertEquals(lastExtract.total, lastExtract.done)
+    }
 }

@@ -2,9 +2,12 @@ package io.github.nikitapetroff.timelineexporter.ui
 
 import android.content.ContentResolver
 import android.net.Uri
+import android.os.SystemClock
+import android.provider.OpenableColumns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.nikitapetroff.timelineexporter.parser.ParsedTimeline
+import io.github.nikitapetroff.timelineexporter.parser.ParserStage
 import io.github.nikitapetroff.timelineexporter.parser.parseTimeline
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,51 +15,56 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 /**
  * Discriminated union of every state the screen can be in.
- * `sealed interface` = the compiler knows the full set of subclasses, so
- * `when (state) { ... }` is checked to be exhaustive.
  */
 sealed interface TimelineUiState {
-    /** Initial state — no file picked yet. */
     data object Idle : TimelineUiState
 
-    /** A parse is running. */
-    data object Loading : TimelineUiState
+    /**
+     * In-progress. [progress] is null when we can't measure the stage
+     * (renders as an indeterminate bar) or a 0..1 fraction otherwise.
+     */
+    data class Loading(
+        val stageLabel: String,
+        val detailLabel: String? = null,
+        val progress: Float? = null,
+    ) : TimelineUiState
 
-    /** Parse finished successfully. */
     data class Loaded(val result: ParsedTimeline) : TimelineUiState
 
-    /** Parse failed. Message is shown to the user. */
     data class Error(val message: String) : TimelineUiState
 }
 
 class TimelineViewModel : ViewModel() {
 
-    // Private mutable state holder, exposed read-only to UI as a plain StateFlow.
     private val _uiState = MutableStateFlow<TimelineUiState>(TimelineUiState.Idle)
     val uiState: StateFlow<TimelineUiState> = _uiState.asStateFlow()
 
-    /**
-     * Called by the UI when the user has picked a file in the system file picker.
-     * Reads the file's bytes and parses them off the main thread; updates uiState
-     * as it goes. Safe to call repeatedly — each call replaces any previous result.
-     */
     fun onFileSelected(uri: Uri, contentResolver: ContentResolver) {
-        _uiState.value = TimelineUiState.Loading
+        _uiState.value = TimelineUiState.Loading(stageLabel = "Opening file…")
 
-        // viewModelScope is a CoroutineScope tied to this ViewModel's lifetime —
-        // any in-flight work is automatically cancelled if the VM is destroyed.
         viewModelScope.launch {
             val newState = withContext(Dispatchers.IO) {
                 try {
-                    val json = contentResolver.openInputStream(uri)?.use { stream ->
-                        stream.bufferedReader().readText()
-                    } ?: throw IOException("Could not open file: $uri")
+                    val totalBytes = queryFileSize(uri, contentResolver)
 
-                    val result = parseTimeline(json)
+                    val json = readUriAsString(uri, contentResolver) { bytesRead ->
+                        _uiState.value = TimelineUiState.Loading(
+                            stageLabel = "Reading file",
+                            detailLabel = formatBytesProgress(bytesRead, totalBytes),
+                            progress = totalBytes
+                                ?.takeIf { it > 0 }
+                                ?.let { bytesRead.toFloat() / it },
+                        )
+                    }
+
+                    val result = parseTimeline(json) { stage ->
+                        _uiState.value = stage.toLoadingState()
+                    }
                     TimelineUiState.Loaded(result)
                 } catch (e: Exception) {
                     TimelineUiState.Error(
@@ -69,3 +77,77 @@ class TimelineViewModel : ViewModel() {
         }
     }
 }
+
+// ---------- private helpers ----------
+
+private fun ParserStage.toLoadingState(): TimelineUiState.Loading = when (this) {
+    ParserStage.DecodingJson -> TimelineUiState.Loading(
+        stageLabel = "Decoding JSON",
+        detailLabel = "Large files can take a few seconds…",
+        progress = null,
+    )
+    is ParserStage.ExtractingSegments -> TimelineUiState.Loading(
+        stageLabel = "Extracting GPS points",
+        detailLabel = "${formatGrouped(done)} / ${formatGrouped(total)} segments",
+        progress = if (total > 0) done.toFloat() / total else null,
+    )
+    ParserStage.Sorting -> TimelineUiState.Loading(
+        stageLabel = "Sorting points by time",
+        detailLabel = null,
+        progress = null,
+    )
+}
+
+/**
+ * Ask the content provider for the file's size in bytes. Not all providers
+ * answer (returns null) — we degrade to indeterminate progress in that case.
+ */
+private fun queryFileSize(uri: Uri, resolver: ContentResolver): Long? = try {
+    resolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)?.use { cursor ->
+        val idx = cursor.getColumnIndex(OpenableColumns.SIZE)
+        if (idx >= 0 && cursor.moveToFirst() && !cursor.isNull(idx)) cursor.getLong(idx) else null
+    }
+} catch (_: Exception) {
+    null
+}
+
+/**
+ * Read the URI's bytes to a String in 64 KB chunks, reporting progress no
+ * more than once every 50 ms. Throttling matters: a 60 MB read produces
+ * ~1000 chunks; without throttling we'd hammer the StateFlow.
+ */
+private fun readUriAsString(
+    uri: Uri,
+    resolver: ContentResolver,
+    onProgress: (bytesRead: Long) -> Unit,
+): String {
+    val stream = resolver.openInputStream(uri)
+        ?: throw IOException("Could not open file: $uri")
+    return stream.use { input ->
+        val buffer = ByteArray(64 * 1024)
+        val out = ByteArrayOutputStream()
+        var totalRead = 0L
+        var lastReportMs = 0L
+        while (true) {
+            val n = input.read(buffer)
+            if (n == -1) break
+            out.write(buffer, 0, n)
+            totalRead += n
+            val now = SystemClock.uptimeMillis()
+            if (now - lastReportMs >= 50L) {
+                onProgress(totalRead)
+                lastReportMs = now
+            }
+        }
+        onProgress(totalRead) // final 100% tick
+        out.toString(Charsets.UTF_8)
+    }
+}
+
+private fun formatBytesProgress(bytesRead: Long, totalBytes: Long?): String =
+    if (totalBytes != null) "${formatMb(bytesRead)} / ${formatMb(totalBytes)}"
+    else formatMb(bytesRead)
+
+private fun formatMb(bytes: Long): String = "%.1f MB".format(bytes / 1_048_576.0)
+
+private fun formatGrouped(n: Int): String = "%,d".format(n)
