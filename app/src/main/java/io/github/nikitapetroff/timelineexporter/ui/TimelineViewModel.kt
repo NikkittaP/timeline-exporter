@@ -6,7 +6,7 @@ import android.os.SystemClock
 import android.provider.OpenableColumns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.nikitapetroff.timelineexporter.export.buildGpx
+import io.github.nikitapetroff.timelineexporter.export.Exporter
 import io.github.nikitapetroff.timelineexporter.filter.TimelineFilter
 import io.github.nikitapetroff.timelineexporter.filter.applyFilter
 import io.github.nikitapetroff.timelineexporter.parser.ParsedTimeline
@@ -109,9 +109,13 @@ class TimelineViewModel : ViewModel() {
 
     /**
      * Called after the user picked a destination URI via CreateDocument.
-     * Builds the GPX off-thread and writes it to [uri].
+     * Builds the chosen format off-thread and writes it to [uri].
      */
-    fun onSaveDestinationSelected(uri: Uri, contentResolver: ContentResolver) {
+    fun onSaveDestinationSelected(
+        uri: Uri,
+        exporter: Exporter,
+        contentResolver: ContentResolver,
+    ) {
         val loaded = _uiState.value as? TimelineUiState.Loaded ?: return
         val currentFilter = _filter.value
         val filteredPoints = applyFilter(loaded.result.pathPoints, currentFilter)
@@ -124,12 +128,12 @@ class TimelineViewModel : ViewModel() {
         viewModelScope.launch {
             val newState = withContext(Dispatchers.IO) {
                 try {
-                    val gpx = buildGpx(
+                    val content = exporter.export(
                         points = filteredPoints,
                         trackName = "Google Timeline ${formatRangeForName(currentFilter.dateRange)}",
                     )
                     contentResolver.openOutputStream(uri)?.use { out ->
-                        out.write(gpx.toByteArray(Charsets.UTF_8))
+                        out.write(content.toByteArray(Charsets.UTF_8))
                     } ?: throw IOException("Could not open destination for writing.")
                     ExportState.Success(
                         pointCount = filteredPoints.size,
@@ -137,7 +141,10 @@ class TimelineViewModel : ViewModel() {
                             ?: "the chosen file",
                     )
                 } catch (e: Exception) {
-                    ExportState.Failed("Could not save GPX: ${e.message ?: e::class.simpleName}")
+                    ExportState.Failed(
+                        "Could not save ${exporter.displayName}: " +
+                                (e.message ?: e::class.simpleName)
+                    )
                 }
             }
             _exportState.value = newState
@@ -236,10 +243,11 @@ private fun formatRangeForName(range: ClosedRange<Instant>?): String {
  * Suggest a filename for the save dialog. Public so the screen can compute
  * it without duplicating the formatting logic.
  */
-fun suggestGpxFilename(filter: TimelineFilter): String {
-    val range = filter.dateRange ?: return "Timeline.gpx"
+fun suggestFilename(filter: TimelineFilter, exporter: Exporter): String {
+    val range = filter.dateRange
+        ?: return "Timeline.${exporter.fileExtension}"
     val z = ZoneId.systemDefault()
     val from = LocalDate.ofInstant(range.start, z)
     val to = LocalDate.ofInstant(range.endInclusive, z)
-    return "Timeline_${from}_to_${to}.gpx"
+    return "Timeline_${from}_to_${to}.${exporter.fileExtension}"
 }

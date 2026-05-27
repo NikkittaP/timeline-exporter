@@ -15,7 +15,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +36,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.nikitapetroff.timelineexporter.export.AllExporters
+import io.github.nikitapetroff.timelineexporter.export.CsvExporter
+import io.github.nikitapetroff.timelineexporter.export.Exporter
+import io.github.nikitapetroff.timelineexporter.export.GeoJsonExporter
+import io.github.nikitapetroff.timelineexporter.export.GpxExporter
+import io.github.nikitapetroff.timelineexporter.export.KmlExporter
 import io.github.nikitapetroff.timelineexporter.filter.applyFilter
 import io.github.nikitapetroff.timelineexporter.parser.ParsedTimeline
 import java.time.Instant
@@ -57,10 +66,38 @@ fun MainScreen(
         uri?.let { viewModel.onFileSelected(it, context.contentResolver) }
     }
 
-    val saveGpxLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.CreateDocument("application/gpx+xml"),
+    // One save launcher per format, each registered with its proper MIME type
+    // so cloud destinations (Drive etc.) tag the saved file correctly.
+    val gpxLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument(GpxExporter.mimeType),
     ) { uri ->
-        uri?.let { viewModel.onSaveDestinationSelected(it, context.contentResolver) }
+        uri?.let { viewModel.onSaveDestinationSelected(it, GpxExporter, context.contentResolver) }
+    }
+    val kmlLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument(KmlExporter.mimeType),
+    ) { uri ->
+        uri?.let { viewModel.onSaveDestinationSelected(it, KmlExporter, context.contentResolver) }
+    }
+    val geojsonLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument(GeoJsonExporter.mimeType),
+    ) { uri ->
+        uri?.let { viewModel.onSaveDestinationSelected(it, GeoJsonExporter, context.contentResolver) }
+    }
+    val csvLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument(CsvExporter.mimeType),
+    ) { uri ->
+        uri?.let { viewModel.onSaveDestinationSelected(it, CsvExporter, context.contentResolver) }
+    }
+
+    // Dispatch from the chosen Exporter to the matching launcher.
+    val launchSave: (Exporter) -> Unit = { exporter ->
+        val name = suggestFilename(filter, exporter)
+        when (exporter) {
+            GpxExporter -> gpxLauncher.launch(name)
+            KmlExporter -> kmlLauncher.launch(name)
+            GeoJsonExporter -> geojsonLauncher.launch(name)
+            CsvExporter -> csvLauncher.launch(name)
+        }
     }
 
     Column(
@@ -113,7 +150,7 @@ fun MainScreen(
                 ExportSection(
                     canSave = filteredPoints.isNotEmpty(),
                     exportState = exportState,
-                    onSave = { saveGpxLauncher.launch(suggestGpxFilename(filter)) },
+                    onPickFormat = launchSave,
                 )
             }
         }
@@ -250,21 +287,41 @@ private fun PreviewSection(points: List<io.github.nikitapetroff.timelineexporter
 private fun ExportSection(
     canSave: Boolean,
     exportState: ExportState,
-    onSave: () -> Unit,
+    onPickFormat: (Exporter) -> Unit,
 ) {
+    var menuOpen by remember { mutableStateOf(false) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text("Export", style = MaterialTheme.typography.titleMedium)
-        Button(
-            onClick = onSave,
-            enabled = canSave && exportState !is ExportState.Working,
-        ) {
-            Text("Save as GPX…")
+
+        // Box anchors the DropdownMenu under the button.
+        Box {
+            Button(
+                onClick = { menuOpen = true },
+                enabled = canSave && exportState !is ExportState.Working,
+            ) {
+                Text("Save as…")
+            }
+            DropdownMenu(
+                expanded = menuOpen,
+                onDismissRequest = { menuOpen = false },
+            ) {
+                AllExporters.forEach { exporter ->
+                    DropdownMenuItem(
+                        text = { Text(exporter.displayName) },
+                        onClick = {
+                            menuOpen = false
+                            onPickFormat(exporter)
+                        },
+                    )
+                }
+            }
         }
+
         when (val s = exportState) {
             ExportState.Idle -> { /* nothing */ }
             ExportState.Working -> {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                Text("Writing GPX…", style = MaterialTheme.typography.bodySmall)
+                Text("Writing file…", style = MaterialTheme.typography.bodySmall)
             }
             is ExportState.Success -> Text(
                 text = "Saved ${"%,d".format(s.pointCount)} points to ${s.displayName}",
