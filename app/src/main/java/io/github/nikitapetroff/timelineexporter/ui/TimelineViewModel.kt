@@ -133,7 +133,8 @@ class TimelineViewModel : ViewModel() {
                     } ?: throw IOException("Could not open destination for writing.")
                     ExportState.Success(
                         pointCount = filteredPoints.size,
-                        displayName = uri.lastPathSegment ?: uri.toString(),
+                        displayName = queryDisplayName(uri, contentResolver)
+                            ?: "the chosen file",
                     )
                 } catch (e: Exception) {
                     ExportState.Failed("Could not save GPX: ${e.message ?: e::class.simpleName}")
@@ -168,6 +169,20 @@ private fun queryFileSize(uri: Uri, resolver: ContentResolver): Long? = try {
     resolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)?.use { cursor ->
         val idx = cursor.getColumnIndex(OpenableColumns.SIZE)
         if (idx >= 0 && cursor.moveToFirst() && !cursor.isNull(idx)) cursor.getLong(idx) else null
+    }
+} catch (_: Exception) {
+    null
+}
+
+/**
+ * Ask the content provider for the file's human-readable name.
+ * Falls back to null if the provider doesn't expose DISPLAY_NAME (rare for
+ * files saved via CreateDocument; common for some cloud providers).
+ */
+private fun queryDisplayName(uri: Uri, resolver: ContentResolver): String? = try {
+    resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
+        val idx = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+        if (idx >= 0 && cursor.moveToFirst() && !cursor.isNull(idx)) cursor.getString(idx) else null
     }
 } catch (_: Exception) {
     null
