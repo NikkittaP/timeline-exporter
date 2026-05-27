@@ -1,5 +1,6 @@
 package io.github.nikitapetroff.timelineexporter.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
@@ -20,20 +21,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -48,6 +53,7 @@ import io.github.nikitapetroff.timelineexporter.export.GpxExporter
 import io.github.nikitapetroff.timelineexporter.export.KmlExporter
 import io.github.nikitapetroff.timelineexporter.filter.applyFilter
 import io.github.nikitapetroff.timelineexporter.parser.ParsedTimeline
+import io.github.nikitapetroff.timelineexporter.parser.PathPoint
 import java.time.Instant
 
 /**
@@ -95,6 +101,27 @@ fun MainScreen(
     val exportState by viewModel.exportState.collectAsStateWithLifecycle()
 
     var dateDialogOpen by remember { mutableStateOf(false) }
+    // True while the user has a finger on the map. Used to disable the
+    // parent verticalScroll so the screen doesn't scroll instead of the
+    // map panning. Flips back to false on ACTION_UP/CANCEL.
+    var mapInteracting by remember { mutableStateOf(false) }
+    // True while the map is expanded to fill the screen.
+    var mapFullscreen by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+
+    // Same TrackMap instance, moved between the inline PreviewSection slot
+    // and the fullscreen overlay. movableContentOf preserves the underlying
+    // MapView (and its loaded style + rendered track) across the move, so
+    // toggling fullscreen is instant — no white flash, no tile reload.
+    val movableMap = remember {
+        movableContentOf<List<PathPoint>, Modifier> { pts, m ->
+            TrackMap(
+                points = pts,
+                onInteractionChange = { mapInteracting = it },
+                modifier = m,
+            )
+        }
+    }
 
     val pickFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
@@ -136,10 +163,11 @@ fun MainScreen(
         }
     }
 
+    Box(modifier = modifier.fillMaxSize()) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState, enabled = !mapInteracting)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -188,7 +216,15 @@ fun MainScreen(
                 )
 
                 HorizontalDivider()
-                PreviewSection(points = filteredPoints)
+                PreviewSection(
+                    points = filteredPoints,
+                    // When fullscreen, the map composable is hosted by the
+                    // overlay below; the inline slot becomes a placeholder
+                    // so the surrounding layout doesn't jump.
+                    inlineMapActive = !mapFullscreen,
+                    onExpand = { mapFullscreen = true },
+                    mapContent = movableMap,
+                )
 
                 HorizontalDivider()
                 ExportSection(
@@ -199,6 +235,26 @@ fun MainScreen(
             }
         }
     }
+
+        // Fullscreen overlay — covers the Column above when active. Hosts
+        // the SAME movable map composable, so toggling preserves the
+        // current pan/zoom state and doesn't reload tiles.
+        if (mapFullscreen) {
+            val loaded = (uiState as? TimelineUiState.Loaded)?.result
+            if (loaded != null) {
+                val fullscreenPoints by remember(loaded, filter) {
+                    derivedStateOf { applyFilter(loaded.pathPoints, filter) }
+                }
+                // System back gesture / button also dismisses fullscreen.
+                BackHandler { mapFullscreen = false }
+                FullscreenMap(
+                    points = fullscreenPoints,
+                    onClose = { mapFullscreen = false },
+                    mapContent = movableMap,
+                )
+            }
+        }
+    } // close of Box
 
     if (dateDialogOpen) {
         val loaded = (uiState as? TimelineUiState.Loaded)?.result
@@ -304,7 +360,12 @@ private fun FilterActionsRow(hasFilter: Boolean, onPick: () -> Unit, onClear: ()
 }
 
 @Composable
-private fun PreviewSection(points: List<io.github.nikitapetroff.timelineexporter.parser.PathPoint>) {
+private fun PreviewSection(
+    points: List<PathPoint>,
+    inlineMapActive: Boolean,
+    onExpand: () -> Unit,
+    mapContent: @Composable (List<PathPoint>, Modifier) -> Unit,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text("Preview", style = MaterialTheme.typography.titleMedium)
         if (points.isEmpty()) {
@@ -315,14 +376,54 @@ private fun PreviewSection(points: List<io.github.nikitapetroff.timelineexporter
             )
         } else {
             val shape = RoundedCornerShape(8.dp)
-            TrackMap(
-                points = points,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(280.dp)
                     .clip(shape)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
-            )
+            ) {
+                if (inlineMapActive) {
+                    // Map is hosted here in the inline slot.
+                    mapContent(points, Modifier.fillMaxSize())
+                    // Overlay expand button.
+                    FilledTonalButton(
+                        onClick = onExpand,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp),
+                    ) {
+                        Text("Expand")
+                    }
+                }
+                // else: map is in the fullscreen overlay; this Box is
+                // intentionally empty (acts as a placeholder so the
+                // surrounding layout doesn't change height).
+            }
+        }
+    }
+}
+
+@Composable
+private fun FullscreenMap(
+    points: List<PathPoint>,
+    onClose: () -> Unit,
+    mapContent: @Composable (List<PathPoint>, Modifier) -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            mapContent(points, Modifier.fillMaxSize())
+            FilledTonalButton(
+                onClick = onClose,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp),
+            ) {
+                Text("Close")
+            }
         }
     }
 }

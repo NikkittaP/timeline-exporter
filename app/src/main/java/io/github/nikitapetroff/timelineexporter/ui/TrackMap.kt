@@ -1,12 +1,14 @@
 package io.github.nikitapetroff.timelineexporter.ui
 
 import android.util.Log
+import android.view.MotionEvent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -55,16 +57,43 @@ private const val LAYER_END = "end-circle"
 fun TrackMap(
     points: List<PathPoint>,
     modifier: Modifier = Modifier,
+    /**
+     * Called with `true` on ACTION_DOWN and `false` on ACTION_UP/CANCEL.
+     * Parent uses this to disable its own verticalScroll while the user is
+     * panning/pinching the map, so the screen doesn't scroll out from
+     * under their finger.
+     */
+    onInteractionChange: (interacting: Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    // Keep latest callback reference so the View's touch listener (created
+    // once in `remember`) always calls the most recent caller's lambda.
+    val latestInteractionCallback by rememberUpdatedState(onInteractionChange)
 
     // MapLibre.getInstance is idempotent — safe to call every time the
     // composable is first composed. MapView creation kicks off the native
     // GL surface; onCreate(null) means "no saved instance state to restore".
     val mapView = remember {
         MapLibre.getInstance(context)
-        MapView(context).apply { onCreate(null) }
+        MapView(context).apply {
+            onCreate(null)
+            // Spy on touch events to tell the parent verticalScroll to back
+            // off while the map is being interacted with. Returning false
+            // from the listener means "I'm not consuming, continue to
+            // MapView's own onTouchEvent" — pan/zoom still work normally.
+            setOnTouchListener { _, event ->
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN ->
+                        latestInteractionCallback(true)
+                    MotionEvent.ACTION_UP,
+                    MotionEvent.ACTION_CANCEL ->
+                        latestInteractionCallback(false)
+                }
+                false
+            }
+        }
     }
 
     // We capture the MapLibreMap + Style as they become available, so the
