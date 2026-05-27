@@ -19,11 +19,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -48,9 +52,43 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
+/**
+ * Top-level Compose entry called from MainActivity. Hosts the Scaffold with
+ * TopAppBar + Help action, owns the help-dialog state, and delegates the main
+ * content to [MainScreen].
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimelineExporterApp() {
+    var helpDialogOpen by remember { mutableStateOf(false) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Timeline Exporter") },
+                actions = {
+                    TextButton(onClick = { helpDialogOpen = true }) {
+                        Text("Help")
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
+        MainScreen(
+            modifier = Modifier.padding(innerPadding),
+            onHelpClick = { helpDialogOpen = true },
+        )
+    }
+
+    if (helpDialogOpen) {
+        HelpDialog(onDismiss = { helpDialogOpen = false })
+    }
+}
+
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    onHelpClick: () -> Unit = {},
     viewModel: TimelineViewModel = viewModel(),
 ) {
     val context = LocalContext.current
@@ -112,10 +150,18 @@ fun MainScreen(
         }
 
         when (val state = uiState) {
-            TimelineUiState.Idle -> Text(
-                "Pick a Google Maps Timeline JSON file to parse.",
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            TimelineUiState.Idle -> Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    "Pick a Google Maps Timeline JSON file to parse.",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                TextButton(
+                    onClick = onHelpClick,
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
+                ) {
+                    Text("How do I get Timeline data?")
+                }
+            }
 
             is TimelineUiState.Loading -> LoadingDisplay(state)
 
