@@ -5,7 +5,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -42,15 +43,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.nikitapetroff.timelineexporter.R
 import io.github.nikitapetroff.timelineexporter.export.AllExporters
 import io.github.nikitapetroff.timelineexporter.export.CsvExporter
 import io.github.nikitapetroff.timelineexporter.export.Exporter
 import io.github.nikitapetroff.timelineexporter.export.GeoJsonExporter
 import io.github.nikitapetroff.timelineexporter.export.GpxExporter
 import io.github.nikitapetroff.timelineexporter.export.KmlExporter
+import io.github.nikitapetroff.timelineexporter.filter.TimelineFilter
 import io.github.nikitapetroff.timelineexporter.filter.applyFilter
 import io.github.nikitapetroff.timelineexporter.parser.ParsedTimeline
 import io.github.nikitapetroff.timelineexporter.parser.PathPoint
@@ -69,10 +73,10 @@ fun TimelineExporterApp() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Timeline Exporter") },
+                title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     TextButton(onClick = { helpDialogOpen = true }) {
-                        Text("Help")
+                        Text(stringResource(R.string.action_help))
                     }
                 },
             )
@@ -101,18 +105,10 @@ fun MainScreen(
     val exportState by viewModel.exportState.collectAsStateWithLifecycle()
 
     var dateDialogOpen by remember { mutableStateOf(false) }
-    // True while the user has a finger on the map. Used to disable the
-    // parent verticalScroll so the screen doesn't scroll instead of the
-    // map panning. Flips back to false on ACTION_UP/CANCEL.
     var mapInteracting by remember { mutableStateOf(false) }
-    // True while the map is expanded to fill the screen.
     var mapFullscreen by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
-    // Same TrackMap instance, moved between the inline PreviewSection slot
-    // and the fullscreen overlay. movableContentOf preserves the underlying
-    // MapView (and its loaded style + rendered track) across the move, so
-    // toggling fullscreen is instant — no white flash, no tile reload.
     val movableMap = remember {
         movableContentOf<List<PathPoint>, Modifier> { pts, m ->
             TrackMap(
@@ -123,36 +119,45 @@ fun MainScreen(
         }
     }
 
+    // The localized track name to embed in exported files. Recomputes per
+    // recomposition; the launcher callbacks below capture the current value.
+    val trackName = buildTrackName(filter)
+
     val pickFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
         uri?.let { viewModel.onFileSelected(it, context.contentResolver) }
     }
 
-    // One save launcher per format, each registered with its proper MIME type
-    // so cloud destinations (Drive etc.) tag the saved file correctly.
     val gpxLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument(GpxExporter.mimeType),
     ) { uri ->
-        uri?.let { viewModel.onSaveDestinationSelected(it, GpxExporter, context.contentResolver) }
+        uri?.let {
+            viewModel.onSaveDestinationSelected(it, GpxExporter, trackName, context.contentResolver)
+        }
     }
     val kmlLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument(KmlExporter.mimeType),
     ) { uri ->
-        uri?.let { viewModel.onSaveDestinationSelected(it, KmlExporter, context.contentResolver) }
+        uri?.let {
+            viewModel.onSaveDestinationSelected(it, KmlExporter, trackName, context.contentResolver)
+        }
     }
     val geojsonLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument(GeoJsonExporter.mimeType),
     ) { uri ->
-        uri?.let { viewModel.onSaveDestinationSelected(it, GeoJsonExporter, context.contentResolver) }
+        uri?.let {
+            viewModel.onSaveDestinationSelected(it, GeoJsonExporter, trackName, context.contentResolver)
+        }
     }
     val csvLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument(CsvExporter.mimeType),
     ) { uri ->
-        uri?.let { viewModel.onSaveDestinationSelected(it, CsvExporter, context.contentResolver) }
+        uri?.let {
+            viewModel.onSaveDestinationSelected(it, CsvExporter, trackName, context.contentResolver)
+        }
     }
 
-    // Dispatch from the chosen Exporter to the matching launcher.
     val launchSave: (Exporter) -> Unit = { exporter ->
         val name = suggestFilename(filter, exporter)
         when (exporter) {
@@ -164,88 +169,84 @@ fun MainScreen(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState, enabled = !mapInteracting)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Button(onClick = { pickFileLauncher.launch(arrayOf("*/*")) }) {
-            Text("Pick Timeline.json")
-        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState, enabled = !mapInteracting)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Button(onClick = { pickFileLauncher.launch(arrayOf("*/*")) }) {
+                Text(stringResource(R.string.pick_file_button))
+            }
 
-        when (val state = uiState) {
-            TimelineUiState.Idle -> Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    "Pick a Google Maps Timeline JSON file to parse.",
+            when (val state = uiState) {
+                TimelineUiState.Idle -> Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        stringResource(R.string.idle_hint),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    TextButton(
+                        onClick = onHelpClick,
+                        contentPadding = PaddingValues(0.dp),
+                    ) {
+                        Text(stringResource(R.string.idle_help_button))
+                    }
+                }
+
+                is TimelineUiState.Loading -> LoadingDisplay(state.phase)
+
+                is TimelineUiState.Error -> Text(
+                    text = stringResource(
+                        R.string.parse_error,
+                        state.exceptionClass,
+                        state.exceptionMessage
+                            ?: stringResource(R.string.parse_error_no_message),
+                    ),
+                    color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                TextButton(
-                    onClick = onHelpClick,
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp),
-                ) {
-                    Text("How do I get Timeline data?")
+
+                is TimelineUiState.Loaded -> {
+                    val filteredPoints by remember(state.result, filter) {
+                        derivedStateOf { applyFilter(state.result.pathPoints, filter) }
+                    }
+
+                    ResultDisplay(state.result)
+
+                    HorizontalDivider()
+                    FilterSection(
+                        totalCount = state.result.pathPoints.size,
+                        filteredCount = filteredPoints.size,
+                        currentRange = filter.dateRange,
+                        onOpenDateDialog = { dateDialogOpen = true },
+                        onClearRange = { viewModel.clearDateRange() },
+                    )
+
+                    HorizontalDivider()
+                    PreviewSection(
+                        points = filteredPoints,
+                        inlineMapActive = !mapFullscreen,
+                        onExpand = { mapFullscreen = true },
+                        mapContent = movableMap,
+                    )
+
+                    HorizontalDivider()
+                    ExportSection(
+                        canSave = filteredPoints.isNotEmpty(),
+                        exportState = exportState,
+                        onPickFormat = launchSave,
+                    )
                 }
-            }
-
-            is TimelineUiState.Loading -> LoadingDisplay(state)
-
-            is TimelineUiState.Error -> Text(
-                text = state.message,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-
-            is TimelineUiState.Loaded -> {
-                // Compute filtered points ONCE per (data, filter) change; share
-                // with both the filter readout, the map, and the save button.
-                val filteredPoints by remember(state.result, filter) {
-                    derivedStateOf { applyFilter(state.result.pathPoints, filter) }
-                }
-
-                ResultDisplay(state.result)
-
-                HorizontalDivider()
-                FilterSection(
-                    totalCount = state.result.pathPoints.size,
-                    filteredCount = filteredPoints.size,
-                    currentRange = filter.dateRange,
-                    onOpenDateDialog = { dateDialogOpen = true },
-                    onClearRange = { viewModel.clearDateRange() },
-                )
-
-                HorizontalDivider()
-                PreviewSection(
-                    points = filteredPoints,
-                    // When fullscreen, the map composable is hosted by the
-                    // overlay below; the inline slot becomes a placeholder
-                    // so the surrounding layout doesn't jump.
-                    inlineMapActive = !mapFullscreen,
-                    onExpand = { mapFullscreen = true },
-                    mapContent = movableMap,
-                )
-
-                HorizontalDivider()
-                ExportSection(
-                    canSave = filteredPoints.isNotEmpty(),
-                    exportState = exportState,
-                    onPickFormat = launchSave,
-                )
             }
         }
-    }
 
-        // Fullscreen overlay — covers the Column above when active. Hosts
-        // the SAME movable map composable, so toggling preserves the
-        // current pan/zoom state and doesn't reload tiles.
         if (mapFullscreen) {
             val loaded = (uiState as? TimelineUiState.Loaded)?.result
             if (loaded != null) {
                 val fullscreenPoints by remember(loaded, filter) {
                     derivedStateOf { applyFilter(loaded.pathPoints, filter) }
                 }
-                // System back gesture / button also dismisses fullscreen.
                 BackHandler { mapFullscreen = false }
                 FullscreenMap(
                     points = fullscreenPoints,
@@ -254,7 +255,7 @@ fun MainScreen(
                 )
             }
         }
-    } // close of Box
+    }
 
     if (dateDialogOpen) {
         val loaded = (uiState as? TimelineUiState.Loaded)?.result
@@ -275,21 +276,72 @@ fun MainScreen(
     }
 }
 
+// ---------- pure-composable helpers ----------
+
+/**
+ * Translate the semantic [LoadingPhase] into a localized title + optional
+ * detail line + optional 0..1 progress for the bar. This is the ONLY
+ * place loading-stage UI text lives.
+ */
 @Composable
-private fun LoadingDisplay(state: TimelineUiState.Loading) {
+private fun LoadingDisplay(phase: LoadingPhase) {
+    val label: String
+    val detail: String?
+    val progress: Float?
+    when (phase) {
+        LoadingPhase.OpeningFile -> {
+            label = stringResource(R.string.loading_opening)
+            detail = null
+            progress = null
+        }
+        is LoadingPhase.ReadingFile -> {
+            label = stringResource(R.string.loading_reading)
+            detail = if (phase.totalBytes != null) {
+                stringResource(
+                    R.string.loading_reading_detail,
+                    formatMb(phase.bytesRead),
+                    formatMb(phase.totalBytes),
+                )
+            } else {
+                stringResource(R.string.loading_reading_detail_unknown, formatMb(phase.bytesRead))
+            }
+            progress = phase.totalBytes
+                ?.takeIf { it > 0 }
+                ?.let { phase.bytesRead.toFloat() / it }
+        }
+        LoadingPhase.DecodingJson -> {
+            label = stringResource(R.string.loading_decoding)
+            detail = stringResource(R.string.loading_decoding_detail)
+            progress = null
+        }
+        is LoadingPhase.ExtractingPoints -> {
+            label = stringResource(R.string.loading_extracting)
+            detail = stringResource(
+                R.string.loading_extracting_detail,
+                formatGrouped(phase.done),
+                formatGrouped(phase.total),
+            )
+            progress = if (phase.total > 0) phase.done.toFloat() / phase.total else null
+        }
+        LoadingPhase.SortingPoints -> {
+            label = stringResource(R.string.loading_sorting)
+            detail = null
+            progress = null
+        }
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(text = state.stageLabel, style = MaterialTheme.typography.titleMedium)
-        if (state.detailLabel != null) {
+        Text(text = label, style = MaterialTheme.typography.titleMedium)
+        if (detail != null) {
             Text(
-                text = state.detailLabel,
+                text = detail,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        val fraction = state.progress
-        if (fraction != null) {
+        if (progress != null) {
             LinearProgressIndicator(
-                progress = { fraction.coerceIn(0f, 1f) },
+                progress = { progress.coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth(),
             )
         } else {
@@ -301,18 +353,18 @@ private fun LoadingDisplay(state: TimelineUiState.Loading) {
 @Composable
 private fun ResultDisplay(result: ParsedTimeline) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("Parsed successfully", style = MaterialTheme.typography.titleMedium)
-        Text("Total segments: ${result.totalSegments}")
-        Text("  • Path: ${result.pathSegments}")
-        Text("  • Visit: ${result.visitSegments}")
-        Text("  • Activity: ${result.activitySegments}")
-        Text("Path points: ${result.pathPoints.size}")
+        Text(stringResource(R.string.result_title), style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.result_total_segments, result.totalSegments))
+        Text(stringResource(R.string.result_path_segments, result.pathSegments))
+        Text(stringResource(R.string.result_visit_segments, result.visitSegments))
+        Text(stringResource(R.string.result_activity_segments, result.activitySegments))
+        Text(stringResource(R.string.result_path_points, result.pathPoints.size))
         if (result.pathPoints.isNotEmpty()) {
             val first = result.pathPoints.first()
             val last = result.pathPoints.last()
             Spacer(modifier = Modifier.size(8.dp))
-            Text("First: ${formatLocalDateTime(first.timeUtc)}")
-            Text("Last:  ${formatLocalDateTime(last.timeUtc)}")
+            Text(stringResource(R.string.result_first, formatLocalDateTime(first.timeUtc)))
+            Text(stringResource(R.string.result_last, formatLocalDateTime(last.timeUtc)))
         }
     }
 }
@@ -326,16 +378,28 @@ private fun FilterSection(
     onClearRange: () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Filter", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.filter_title), style = MaterialTheme.typography.titleMedium)
         if (currentRange == null) {
-            Text("Date range: all dates", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                stringResource(R.string.filter_date_range_all),
+                style = MaterialTheme.typography.bodyMedium,
+            )
         } else {
-            val from = formatLocalDate(currentRange.start)
-            val to = formatLocalDate(currentRange.endInclusive)
-            Text("Date range: $from — $to", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                stringResource(
+                    R.string.filter_date_range_set,
+                    formatLocalDate(currentRange.start),
+                    formatLocalDate(currentRange.endInclusive),
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
         Text(
-            text = "After filter: ${"%,d".format(filteredCount)} of ${"%,d".format(totalCount)} points",
+            text = stringResource(
+                R.string.filter_filtered_count,
+                formatGrouped(filteredCount),
+                formatGrouped(totalCount),
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -351,10 +415,15 @@ private fun FilterSection(
 private fun FilterActionsRow(hasFilter: Boolean, onPick: () -> Unit, onClear: () -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedButton(onClick = onPick) {
-            Text(if (hasFilter) "Change date range" else "Set date range")
+            Text(
+                if (hasFilter) stringResource(R.string.filter_change_button)
+                else stringResource(R.string.filter_set_button)
+            )
         }
         if (hasFilter) {
-            OutlinedButton(onClick = onClear) { Text("Clear") }
+            OutlinedButton(onClick = onClear) {
+                Text(stringResource(R.string.filter_clear_button))
+            }
         }
     }
 }
@@ -367,10 +436,10 @@ private fun PreviewSection(
     mapContent: @Composable (List<PathPoint>, Modifier) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Preview", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.preview_title), style = MaterialTheme.typography.titleMedium)
         if (points.isEmpty()) {
             Text(
-                "No points match the current filter — nothing to preview.",
+                stringResource(R.string.preview_no_points),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -384,22 +453,16 @@ private fun PreviewSection(
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
             ) {
                 if (inlineMapActive) {
-                    // Map is hosted here in the inline slot.
                     mapContent(points, Modifier.fillMaxSize())
-                    // Bottom-right: clear of MapLibre's compass (top-right)
-                    // and its attribution + logo (bottom-left).
                     FilledTonalButton(
                         onClick = onExpand,
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(8.dp),
                     ) {
-                        Text("Expand")
+                        Text(stringResource(R.string.preview_expand))
                     }
                 }
-                // else: map is in the fullscreen overlay; this Box is
-                // intentionally empty (acts as a placeholder so the
-                // surrounding layout doesn't change height).
             }
         }
     }
@@ -417,15 +480,13 @@ private fun FullscreenMap(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             mapContent(points, Modifier.fillMaxSize())
-            // Top-left: clear of MapLibre's compass (top-right when rotated)
-            // and conventional location for a "close / back" action.
             FilledTonalButton(
                 onClick = onClose,
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(16.dp),
             ) {
-                Text("Close")
+                Text(stringResource(R.string.preview_close))
             }
         }
     }
@@ -439,15 +500,14 @@ private fun ExportSection(
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Export", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.export_title), style = MaterialTheme.typography.titleMedium)
 
-        // Box anchors the DropdownMenu under the button.
         Box {
             Button(
                 onClick = { menuOpen = true },
                 enabled = canSave && exportState !is ExportState.Working,
             ) {
-                Text("Save as…")
+                Text(stringResource(R.string.export_save_button))
             }
             DropdownMenu(
                 expanded = menuOpen,
@@ -469,18 +529,64 @@ private fun ExportSection(
             ExportState.Idle -> { /* nothing */ }
             ExportState.Working -> {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                Text("Writing file…", style = MaterialTheme.typography.bodySmall)
+                Text(
+                    stringResource(R.string.export_writing),
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
             is ExportState.Success -> Text(
-                text = "Saved ${"%,d".format(s.pointCount)} points to ${s.displayName}",
+                text = stringResource(
+                    R.string.export_success,
+                    formatGrouped(s.pointCount),
+                    s.displayName ?: stringResource(R.string.export_fallback_filename),
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
             )
-            is ExportState.Failed -> Text(
-                text = s.message,
+            ExportState.Failure.NoPoints -> Text(
+                text = stringResource(R.string.export_error_no_points),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
             )
+            is ExportState.Failure.Generic -> {
+                val detail = s.exceptionMessage
+                    ?: stringResource(R.string.parse_error_no_message)
+                Text(
+                    text = stringResource(
+                        R.string.export_error_generic,
+                        s.formatName,
+                        "${s.exceptionClass}: $detail",
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
         }
     }
 }
+
+/**
+ * Build the human-readable track name that gets embedded inside exported
+ * GPX/KML/GeoJSON files. Composed from string resources so it follows the
+ * active locale.
+ */
+@Composable
+private fun buildTrackName(filter: TimelineFilter): String {
+    val range = filter.dateRange
+    val rangePart = if (range == null) {
+        stringResource(R.string.track_name_full_range)
+    } else {
+        stringResource(
+            R.string.track_name_date_range,
+            formatLocalDate(range.start),
+            formatLocalDate(range.endInclusive),
+        )
+    }
+    return stringResource(R.string.track_name, rangePart)
+}
+
+// ---------- non-Compose formatting helpers ----------
+
+private fun formatGrouped(n: Int): String = "%,d".format(n)
+
+private fun formatMb(bytes: Long): String = "%.1f MB".format(bytes / 1_048_576.0)

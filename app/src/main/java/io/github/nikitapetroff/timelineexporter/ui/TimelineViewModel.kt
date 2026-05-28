@@ -25,23 +25,53 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 // ---------- UI state types ----------
+//
+// The VM emits SEMANTIC state: "we're reading file, X of Y bytes" — not
+// a pre-formatted English string. The UI layer (MainScreen) is the only
+// place that turns these into localized strings via stringResource.
+
+/** Discrete stages of the file→parsed pipeline. */
+sealed interface LoadingPhase {
+    data object OpeningFile : LoadingPhase
+    data class ReadingFile(val bytesRead: Long, val totalBytes: Long?) : LoadingPhase
+    data object DecodingJson : LoadingPhase
+    data class ExtractingPoints(val done: Int, val total: Int) : LoadingPhase
+    data object SortingPoints : LoadingPhase
+}
 
 sealed interface TimelineUiState {
     data object Idle : TimelineUiState
-    data class Loading(
-        val stageLabel: String,
-        val detailLabel: String? = null,
-        val progress: Float? = null,
-    ) : TimelineUiState
+    data class Loading(val phase: LoadingPhase) : TimelineUiState
     data class Loaded(val result: ParsedTimeline) : TimelineUiState
-    data class Error(val message: String) : TimelineUiState
+    /**
+     * Parse failed. [exceptionClass] and [exceptionMessage] are technical
+     * detail the UI shows under a localized "Could not parse…" wrapper.
+     * exceptionMessage is null when the underlying exception had none.
+     */
+    data class Error(
+        val exceptionClass: String,
+        val exceptionMessage: String?,
+    ) : TimelineUiState
 }
 
 sealed interface ExportState {
     data object Idle : ExportState
     data object Working : ExportState
-    data class Success(val pointCount: Int, val displayName: String) : ExportState
-    data class Failed(val message: String) : ExportState
+    /** [displayName] may be null if the content provider didn't expose one. */
+    data class Success(val pointCount: Int, val displayName: String?) : ExportState
+    /** Semantic failure kind — UI composes the localized message. */
+    sealed interface Failure : ExportState {
+        data object NoPoints : Failure
+        /**
+         * Anything else. [formatName] e.g. "GPX", [exceptionClass] e.g.
+         * "IOException", [exceptionMessage] e.g. "Permission denied".
+         */
+        data class Generic(
+            val formatName: String,
+            val exceptionClass: String,
+            val exceptionMessage: String?,
+        ) : Failure
+    }
 }
 
 // ---------- ViewModel ----------
@@ -57,11 +87,10 @@ class TimelineViewModel : ViewModel() {
     private val _exportState = MutableStateFlow<ExportState>(ExportState.Idle)
     val exportState: StateFlow<ExportState> = _exportState.asStateFlow()
 
-    // ----- parse pipeline (unchanged from previous chunk) -----
+    // ----- parse pipeline -----
 
     fun onFileSelected(uri: Uri, contentResolver: ContentResolver) {
-        _uiState.value = TimelineUiState.Loading(stageLabel = "Opening file…")
-        // Reset transient state belonging to the previous file.
+        _uiState.value = TimelineUiState.Loading(LoadingPhase.OpeningFile)
         _filter.value = TimelineFilter()
         _exportState.value = ExportState.Idle
 
@@ -71,21 +100,17 @@ class TimelineViewModel : ViewModel() {
                     val totalBytes = queryFileSize(uri, contentResolver)
                     val json = readUriAsString(uri, contentResolver) { bytesRead ->
                         _uiState.value = TimelineUiState.Loading(
-                            stageLabel = "Reading file",
-                            detailLabel = formatBytesProgress(bytesRead, totalBytes),
-                            progress = totalBytes
-                                ?.takeIf { it > 0 }
-                                ?.let { bytesRead.toFloat() / it },
+                            LoadingPhase.ReadingFile(bytesRead, totalBytes),
                         )
                     }
                     val result = parseTimeline(json) { stage ->
-                        _uiState.value = stage.toLoadingState()
+                        _uiState.value = TimelineUiState.Loading(stage.toLoadingPhase())
                     }
                     TimelineUiState.Loaded(result)
                 } catch (e: Exception) {
                     TimelineUiState.Error(
-                        "Could not parse this file as a Google Timeline export.\n" +
-                                "${e::class.simpleName}: ${e.message ?: "(no message)"}"
+                        exceptionClass = e::class.simpleName ?: "Exception",
+                        exceptionMessage = e.message,
                     )
                 }
             }
@@ -97,7 +122,7 @@ class TimelineViewModel : ViewModel() {
 
     fun setDateRange(range: ClosedRange<Instant>) {
         _filter.value = _filter.value.copy(dateRange = range)
-        _exportState.value = ExportState.Idle // any previous save no longer reflects current filter
+        _exportState.value = ExportState.Idle
     }
 
     fun clearDateRange() {
@@ -109,18 +134,20 @@ class TimelineViewModel : ViewModel() {
 
     /**
      * Called after the user picked a destination URI via CreateDocument.
-     * Builds the chosen format off-thread and writes it to [uri].
+     * [trackName] is the (already-localized) string the UI wants embedded
+     * inside the exported file as the track's human label.
      */
     fun onSaveDestinationSelected(
         uri: Uri,
         exporter: Exporter,
+        trackName: String,
         contentResolver: ContentResolver,
     ) {
         val loaded = _uiState.value as? TimelineUiState.Loaded ?: return
         val currentFilter = _filter.value
         val filteredPoints = applyFilter(loaded.result.pathPoints, currentFilter)
         if (filteredPoints.isEmpty()) {
-            _exportState.value = ExportState.Failed("No points match the current filter.")
+            _exportState.value = ExportState.Failure.NoPoints
             return
         }
         _exportState.value = ExportState.Working
@@ -128,22 +155,19 @@ class TimelineViewModel : ViewModel() {
         viewModelScope.launch {
             val newState = withContext(Dispatchers.IO) {
                 try {
-                    val content = exporter.export(
-                        points = filteredPoints,
-                        trackName = "Google Timeline ${formatRangeForName(currentFilter.dateRange)}",
-                    )
+                    val content = exporter.export(filteredPoints, trackName)
                     contentResolver.openOutputStream(uri)?.use { out ->
                         out.write(content.toByteArray(Charsets.UTF_8))
-                    } ?: throw IOException("Could not open destination for writing.")
+                    } ?: throw IOException("openOutputStream returned null for $uri")
                     ExportState.Success(
                         pointCount = filteredPoints.size,
-                        displayName = queryDisplayName(uri, contentResolver)
-                            ?: "the chosen file",
+                        displayName = queryDisplayName(uri, contentResolver),
                     )
                 } catch (e: Exception) {
-                    ExportState.Failed(
-                        "Could not save ${exporter.displayName}: " +
-                                (e.message ?: e::class.simpleName)
+                    ExportState.Failure.Generic(
+                        formatName = exporter.displayName,
+                        exceptionClass = e::class.simpleName ?: "Exception",
+                        exceptionMessage = e.message,
                     )
                 }
             }
@@ -154,22 +178,10 @@ class TimelineViewModel : ViewModel() {
 
 // ---------- private helpers ----------
 
-private fun ParserStage.toLoadingState(): TimelineUiState.Loading = when (this) {
-    ParserStage.DecodingJson -> TimelineUiState.Loading(
-        stageLabel = "Decoding JSON",
-        detailLabel = "Large files can take a few seconds…",
-        progress = null,
-    )
-    is ParserStage.ExtractingSegments -> TimelineUiState.Loading(
-        stageLabel = "Extracting GPS points",
-        detailLabel = "${formatGrouped(done)} / ${formatGrouped(total)} segments",
-        progress = if (total > 0) done.toFloat() / total else null,
-    )
-    ParserStage.Sorting -> TimelineUiState.Loading(
-        stageLabel = "Sorting points by time",
-        detailLabel = null,
-        progress = null,
-    )
+private fun ParserStage.toLoadingPhase(): LoadingPhase = when (this) {
+    ParserStage.DecodingJson -> LoadingPhase.DecodingJson
+    is ParserStage.ExtractingSegments -> LoadingPhase.ExtractingPoints(done, total)
+    ParserStage.Sorting -> LoadingPhase.SortingPoints
 }
 
 private fun queryFileSize(uri: Uri, resolver: ContentResolver): Long? = try {
@@ -181,11 +193,6 @@ private fun queryFileSize(uri: Uri, resolver: ContentResolver): Long? = try {
     null
 }
 
-/**
- * Ask the content provider for the file's human-readable name.
- * Falls back to null if the provider doesn't expose DISPLAY_NAME (rare for
- * files saved via CreateDocument; common for some cloud providers).
- */
 private fun queryDisplayName(uri: Uri, resolver: ContentResolver): String? = try {
     resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
         val idx = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
@@ -223,25 +230,10 @@ private fun readUriAsString(
     }
 }
 
-private fun formatBytesProgress(bytesRead: Long, totalBytes: Long?): String =
-    if (totalBytes != null) "${formatMb(bytesRead)} / ${formatMb(totalBytes)}"
-    else formatMb(bytesRead)
-
-private fun formatMb(bytes: Long): String = "%.1f MB".format(bytes / 1_048_576.0)
-
-private fun formatGrouped(n: Int): String = "%,d".format(n)
-
-private fun formatRangeForName(range: ClosedRange<Instant>?): String {
-    if (range == null) return "(full export)"
-    val z = ZoneId.systemDefault()
-    val from = LocalDate.ofInstant(range.start, z)
-    val to = LocalDate.ofInstant(range.endInclusive, z)
-    return "$from — $to"
-}
-
 /**
- * Suggest a filename for the save dialog. Public so the screen can compute
- * it without duplicating the formatting logic.
+ * Suggest a filename for the save dialog. Filenames stay English /
+ * ASCII-friendly for cross-platform compatibility — they're not
+ * localised even when the rest of the UI is.
  */
 fun suggestFilename(filter: TimelineFilter, exporter: Exporter): String {
     val range = filter.dateRange

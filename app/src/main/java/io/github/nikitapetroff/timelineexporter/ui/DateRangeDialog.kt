@@ -22,9 +22,11 @@ import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import io.github.nikitapetroff.timelineexporter.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -74,7 +76,7 @@ fun DateRangeDialog(
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                 Text(
-                    text = "Filter by date",
+                    text = stringResource(R.string.date_dialog_title),
                     style = MaterialTheme.typography.headlineSmall,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -97,7 +99,9 @@ fun DateRangeDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    TextButton(onClick = onDismiss) { Text("Cancel") }
+                    TextButton(onClick = onDismiss) {
+                        Text(stringResource(R.string.date_dialog_cancel))
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
                     TextButton(
                         onClick = {
@@ -109,7 +113,9 @@ fun DateRangeDialog(
                         },
                         enabled = pickerState.selectedStartDateMillis != null &&
                                 pickerState.selectedEndDateMillis != null,
-                    ) { Text("Apply") }
+                    ) {
+                        Text(stringResource(R.string.date_dialog_apply))
+                    }
                 }
             }
         }
@@ -131,24 +137,30 @@ private fun QuickPresetChips(
     zoneId: ZoneId,
     onSelect: (Pair<Long, Long>) -> Unit,
 ) {
-    val presets = remember(dataRange) {
+    // Range pairs are pure data so they're remembered; the localized
+    // labels are resolved at composition time via stringResource.
+    val ranges = remember(dataRange) {
         listOf(
-            "Last 7 days" to lastNDaysPickerRange(dataRange.endInclusive, 7, zoneId),
-            "Last 30 days" to lastNDaysPickerRange(dataRange.endInclusive, 30, zoneId),
-            "Last 90 days" to lastNDaysPickerRange(dataRange.endInclusive, 90, zoneId),
-            "All data" to (
-                instantToPickerMillis(dataRange.start, zoneId) to
-                    instantToPickerMillis(dataRange.endInclusive, zoneId)
-            ),
+            lastNDaysPickerRange(dataRange.endInclusive, 7, zoneId),
+            lastNDaysPickerRange(dataRange.endInclusive, 30, zoneId),
+            lastNDaysPickerRange(dataRange.endInclusive, 90, zoneId),
+            instantToPickerMillis(dataRange.start, zoneId) to
+                instantToPickerMillis(dataRange.endInclusive, zoneId),
         )
     }
+    val labels = listOf(
+        stringResource(R.string.date_preset_last_7),
+        stringResource(R.string.date_preset_last_30),
+        stringResource(R.string.date_preset_last_90),
+        stringResource(R.string.date_preset_all),
+    )
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState()),
     ) {
-        presets.forEach { (label, range) ->
+        ranges.zip(labels).forEach { (range, label) ->
             AssistChip(
                 onClick = { onSelect(range) },
                 label = { Text(label) },

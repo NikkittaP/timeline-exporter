@@ -1,3 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App identity -->
     <string name="app_name">Timeline Exporter</string>
+
+    <!-- Top app bar -->
+    <string name="action_help">Help</string>
+
+    <!-- Pick file / Idle state -->
+    <string name="pick_file_button">Pick Timeline.json</string>
+    <string name="idle_hint">Pick a Google Maps Timeline JSON file to parse.</string>
+    <string name="idle_help_button">How do I get Timeline data?</string>
+
+    <!-- Loading stages (translated in UI from VM's semantic LoadingPhase) -->
+    <string name="loading_opening">Opening file…</string>
+    <string name="loading_reading">Reading file</string>
+    <string name="loading_reading_detail">%1$s / %2$s</string>
+    <string name="loading_reading_detail_unknown">%1$s</string>
+    <string name="loading_decoding">Decoding JSON</string>
+    <string name="loading_decoding_detail">Large files can take a few seconds…</string>
+    <string name="loading_extracting">Extracting GPS points</string>
+    <string name="loading_extracting_detail">%1$s / %2$s segments</string>
+    <string name="loading_sorting">Sorting points by time</string>
+
+    <!-- Parse result display -->
+    <string name="result_title">Parsed successfully</string>
+    <string name="result_total_segments">Total segments: %1$d</string>
+    <string name="result_path_segments">  • Path: %1$d</string>
+    <string name="result_visit_segments">  • Visit: %1$d</string>
+    <string name="result_activity_segments">  • Activity: %1$d</string>
+    <string name="result_path_points">Path points: %1$d</string>
+    <string name="result_first">First: %1$s</string>
+    <string name="result_last">Last:  %1$s</string>
+
+    <!-- Filter section -->
+    <string name="filter_title">Filter</string>
+    <string name="filter_date_range_all">Date range: all dates</string>
+    <string name="filter_date_range_set">Date range: %1$s — %2$s</string>
+    <string name="filter_filtered_count">After filter: %1$s of %2$s points</string>
+    <string name="filter_set_button">Set date range</string>
+    <string name="filter_change_button">Change date range</string>
+    <string name="filter_clear_button">Clear</string>
+
+    <!-- Date range dialog -->
+    <string name="date_dialog_title">Filter by date</string>
+    <string name="date_dialog_cancel">Cancel</string>
+    <string name="date_dialog_apply">Apply</string>
+    <string name="date_preset_last_7">Last 7 days</string>
+    <string name="date_preset_last_30">Last 30 days</string>
+    <string name="date_preset_last_90">Last 90 days</string>
+    <string name="date_preset_all">All data</string>
+
+    <!-- Preview section -->
+    <string name="preview_title">Preview</string>
+    <string name="preview_no_points">No points match the current filter — nothing to preview.</string>
+    <string name="preview_expand">Expand</string>
+    <string name="preview_close">Close</string>
+
+    <!-- Export section -->
+    <string name="export_title">Export</string>
+    <string name="export_save_button">Save as…</string>
+    <string name="export_writing">Writing file…</string>
+    <string name="export_success">Saved %1$s points to %2$s</string>
+    <string name="export_fallback_filename">the chosen file</string>
+    <!-- Used as the "no points" failure shown inline in the Export section. -->
+    <string name="export_error_no_points">No points match the current filter.</string>
+    <!-- Wraps the technical detail when an export fails. %1$s = format name (e.g. GPX), %2$s = technical detail (e.g. "IOException: …"). -->
+    <string name="export_error_generic">Could not save %1$s: %2$s</string>
+
+    <!-- Parse error.
+         %1$s = exception class (e.g. "SerializationException")
+         %2$s = exception message or the fallback below. -->
+    <string name="parse_error">Could not parse this file as a Google Timeline export.\n%1$s: %2$s</string>
+    <string name="parse_error_no_message">(no message)</string>
+
+    <!-- Track-name metadata embedded inside exported GPX/KML/GeoJSON files.
+         %1$s = the date-range portion below. -->
+    <string name="track_name">Google Timeline %1$s</string>
+    <string name="track_name_full_range">(full export)</string>
+    <!-- %1$s = formatted start date, %2$s = formatted end date. -->
+    <string name="track_name_date_range">%1$s — %2$s</string>
+
+    <!-- Help dialog -->
+    <string name="help_title">Getting your Timeline data</string>
+    <string name="help_intro">Since late 2024 Google stores Timeline only on your device — there\'s no Google Takeout option and no third-party app can read it directly. You export it once from system Settings, then bring the file here.</string>
+
+    <string name="help_method_settings_title">Export from Android Settings (recommended)</string>
+    <string name="help_method_settings_step1">Open the Android Settings app</string>
+    <string name="help_method_settings_step2">Tap Location → Location services</string>
+    <string name="help_method_settings_step3">Tap Timeline</string>
+    <string name="help_method_settings_step4">Tap \'Export Timeline data\'</string>
+    <string name="help_method_settings_step5">Authenticate when prompted</string>
+    <string name="help_method_settings_step6">Choose where to save the file</string>
+    <string name="help_method_settings_button">Open Location settings →</string>
+
+    <string name="help_method_maps_title">Alternative: export from Google Maps</string>
+    <string name="help_method_maps_step1">Open Google Maps</string>
+    <string name="help_method_maps_step2">Tap your profile picture (top right)</string>
+    <string name="help_method_maps_step3">Choose \'Your Timeline\'</string>
+    <string name="help_method_maps_step4">Tap the ⋯ menu (top right)</string>
+    <string name="help_method_maps_step5">Tap \'Location and privacy settings\'</string>
+    <string name="help_method_maps_step6">Tap \'Export Timeline data\'</string>
+    <string name="help_method_maps_button">Open Google Maps →</string>
+
+    <string name="help_import_title">Bring the file into this app</string>
+    <string name="help_import_step1">Open your Files app, find Timeline.json, tap Share → \'Timeline Exporter\', or</string>
+    <string name="help_import_step2">Tap \'Pick Timeline.json\' above and browse to the file.</string>
+
+    <string name="help_notes_title">Notes</string>
+    <string name="help_note_file_location">• The exported file is named Timeline.json. It lands wherever you chose during export — some Android versions restrict access to certain folders (e.g. Downloads), so if this app can\'t read it, try moving it.</string>
+    <string name="help_note_eu_csv">• EU users may receive a CSV instead of JSON for privacy-law reasons. This version of the app only handles JSON.</string>
+    <string name="help_note_slow_first">• The first export can take a minute or two if you have years of location history.</string>
+
+    <string name="help_dismiss">Got it</string>
+    <string name="help_toast_no_location_settings">Could not open Location settings on this device.</string>
+    <string name="help_toast_no_maps_installed">Google Maps is not installed on this device.</string>
+    <string name="help_toast_no_maps_launch">Could not open Google Maps.</string>
 </resources>
