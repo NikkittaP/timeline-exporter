@@ -29,8 +29,13 @@ android {
         applicationId = "io.github.nikitapetroff.timelineexporter"
         minSdk = 29
         targetSdk = 36
+
+        // Bump versionCode by 1 for every AAB uploaded to Play Console
+        // (including internal-testing uploads; Play won't accept a repeat).
+        // Bump versionName per semver: patch for bugfixes, minor for
+        // backwards-compatible features, major for breaking changes.
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
