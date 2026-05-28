@@ -386,11 +386,12 @@ private fun PreviewSection(
                 if (inlineMapActive) {
                     // Map is hosted here in the inline slot.
                     mapContent(points, Modifier.fillMaxSize())
-                    // Overlay expand button.
+                    // Bottom-right: clear of MapLibre's compass (top-right)
+                    // and its attribution + logo (bottom-left).
                     FilledTonalButton(
                         onClick = onExpand,
                         modifier = Modifier
-                            .align(Alignment.TopEnd)
+                            .align(Alignment.BottomEnd)
                             .padding(8.dp),
                     ) {
                         Text("Expand")
@@ -416,10 +417,12 @@ private fun FullscreenMap(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             mapContent(points, Modifier.fillMaxSize())
+            // Top-left: clear of MapLibre's compass (top-right when rotated)
+            // and conventional location for a "close / back" action.
             FilledTonalButton(
                 onClick = onClose,
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
+                    .align(Alignment.TopStart)
                     .padding(16.dp),
             ) {
                 Text("Close")
