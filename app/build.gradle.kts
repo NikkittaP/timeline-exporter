@@ -46,7 +46,13 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8 strips unused code and obfuscates remaining classes/methods.
+            // Reflection-using libraries (kotlinx.serialization, MapLibre)
+            // are protected by rules in proguard-rules.pro.
+            isMinifyEnabled = true
+            // Strips unused resources (drawables, strings, layouts). Requires
+            // isMinifyEnabled = true. Saves a few hundred KB typically.
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
