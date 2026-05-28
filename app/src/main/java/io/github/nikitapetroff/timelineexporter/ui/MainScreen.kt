@@ -69,12 +69,16 @@ import java.time.Instant
 @Composable
 fun TimelineExporterApp() {
     var helpDialogOpen by remember { mutableStateOf(false) }
+    var tipJarDialogOpen by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
+                    TextButton(onClick = { tipJarDialogOpen = true }) {
+                        Text(stringResource(R.string.action_support))
+                    }
                     TextButton(onClick = { helpDialogOpen = true }) {
                         Text(stringResource(R.string.action_help))
                     }
@@ -90,6 +94,9 @@ fun TimelineExporterApp() {
 
     if (helpDialogOpen) {
         HelpDialog(onDismiss = { helpDialogOpen = false })
+    }
+    if (tipJarDialogOpen) {
+        TipJarDialog(onDismiss = { tipJarDialogOpen = false })
     }
 }
 

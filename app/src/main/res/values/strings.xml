@@ -6,6 +6,7 @@
 
     <!-- Top app bar -->
     <string name="action_help">Help</string>
+    <string name="action_support">Support</string>
 
     <!-- Pick file / Idle state -->
     <string name="pick_file_button">Pick Timeline.json</string>
@@ -116,4 +117,18 @@
     <string name="help_toast_no_location_settings">Could not open Location settings on this device.</string>
     <string name="help_toast_no_maps_installed">Google Maps is not installed on this device.</string>
     <string name="help_toast_no_maps_launch">Could not open Google Maps.</string>
+
+    <!-- Tip jar dialog -->
+    <string name="tipjar_title">Support development</string>
+    <string name="tipjar_blurb">Timeline Exporter is free, ad-free, and open source. If it\'s been useful, a small tip goes directly to me. Thanks for considering it!</string>
+    <string name="tipjar_connecting">Connecting to Google Play…</string>
+    <string name="tipjar_processing">Opening Google Play…</string>
+    <string name="tipjar_no_products">No tip options are available right now. This usually means the app isn\'t fully set up in Google Play yet. Please try again later.</string>
+    <string name="tipjar_unavailable">Google Play Billing isn\'t available on this device. Tips require Google Play services.</string>
+    <string name="tipjar_thank_you">Thank you! 💜</string>
+    <string name="tipjar_thank_you_detail">Your tip really helps. Hope the app keeps being useful!</string>
+    <string name="tipjar_tip_again">Tip again</string>
+    <string name="tipjar_error">Something went wrong with the purchase.</string>
+    <string name="tipjar_retry">Try again</string>
+    <string name="tipjar_close">Close</string>
 </resources>
