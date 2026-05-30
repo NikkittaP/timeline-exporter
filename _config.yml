@@ -1,0 +1,23 @@
+# GitHub Pages configuration.
+# Drives the rendering of README.md and PRIVACY.md as a small public
+# site at https://nikkittap.github.io/timeline-exporter/
+
+title: Timeline Exporter
+description: >-
+  Android app for parsing, filtering, and exporting your Google Maps
+  Timeline data to GPX / KML / GeoJSON / CSV.
+
+# Built-in supported theme — no extra Gemfile required.
+theme: jekyll-theme-minimal
+
+# Exclude project files from the rendered site so visitors don't get
+# served gradle, .kotlin caches, etc. .gitignored paths are excluded
+# automatically, but explicit is clearer.
+exclude:
+  - app/
+  - gradle/
+  - gradlew
+  - gradlew.bat
+  - settings.gradle.kts
+  - build.gradle.kts
+  - LICENSE
