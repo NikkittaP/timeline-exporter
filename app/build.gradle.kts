@@ -34,7 +34,11 @@ android {
         // (including internal-testing uploads; Play won't accept a repeat).
         // Bump versionName per semver: patch for bugfixes, minor for
         // backwards-compatible features, major for breaking changes.
-        versionCode = 1
+        //
+        // History:
+        //   versionCode=1, versionName="1.0.0" -> uploaded to Internal track
+        //   versionCode=2, versionName="1.0.0" -> Closed (Alpha) track
+        versionCode = 2
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
