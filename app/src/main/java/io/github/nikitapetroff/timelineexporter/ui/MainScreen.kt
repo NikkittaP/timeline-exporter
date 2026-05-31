@@ -359,19 +359,31 @@ private fun LoadingDisplay(phase: LoadingPhase) {
 
 @Composable
 private fun ResultDisplay(result: ParsedTimeline) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.result_title), style = MaterialTheme.typography.titleMedium)
-        Text(stringResource(R.string.result_total_segments, result.totalSegments))
-        Text(stringResource(R.string.result_path_segments, result.pathSegments))
-        Text(stringResource(R.string.result_visit_segments, result.visitSegments))
-        Text(stringResource(R.string.result_activity_segments, result.activitySegments))
-        Text(stringResource(R.string.result_path_points, result.pathPoints.size))
+    // Compact two-line summary. The per-segment-type breakdown
+    // (path / visit / activity) was useful while debugging the parser but
+    // is noise for end users; can be brought back later behind an
+    // expandable "Details" affordance if anyone asks.
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(
+            text = stringResource(
+                R.string.result_summary,
+                formatGrouped(result.pathPoints.size),
+                formatGrouped(result.totalSegments),
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+        )
         if (result.pathPoints.isNotEmpty()) {
             val first = result.pathPoints.first()
             val last = result.pathPoints.last()
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(stringResource(R.string.result_first, formatLocalDateTime(first.timeUtc)))
-            Text(stringResource(R.string.result_last, formatLocalDateTime(last.timeUtc)))
+            Text(
+                text = stringResource(
+                    R.string.result_range,
+                    formatLocalDate(first.timeUtc),
+                    formatLocalDate(last.timeUtc),
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

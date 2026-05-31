@@ -24,15 +24,11 @@
     <string name="loading_extracting_detail">%1$s / %2$s segments</string>
     <string name="loading_sorting">Sorting points by time</string>
 
-    <!-- Parse result display -->
-    <string name="result_title">Parsed successfully</string>
-    <string name="result_total_segments">Total segments: %1$d</string>
-    <string name="result_path_segments">  • Path: %1$d</string>
-    <string name="result_visit_segments">  • Visit: %1$d</string>
-    <string name="result_activity_segments">  • Activity: %1$d</string>
-    <string name="result_path_points">Path points: %1$d</string>
-    <string name="result_first">First: %1$s</string>
-    <string name="result_last">Last:  %1$s</string>
+    <!-- Parse result display (compact two-line summary).
+         %1$s = formatted point count, %2$s = formatted segment count. -->
+    <string name="result_summary">%1$s points from %2$s segments</string>
+    <!-- %1$s = formatted first-point date, %2$s = formatted last-point date. -->
+    <string name="result_range">%1$s — %2$s</string>
 
     <!-- Filter section -->
     <string name="filter_title">Filter</string>
