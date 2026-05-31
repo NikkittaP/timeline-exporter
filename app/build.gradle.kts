@@ -18,7 +18,7 @@ val keystoreProperties = Properties().apply {
 }
 
 android {
-    namespace = "io.github.nikitapetroff.timelineexporter"
+    namespace = "io.github.nikkittap.timelineexporter"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -26,7 +26,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.github.nikitapetroff.timelineexporter"
+        applicationId = "io.github.nikkittap.timelineexporter"
         minSdk = 29
         targetSdk = 36
 

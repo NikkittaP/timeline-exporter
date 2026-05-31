@@ -45,7 +45,7 @@ user explicitly grants per-file access through the system file picker.
 ## Open source
 
 The source code is available at
-[github.com/nikitapetroff/timeline-exporter](https://github.com/nikitapetroff/timeline-exporter).
+[github.com/NikkittaP/timeline-exporter](https://github.com/NikkittaP/timeline-exporter).
 You can verify any of the above claims by reading it.
 
 ## Contact
