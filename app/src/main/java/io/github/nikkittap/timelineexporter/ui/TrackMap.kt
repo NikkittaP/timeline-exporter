@@ -34,12 +34,19 @@ import org.maplibre.android.style.layers.PropertyFactory.circleStrokeColor
 import org.maplibre.android.style.layers.PropertyFactory.circleStrokeWidth
 import org.maplibre.android.style.layers.PropertyFactory.lineCap
 import org.maplibre.android.style.layers.PropertyFactory.lineColor
+import org.maplibre.android.style.layers.PropertyFactory.lineDasharray
 import org.maplibre.android.style.layers.PropertyFactory.lineJoin
+import org.maplibre.android.style.layers.PropertyFactory.lineOpacity
 import org.maplibre.android.style.layers.PropertyFactory.lineWidth
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
 import org.maplibre.geojson.LineString
+import org.maplibre.geojson.MultiLineString
 import org.maplibre.geojson.Point
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 private const val TAG = "TrackMap"
 
@@ -47,11 +54,27 @@ private const val TAG = "TrackMap"
 private const val MAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty"
 
 private const val SOURCE_TRACK = "track-source"
+private const val SOURCE_GAPS = "gaps-source"
 private const val SOURCE_START = "start-source"
 private const val SOURCE_END = "end-source"
 private const val LAYER_TRACK = "track-line"
+private const val LAYER_GAPS = "gaps-line"
 private const val LAYER_START = "start-circle"
 private const val LAYER_END = "end-circle"
+
+/**
+ * Consecutive GPS samples farther apart than this are treated as a "gap"
+ * (a flight, a long drive with location off, or any other discontinuity)
+ * rather than a real travelled segment. Drawing a solid line across such a
+ * jump produces the long straight streaks that clutter the map. Instead we
+ * break the track there and render the jump as a faint dashed connector.
+ *
+ * 80 km is comfortably above normal Timeline sampling density yet low enough
+ * to catch short-haul flights.
+ */
+private const val GAP_DISTANCE_METERS = 80_000.0
+
+private const val EARTH_RADIUS_METERS = 6_371_000.0
 
 @Composable
 fun TrackMap(
@@ -151,26 +174,75 @@ fun TrackMap(
 private fun renderTrack(map: MapLibreMap, style: Style, points: List<PathPoint>) {
     // Always tear down previous overlays first; addSource/addLayer throw on
     // collisions, and v1 just rebuilds wholesale on every change.
-    listOf(LAYER_TRACK, LAYER_START, LAYER_END).forEach { id ->
+    listOf(LAYER_GAPS, LAYER_TRACK, LAYER_START, LAYER_END).forEach { id ->
         style.getLayer(id)?.let { style.removeLayer(it) }
     }
-    listOf(SOURCE_TRACK, SOURCE_START, SOURCE_END).forEach { id ->
+    listOf(SOURCE_TRACK, SOURCE_GAPS, SOURCE_START, SOURCE_END).forEach { id ->
         style.getSource(id)?.let { style.removeSource(it) }
     }
 
     if (points.isEmpty()) return
 
-    // Track polyline.
-    val coords = points.map { Point.fromLngLat(it.longitude, it.latitude) }
-    style.addSource(GeoJsonSource(SOURCE_TRACK, Feature.fromGeometry(LineString.fromLngLats(coords))))
-    style.addLayer(
-        LineLayer(LAYER_TRACK, SOURCE_TRACK).withProperties(
-            lineColor("#FF5722"),
-            lineWidth(4f),
-            lineCap(Property.LINE_CAP_ROUND),
-            lineJoin(Property.LINE_JOIN_ROUND),
+    // Split the ordered points into continuous runs, breaking wherever two
+    // consecutive samples are too far apart to be a real travelled segment
+    // (a flight, or a stretch with location services off). Each break is also
+    // recorded as a "gap" connector so we can hint at it with a faint dash.
+    val runs = mutableListOf<MutableList<Point>>()
+    val gaps = mutableListOf<List<Point>>()
+    var current = mutableListOf(points.first().toPoint())
+    for (i in 1 until points.size) {
+        val prev = points[i - 1]
+        val cur = points[i]
+        if (haversineMeters(prev, cur) > GAP_DISTANCE_METERS) {
+            // Close the current run and remember the jump between the two
+            // endpoints, then start a fresh run at the far side.
+            runs += current
+            gaps += listOf(prev.toPoint(), cur.toPoint())
+            current = mutableListOf(cur.toPoint())
+        } else {
+            current += cur.toPoint()
+        }
+    }
+    runs += current
+
+    // Gap connectors: very transparent dashed lines, drawn first so the solid
+    // track sits on top of them at shared endpoints.
+    if (gaps.isNotEmpty()) {
+        style.addSource(
+            GeoJsonSource(
+                SOURCE_GAPS,
+                Feature.fromGeometry(MultiLineString.fromLngLats(gaps)),
+            )
         )
-    )
+        style.addLayer(
+            LineLayer(LAYER_GAPS, SOURCE_GAPS).withProperties(
+                lineColor("#FF5722"),
+                lineWidth(2.5f),
+                lineOpacity(0.4f),
+                lineDasharray(arrayOf(2f, 4f)),
+                lineCap(Property.LINE_CAP_ROUND),
+            )
+        )
+    }
+
+    // Solid track: one MultiLineString made of every run with ≥2 points.
+    val drawableRuns = runs.filter { it.size >= 2 }
+    if (drawableRuns.isNotEmpty()) {
+        style.addSource(
+            GeoJsonSource(
+                SOURCE_TRACK,
+                Feature.fromGeometry(MultiLineString.fromLngLats(drawableRuns)),
+            )
+        )
+        style.addLayer(
+            LineLayer(LAYER_TRACK, SOURCE_TRACK).withProperties(
+                lineColor("#FF5722"),
+                lineWidth(4f),
+                lineCap(Property.LINE_CAP_ROUND),
+                lineJoin(Property.LINE_JOIN_ROUND),
+            )
+        )
+    }
 
     // Start marker (green) and end marker (red).
     val first = points.first()
@@ -210,3 +282,20 @@ private fun endpointCircle(layerId: String, sourceId: String, hexColor: String) 
         circleStrokeColor("#FFFFFF"),
         circleStrokeWidth(2f),
     )
+
+private fun PathPoint.toPoint(): Point = Point.fromLngLat(longitude, latitude)
+
+/**
+ * Great-circle distance between two points in metres (haversine). Used only to
+ * decide whether two consecutive samples are far enough apart to count as a
+ * gap, so the small-angle accuracy of haversine is more than sufficient.
+ */
+private fun haversineMeters(a: PathPoint, b: PathPoint): Double {
+    val lat1 = Math.toRadians(a.latitude)
+    val lat2 = Math.toRadians(b.latitude)
+    val dLat = lat2 - lat1
+    val dLon = Math.toRadians(b.longitude - a.longitude)
+    val h = sin(dLat / 2) * sin(dLat / 2) +
+        cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2)
+    return 2 * EARTH_RADIUS_METERS * atan2(sqrt(h), sqrt(1 - h))
+}
