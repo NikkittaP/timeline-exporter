@@ -97,7 +97,12 @@ fun TimelineExporterApp() {
                             .clip(RoundedCornerShape(8.dp)),
                     )
                 },
-                title = { Text(stringResource(R.string.app_name)) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                },
                 actions = {
                     TextButton(onClick = { tipJarDialogOpen = true }) {
                         Text(stringResource(R.string.action_support))
