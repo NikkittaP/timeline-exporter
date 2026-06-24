@@ -38,8 +38,10 @@ android {
         // History:
         //   versionCode=1, versionName="1.0.0" -> uploaded to Internal track
         //   versionCode=2, versionName="1.0.0" -> Closed (Alpha) track
-        versionCode = 2
-        versionName = "1.0.0"
+        //   versionCode=3, versionName="1.1.0" -> map gap-splitting, multi-format
+        //                                         parser, localization, version footer
+        versionCode = 3
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -75,6 +77,9 @@ android {
     }
     buildFeatures {
         compose = true
+        // Generates BuildConfig (incl. VERSION_NAME) so the UI can show the
+        // app version. Off by default in recent AGP.
+        buildConfig = true
     }
 }
 

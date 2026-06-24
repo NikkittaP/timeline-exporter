@@ -47,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.github.nikkittap.timelineexporter.BuildConfig
 import io.github.nikkittap.timelineexporter.R
 import io.github.nikkittap.timelineexporter.export.AllExporters
 import io.github.nikkittap.timelineexporter.export.CsvExporter
@@ -246,6 +247,8 @@ fun MainScreen(
                     )
                 }
             }
+
+            VersionFooter(modifier = Modifier.align(Alignment.CenterHorizontally))
         }
 
         if (mapFullscreen) {
@@ -582,6 +585,20 @@ private fun ExportSection(
             }
         }
     }
+}
+
+/**
+ * Small, muted app-version line shown at the very bottom of the screen.
+ * Reads [BuildConfig.VERSION_NAME] so it always matches the published build.
+ */
+@Composable
+private fun VersionFooter(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier.padding(top = 8.dp),
+    )
 }
 
 /**
