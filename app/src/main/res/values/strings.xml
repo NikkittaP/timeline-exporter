@@ -7,6 +7,28 @@
     <!-- Top app bar -->
     <string name="action_help">Help</string>
     <string name="action_support">Support</string>
+    <string name="app_logo_desc">Timeline Exporter logo</string>
+
+    <!-- Step card headers -->
+    <string name="step_choose_file">Choose file</string>
+    <string name="step_filter">Filter by date</string>
+    <string name="step_preview">Preview</string>
+    <string name="step_export">Export</string>
+
+    <!-- Loaded summary -->
+    <string name="loaded_badge">Loaded</string>
+    <string name="metric_points">Points</string>
+    <string name="metric_date_range">Date range</string>
+
+    <!-- Detected file format badges -->
+    <string name="format_phone">Phone export</string>
+    <string name="format_phone_ios">Phone export (iOS)</string>
+    <string name="format_semantic">Semantic History</string>
+    <string name="format_records">Records.json</string>
+    <string name="format_unknown">Unknown format</string>
+
+    <!-- Filter quick presets -->
+    <string name="filter_preset_custom">Custom…</string>
 
     <!-- Pick file / Idle state -->
     <string name="pick_file_button">Pick Timeline.json</string>

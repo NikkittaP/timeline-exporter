@@ -3,30 +3,37 @@ package io.github.nikkittap.timelineexporter.ui
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -43,7 +50,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -59,12 +68,15 @@ import io.github.nikkittap.timelineexporter.filter.TimelineFilter
 import io.github.nikkittap.timelineexporter.filter.applyFilter
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.PathPoint
+import io.github.nikkittap.timelineexporter.parser.TimelineFormat
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
 /**
  * Top-level Compose entry called from MainActivity. Hosts the Scaffold with
- * TopAppBar + Help action, owns the help-dialog state, and delegates the main
- * content to [MainScreen].
+ * TopAppBar (app logo + Help / Support actions), owns the dialog state, and
+ * delegates the main content to [MainScreen].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,6 +87,16 @@ fun TimelineExporterApp() {
     Scaffold(
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    Image(
+                        painter = painterResource(R.drawable.app_logo),
+                        contentDescription = stringResource(R.string.app_logo_desc),
+                        modifier = Modifier
+                            .padding(start = 12.dp)
+                            .size(32.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                    )
+                },
                 title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     TextButton(onClick = { tipJarDialogOpen = true }) {
@@ -182,65 +204,88 @@ fun MainScreen(
                 .fillMaxSize()
                 .verticalScroll(scrollState, enabled = !mapInteracting)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Button(onClick = { pickFileLauncher.launch(arrayOf("*/*")) }) {
-                Text(stringResource(R.string.pick_file_button))
-            }
-
-            when (val state = uiState) {
-                TimelineUiState.Idle -> Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        stringResource(R.string.idle_hint),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    TextButton(
-                        onClick = onHelpClick,
-                        contentPadding = PaddingValues(0.dp),
-                    ) {
-                        Text(stringResource(R.string.idle_help_button))
-                    }
+            // Step 1 — file picking + load/parse status.
+            StepCard(step = 1, title = stringResource(R.string.step_choose_file)) {
+                Button(
+                    onClick = { pickFileLauncher.launch(arrayOf("*/*")) },
+                    shape = ButtonShape,
+                ) {
+                    Text(stringResource(R.string.pick_file_button))
                 }
 
-                is TimelineUiState.Loading -> LoadingDisplay(state.phase)
-
-                is TimelineUiState.Error -> Text(
-                    text = stringResource(
-                        R.string.parse_error,
-                        state.exceptionClass,
-                        state.exceptionMessage
-                            ?: stringResource(R.string.parse_error_no_message),
-                    ),
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-
-                is TimelineUiState.Loaded -> {
-                    val filteredPoints by remember(state.result, filter) {
-                        derivedStateOf { applyFilter(state.result.pathPoints, filter) }
+                when (val state = uiState) {
+                    TimelineUiState.Idle -> Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            stringResource(R.string.idle_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        TextButton(
+                            onClick = onHelpClick,
+                            contentPadding = PaddingValues(0.dp),
+                        ) {
+                            Text(stringResource(R.string.idle_help_button))
+                        }
                     }
 
-                    ResultDisplay(state.result)
+                    is TimelineUiState.Loading -> LoadingDisplay(state.phase)
 
-                    HorizontalDivider()
-                    FilterSection(
-                        totalCount = state.result.pathPoints.size,
-                        filteredCount = filteredPoints.size,
-                        currentRange = filter.dateRange,
-                        onOpenDateDialog = { dateDialogOpen = true },
-                        onClearRange = { viewModel.clearDateRange() },
+                    is TimelineUiState.Error -> Text(
+                        text = stringResource(
+                            R.string.parse_error,
+                            state.exceptionClass,
+                            state.exceptionMessage
+                                ?: stringResource(R.string.parse_error_no_message),
+                        ),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
 
-                    HorizontalDivider()
-                    PreviewSection(
+                    is TimelineUiState.Loaded -> LoadedSummary(state.result)
+                }
+            }
+
+            // Remaining steps only make sense once a file is loaded.
+            val loaded = (uiState as? TimelineUiState.Loaded)?.result
+            if (loaded != null) {
+                val filteredPoints by remember(loaded, filter) {
+                    derivedStateOf { applyFilter(loaded.pathPoints, filter) }
+                }
+                val dataLast = loaded.pathPoints.lastOrNull()?.timeUtc
+
+                StepCard(step = 2, title = stringResource(R.string.step_filter)) {
+                    FilterContent(
+                        currentRange = filter.dateRange,
+                        dataLast = dataLast,
+                        totalCount = loaded.pathPoints.size,
+                        filteredCount = filteredPoints.size,
+                        onApply = { viewModel.setDateRange(it) },
+                        onClear = { viewModel.clearDateRange() },
+                        onCustom = { dateDialogOpen = true },
+                    )
+                }
+
+                StepCard(
+                    step = 3,
+                    title = stringResource(R.string.step_preview),
+                    trailing = {
+                        if (filteredPoints.isNotEmpty()) {
+                            TextButton(onClick = { mapFullscreen = true }) {
+                                Text(stringResource(R.string.preview_expand))
+                            }
+                        }
+                    },
+                ) {
+                    PreviewContent(
                         points = filteredPoints,
                         inlineMapActive = !mapFullscreen,
-                        onExpand = { mapFullscreen = true },
                         mapContent = movableMap,
                     )
+                }
 
-                    HorizontalDivider()
-                    ExportSection(
+                StepCard(step = 4, title = stringResource(R.string.step_export)) {
+                    ExportContent(
                         canSave = filteredPoints.isNotEmpty(),
                         exportState = exportState,
                         onPickFormat = launchSave,
@@ -252,10 +297,10 @@ fun MainScreen(
         }
 
         if (mapFullscreen) {
-            val loaded = (uiState as? TimelineUiState.Loaded)?.result
-            if (loaded != null) {
-                val fullscreenPoints by remember(loaded, filter) {
-                    derivedStateOf { applyFilter(loaded.pathPoints, filter) }
+            val loadedResult = (uiState as? TimelineUiState.Loaded)?.result
+            if (loadedResult != null) {
+                val fullscreenPoints by remember(loadedResult, filter) {
+                    derivedStateOf { applyFilter(loadedResult.pathPoints, filter) }
                 }
                 BackHandler { mapFullscreen = false }
                 FullscreenMap(
@@ -268,8 +313,8 @@ fun MainScreen(
     }
 
     if (dateDialogOpen) {
-        val loaded = (uiState as? TimelineUiState.Loaded)?.result
-        val dataRange = loaded?.let {
+        val loadedResult = (uiState as? TimelineUiState.Loaded)?.result
+        val dataRange = loadedResult?.let {
             it.pathPoints.firstOrNull()?.timeUtc?.let { first ->
                 first..it.pathPoints.last().timeUtc
             }
@@ -283,6 +328,322 @@ fun MainScreen(
             },
             onDismiss = { dateDialogOpen = false },
         )
+    }
+}
+
+// ---------- structural building blocks ----------
+
+/** An outlined card with a numbered badge + title header and arbitrary content. */
+@Composable
+private fun StepCard(
+    step: Int,
+    title: String,
+    modifier: Modifier = Modifier,
+    trailing: @Composable (RowScope.() -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    OutlinedCard(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                StepBadge(step)
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                if (trailing != null) {
+                    Spacer(Modifier.weight(1f))
+                    trailing()
+                }
+            }
+            content()
+        }
+    }
+}
+
+@Composable
+private fun StepBadge(number: Int) {
+    Box(
+        modifier = Modifier
+            .size(24.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primaryContainer),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = number.toString(),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+    }
+}
+
+// ---------- step content ----------
+
+/** Loaded-state header: a format badge plus the points / date-range metrics. */
+@Composable
+private fun LoadedSummary(result: ParsedTimeline) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Pill(
+                text = stringResource(R.string.loaded_badge),
+                container = MaterialTheme.colorScheme.tertiaryContainer,
+                content = MaterialTheme.colorScheme.onTertiaryContainer,
+            )
+            FormatBadge(result.format)
+        }
+
+        // Date range as two short lines so it never wraps awkwardly and both
+        // tiles can share one height.
+        val rangeValue = if (result.pathPoints.isNotEmpty()) {
+            "${formatLocalDate(result.pathPoints.first().timeUtc)}\n– ${
+                formatLocalDate(result.pathPoints.last().timeUtc)
+            }"
+        } else {
+            "—"
+        }
+        Row(
+            modifier = Modifier.height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            MetricCard(
+                label = stringResource(R.string.metric_points),
+                value = formatGrouped(result.pathPoints.size),
+                valueStyle = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+            )
+            MetricCard(
+                label = stringResource(R.string.metric_date_range),
+                value = rangeValue,
+                valueStyle = MaterialTheme.typography.titleSmall,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun MetricCard(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    valueStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.titleMedium,
+) {
+    Surface(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(text = value, style = valueStyle)
+        }
+    }
+}
+
+@Composable
+private fun FormatBadge(format: TimelineFormat) {
+    val label = when (format) {
+        TimelineFormat.PHONE_TAKEOUT -> stringResource(R.string.format_phone)
+        TimelineFormat.PHONE_TAKEOUT_ARRAY -> stringResource(R.string.format_phone_ios)
+        TimelineFormat.SEMANTIC_LOCATION_HISTORY -> stringResource(R.string.format_semantic)
+        TimelineFormat.RECORDS -> stringResource(R.string.format_records)
+        TimelineFormat.UNKNOWN -> stringResource(R.string.format_unknown)
+    }
+    Pill(
+        text = label,
+        container = MaterialTheme.colorScheme.secondaryContainer,
+        content = MaterialTheme.colorScheme.onSecondaryContainer,
+    )
+}
+
+@Composable
+private fun Pill(
+    text: String,
+    container: androidx.compose.ui.graphics.Color,
+    content: androidx.compose.ui.graphics.Color,
+) {
+    Surface(color = container, shape = RoundedCornerShape(8.dp)) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = content,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun FilterContent(
+    currentRange: ClosedRange<Instant>?,
+    dataLast: Instant?,
+    totalCount: Int,
+    filteredCount: Int,
+    onApply: (ClosedRange<Instant>) -> Unit,
+    onClear: () -> Unit,
+    onCustom: () -> Unit,
+) {
+    if (currentRange == null) {
+        Text(
+            stringResource(R.string.filter_date_range_all),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    } else {
+        Text(
+            stringResource(
+                R.string.filter_date_range_set,
+                formatLocalDate(currentRange.start),
+                formatLocalDate(currentRange.endInclusive),
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (dataLast != null) {
+            val last7 = lastNDaysRange(dataLast, 7)
+            val last30 = lastNDaysRange(dataLast, 30)
+            val last90 = lastNDaysRange(dataLast, 90)
+            FilterChip(
+                selected = currentRange == last7,
+                onClick = { onApply(last7) },
+                label = { Text(stringResource(R.string.date_preset_last_7)) },
+            )
+            FilterChip(
+                selected = currentRange == last30,
+                onClick = { onApply(last30) },
+                label = { Text(stringResource(R.string.date_preset_last_30)) },
+            )
+            FilterChip(
+                selected = currentRange == last90,
+                onClick = { onApply(last90) },
+                label = { Text(stringResource(R.string.date_preset_last_90)) },
+            )
+        }
+        FilterChip(
+            selected = currentRange == null,
+            onClick = onClear,
+            label = { Text(stringResource(R.string.date_preset_all)) },
+        )
+        FilterChip(
+            selected = false,
+            onClick = onCustom,
+            label = { Text(stringResource(R.string.filter_preset_custom)) },
+        )
+    }
+
+    Text(
+        text = stringResource(
+            R.string.filter_filtered_count,
+            formatGrouped(filteredCount),
+            formatGrouped(totalCount),
+        ),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+@Composable
+private fun PreviewContent(
+    points: List<PathPoint>,
+    inlineMapActive: Boolean,
+    mapContent: @Composable (List<PathPoint>, Modifier) -> Unit,
+) {
+    if (points.isEmpty()) {
+        Text(
+            stringResource(R.string.preview_no_points),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    } else {
+        val shape = RoundedCornerShape(8.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(280.dp)
+                .clip(shape)
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
+        ) {
+            if (inlineMapActive) {
+                mapContent(points, Modifier.fillMaxSize())
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ExportContent(
+    canSave: Boolean,
+    exportState: ExportState,
+    onPickFormat: (Exporter) -> Unit,
+) {
+    val enabled = canSave && exportState !is ExportState.Working
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        AllExporters.forEach { exporter ->
+            FilledTonalButton(
+                onClick = { onPickFormat(exporter) },
+                enabled = enabled,
+                shape = ButtonShape,
+            ) {
+                Text(exporter.displayName)
+            }
+        }
+    }
+
+    when (val s = exportState) {
+        ExportState.Idle -> { /* nothing */ }
+        ExportState.Working -> {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            Text(
+                stringResource(R.string.export_writing),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+        is ExportState.Success -> Text(
+            text = stringResource(
+                R.string.export_success,
+                formatGrouped(s.pointCount),
+                s.displayName ?: stringResource(R.string.export_fallback_filename),
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
+        ExportState.Failure.NoPoints -> Text(
+            text = stringResource(R.string.export_error_no_points),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.error,
+        )
+        is ExportState.Failure.Generic -> {
+            val detail = s.exceptionMessage
+                ?: stringResource(R.string.parse_error_no_message)
+            Text(
+                text = stringResource(
+                    R.string.export_error_generic,
+                    s.formatName,
+                    "${s.exceptionClass}: $detail",
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
     }
 }
 
@@ -361,136 +722,6 @@ private fun LoadingDisplay(phase: LoadingPhase) {
 }
 
 @Composable
-private fun ResultDisplay(result: ParsedTimeline) {
-    // Compact two-line summary. The per-segment-type breakdown
-    // (path / visit / activity) was useful while debugging the parser but
-    // is noise for end users; can be brought back later behind an
-    // expandable "Details" affordance if anyone asks.
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(
-            text = stringResource(
-                R.string.result_summary,
-                formatGrouped(result.pathPoints.size),
-                formatGrouped(result.totalSegments),
-            ),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        if (result.pathPoints.isNotEmpty()) {
-            val first = result.pathPoints.first()
-            val last = result.pathPoints.last()
-            Text(
-                text = stringResource(
-                    R.string.result_range,
-                    formatLocalDate(first.timeUtc),
-                    formatLocalDate(last.timeUtc),
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-@Composable
-private fun FilterSection(
-    totalCount: Int,
-    filteredCount: Int,
-    currentRange: ClosedRange<Instant>?,
-    onOpenDateDialog: () -> Unit,
-    onClearRange: () -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.filter_title), style = MaterialTheme.typography.titleMedium)
-        if (currentRange == null) {
-            Text(
-                stringResource(R.string.filter_date_range_all),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        } else {
-            Text(
-                stringResource(
-                    R.string.filter_date_range_set,
-                    formatLocalDate(currentRange.start),
-                    formatLocalDate(currentRange.endInclusive),
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        Text(
-            text = stringResource(
-                R.string.filter_filtered_count,
-                formatGrouped(filteredCount),
-                formatGrouped(totalCount),
-            ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        FilterActionsRow(
-            hasFilter = currentRange != null,
-            onPick = onOpenDateDialog,
-            onClear = onClearRange,
-        )
-    }
-}
-
-@Composable
-private fun FilterActionsRow(hasFilter: Boolean, onPick: () -> Unit, onClear: () -> Unit) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedButton(onClick = onPick) {
-            Text(
-                if (hasFilter) stringResource(R.string.filter_change_button)
-                else stringResource(R.string.filter_set_button)
-            )
-        }
-        if (hasFilter) {
-            OutlinedButton(onClick = onClear) {
-                Text(stringResource(R.string.filter_clear_button))
-            }
-        }
-    }
-}
-
-@Composable
-private fun PreviewSection(
-    points: List<PathPoint>,
-    inlineMapActive: Boolean,
-    onExpand: () -> Unit,
-    mapContent: @Composable (List<PathPoint>, Modifier) -> Unit,
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.preview_title), style = MaterialTheme.typography.titleMedium)
-        if (points.isEmpty()) {
-            Text(
-                stringResource(R.string.preview_no_points),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        } else {
-            val shape = RoundedCornerShape(8.dp)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(280.dp)
-                    .clip(shape)
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
-            ) {
-                if (inlineMapActive) {
-                    mapContent(points, Modifier.fillMaxSize())
-                    FilledTonalButton(
-                        onClick = onExpand,
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(8.dp),
-                    ) {
-                        Text(stringResource(R.string.preview_expand))
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
 private fun FullscreenMap(
     points: List<PathPoint>,
     onClose: () -> Unit,
@@ -514,79 +745,6 @@ private fun FullscreenMap(
     }
 }
 
-@Composable
-private fun ExportSection(
-    canSave: Boolean,
-    exportState: ExportState,
-    onPickFormat: (Exporter) -> Unit,
-) {
-    var menuOpen by remember { mutableStateOf(false) }
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.export_title), style = MaterialTheme.typography.titleMedium)
-
-        Box {
-            Button(
-                onClick = { menuOpen = true },
-                enabled = canSave && exportState !is ExportState.Working,
-            ) {
-                Text(stringResource(R.string.export_save_button))
-            }
-            DropdownMenu(
-                expanded = menuOpen,
-                onDismissRequest = { menuOpen = false },
-            ) {
-                AllExporters.forEach { exporter ->
-                    DropdownMenuItem(
-                        text = { Text(exporter.displayName) },
-                        onClick = {
-                            menuOpen = false
-                            onPickFormat(exporter)
-                        },
-                    )
-                }
-            }
-        }
-
-        when (val s = exportState) {
-            ExportState.Idle -> { /* nothing */ }
-            ExportState.Working -> {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                Text(
-                    stringResource(R.string.export_writing),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            is ExportState.Success -> Text(
-                text = stringResource(
-                    R.string.export_success,
-                    formatGrouped(s.pointCount),
-                    s.displayName ?: stringResource(R.string.export_fallback_filename),
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            ExportState.Failure.NoPoints -> Text(
-                text = stringResource(R.string.export_error_no_points),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
-            )
-            is ExportState.Failure.Generic -> {
-                val detail = s.exceptionMessage
-                    ?: stringResource(R.string.parse_error_no_message)
-                Text(
-                    text = stringResource(
-                        R.string.export_error_generic,
-                        s.formatName,
-                        "${s.exceptionClass}: $detail",
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        }
-    }
-}
-
 /**
  * Small, muted app-version line shown at the very bottom of the screen.
  * Reads [BuildConfig.VERSION_NAME] so it always matches the published build.
@@ -597,6 +755,7 @@ private fun VersionFooter(modifier: Modifier = Modifier) {
         text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center,
         modifier = modifier.padding(top = 8.dp),
     )
 }
@@ -621,8 +780,25 @@ private fun buildTrackName(filter: TimelineFilter): String {
     return stringResource(R.string.track_name, rangePart)
 }
 
-// ---------- non-Compose formatting helpers ----------
+// ---------- shared shapes / formatting helpers ----------
+
+/** Slightly-rounded rectangle for filled buttons, instead of Material's pill. */
+private val ButtonShape = RoundedCornerShape(8.dp)
 
 private fun formatGrouped(n: Int): String = "%,d".format(n)
 
 private fun formatMb(bytes: Long): String = "%.1f MB".format(bytes / 1_048_576.0)
+
+/**
+ * "Last N days" as a real local-day [ClosedRange] of [Instant]s, anchored at
+ * the last data point (not today — for historical Timeline data that's what
+ * users mean). E.g. anchor 2026-05-21, N=7 -> 2026-05-15 00:00 .. 2026-05-21 23:59:59.
+ */
+private fun lastNDaysRange(anchor: Instant, days: Int): ClosedRange<Instant> {
+    val zone = ZoneId.systemDefault()
+    val endDate = LocalDate.ofInstant(anchor, zone)
+    val startDate = endDate.minusDays((days - 1).toLong())
+    val start = startDate.atStartOfDay(zone).toInstant()
+    val end = endDate.plusDays(1).atStartOfDay(zone).toInstant().minusNanos(1)
+    return start..end
+}
