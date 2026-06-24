@@ -303,7 +303,7 @@ fun MainScreen(
                     derivedStateOf { applyFilter(loadedResult.pathPoints, filter) }
                 }
                 BackHandler { mapFullscreen = false }
-                FullscreenMap(
+                ExpandedMap(
                     points = fullscreenPoints,
                     onClose = { mapFullscreen = false },
                     mapContent = movableMap,
@@ -722,7 +722,7 @@ private fun LoadingDisplay(phase: LoadingPhase) {
 }
 
 @Composable
-private fun FullscreenMap(
+private fun ExpandedMap(
     points: List<PathPoint>,
     onClose: () -> Unit,
     mapContent: @Composable (List<PathPoint>, Modifier) -> Unit,
@@ -731,13 +731,24 @@ private fun FullscreenMap(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            mapContent(points, Modifier.fillMaxSize())
+        // Keep the same rounded, bordered "Preview tile" framing as the inline
+        // map, just enlarged with a margin around it — not edge-to-edge.
+        Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            val shape = RoundedCornerShape(8.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(shape)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
+            ) {
+                mapContent(points, Modifier.fillMaxSize())
+            }
             FilledTonalButton(
                 onClick = onClose,
+                shape = ButtonShape,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(16.dp),
+                    .padding(8.dp),
             ) {
                 Text(stringResource(R.string.preview_close))
             }
