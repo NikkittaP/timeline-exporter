@@ -103,6 +103,9 @@
 
     <string name="app_version">Sürüm %1$s</string>
 
+    <string name="language_title">Dil</string>
+    <string name="language_system">Sistem dili</string>
+
     <string name="tipjar_title">Geliştirmeyi destekle</string>
     <string name="tipjar_blurb">Timeline Exporter ücretsiz, reklamsız ve açık kaynaktır. Faydalı olduysa, küçük bir bahşiş doğrudan bana ulaşır. Düşündüğünüz için teşekkürler!</string>
     <string name="tipjar_connecting">Google Play\'e bağlanılıyor…</string>

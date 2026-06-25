@@ -31,6 +31,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -83,6 +84,7 @@ import java.time.ZoneId
 fun TimelineExporterApp() {
     var helpDialogOpen by remember { mutableStateOf(false) }
     var tipJarDialogOpen by remember { mutableStateOf(false) }
+    var languageDialogOpen by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -104,6 +106,9 @@ fun TimelineExporterApp() {
                     )
                 },
                 actions = {
+                    IconButton(onClick = { languageDialogOpen = true }) {
+                        Text("🌐", style = MaterialTheme.typography.titleMedium)
+                    }
                     TextButton(onClick = { tipJarDialogOpen = true }) {
                         Text(stringResource(R.string.action_support))
                     }
@@ -125,6 +130,9 @@ fun TimelineExporterApp() {
     }
     if (tipJarDialogOpen) {
         TipJarDialog(onDismiss = { tipJarDialogOpen = false })
+    }
+    if (languageDialogOpen) {
+        LanguageDialog(onDismiss = { languageDialogOpen = false })
     }
 }
 

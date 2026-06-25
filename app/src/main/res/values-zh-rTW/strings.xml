@@ -103,6 +103,9 @@
 
     <string name="app_version">版本 %1$s</string>
 
+    <string name="language_title">語言</string>
+    <string name="language_system">跟隨系統</string>
+
     <string name="tipjar_title">支持開發</string>
     <string name="tipjar_blurb">Timeline Exporter 免費、無廣告且開放原始碼。如果它對你有幫助，一點小費會直接給我。感謝你的考慮！</string>
     <string name="tipjar_connecting">正在連接 Google Play…</string>

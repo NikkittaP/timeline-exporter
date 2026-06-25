@@ -1,5 +1,6 @@
 package io.github.nikkittap.timelineexporter
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -19,6 +20,11 @@ class MainActivity : ComponentActivity() {
     // returns the same instance because both use this Activity's
     // ViewModelStore.
     private val viewModel: TimelineViewModel by viewModels()
+
+    // Apply the user's in-app language choice before any resources are resolved.
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleManager.wrap(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // installSplashScreen MUST be called before super.onCreate. It

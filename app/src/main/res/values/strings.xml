@@ -139,6 +139,10 @@
     <!-- App version footer. %1$s = versionName (e.g. "1.1.0"). -->
     <string name="app_version">Version %1$s</string>
 
+    <!-- Language picker -->
+    <string name="language_title">Language</string>
+    <string name="language_system">System default</string>
+
     <!-- Tip jar dialog -->
     <string name="tipjar_title">Support development</string>
     <string name="tipjar_blurb">Timeline Exporter is free, ad-free, and open source. If it\'s been useful, a small tip goes directly to me. Thanks for considering it!</string>

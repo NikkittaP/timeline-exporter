@@ -103,6 +103,9 @@
 
     <string name="app_version">バージョン %1$s</string>
 
+    <string name="language_title">言語</string>
+    <string name="language_system">システムの言語</string>
+
     <string name="tipjar_title">開発を支援する</string>
     <string name="tipjar_blurb">Timeline Exporter は無料・広告なし・オープンソースです。役に立ったら、ささやかなチップが直接私に届きます。ご検討ありがとうございます！</string>
     <string name="tipjar_connecting">Google Play に接続中…</string>

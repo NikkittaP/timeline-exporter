@@ -103,6 +103,9 @@
 
     <string name="app_version">Versione %1$s</string>
 
+    <string name="language_title">Lingua</string>
+    <string name="language_system">Lingua del sistema</string>
+
     <string name="tipjar_title">Sostieni lo sviluppo</string>
     <string name="tipjar_blurb">Timeline Exporter è gratuito, senza pubblicità e open source. Se ti è stato utile, una piccola mancia arriva direttamente a me. Grazie per averci pensato!</string>
     <string name="tipjar_connecting">Connessione a Google Play…</string>
