@@ -3,6 +3,8 @@
     <string name="action_help">Aiuto</string>
     <string name="action_support">Sostieni</string>
     <string name="app_logo_desc">Logo di Timeline Exporter</string>
+    <string name="action_more">Altre opzioni</string>
+    <string name="error_not_timeline">Questo non sembra un file di Google Timeline. Scegli il file Timeline.json esportato da Google Maps — tocca «Aiuto» per i passaggi.</string>
 
     <string name="step_choose_file">Scegli file</string>
     <string name="step_filter">Filtra per data</string>

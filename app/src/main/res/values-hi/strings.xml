@@ -3,6 +3,8 @@
     <string name="action_help">मदद</string>
     <string name="action_support">सहयोग</string>
     <string name="app_logo_desc">Timeline Exporter का लोगो</string>
+    <string name="action_more">और विकल्प</string>
+    <string name="error_not_timeline">यह Google Timeline फ़ाइल नहीं लगती। Google Maps से एक्सपोर्ट की गई Timeline.json फ़ाइल चुनें — चरणों के लिए “मदद” पर टैप करें।</string>
 
     <string name="step_choose_file">फ़ाइल चुनें</string>
     <string name="step_filter">तारीख़ से फ़िल्टर करें</string>

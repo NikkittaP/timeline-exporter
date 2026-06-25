@@ -9,9 +9,11 @@ import androidx.lifecycle.viewModelScope
 import io.github.nikkittap.timelineexporter.export.Exporter
 import io.github.nikkittap.timelineexporter.filter.TimelineFilter
 import io.github.nikkittap.timelineexporter.filter.applyFilter
+import io.github.nikkittap.timelineexporter.parser.NotTimelineFileException
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.ParserStage
 import io.github.nikkittap.timelineexporter.parser.parseTimeline
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,11 +46,14 @@ sealed interface TimelineUiState {
     data class Loading(val phase: LoadingPhase) : TimelineUiState
     data class Loaded(val result: ParsedTimeline) : TimelineUiState
     /**
-     * Parse failed. [exceptionClass] and [exceptionMessage] are technical
-     * detail the UI shows under a localized "Could not parse…" wrapper.
-     * exceptionMessage is null when the underlying exception had none.
+     * Parse failed. When [wrongFile] is true the user simply picked something
+     * that isn't a Timeline export (or an unreadable/binary file); the UI shows
+     * a short friendly message and hides the technical detail. When false it's
+     * an unexpected error and [exceptionClass]/[exceptionMessage] are shown to
+     * aid bug reports. exceptionMessage is null when the exception had none.
      */
     data class Error(
+        val wrongFile: Boolean,
         val exceptionClass: String,
         val exceptionMessage: String?,
     ) : TimelineUiState
@@ -107,9 +112,27 @@ class TimelineViewModel : ViewModel() {
                         _uiState.value = TimelineUiState.Loading(stage.toLoadingPhase())
                     }
                     TimelineUiState.Loaded(result)
-                } catch (e: Exception) {
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: NotTimelineFileException) {
+                    // User picked a non-Timeline file: friendly message, no detail.
                     TimelineUiState.Error(
+                        wrongFile = true,
                         exceptionClass = e::class.simpleName ?: "Exception",
+                        exceptionMessage = e.message,
+                    )
+                } catch (e: Throwable) {
+                    // Catch-all incl. OutOfMemoryError so a huge/binary file can
+                    // never crash the app. Malformed JSON (decode failures),
+                    // out-of-memory, and read errors all land here and are shown
+                    // as the friendly "wrong file" message rather than a stack
+                    // trace. Anything truly unexpected keeps the technical detail.
+                    val wrong = e is OutOfMemoryError ||
+                        e is kotlinx.serialization.SerializationException ||
+                        e is java.io.IOException
+                    TimelineUiState.Error(
+                        wrongFile = wrong,
+                        exceptionClass = e::class.simpleName ?: "Throwable",
                         exceptionMessage = e.message,
                     )
                 }
@@ -214,9 +237,18 @@ private fun readUriAsString(
         val out = ByteArrayOutputStream()
         var totalRead = 0L
         var lastReportMs = 0L
+        var sniffed = false
         while (true) {
             val n = input.read(buffer)
             if (n == -1) break
+            // Validate the very first chunk before accumulating anything. A
+            // Timeline export must start with a JSON object or array; anything
+            // else (HTML/XML, an APK or other binary, an image) is rejected
+            // immediately — no full read, no parser, no OOM risk.
+            if (!sniffed) {
+                assertLooksLikeJson(buffer, n)
+                sniffed = true
+            }
             out.write(buffer, 0, n)
             totalRead += n
             val now = SystemClock.uptimeMillis()
@@ -225,9 +257,38 @@ private fun readUriAsString(
                 lastReportMs = now
             }
         }
+        if (!sniffed) throw NotTimelineFileException("File is empty")
         onProgress(totalRead)
         out.toString(Charsets.UTF_8)
     }
+}
+
+/**
+ * Cheap content sniff over the first bytes of a file: after an optional UTF-8
+ * BOM and any leading ASCII whitespace, the first byte must open a JSON object
+ * `{` or array `[`. Throws [NotTimelineFileException] otherwise. This catches
+ * the common "wrong file" cases (HTML pages, XML, APKs/ZIPs starting with
+ * "PK", images) before we read or parse the whole thing.
+ */
+private fun assertLooksLikeJson(buffer: ByteArray, len: Int) {
+    var i = 0
+    if (len >= 3 &&
+        (buffer[0].toInt() and 0xFF) == 0xEF &&
+        (buffer[1].toInt() and 0xFF) == 0xBB &&
+        (buffer[2].toInt() and 0xFF) == 0xBF
+    ) {
+        i = 3 // skip BOM
+    }
+    while (i < len) {
+        when (buffer[i].toInt() and 0xFF) {
+            0x20, 0x09, 0x0A, 0x0D -> i++ // space, tab, LF, CR
+            '{'.code, '['.code -> return // looks like JSON
+            else -> throw NotTimelineFileException(
+                "File does not begin with a JSON object or array",
+            )
+        }
+    }
+    throw NotTimelineFileException("File is empty or whitespace only")
 }
 
 /**

@@ -135,7 +135,7 @@ class TimelineParserFormatsTest {
         assertEquals(48.833657, result.pathPoints[0].latitude, 1e-7)
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test(expected = NotTimelineFileException::class)
     fun `unknown format throws`() {
         parseTimeline("""{ "somethingElse": [] }""")
     }

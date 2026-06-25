@@ -3,6 +3,8 @@
     <string name="action_help">帮助</string>
     <string name="action_support">支持</string>
     <string name="app_logo_desc">Timeline Exporter 徽标</string>
+    <string name="action_more">更多选项</string>
+    <string name="error_not_timeline">这看起来不是 Google 时间线文件。请选择你从 Google 地图导出的 Timeline.json — 点按“帮助”查看步骤。</string>
 
     <string name="step_choose_file">选择文件</string>
     <string name="step_filter">按日期筛选</string>

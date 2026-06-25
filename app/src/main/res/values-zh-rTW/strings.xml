@@ -3,6 +3,8 @@
     <string name="action_help">說明</string>
     <string name="action_support">支持</string>
     <string name="app_logo_desc">Timeline Exporter 標誌</string>
+    <string name="action_more">更多選項</string>
+    <string name="error_not_timeline">這看起來不是 Google 時間軸檔案。請選擇你從 Google 地圖匯出的 Timeline.json — 輕觸「說明」查看步驟。</string>
 
     <string name="step_choose_file">選擇檔案</string>
     <string name="step_filter">依日期篩選</string>

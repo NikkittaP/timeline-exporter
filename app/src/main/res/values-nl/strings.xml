@@ -3,6 +3,8 @@
     <string name="action_help">Help</string>
     <string name="action_support">Steun</string>
     <string name="app_logo_desc">Timeline Exporter-logo</string>
+    <string name="action_more">Meer opties</string>
+    <string name="error_not_timeline">Dit lijkt geen Google Timeline-bestand. Kies het Timeline.json-bestand dat je uit Google Maps hebt geëxporteerd — tik op „Help“ voor de stappen.</string>
 
     <string name="step_choose_file">Bestand kiezen</string>
     <string name="step_filter">Op datum filteren</string>

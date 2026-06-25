@@ -3,6 +3,8 @@
     <string name="action_help">Yardım</string>
     <string name="action_support">Destekle</string>
     <string name="app_logo_desc">Timeline Exporter logosu</string>
+    <string name="action_more">Diğer seçenekler</string>
+    <string name="error_not_timeline">Bu, bir Google Timeline dosyası gibi görünmüyor. Google Haritalar\'dan dışa aktardığınız Timeline.json dosyasını seçin — adımlar için «Yardım»a dokunun.</string>
 
     <string name="step_choose_file">Dosya seç</string>
     <string name="step_filter">Tarihe göre filtrele</string>

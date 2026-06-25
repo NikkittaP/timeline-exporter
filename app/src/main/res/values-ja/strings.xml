@@ -3,6 +3,8 @@
     <string name="action_help">ヘルプ</string>
     <string name="action_support">サポート</string>
     <string name="app_logo_desc">Timeline Exporter のロゴ</string>
+    <string name="action_more">その他</string>
+    <string name="error_not_timeline">これは Google タイムラインのファイルではないようです。Google マップからエクスポートした Timeline.json を選択してください。手順は「ヘルプ」をご覧ください。</string>
 
     <string name="step_choose_file">ファイルを選択</string>
     <string name="step_filter">日付で絞り込み</string>

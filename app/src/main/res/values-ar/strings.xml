@@ -3,6 +3,8 @@
     <string name="action_help">مساعدة</string>
     <string name="action_support">ادعم</string>
     <string name="app_logo_desc">شعار Timeline Exporter</string>
+    <string name="action_more">خيارات أخرى</string>
+    <string name="error_not_timeline">لا يبدو أن هذا ملف Google Timeline. اختر ملف Timeline.json الذي صدّرته من خرائط Google — اضغط على «مساعدة» لمعرفة الخطوات.</string>
 
     <string name="step_choose_file">اختيار ملف</string>
     <string name="step_filter">التصفية حسب التاريخ</string>

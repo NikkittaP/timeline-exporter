@@ -54,6 +54,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -113,27 +115,36 @@ fun TimelineExporterApp() {
                 },
                 actions = {
                     // Only fixed-width icon buttons live in the bar so the title
-                    // never gets squeezed by translated labels. Text actions
-                    // (Support/Help) move into an overflow menu, where their
-                    // width can't affect the layout in any language.
-                    IconButton(onClick = { languageDialogOpen = true }) {
+                    // is never squeezed by translated labels. Support stays
+                    // visible (it's the donate entry point); Help — also
+                    // reachable from the in-content "How do I get Timeline
+                    // data?" link — moves into the overflow menu.
+                    val cdLanguage = stringResource(R.string.language_title)
+                    val cdSupport = stringResource(R.string.action_support)
+                    val cdMore = stringResource(R.string.action_more)
+                    IconButton(
+                        onClick = { languageDialogOpen = true },
+                        modifier = Modifier.semantics { contentDescription = cdLanguage },
+                    ) {
                         Text("🌐", style = MaterialTheme.typography.titleMedium)
                     }
+                    IconButton(
+                        onClick = { tipJarDialogOpen = true },
+                        modifier = Modifier.semantics { contentDescription = cdSupport },
+                    ) {
+                        Text("💜", style = MaterialTheme.typography.titleMedium)
+                    }
                     Box {
-                        IconButton(onClick = { overflowMenuOpen = true }) {
+                        IconButton(
+                            onClick = { overflowMenuOpen = true },
+                            modifier = Modifier.semantics { contentDescription = cdMore },
+                        ) {
                             Text("⋮", style = MaterialTheme.typography.titleLarge)
                         }
                         DropdownMenu(
                             expanded = overflowMenuOpen,
                             onDismissRequest = { overflowMenuOpen = false },
                         ) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.action_support)) },
-                                onClick = {
-                                    overflowMenuOpen = false
-                                    tipJarDialogOpen = true
-                                },
-                            )
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.action_help)) },
                                 onClick = {
@@ -273,12 +284,16 @@ fun MainScreen(
                     is TimelineUiState.Loading -> LoadingDisplay(state.phase)
 
                     is TimelineUiState.Error -> Text(
-                        text = stringResource(
-                            R.string.parse_error,
-                            state.exceptionClass,
-                            state.exceptionMessage
-                                ?: stringResource(R.string.parse_error_no_message),
-                        ),
+                        text = if (state.wrongFile) {
+                            stringResource(R.string.error_not_timeline)
+                        } else {
+                            stringResource(
+                                R.string.parse_error,
+                                state.exceptionClass,
+                                state.exceptionMessage
+                                    ?: stringResource(R.string.parse_error_no_message),
+                            )
+                        },
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium,
                     )

@@ -3,6 +3,8 @@
     <string name="action_help">Hjälp</string>
     <string name="action_support">Stötta</string>
     <string name="app_logo_desc">Timeline Exporter-logotyp</string>
+    <string name="action_more">Fler alternativ</string>
+    <string name="error_not_timeline">Det här ser inte ut som en Google Timeline-fil. Välj filen Timeline.json som du exporterade från Google Maps — tryck på ”Hjälp” för stegen.</string>
 
     <string name="step_choose_file">Välj fil</string>
     <string name="step_filter">Filtrera efter datum</string>

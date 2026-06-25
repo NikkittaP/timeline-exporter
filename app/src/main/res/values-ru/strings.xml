@@ -3,6 +3,8 @@
     <string name="action_help">Справка</string>
     <string name="action_support">Поддержать</string>
     <string name="app_logo_desc">Логотип Timeline Exporter</string>
+    <string name="action_more">Ещё</string>
+    <string name="error_not_timeline">Это не похоже на файл Google Timeline. Выберите файл Timeline.json, экспортированный из Google Карт — нажмите «Справка», чтобы увидеть шаги.</string>
 
     <string name="step_choose_file">Выбор файла</string>
     <string name="step_filter">Фильтр по дате</string>

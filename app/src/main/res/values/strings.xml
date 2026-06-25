@@ -7,6 +7,7 @@
     <!-- Top app bar -->
     <string name="action_help">Help</string>
     <string name="action_support">Support</string>
+    <string name="action_more">More options</string>
     <string name="app_logo_desc">Timeline Exporter logo</string>
 
     <!-- Step card headers -->
@@ -92,6 +93,8 @@
          %2$s = exception message or the fallback below. -->
     <string name="parse_error">Could not parse this file as a Google Timeline export.\n%1$s: %2$s</string>
     <string name="parse_error_no_message">(no message)</string>
+    <!-- Shown when the picked file clearly isn't a Timeline export. -->
+    <string name="error_not_timeline">This doesn\'t look like a Google Timeline file. Pick the Timeline.json you exported from Google Maps — tap \"Help\" for the steps.</string>
 
     <!-- Track-name metadata embedded inside exported GPX/KML/GeoJSON files.
          %1$s = the date-range portion below. -->

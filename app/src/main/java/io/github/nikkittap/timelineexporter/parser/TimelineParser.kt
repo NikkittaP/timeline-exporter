@@ -6,6 +6,14 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 
 /**
+ * Thrown when a file is structurally readable (or even valid JSON) but is
+ * clearly not a Google Timeline export — e.g. the user picked an unrelated
+ * JSON file, an HTML/XML page, or a binary file. Surfaced to the UI as a
+ * friendly "this isn't a Timeline file" message rather than a raw stack trace.
+ */
+class NotTimelineFileException(message: String) : Exception(message)
+
+/**
  * Stages emitted by [parseTimeline] via its optional onProgress callback.
  * The UI (or test) decides what to do with them. Parsers stay UI-agnostic.
  */
@@ -91,7 +99,7 @@ fun parseTimeline(
         root.rawSignals != null ->
             extractFromRawSignals(root.rawSignals, onProgress)
 
-        else -> throw IllegalArgumentException(
+        else -> throw NotTimelineFileException(
             "Unrecognized Timeline format: none of semanticSegments, " +
                 "timelineObjects, locations or rawSignals were present."
         )
