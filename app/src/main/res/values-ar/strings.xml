@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_help">مساعدة</string>
+    <string name="action_support">ادعم</string>
+    <string name="app_logo_desc">شعار Timeline Exporter</string>
+
+    <string name="step_choose_file">اختيار ملف</string>
+    <string name="step_filter">التصفية حسب التاريخ</string>
+    <string name="step_preview">معاينة</string>
+    <string name="step_export">تصدير</string>
+
+    <string name="loaded_badge">تم التحميل</string>
+    <string name="metric_points">النقاط</string>
+    <string name="metric_date_range">النطاق الزمني</string>
+
+    <string name="format_phone">تصدير من الهاتف</string>
+    <string name="format_phone_ios">تصدير من الهاتف (iOS)</string>
+    <string name="format_semantic">Semantic History</string>
+    <string name="format_unknown">تنسيق غير معروف</string>
+
+    <string name="filter_preset_custom">مخصّص…</string>
+
+    <string name="pick_file_button">اختيار Timeline.json</string>
+    <string name="idle_hint">اختر ملف JSON الخاص بالمخطط الزمني في خرائط Google لتحليله.</string>
+    <string name="idle_help_button">كيف أحصل على بيانات المخطط الزمني؟</string>
+
+    <string name="loading_opening">جارٍ فتح الملف…</string>
+    <string name="loading_reading">جارٍ قراءة الملف</string>
+    <string name="loading_decoding">جارٍ فك ترميز JSON</string>
+    <string name="loading_decoding_detail">قد تستغرق الملفات الكبيرة بضع ثوانٍ…</string>
+    <string name="loading_extracting">جارٍ استخراج نقاط GPS</string>
+    <string name="loading_extracting_detail">%1$s / %2$s مقطع</string>
+    <string name="loading_sorting">جارٍ ترتيب النقاط حسب الوقت</string>
+
+    <string name="filter_title">تصفية</string>
+    <string name="filter_date_range_all">النطاق الزمني: كل التواريخ</string>
+    <string name="filter_date_range_set">النطاق الزمني: %1$s — %2$s</string>
+    <string name="filter_filtered_count">بعد التصفية: %1$s من %2$s نقطة</string>
+    <string name="filter_set_button">تحديد النطاق الزمني</string>
+    <string name="filter_change_button">تغيير النطاق الزمني</string>
+    <string name="filter_clear_button">مسح</string>
+
+    <string name="date_dialog_title">التصفية حسب التاريخ</string>
+    <string name="date_dialog_cancel">إلغاء</string>
+    <string name="date_dialog_apply">تطبيق</string>
+    <string name="date_preset_last_7">آخر 7 أيام</string>
+    <string name="date_preset_last_30">آخر 30 يومًا</string>
+    <string name="date_preset_last_90">آخر 90 يومًا</string>
+    <string name="date_preset_all">كل البيانات</string>
+
+    <string name="preview_title">معاينة</string>
+    <string name="preview_no_points">لا توجد نقاط تطابق التصفية الحالية — لا شيء للعرض.</string>
+    <string name="preview_expand">تكبير</string>
+    <string name="preview_close">إغلاق</string>
+
+    <string name="export_title">تصدير</string>
+    <string name="export_save_button">حفظ باسم…</string>
+    <string name="export_writing">جارٍ كتابة الملف…</string>
+    <string name="export_success">تم حفظ %1$s نقطة في %2$s</string>
+    <string name="export_fallback_filename">الملف المختار</string>
+    <string name="export_error_no_points">لا توجد نقاط تطابق التصفية الحالية.</string>
+    <string name="export_error_generic">تعذّر حفظ %1$s: %2$s</string>
+
+    <string name="parse_error">تعذّرت قراءة هذا الملف كتصدير من مخطط Google الزمني.\n%1$s: %2$s</string>
+    <string name="parse_error_no_message">(لا توجد رسالة)</string>
+
+    <string name="track_name_full_range">(تصدير كامل)</string>
+
+    <string name="help_title">الحصول على بيانات المخطط الزمني</string>
+    <string name="help_intro">منذ أواخر عام 2024، يخزّن Google المخطط الزمني على جهازك فقط — لا يوجد خيار Google Takeout ولا تطبيق خارجي يمكنه قراءته مباشرةً. تصدّره مرة واحدة من إعدادات النظام، ثم تفتح الملف هنا.</string>
+
+    <string name="help_method_settings_title">التصدير من إعدادات Android (مُستحسَن)</string>
+    <string name="help_method_settings_step1">افتح تطبيق الإعدادات في Android</string>
+    <string name="help_method_settings_step2">انقر على الموقع ← خدمات الموقع</string>
+    <string name="help_method_settings_step3">انقر على المخطط الزمني (Timeline)</string>
+    <string name="help_method_settings_step4">انقر على «تصدير بيانات المخطط الزمني»</string>
+    <string name="help_method_settings_step5">تحقّق من هويتك عند الطلب</string>
+    <string name="help_method_settings_step6">اختر مكان حفظ الملف</string>
+    <string name="help_method_settings_button">فتح إعدادات الموقع ←</string>
+
+    <string name="help_method_maps_title">بديل: التصدير من خرائط Google</string>
+    <string name="help_method_maps_step1">افتح خرائط Google</string>
+    <string name="help_method_maps_step2">انقر على صورة ملفك الشخصي (أعلى اليمين)</string>
+    <string name="help_method_maps_step3">اختر «مخططك الزمني»</string>
+    <string name="help_method_maps_step4">انقر على قائمة ⋯ (أعلى اليمين)</string>
+    <string name="help_method_maps_step5">انقر على «إعدادات الموقع والخصوصية»</string>
+    <string name="help_method_maps_step6">انقر على «تصدير بيانات المخطط الزمني»</string>
+    <string name="help_method_maps_button">فتح خرائط Google ←</string>
+
+    <string name="help_import_title">إحضار الملف إلى هذا التطبيق</string>
+    <string name="help_import_step1">افتح تطبيق الملفات، وابحث عن Timeline.json، وانقر على مشاركة ← «Timeline Exporter»، أو</string>
+    <string name="help_import_step2">انقر على «اختيار Timeline.json» بالأعلى وتصفّح حتى الملف.</string>
+
+    <string name="help_notes_title">ملاحظات</string>
+    <string name="help_note_file_location">• اسم الملف المُصدَّر هو Timeline.json. يُحفظ في المكان الذي اخترته أثناء التصدير — تقيّد بعض إصدارات Android الوصول إلى مجلدات معيّنة (مثل التنزيلات)، فإذا تعذّر على التطبيق قراءته، جرّب نقله.</string>
+    <string name="help_note_eu_csv">• قد يتلقى مستخدمو الاتحاد الأوروبي ملف CSV بدلاً من JSON لأسباب تتعلق بقوانين الخصوصية. يتعامل هذا الإصدار من التطبيق مع JSON فقط.</string>
+    <string name="help_note_slow_first">• قد يستغرق التصدير الأول دقيقة أو دقيقتين إذا كان لديك سنوات من سجل المواقع.</string>
+
+    <string name="help_dismiss">حسنًا</string>
+    <string name="help_toast_no_location_settings">تعذّر فتح إعدادات الموقع على هذا الجهاز.</string>
+    <string name="help_toast_no_maps_installed">تطبيق خرائط Google غير مُثبّت على هذا الجهاز.</string>
+    <string name="help_toast_no_maps_launch">تعذّر فتح خرائط Google.</string>
+
+    <string name="app_version">الإصدار %1$s</string>
+
+    <string name="tipjar_title">ادعم التطوير</string>
+    <string name="tipjar_blurb">تطبيق Timeline Exporter مجاني وبدون إعلانات ومفتوح المصدر. إذا كان مفيدًا لك، فإن إكرامية صغيرة تصل إليّ مباشرةً. شكرًا لتفكيرك في ذلك!</string>
+    <string name="tipjar_connecting">جارٍ الاتصال بـ Google Play…</string>
+    <string name="tipjar_processing">جارٍ فتح Google Play…</string>
+    <string name="tipjar_no_products">لا تتوفّر خيارات إكرامية حاليًا. يعني هذا عادةً أن التطبيق لم يُضبط بالكامل في Google Play بعد. يُرجى المحاولة لاحقًا.</string>
+    <string name="tipjar_unavailable">خدمة الدفع في Google Play غير متوفّرة على هذا الجهاز. تتطلب الإكراميات خدمات Google Play.</string>
+    <string name="tipjar_thank_you">شكرًا! 💜</string>
+    <string name="tipjar_thank_you_detail">إكراميتك تساعد حقًا. آمل أن يبقى التطبيق مفيدًا!</string>
+    <string name="tipjar_tip_again">قدّم إكرامية مرة أخرى</string>
+    <string name="tipjar_error">حدث خطأ ما أثناء الشراء.</string>
+    <string name="tipjar_retry">أعد المحاولة</string>
+    <string name="tipjar_close">إغلاق</string>
+</resources>

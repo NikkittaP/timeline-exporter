@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_help">Help</string>
+    <string name="action_support">Steun</string>
+    <string name="app_logo_desc">Timeline Exporter-logo</string>
+
+    <string name="step_choose_file">Bestand kiezen</string>
+    <string name="step_filter">Op datum filteren</string>
+    <string name="step_preview">Voorbeeld</string>
+    <string name="step_export">Exporteren</string>
+
+    <string name="loaded_badge">Geladen</string>
+    <string name="metric_points">Punten</string>
+    <string name="metric_date_range">Periode</string>
+
+    <string name="format_phone">Telefoon-export</string>
+    <string name="format_phone_ios">Telefoon-export (iOS)</string>
+    <string name="format_semantic">Semantic History</string>
+    <string name="format_unknown">Onbekend formaat</string>
+
+    <string name="filter_preset_custom">Aangepast…</string>
+
+    <string name="pick_file_button">Timeline.json kiezen</string>
+    <string name="idle_hint">Kies een Google Maps Timeline-JSON-bestand om te verwerken.</string>
+    <string name="idle_help_button">Hoe krijg ik Timeline-gegevens?</string>
+
+    <string name="loading_opening">Bestand openen…</string>
+    <string name="loading_reading">Bestand lezen</string>
+    <string name="loading_decoding">JSON decoderen</string>
+    <string name="loading_decoding_detail">Grote bestanden kunnen enkele seconden duren…</string>
+    <string name="loading_extracting">GPS-punten extraheren</string>
+    <string name="loading_extracting_detail">%1$s / %2$s segmenten</string>
+    <string name="loading_sorting">Punten op tijd sorteren</string>
+
+    <string name="filter_title">Filter</string>
+    <string name="filter_date_range_all">Periode: alle datums</string>
+    <string name="filter_date_range_set">Periode: %1$s — %2$s</string>
+    <string name="filter_filtered_count">Na filter: %1$s van %2$s punten</string>
+    <string name="filter_set_button">Periode instellen</string>
+    <string name="filter_change_button">Periode wijzigen</string>
+    <string name="filter_clear_button">Wissen</string>
+
+    <string name="date_dialog_title">Op datum filteren</string>
+    <string name="date_dialog_cancel">Annuleren</string>
+    <string name="date_dialog_apply">Toepassen</string>
+    <string name="date_preset_last_7">Laatste 7 dagen</string>
+    <string name="date_preset_last_30">Laatste 30 dagen</string>
+    <string name="date_preset_last_90">Laatste 90 dagen</string>
+    <string name="date_preset_all">Alle gegevens</string>
+
+    <string name="preview_title">Voorbeeld</string>
+    <string name="preview_no_points">Geen punten voor het huidige filter — niets te tonen.</string>
+    <string name="preview_expand">Vergroten</string>
+    <string name="preview_close">Sluiten</string>
+
+    <string name="export_title">Exporteren</string>
+    <string name="export_save_button">Opslaan als…</string>
+    <string name="export_writing">Bestand schrijven…</string>
+    <string name="export_success">%1$s punten opgeslagen in %2$s</string>
+    <string name="export_fallback_filename">het gekozen bestand</string>
+    <string name="export_error_no_points">Geen punten voor het huidige filter.</string>
+    <string name="export_error_generic">Kon %1$s niet opslaan: %2$s</string>
+
+    <string name="parse_error">Kon dit bestand niet lezen als een Google Timeline-export.\n%1$s: %2$s</string>
+    <string name="parse_error_no_message">(geen bericht)</string>
+
+    <string name="track_name_full_range">(volledige export)</string>
+
+    <string name="help_title">Je Timeline-gegevens ophalen</string>
+    <string name="help_intro">Sinds eind 2024 bewaart Google de Timeline alleen op je apparaat — er is geen Google Takeout-optie en geen app van derden die het rechtstreeks kan lezen. Je exporteert het één keer via de systeeminstellingen en opent het bestand daarna hier.</string>
+
+    <string name="help_method_settings_title">Exporteren via Android-instellingen (aanbevolen)</string>
+    <string name="help_method_settings_step1">Open de Android-app Instellingen</string>
+    <string name="help_method_settings_step2">Tik op Locatie → Locatieservices</string>
+    <string name="help_method_settings_step3">Tik op Tijdlijn (Timeline)</string>
+    <string name="help_method_settings_step4">Tik op ‘Timeline-gegevens exporteren’</string>
+    <string name="help_method_settings_step5">Verifieer wanneer daarom wordt gevraagd</string>
+    <string name="help_method_settings_step6">Kies waar je het bestand opslaat</string>
+    <string name="help_method_settings_button">Locatie-instellingen openen →</string>
+
+    <string name="help_method_maps_title">Alternatief: exporteren via Google Maps</string>
+    <string name="help_method_maps_step1">Open Google Maps</string>
+    <string name="help_method_maps_step2">Tik op je profielfoto (rechtsboven)</string>
+    <string name="help_method_maps_step3">Kies ‘Je tijdlijn’</string>
+    <string name="help_method_maps_step4">Tik op het menu ⋯ (rechtsboven)</string>
+    <string name="help_method_maps_step5">Tik op ‘Instellingen voor locatie en privacy’</string>
+    <string name="help_method_maps_step6">Tik op ‘Timeline-gegevens exporteren’</string>
+    <string name="help_method_maps_button">Google Maps openen →</string>
+
+    <string name="help_import_title">Het bestand in deze app laden</string>
+    <string name="help_import_step1">Open je Bestanden-app, zoek Timeline.json, tik op Delen → ‘Timeline Exporter’, of</string>
+    <string name="help_import_step2">Tik hierboven op ‘Timeline.json kiezen’ en blader naar het bestand.</string>
+
+    <string name="help_notes_title">Opmerkingen</string>
+    <string name="help_note_file_location">• Het geëxporteerde bestand heet Timeline.json. Het komt terecht waar je tijdens het exporteren koos — sommige Android-versies beperken de toegang tot bepaalde mappen (bijv. Downloads), dus als de app het niet kan lezen, probeer het te verplaatsen.</string>
+    <string name="help_note_eu_csv">• EU-gebruikers krijgen vanwege privacywetgeving mogelijk een CSV in plaats van JSON. Deze versie van de app verwerkt alleen JSON.</string>
+    <string name="help_note_slow_first">• De eerste export kan een à twee minuten duren als je jarenlange locatiegeschiedenis hebt.</string>
+
+    <string name="help_dismiss">Begrepen</string>
+    <string name="help_toast_no_location_settings">Kon de locatie-instellingen op dit apparaat niet openen.</string>
+    <string name="help_toast_no_maps_installed">Google Maps is niet geïnstalleerd op dit apparaat.</string>
+    <string name="help_toast_no_maps_launch">Kon Google Maps niet openen.</string>
+
+    <string name="app_version">Versie %1$s</string>
+
+    <string name="tipjar_title">Ontwikkeling steunen</string>
+    <string name="tipjar_blurb">Timeline Exporter is gratis, advertentievrij en open source. Als het nuttig was, gaat een kleine fooi rechtstreeks naar mij. Bedankt dat je het overweegt!</string>
+    <string name="tipjar_connecting">Verbinden met Google Play…</string>
+    <string name="tipjar_processing">Google Play openen…</string>
+    <string name="tipjar_no_products">Er zijn nu geen fooi-opties beschikbaar. Meestal betekent dit dat de app nog niet volledig is ingesteld in Google Play. Probeer het later opnieuw.</string>
+    <string name="tipjar_unavailable">Google Play Facturering is niet beschikbaar op dit apparaat. Fooien vereisen Google Play-services.</string>
+    <string name="tipjar_thank_you">Bedankt! 💜</string>
+    <string name="tipjar_thank_you_detail">Je fooi helpt echt. Ik hoop dat de app nuttig blijft!</string>
+    <string name="tipjar_tip_again">Opnieuw een fooi geven</string>
+    <string name="tipjar_error">Er ging iets mis met de aankoop.</string>
+    <string name="tipjar_retry">Opnieuw proberen</string>
+    <string name="tipjar_close">Sluiten</string>
+</resources>

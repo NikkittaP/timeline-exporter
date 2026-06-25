@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_help">Hjälp</string>
+    <string name="action_support">Stötta</string>
+    <string name="app_logo_desc">Timeline Exporter-logotyp</string>
+
+    <string name="step_choose_file">Välj fil</string>
+    <string name="step_filter">Filtrera efter datum</string>
+    <string name="step_preview">Förhandsvisning</string>
+    <string name="step_export">Exportera</string>
+
+    <string name="loaded_badge">Inläst</string>
+    <string name="metric_points">Punkter</string>
+    <string name="metric_date_range">Period</string>
+
+    <string name="format_phone">Telefonexport</string>
+    <string name="format_phone_ios">Telefonexport (iOS)</string>
+    <string name="format_semantic">Semantic History</string>
+    <string name="format_unknown">Okänt format</string>
+
+    <string name="filter_preset_custom">Anpassad…</string>
+
+    <string name="pick_file_button">Välj Timeline.json</string>
+    <string name="idle_hint">Välj en JSON-fil från Google Maps Timeline att tolka.</string>
+    <string name="idle_help_button">Hur får jag Timeline-data?</string>
+
+    <string name="loading_opening">Öppnar fil…</string>
+    <string name="loading_reading">Läser fil</string>
+    <string name="loading_decoding">Avkodar JSON</string>
+    <string name="loading_decoding_detail">Stora filer kan ta några sekunder…</string>
+    <string name="loading_extracting">Extraherar GPS-punkter</string>
+    <string name="loading_extracting_detail">%1$s / %2$s segment</string>
+    <string name="loading_sorting">Sorterar punkter efter tid</string>
+
+    <string name="filter_title">Filter</string>
+    <string name="filter_date_range_all">Period: alla datum</string>
+    <string name="filter_date_range_set">Period: %1$s — %2$s</string>
+    <string name="filter_filtered_count">Efter filter: %1$s av %2$s punkter</string>
+    <string name="filter_set_button">Ange period</string>
+    <string name="filter_change_button">Ändra period</string>
+    <string name="filter_clear_button">Rensa</string>
+
+    <string name="date_dialog_title">Filtrera efter datum</string>
+    <string name="date_dialog_cancel">Avbryt</string>
+    <string name="date_dialog_apply">Tillämpa</string>
+    <string name="date_preset_last_7">Senaste 7 dagarna</string>
+    <string name="date_preset_last_30">Senaste 30 dagarna</string>
+    <string name="date_preset_last_90">Senaste 90 dagarna</string>
+    <string name="date_preset_all">Alla data</string>
+
+    <string name="preview_title">Förhandsvisning</string>
+    <string name="preview_no_points">Inga punkter matchar det aktuella filtret — inget att visa.</string>
+    <string name="preview_expand">Förstora</string>
+    <string name="preview_close">Stäng</string>
+
+    <string name="export_title">Exportera</string>
+    <string name="export_save_button">Spara som…</string>
+    <string name="export_writing">Skriver fil…</string>
+    <string name="export_success">Sparade %1$s punkter till %2$s</string>
+    <string name="export_fallback_filename">den valda filen</string>
+    <string name="export_error_no_points">Inga punkter matchar det aktuella filtret.</string>
+    <string name="export_error_generic">Det gick inte att spara %1$s: %2$s</string>
+
+    <string name="parse_error">Det gick inte att läsa filen som en Google Timeline-export.\n%1$s: %2$s</string>
+    <string name="parse_error_no_message">(inget meddelande)</string>
+
+    <string name="track_name_full_range">(fullständig export)</string>
+
+    <string name="help_title">Hämta dina Timeline-data</string>
+    <string name="help_intro">Sedan slutet av 2024 lagrar Google Timeline endast på din enhet — det finns inget Google Takeout-alternativ och ingen tredjepartsapp som kan läsa den direkt. Du exporterar den en gång från systeminställningarna och öppnar sedan filen här.</string>
+
+    <string name="help_method_settings_title">Exportera från Android-inställningarna (rekommenderas)</string>
+    <string name="help_method_settings_step1">Öppna appen Inställningar i Android</string>
+    <string name="help_method_settings_step2">Tryck på Plats → Platstjänster</string>
+    <string name="help_method_settings_step3">Tryck på Tidslinje (Timeline)</string>
+    <string name="help_method_settings_step4">Tryck på ”Exportera Timeline-data”</string>
+    <string name="help_method_settings_step5">Autentisera när du ombeds</string>
+    <string name="help_method_settings_step6">Välj var filen ska sparas</string>
+    <string name="help_method_settings_button">Öppna platsinställningar →</string>
+
+    <string name="help_method_maps_title">Alternativ: exportera från Google Maps</string>
+    <string name="help_method_maps_step1">Öppna Google Maps</string>
+    <string name="help_method_maps_step2">Tryck på din profilbild (uppe till höger)</string>
+    <string name="help_method_maps_step3">Välj ”Din tidslinje”</string>
+    <string name="help_method_maps_step4">Tryck på menyn ⋯ (uppe till höger)</string>
+    <string name="help_method_maps_step5">Tryck på ”Inställningar för plats och integritet”</string>
+    <string name="help_method_maps_step6">Tryck på ”Exportera Timeline-data”</string>
+    <string name="help_method_maps_button">Öppna Google Maps →</string>
+
+    <string name="help_import_title">Få in filen i den här appen</string>
+    <string name="help_import_step1">Öppna din Filer-app, hitta Timeline.json, tryck på Dela → ”Timeline Exporter”, eller</string>
+    <string name="help_import_step2">Tryck på ”Välj Timeline.json” ovan och bläddra till filen.</string>
+
+    <string name="help_notes_title">Anmärkningar</string>
+    <string name="help_note_file_location">• Den exporterade filen heter Timeline.json. Den hamnar där du valde vid exporten — vissa Android-versioner begränsar åtkomsten till vissa mappar (t.ex. Nedladdningar), så om appen inte kan läsa den, prova att flytta den.</string>
+    <string name="help_note_eu_csv">• EU-användare kan av integritetsskäl få en CSV i stället för JSON. Den här versionen av appen hanterar bara JSON.</string>
+    <string name="help_note_slow_first">• Den första exporten kan ta en eller två minuter om du har flera års platshistorik.</string>
+
+    <string name="help_dismiss">Uppfattat</string>
+    <string name="help_toast_no_location_settings">Det gick inte att öppna platsinställningarna på den här enheten.</string>
+    <string name="help_toast_no_maps_installed">Google Maps är inte installerat på den här enheten.</string>
+    <string name="help_toast_no_maps_launch">Det gick inte att öppna Google Maps.</string>
+
+    <string name="app_version">Version %1$s</string>
+
+    <string name="tipjar_title">Stötta utvecklingen</string>
+    <string name="tipjar_blurb">Timeline Exporter är gratis, reklamfritt och öppen källkod. Om det varit användbart går en liten dricks direkt till mig. Tack för att du överväger det!</string>
+    <string name="tipjar_connecting">Ansluter till Google Play…</string>
+    <string name="tipjar_processing">Öppnar Google Play…</string>
+    <string name="tipjar_no_products">Det finns inga dricksalternativ just nu. Det betyder oftast att appen inte är helt konfigurerad i Google Play ännu. Försök igen senare.</string>
+    <string name="tipjar_unavailable">Google Play Billing är inte tillgängligt på den här enheten. Dricks kräver Google Play-tjänster.</string>
+    <string name="tipjar_thank_you">Tack! 💜</string>
+    <string name="tipjar_thank_you_detail">Din dricks hjälper verkligen. Hoppas att appen fortsätter vara användbar!</string>
+    <string name="tipjar_tip_again">Ge dricks igen</string>
+    <string name="tipjar_error">Något gick fel med köpet.</string>
+    <string name="tipjar_retry">Försök igen</string>
+    <string name="tipjar_close">Stäng</string>
+</resources>

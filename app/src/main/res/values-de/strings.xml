@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_help">Hilfe</string>
+    <string name="action_support">Unterstützen</string>
+    <string name="app_logo_desc">Timeline-Exporter-Logo</string>
+
+    <string name="step_choose_file">Datei wählen</string>
+    <string name="step_filter">Nach Datum filtern</string>
+    <string name="step_preview">Vorschau</string>
+    <string name="step_export">Export</string>
+
+    <string name="loaded_badge">Geladen</string>
+    <string name="metric_points">Punkte</string>
+    <string name="metric_date_range">Zeitraum</string>
+
+    <string name="format_phone">Telefon-Export</string>
+    <string name="format_phone_ios">Telefon-Export (iOS)</string>
+    <string name="format_semantic">Semantic History</string>
+    <string name="format_unknown">Unbekanntes Format</string>
+
+    <string name="filter_preset_custom">Eigener…</string>
+
+    <string name="pick_file_button">Timeline.json auswählen</string>
+    <string name="idle_hint">Wähle eine Google Maps Timeline-JSON-Datei zum Einlesen.</string>
+    <string name="idle_help_button">Wie bekomme ich Timeline-Daten?</string>
+
+    <string name="loading_opening">Datei wird geöffnet…</string>
+    <string name="loading_reading">Datei wird gelesen</string>
+    <string name="loading_decoding">JSON wird verarbeitet</string>
+    <string name="loading_decoding_detail">Große Dateien können einige Sekunden dauern…</string>
+    <string name="loading_extracting">GPS-Punkte werden extrahiert</string>
+    <string name="loading_extracting_detail">%1$s / %2$s Segmente</string>
+    <string name="loading_sorting">Punkte werden nach Zeit sortiert</string>
+
+    <string name="filter_title">Filter</string>
+    <string name="filter_date_range_all">Zeitraum: alle Daten</string>
+    <string name="filter_date_range_set">Zeitraum: %1$s — %2$s</string>
+    <string name="filter_filtered_count">Nach Filter: %1$s von %2$s Punkten</string>
+    <string name="filter_set_button">Zeitraum festlegen</string>
+    <string name="filter_change_button">Zeitraum ändern</string>
+    <string name="filter_clear_button">Zurücksetzen</string>
+
+    <string name="date_dialog_title">Nach Datum filtern</string>
+    <string name="date_dialog_cancel">Abbrechen</string>
+    <string name="date_dialog_apply">Anwenden</string>
+    <string name="date_preset_last_7">Letzte 7 Tage</string>
+    <string name="date_preset_last_30">Letzte 30 Tage</string>
+    <string name="date_preset_last_90">Letzte 90 Tage</string>
+    <string name="date_preset_all">Alle Daten</string>
+
+    <string name="preview_title">Vorschau</string>
+    <string name="preview_no_points">Keine Punkte für den aktuellen Filter — nichts anzuzeigen.</string>
+    <string name="preview_expand">Vergrößern</string>
+    <string name="preview_close">Schließen</string>
+
+    <string name="export_title">Export</string>
+    <string name="export_save_button">Speichern unter…</string>
+    <string name="export_writing">Datei wird geschrieben…</string>
+    <string name="export_success">%1$s Punkte in %2$s gespeichert</string>
+    <string name="export_fallback_filename">die gewählte Datei</string>
+    <string name="export_error_no_points">Keine Punkte für den aktuellen Filter.</string>
+    <string name="export_error_generic">%1$s konnte nicht gespeichert werden: %2$s</string>
+
+    <string name="parse_error">Diese Datei konnte nicht als Google-Timeline-Export gelesen werden.\n%1$s: %2$s</string>
+    <string name="parse_error_no_message">(keine Meldung)</string>
+
+    <string name="track_name_full_range">(vollständiger Export)</string>
+
+    <string name="help_title">Timeline-Daten beschaffen</string>
+    <string name="help_intro">Seit Ende 2024 speichert Google die Timeline nur noch auf deinem Gerät — es gibt keine Google-Takeout-Option und keine Drittanbieter-App, die sie direkt lesen kann. Du exportierst sie einmal aus den Systemeinstellungen und öffnest die Datei dann hier.</string>
+
+    <string name="help_method_settings_title">Export aus den Android-Einstellungen (empfohlen)</string>
+    <string name="help_method_settings_step1">Öffne die Android-Einstellungen</string>
+    <string name="help_method_settings_step2">Tippe auf Standort → Standortdienste</string>
+    <string name="help_method_settings_step3">Tippe auf Zeitachse (Timeline)</string>
+    <string name="help_method_settings_step4">Tippe auf „Timeline-Daten exportieren“</string>
+    <string name="help_method_settings_step5">Authentifiziere dich, wenn du dazu aufgefordert wirst</string>
+    <string name="help_method_settings_step6">Wähle, wo die Datei gespeichert wird</string>
+    <string name="help_method_settings_button">Standorteinstellungen öffnen →</string>
+
+    <string name="help_method_maps_title">Alternative: Export aus Google Maps</string>
+    <string name="help_method_maps_step1">Öffne Google Maps</string>
+    <string name="help_method_maps_step2">Tippe auf dein Profilbild (oben rechts)</string>
+    <string name="help_method_maps_step3">Wähle „Deine Zeitachse“</string>
+    <string name="help_method_maps_step4">Tippe auf das Menü ⋯ (oben rechts)</string>
+    <string name="help_method_maps_step5">Tippe auf „Einstellungen für Standort und Datenschutz“</string>
+    <string name="help_method_maps_step6">Tippe auf „Timeline-Daten exportieren“</string>
+    <string name="help_method_maps_button">Google Maps öffnen →</string>
+
+    <string name="help_import_title">Datei in diese App laden</string>
+    <string name="help_import_step1">Öffne deine Dateien-App, suche Timeline.json, tippe auf Teilen → „Timeline Exporter“, oder</string>
+    <string name="help_import_step2">Tippe oben auf „Timeline.json auswählen“ und navigiere zur Datei.</string>
+
+    <string name="help_notes_title">Hinweise</string>
+    <string name="help_note_file_location">• Die exportierte Datei heißt Timeline.json. Sie landet dort, wo du beim Export gewählt hast — manche Android-Versionen beschränken den Zugriff auf bestimmte Ordner (z. B. Downloads). Wenn die App sie nicht lesen kann, verschiebe sie.</string>
+    <string name="help_note_eu_csv">• EU-Nutzer erhalten aus Datenschutzgründen evtl. eine CSV statt JSON. Diese App-Version verarbeitet nur JSON.</string>
+    <string name="help_note_slow_first">• Der erste Export kann ein bis zwei Minuten dauern, wenn du jahrelange Standortdaten hast.</string>
+
+    <string name="help_dismiss">Verstanden</string>
+    <string name="help_toast_no_location_settings">Standorteinstellungen konnten auf diesem Gerät nicht geöffnet werden.</string>
+    <string name="help_toast_no_maps_installed">Google Maps ist auf diesem Gerät nicht installiert.</string>
+    <string name="help_toast_no_maps_launch">Google Maps konnte nicht geöffnet werden.</string>
+
+    <string name="app_version">Version %1$s</string>
+
+    <string name="tipjar_title">Entwicklung unterstützen</string>
+    <string name="tipjar_blurb">Timeline Exporter ist kostenlos, werbefrei und Open Source. Wenn es nützlich war, geht ein kleines Trinkgeld direkt an mich. Danke, dass du es in Erwägung ziehst!</string>
+    <string name="tipjar_connecting">Verbindung zu Google Play…</string>
+    <string name="tipjar_processing">Google Play wird geöffnet…</string>
+    <string name="tipjar_no_products">Derzeit sind keine Trinkgeld-Optionen verfügbar. Das bedeutet meist, dass die App in Google Play noch nicht vollständig eingerichtet ist. Bitte versuche es später erneut.</string>
+    <string name="tipjar_unavailable">Google Play Billing ist auf diesem Gerät nicht verfügbar. Trinkgeld erfordert Google-Play-Dienste.</string>
+    <string name="tipjar_thank_you">Danke! 💜</string>
+    <string name="tipjar_thank_you_detail">Dein Trinkgeld hilft wirklich. Ich hoffe, die App bleibt nützlich!</string>
+    <string name="tipjar_tip_again">Erneut Trinkgeld geben</string>
+    <string name="tipjar_error">Beim Kauf ist etwas schiefgelaufen.</string>
+    <string name="tipjar_retry">Erneut versuchen</string>
+    <string name="tipjar_close">Schließen</string>
+</resources>

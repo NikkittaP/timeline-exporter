@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_help">ヘルプ</string>
+    <string name="action_support">サポート</string>
+    <string name="app_logo_desc">Timeline Exporter のロゴ</string>
+
+    <string name="step_choose_file">ファイルを選択</string>
+    <string name="step_filter">日付で絞り込み</string>
+    <string name="step_preview">プレビュー</string>
+    <string name="step_export">エクスポート</string>
+
+    <string name="loaded_badge">読み込み済み</string>
+    <string name="metric_points">ポイント</string>
+    <string name="metric_date_range">期間</string>
+
+    <string name="format_phone">スマホからのエクスポート</string>
+    <string name="format_phone_ios">スマホからのエクスポート (iOS)</string>
+    <string name="format_semantic">Semantic History</string>
+    <string name="format_unknown">不明な形式</string>
+
+    <string name="filter_preset_custom">カスタム…</string>
+
+    <string name="pick_file_button">Timeline.json を選択</string>
+    <string name="idle_hint">解析する Google マップのタイムライン JSON ファイルを選択してください。</string>
+    <string name="idle_help_button">タイムラインのデータを取得するには？</string>
+
+    <string name="loading_opening">ファイルを開いています…</string>
+    <string name="loading_reading">ファイルを読み込み中</string>
+    <string name="loading_decoding">JSON を解析中</string>
+    <string name="loading_decoding_detail">大きなファイルは数秒かかることがあります…</string>
+    <string name="loading_extracting">GPS ポイントを抽出中</string>
+    <string name="loading_extracting_detail">%1$s / %2$s セグメント</string>
+    <string name="loading_sorting">ポイントを時刻順に並べ替え中</string>
+
+    <string name="filter_title">絞り込み</string>
+    <string name="filter_date_range_all">期間: すべての日付</string>
+    <string name="filter_date_range_set">期間: %1$s — %2$s</string>
+    <string name="filter_filtered_count">絞り込み後: %2$s 件中 %1$s 件</string>
+    <string name="filter_set_button">期間を設定</string>
+    <string name="filter_change_button">期間を変更</string>
+    <string name="filter_clear_button">クリア</string>
+
+    <string name="date_dialog_title">日付で絞り込み</string>
+    <string name="date_dialog_cancel">キャンセル</string>
+    <string name="date_dialog_apply">適用</string>
+    <string name="date_preset_last_7">過去 7 日間</string>
+    <string name="date_preset_last_30">過去 30 日間</string>
+    <string name="date_preset_last_90">過去 90 日間</string>
+    <string name="date_preset_all">すべてのデータ</string>
+
+    <string name="preview_title">プレビュー</string>
+    <string name="preview_no_points">現在の絞り込みに一致するポイントがありません — 表示するものがありません。</string>
+    <string name="preview_expand">拡大</string>
+    <string name="preview_close">閉じる</string>
+
+    <string name="export_title">エクスポート</string>
+    <string name="export_save_button">名前を付けて保存…</string>
+    <string name="export_writing">ファイルを書き込み中…</string>
+    <string name="export_success">%1$s 件のポイントを %2$s に保存しました</string>
+    <string name="export_fallback_filename">選択したファイル</string>
+    <string name="export_error_no_points">現在の絞り込みに一致するポイントがありません。</string>
+    <string name="export_error_generic">%1$s を保存できませんでした: %2$s</string>
+
+    <string name="parse_error">このファイルを Google タイムラインのエクスポートとして読み取れませんでした。\n%1$s: %2$s</string>
+    <string name="parse_error_no_message">(メッセージなし)</string>
+
+    <string name="track_name_full_range">(全体のエクスポート)</string>
+
+    <string name="help_title">タイムラインのデータを取得する</string>
+    <string name="help_intro">2024 年後半以降、Google はタイムラインをお使いの端末にのみ保存します。Google Takeout のオプションはなく、直接読み取れるサードパーティ製アプリもありません。システムの設定から一度エクスポートし、そのファイルをここで開きます。</string>
+
+    <string name="help_method_settings_title">Android の設定からエクスポート（推奨）</string>
+    <string name="help_method_settings_step1">Android の「設定」アプリを開く</string>
+    <string name="help_method_settings_step2">「位置情報」→「位置情報サービス」をタップ</string>
+    <string name="help_method_settings_step3">「タイムライン」をタップ</string>
+    <string name="help_method_settings_step4">「タイムラインデータをエクスポート」をタップ</string>
+    <string name="help_method_settings_step5">求められたら認証する</string>
+    <string name="help_method_settings_step6">ファイルの保存先を選ぶ</string>
+    <string name="help_method_settings_button">位置情報の設定を開く →</string>
+
+    <string name="help_method_maps_title">別の方法: Google マップからエクスポート</string>
+    <string name="help_method_maps_step1">Google マップを開く</string>
+    <string name="help_method_maps_step2">プロフィール写真をタップ（右上）</string>
+    <string name="help_method_maps_step3">「タイムライン」を選ぶ</string>
+    <string name="help_method_maps_step4">⋯ メニューをタップ（右上）</string>
+    <string name="help_method_maps_step5">「位置情報とプライバシーの設定」をタップ</string>
+    <string name="help_method_maps_step6">「タイムラインデータをエクスポート」をタップ</string>
+    <string name="help_method_maps_button">Google マップを開く →</string>
+
+    <string name="help_import_title">ファイルをこのアプリに取り込む</string>
+    <string name="help_import_step1">「ファイル」アプリを開いて Timeline.json を探し、共有 →「Timeline Exporter」をタップ、または</string>
+    <string name="help_import_step2">上の「Timeline.json を選択」をタップしてファイルを探します。</string>
+
+    <string name="help_notes_title">注意</string>
+    <string name="help_note_file_location">• エクスポートされたファイル名は Timeline.json です。エクスポート時に選んだ場所に保存されます。Android のバージョンによっては特定のフォルダ（例: ダウンロード）へのアクセスが制限されるため、アプリが読み取れない場合は移動してみてください。</string>
+    <string name="help_note_eu_csv">• プライバシー法の関係で、EU のユーザーには JSON ではなく CSV が提供される場合があります。このバージョンのアプリは JSON のみに対応しています。</string>
+    <string name="help_note_slow_first">• 位置情報の履歴が数年分ある場合、最初のエクスポートには 1〜2 分かかることがあります。</string>
+
+    <string name="help_dismiss">OK</string>
+    <string name="help_toast_no_location_settings">この端末で位置情報の設定を開けませんでした。</string>
+    <string name="help_toast_no_maps_installed">この端末に Google マップがインストールされていません。</string>
+    <string name="help_toast_no_maps_launch">Google マップを開けませんでした。</string>
+
+    <string name="app_version">バージョン %1$s</string>
+
+    <string name="tipjar_title">開発を支援する</string>
+    <string name="tipjar_blurb">Timeline Exporter は無料・広告なし・オープンソースです。役に立ったら、ささやかなチップが直接私に届きます。ご検討ありがとうございます！</string>
+    <string name="tipjar_connecting">Google Play に接続中…</string>
+    <string name="tipjar_processing">Google Play を開いています…</string>
+    <string name="tipjar_no_products">現在、チップのオプションはありません。通常、これはアプリが Google Play でまだ完全に設定されていないことを意味します。後でもう一度お試しください。</string>
+    <string name="tipjar_unavailable">この端末では Google Play 課金を利用できません。チップには Google Play 開発者サービスが必要です。</string>
+    <string name="tipjar_thank_you">ありがとうございます！💜</string>
+    <string name="tipjar_thank_you_detail">あなたのチップはとても助かります。これからもアプリが役に立ちますように！</string>
+    <string name="tipjar_tip_again">もう一度チップを贈る</string>
+    <string name="tipjar_error">購入中に問題が発生しました。</string>
+    <string name="tipjar_retry">もう一度試す</string>
+    <string name="tipjar_close">閉じる</string>
+</resources>

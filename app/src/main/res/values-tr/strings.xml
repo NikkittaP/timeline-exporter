@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_help">Yardım</string>
+    <string name="action_support">Destekle</string>
+    <string name="app_logo_desc">Timeline Exporter logosu</string>
+
+    <string name="step_choose_file">Dosya seç</string>
+    <string name="step_filter">Tarihe göre filtrele</string>
+    <string name="step_preview">Önizleme</string>
+    <string name="step_export">Dışa aktar</string>
+
+    <string name="loaded_badge">Yüklendi</string>
+    <string name="metric_points">Noktalar</string>
+    <string name="metric_date_range">Tarih aralığı</string>
+
+    <string name="format_phone">Telefon dışa aktarımı</string>
+    <string name="format_phone_ios">Telefon dışa aktarımı (iOS)</string>
+    <string name="format_semantic">Semantic History</string>
+    <string name="format_unknown">Bilinmeyen biçim</string>
+
+    <string name="filter_preset_custom">Özel…</string>
+
+    <string name="pick_file_button">Timeline.json seç</string>
+    <string name="idle_hint">Ayrıştırmak için bir Google Maps Timeline JSON dosyası seçin.</string>
+    <string name="idle_help_button">Timeline verilerimi nasıl alırım?</string>
+
+    <string name="loading_opening">Dosya açılıyor…</string>
+    <string name="loading_reading">Dosya okunuyor</string>
+    <string name="loading_decoding">JSON çözümleniyor</string>
+    <string name="loading_decoding_detail">Büyük dosyalar birkaç saniye sürebilir…</string>
+    <string name="loading_extracting">GPS noktaları çıkarılıyor</string>
+    <string name="loading_extracting_detail">%1$s / %2$s segment</string>
+    <string name="loading_sorting">Noktalar zamana göre sıralanıyor</string>
+
+    <string name="filter_title">Filtre</string>
+    <string name="filter_date_range_all">Tarih aralığı: tüm tarihler</string>
+    <string name="filter_date_range_set">Tarih aralığı: %1$s — %2$s</string>
+    <string name="filter_filtered_count">Filtreden sonra: %1$s / %2$s nokta</string>
+    <string name="filter_set_button">Tarih aralığı belirle</string>
+    <string name="filter_change_button">Tarih aralığını değiştir</string>
+    <string name="filter_clear_button">Temizle</string>
+
+    <string name="date_dialog_title">Tarihe göre filtrele</string>
+    <string name="date_dialog_cancel">İptal</string>
+    <string name="date_dialog_apply">Uygula</string>
+    <string name="date_preset_last_7">Son 7 gün</string>
+    <string name="date_preset_last_30">Son 30 gün</string>
+    <string name="date_preset_last_90">Son 90 gün</string>
+    <string name="date_preset_all">Tüm veriler</string>
+
+    <string name="preview_title">Önizleme</string>
+    <string name="preview_no_points">Geçerli filtreyle eşleşen nokta yok — gösterilecek bir şey yok.</string>
+    <string name="preview_expand">Büyüt</string>
+    <string name="preview_close">Kapat</string>
+
+    <string name="export_title">Dışa aktar</string>
+    <string name="export_save_button">Farklı kaydet…</string>
+    <string name="export_writing">Dosya yazılıyor…</string>
+    <string name="export_success">%1$s nokta %2$s konumuna kaydedildi</string>
+    <string name="export_fallback_filename">seçilen dosya</string>
+    <string name="export_error_no_points">Geçerli filtreyle eşleşen nokta yok.</string>
+    <string name="export_error_generic">%1$s kaydedilemedi: %2$s</string>
+
+    <string name="parse_error">Bu dosya bir Google Timeline dışa aktarımı olarak okunamadı.\n%1$s: %2$s</string>
+    <string name="parse_error_no_message">(mesaj yok)</string>
+
+    <string name="track_name_full_range">(tam dışa aktarım)</string>
+
+    <string name="help_title">Timeline verilerinizi alma</string>
+    <string name="help_intro">2024 sonundan beri Google, Timeline\'ı yalnızca cihazınızda saklıyor — Google Takeout seçeneği yok ve onu doğrudan okuyabilen üçüncü taraf uygulama da yok. Verileri sistem Ayarları\'ndan bir kez dışa aktarır, ardından dosyayı burada açarsınız.</string>
+
+    <string name="help_method_settings_title">Android Ayarları\'ndan dışa aktarma (önerilir)</string>
+    <string name="help_method_settings_step1">Android Ayarlar uygulamasını açın</string>
+    <string name="help_method_settings_step2">Konum → Konum hizmetleri\'ne dokunun</string>
+    <string name="help_method_settings_step3">Timeline\'a dokunun</string>
+    <string name="help_method_settings_step4">“Timeline verilerini dışa aktar”a dokunun</string>
+    <string name="help_method_settings_step5">İstendiğinde kimliğinizi doğrulayın</string>
+    <string name="help_method_settings_step6">Dosyanın kaydedileceği yeri seçin</string>
+    <string name="help_method_settings_button">Konum ayarlarını aç →</string>
+
+    <string name="help_method_maps_title">Alternatif: Google Maps\'ten dışa aktarma</string>
+    <string name="help_method_maps_step1">Google Maps\'i açın</string>
+    <string name="help_method_maps_step2">Profil fotoğrafınıza dokunun (sağ üst)</string>
+    <string name="help_method_maps_step3">“Zaman çizelgeniz”i seçin</string>
+    <string name="help_method_maps_step4">⋯ menüsüne dokunun (sağ üst)</string>
+    <string name="help_method_maps_step5">“Konum ve gizlilik ayarları”na dokunun</string>
+    <string name="help_method_maps_step6">“Timeline verilerini dışa aktar”a dokunun</string>
+    <string name="help_method_maps_button">Google Maps\'i aç →</string>
+
+    <string name="help_import_title">Dosyayı bu uygulamaya alma</string>
+    <string name="help_import_step1">Dosyalar uygulamanızı açın, Timeline.json\'u bulun, Paylaş → “Timeline Exporter”a dokunun veya</string>
+    <string name="help_import_step2">Yukarıdaki “Timeline.json seç”e dokunun ve dosyaya gidin.</string>
+
+    <string name="help_notes_title">Notlar</string>
+    <string name="help_note_file_location">• Dışa aktarılan dosyanın adı Timeline.json\'dur. Dışa aktarırken seçtiğiniz yere kaydedilir — bazı Android sürümleri belirli klasörlere (ör. İndirilenler) erişimi kısıtlar; uygulama okuyamıyorsa dosyayı taşımayı deneyin.</string>
+    <string name="help_note_eu_csv">• Gizlilik yasaları nedeniyle AB kullanıcıları JSON yerine CSV alabilir. Uygulamanın bu sürümü yalnızca JSON\'u işler.</string>
+    <string name="help_note_slow_first">• Yıllarca konum geçmişiniz varsa ilk dışa aktarma bir iki dakika sürebilir.</string>
+
+    <string name="help_dismiss">Anladım</string>
+    <string name="help_toast_no_location_settings">Bu cihazda konum ayarları açılamadı.</string>
+    <string name="help_toast_no_maps_installed">Bu cihazda Google Maps yüklü değil.</string>
+    <string name="help_toast_no_maps_launch">Google Maps açılamadı.</string>
+
+    <string name="app_version">Sürüm %1$s</string>
+
+    <string name="tipjar_title">Geliştirmeyi destekle</string>
+    <string name="tipjar_blurb">Timeline Exporter ücretsiz, reklamsız ve açık kaynaktır. Faydalı olduysa, küçük bir bahşiş doğrudan bana ulaşır. Düşündüğünüz için teşekkürler!</string>
+    <string name="tipjar_connecting">Google Play\'e bağlanılıyor…</string>
+    <string name="tipjar_processing">Google Play açılıyor…</string>
+    <string name="tipjar_no_products">Şu anda bahşiş seçeneği yok. Bu genellikle uygulamanın Google Play\'de henüz tam olarak ayarlanmadığı anlamına gelir. Lütfen daha sonra tekrar deneyin.</string>
+    <string name="tipjar_unavailable">Bu cihazda Google Play Faturalandırma kullanılamıyor. Bahşişler için Google Play hizmetleri gerekir.</string>
+    <string name="tipjar_thank_you">Teşekkürler! 💜</string>
+    <string name="tipjar_thank_you_detail">Bahşişiniz gerçekten yardımcı oluyor. Umarım uygulama faydalı olmaya devam eder!</string>
+    <string name="tipjar_tip_again">Tekrar bahşiş ver</string>
+    <string name="tipjar_error">Satın alma sırasında bir şeyler ters gitti.</string>
+    <string name="tipjar_retry">Tekrar dene</string>
+    <string name="tipjar_close">Kapat</string>
+</resources>

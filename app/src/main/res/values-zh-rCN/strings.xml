@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_help">帮助</string>
+    <string name="action_support">支持</string>
+    <string name="app_logo_desc">Timeline Exporter 徽标</string>
+
+    <string name="step_choose_file">选择文件</string>
+    <string name="step_filter">按日期筛选</string>
+    <string name="step_preview">预览</string>
+    <string name="step_export">导出</string>
+
+    <string name="loaded_badge">已加载</string>
+    <string name="metric_points">点</string>
+    <string name="metric_date_range">日期范围</string>
+
+    <string name="format_phone">手机导出</string>
+    <string name="format_phone_ios">手机导出 (iOS)</string>
+    <string name="format_semantic">Semantic History</string>
+    <string name="format_unknown">未知格式</string>
+
+    <string name="filter_preset_custom">自定义…</string>
+
+    <string name="pick_file_button">选择 Timeline.json</string>
+    <string name="idle_hint">选择要解析的 Google 地图时间轴 JSON 文件。</string>
+    <string name="idle_help_button">如何获取时间轴数据？</string>
+
+    <string name="loading_opening">正在打开文件…</string>
+    <string name="loading_reading">正在读取文件</string>
+    <string name="loading_decoding">正在解析 JSON</string>
+    <string name="loading_decoding_detail">大文件可能需要几秒钟…</string>
+    <string name="loading_extracting">正在提取 GPS 点</string>
+    <string name="loading_extracting_detail">%1$s / %2$s 个分段</string>
+    <string name="loading_sorting">正在按时间排序点</string>
+
+    <string name="filter_title">筛选</string>
+    <string name="filter_date_range_all">日期范围：所有日期</string>
+    <string name="filter_date_range_set">日期范围：%1$s — %2$s</string>
+    <string name="filter_filtered_count">筛选后：%2$s 个点中的 %1$s 个</string>
+    <string name="filter_set_button">设置日期范围</string>
+    <string name="filter_change_button">更改日期范围</string>
+    <string name="filter_clear_button">清除</string>
+
+    <string name="date_dialog_title">按日期筛选</string>
+    <string name="date_dialog_cancel">取消</string>
+    <string name="date_dialog_apply">应用</string>
+    <string name="date_preset_last_7">最近 7 天</string>
+    <string name="date_preset_last_30">最近 30 天</string>
+    <string name="date_preset_last_90">最近 90 天</string>
+    <string name="date_preset_all">所有数据</string>
+
+    <string name="preview_title">预览</string>
+    <string name="preview_no_points">没有符合当前筛选条件的点 — 无可预览内容。</string>
+    <string name="preview_expand">放大</string>
+    <string name="preview_close">关闭</string>
+
+    <string name="export_title">导出</string>
+    <string name="export_save_button">另存为…</string>
+    <string name="export_writing">正在写入文件…</string>
+    <string name="export_success">已将 %1$s 个点保存到 %2$s</string>
+    <string name="export_fallback_filename">所选文件</string>
+    <string name="export_error_no_points">没有符合当前筛选条件的点。</string>
+    <string name="export_error_generic">无法保存 %1$s：%2$s</string>
+
+    <string name="parse_error">无法将此文件作为 Google 时间轴导出读取。\n%1$s：%2$s</string>
+    <string name="parse_error_no_message">（无消息）</string>
+
+    <string name="track_name_full_range">（完整导出）</string>
+
+    <string name="help_title">获取你的时间轴数据</string>
+    <string name="help_intro">自 2024 年底起，Google 仅将时间轴存储在你的设备上——没有 Google Takeout 选项，也没有可直接读取它的第三方应用。你从系统设置中导出一次，然后在这里打开该文件。</string>
+
+    <string name="help_method_settings_title">从 Android 设置导出（推荐）</string>
+    <string name="help_method_settings_step1">打开 Android “设置”应用</string>
+    <string name="help_method_settings_step2">点按“位置信息”→“位置信息服务”</string>
+    <string name="help_method_settings_step3">点按“时间轴”</string>
+    <string name="help_method_settings_step4">点按“导出时间轴数据”</string>
+    <string name="help_method_settings_step5">出现提示时进行验证</string>
+    <string name="help_method_settings_step6">选择文件的保存位置</string>
+    <string name="help_method_settings_button">打开位置信息设置 →</string>
+
+    <string name="help_method_maps_title">备选：从 Google 地图导出</string>
+    <string name="help_method_maps_step1">打开 Google 地图</string>
+    <string name="help_method_maps_step2">点按你的头像（右上角）</string>
+    <string name="help_method_maps_step3">选择“你的时间轴”</string>
+    <string name="help_method_maps_step4">点按 ⋯ 菜单（右上角）</string>
+    <string name="help_method_maps_step5">点按“位置信息和隐私设置”</string>
+    <string name="help_method_maps_step6">点按“导出时间轴数据”</string>
+    <string name="help_method_maps_button">打开 Google 地图 →</string>
+
+    <string name="help_import_title">将文件导入此应用</string>
+    <string name="help_import_step1">打开“文件”应用，找到 Timeline.json，点按分享→“Timeline Exporter”，或</string>
+    <string name="help_import_step2">点按上方的“选择 Timeline.json”并浏览到该文件。</string>
+
+    <string name="help_notes_title">备注</string>
+    <string name="help_note_file_location">• 导出的文件名为 Timeline.json。它会保存在你导出时选择的位置——某些 Android 版本会限制对特定文件夹（如“下载”）的访问，因此如果应用无法读取，请尝试移动该文件。</string>
+    <string name="help_note_eu_csv">• 出于隐私法规的原因，欧盟用户可能会收到 CSV 而非 JSON。此版本的应用仅支持 JSON。</string>
+    <string name="help_note_slow_first">• 如果你有数年的位置信息记录，首次导出可能需要一两分钟。</string>
+
+    <string name="help_dismiss">知道了</string>
+    <string name="help_toast_no_location_settings">无法在此设备上打开位置信息设置。</string>
+    <string name="help_toast_no_maps_installed">此设备未安装 Google 地图。</string>
+    <string name="help_toast_no_maps_launch">无法打开 Google 地图。</string>
+
+    <string name="app_version">版本 %1$s</string>
+
+    <string name="tipjar_title">支持开发</string>
+    <string name="tipjar_blurb">Timeline Exporter 免费、无广告且开源。如果它对你有用，一点小费会直接给到我。感谢你的考虑！</string>
+    <string name="tipjar_connecting">正在连接 Google Play…</string>
+    <string name="tipjar_processing">正在打开 Google Play…</string>
+    <string name="tipjar_no_products">目前没有可用的打赏选项。这通常表示应用在 Google Play 中尚未完全设置。请稍后再试。</string>
+    <string name="tipjar_unavailable">此设备不支持 Google Play 结算。打赏需要 Google Play 服务。</string>
+    <string name="tipjar_thank_you">谢谢！💜</string>
+    <string name="tipjar_thank_you_detail">你的小费真的很有帮助。希望这个应用继续对你有用！</string>
+    <string name="tipjar_tip_again">再次打赏</string>
+    <string name="tipjar_error">购买时出了点问题。</string>
+    <string name="tipjar_retry">重试</string>
+    <string name="tipjar_close">关闭</string>
+</resources>
