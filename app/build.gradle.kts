@@ -40,8 +40,10 @@ android {
         //   versionCode=2, versionName="1.0.0" -> Closed (Alpha) track
         //   versionCode=3, versionName="1.1.0" -> map gap-splitting, multi-format
         //                                         parser, localization, version footer
-        versionCode = 3
-        versionName = "1.1.0"
+        //   versionCode=4, versionName="1.2.0" -> language picker, polish UI,
+        //                                         reject non-Timeline
+        versionCode = 4
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
