@@ -28,6 +28,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
@@ -54,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -85,6 +88,7 @@ fun TimelineExporterApp() {
     var helpDialogOpen by remember { mutableStateOf(false) }
     var tipJarDialogOpen by remember { mutableStateOf(false) }
     var languageDialogOpen by remember { mutableStateOf(false) }
+    var overflowMenuOpen by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -103,17 +107,41 @@ fun TimelineExporterApp() {
                     Text(
                         text = stringResource(R.string.app_name),
                         modifier = Modifier.padding(start = 8.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 actions = {
+                    // Only fixed-width icon buttons live in the bar so the title
+                    // never gets squeezed by translated labels. Text actions
+                    // (Support/Help) move into an overflow menu, where their
+                    // width can't affect the layout in any language.
                     IconButton(onClick = { languageDialogOpen = true }) {
                         Text("🌐", style = MaterialTheme.typography.titleMedium)
                     }
-                    TextButton(onClick = { tipJarDialogOpen = true }) {
-                        Text(stringResource(R.string.action_support))
-                    }
-                    TextButton(onClick = { helpDialogOpen = true }) {
-                        Text(stringResource(R.string.action_help))
+                    Box {
+                        IconButton(onClick = { overflowMenuOpen = true }) {
+                            Text("⋮", style = MaterialTheme.typography.titleLarge)
+                        }
+                        DropdownMenu(
+                            expanded = overflowMenuOpen,
+                            onDismissRequest = { overflowMenuOpen = false },
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.action_support)) },
+                                onClick = {
+                                    overflowMenuOpen = false
+                                    tipJarDialogOpen = true
+                                },
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.action_help)) },
+                                onClick = {
+                                    overflowMenuOpen = false
+                                    helpDialogOpen = true
+                                },
+                            )
+                        }
                     }
                 },
             )

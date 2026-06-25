@@ -3,6 +3,7 @@ package io.github.nikkittap.timelineexporter.ui
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -61,8 +62,12 @@ fun LanguageDialog(onDismiss: () -> Unit) {
     val apply: (String) -> Unit = { tag ->
         if (tag != current) {
             LocaleManager.setLanguage(context, tag)
-            // Recreate so attachBaseContext re-applies the new locale.
-            context.findActivity()?.recreate()
+            // API < 33: recreate so attachBaseContext re-applies the override.
+            // API 33+: the platform applies the per-app locale and recreates
+            // the activity itself — recreating here would race with it.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                context.findActivity()?.recreate()
+            }
         }
         onDismiss()
     }
