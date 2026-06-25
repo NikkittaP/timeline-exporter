@@ -2,7 +2,7 @@
 <resources>
 
     <!-- App identity -->
-    <string name="app_name">Timeline Exporter</string>
+    <string name="app_name" translatable="false">Timeline Exporter</string>
 
     <!-- Top app bar -->
     <string name="action_help">Help</string>
@@ -24,7 +24,7 @@
     <string name="format_phone">Phone export</string>
     <string name="format_phone_ios">Phone export (iOS)</string>
     <string name="format_semantic">Semantic History</string>
-    <string name="format_records">Records.json</string>
+    <string name="format_records" translatable="false">Records.json</string>
     <string name="format_unknown">Unknown format</string>
 
     <!-- Filter quick presets -->
@@ -38,8 +38,8 @@
     <!-- Loading stages (translated in UI from VM's semantic LoadingPhase) -->
     <string name="loading_opening">Opening file…</string>
     <string name="loading_reading">Reading file</string>
-    <string name="loading_reading_detail">%1$s / %2$s</string>
-    <string name="loading_reading_detail_unknown">%1$s</string>
+    <string name="loading_reading_detail" translatable="false">%1$s / %2$s</string>
+    <string name="loading_reading_detail_unknown" translatable="false">%1$s</string>
     <string name="loading_decoding">Decoding JSON</string>
     <string name="loading_decoding_detail">Large files can take a few seconds…</string>
     <string name="loading_extracting">Extracting GPS points</string>
@@ -48,9 +48,9 @@
 
     <!-- Parse result display (compact two-line summary).
          %1$s = formatted point count, %2$s = formatted segment count. -->
-    <string name="result_summary">%1$s points from %2$s segments</string>
+    <string name="result_summary" translatable="false">%1$s points from %2$s segments</string>
     <!-- %1$s = formatted first-point date, %2$s = formatted last-point date. -->
-    <string name="result_range">%1$s — %2$s</string>
+    <string name="result_range" translatable="false">%1$s — %2$s</string>
 
     <!-- Filter section -->
     <string name="filter_title">Filter</string>
@@ -95,10 +95,10 @@
 
     <!-- Track-name metadata embedded inside exported GPX/KML/GeoJSON files.
          %1$s = the date-range portion below. -->
-    <string name="track_name">Google Timeline %1$s</string>
+    <string name="track_name" translatable="false">Google Timeline %1$s</string>
     <string name="track_name_full_range">(full export)</string>
     <!-- %1$s = formatted start date, %2$s = formatted end date. -->
-    <string name="track_name_date_range">%1$s — %2$s</string>
+    <string name="track_name_date_range" translatable="false">%1$s — %2$s</string>
 
     <!-- Help dialog -->
     <string name="help_title">Getting your Timeline data</string>
