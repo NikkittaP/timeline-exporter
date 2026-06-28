@@ -1,0 +1,64 @@
+# Configuration for `fastlane screengrab` / capture_android_screenshots.
+# Docs: https://docs.fastlane.tools/actions/capture_android_screenshots/
+
+app_package_name("io.github.nikkittap.timelineexporter")
+tests_package_name("io.github.nikkittap.timelineexporter.test")
+
+# Run every test in our package (ScreenshotTest).
+use_tests_in_packages(["io.github.nikkittap.timelineexporter"])
+
+# Built by the `gradle assembleDebug assembleDebugAndroidTest` step.
+app_apk_path("app/build/outputs/apk/debug/app-debug.apk")
+tests_apk_path("app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk")
+
+test_instrumentation_runner("androidx.test.runner.AndroidJUnitRunner")
+
+# One screenshot set per language. These are the 18 languages your app ships
+# (locales_config.xml), expressed as Android system locales. Trim any that an
+# emulator doesn't carry, or that you don't list on the Play Store.
+# NOTE: these double as (a) the Android system locale screengrab sets on the
+# device AND (b) the Play Console store-listing language (the folder name supply
+# uploads into). Most are identical, but Play uses NO region for a couple:
+# Arabic is "ar" (not ar-EG) and Ukrainian is "uk" (not uk-UA). Using the
+# regioned forms makes `supply` fail with "Invalid request".
+locales([
+  "en-US",
+  "ar",
+  "de-DE",
+  "es-ES",
+  "fr-FR",
+  "hi-IN",
+  "it-IT",
+  "ja-JP",
+  "ko-KR",
+  "nl-NL",
+  "pl-PL",
+  "pt-BR",
+  "ru-RU",
+  "sv-SE",
+  "tr-TR",
+  "uk",
+  "zh-CN",
+  "zh-TW",
+])
+
+# Clean filenames (02_overview.png, not 02_overview_<timestamp>.png). This lets
+# re-runs overwrite the same files instead of piling up duplicates, and lets the
+# caption script find 03_map_fullscreen.png by name.
+use_timestamp_suffix(false)
+
+# Leave the device back on English after a run.
+ending_locale("en-US")
+
+# Clear old shots before a run so re-runs don't accumulate. screengrab clears
+# only the CURRENT device class's sub-folders (e.g. phoneScreenshots) across
+# locales, so your 7"/10" tablet shots are left intact. Capture each device
+# class in its own run.
+clear_previous_screenshots(true)
+
+# Keep this false. With it true, screengrab uninstalls + reinstalls the app
+# for EVERY locale (18x), which is slow and repeatedly hammers the adb server
+# — long runs then die with "failed to start daemon". The app is identical
+# across locales, so we install once (screengrab still installs the freshly
+# built APKs at the start of a run) and only switch the device locale per pass.
+reinstall_app(false)

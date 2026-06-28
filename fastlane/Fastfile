@@ -1,0 +1,81 @@
+default_platform(:android)
+
+# ---------------------------------------------------------------------------
+# Timeline Exporter — screenshot capture + Play Store upload.
+#
+# Typical flow (see SCREENSHOTS_SETUP.md for the full walkthrough):
+#   1. boot a PHONE emulator,  then:  bundle exec fastlane screens_phone
+#   2. boot a 7" TABLET emul., then:  bundle exec fastlane screens_tablet7
+#   3. boot a 10" TABLET emul, then:  bundle exec fastlane screens_tablet10
+#   4. review fastlane/metadata/android/<locale>/images/...
+#   5. upload:                        bundle exec fastlane upload_screens
+# ---------------------------------------------------------------------------
+
+platform :android do
+
+  desc "Build the debug app + instrumentation APKs that screengrab drives"
+  lane :build_for_screengrab do
+    gradle(
+      task: "assembleDebug assembleDebugAndroidTest",
+      flags: "--stacktrace"
+    )
+  end
+
+  desc "Overlay the localized '100% on-device' caption onto 01_hero (built " \
+       "from the clean 03_map_fullscreen shot). Requires Python + Pillow."
+  lane :add_hero_captions do
+    # The script resolves its own paths, so cwd doesn't matter. Use `python`
+    # (Windows); change to `python3` on macOS/Linux if that's your launcher.
+    sh("python", "../tools/add_hero_caption.py")
+  end
+
+  desc "Capture screenshots on a PHONE emulator/device (run one first)"
+  lane :screens_phone do
+    build_for_screengrab
+    capture_android_screenshots(device_type: "phone")
+    add_hero_captions
+  end
+
+  desc "Capture screenshots on a 7-inch TABLET emulator/device"
+  lane :screens_tablet7 do
+    build_for_screengrab
+    capture_android_screenshots(device_type: "sevenInch")
+    add_hero_captions
+  end
+
+  desc "Capture screenshots on a 10-inch TABLET emulator/device"
+  lane :screens_tablet10 do
+    build_for_screengrab
+    capture_android_screenshots(device_type: "tenInch")
+    add_hero_captions
+  end
+
+  desc "Upload ONLY screenshots to Play (internal track). Leaves your listing " \
+       "text, release notes and the AAB untouched."
+  lane :upload_screens do
+    upload_to_play_store(
+      track: "internal",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,     # don't overwrite your hand-edited listing
+      skip_upload_changelogs: true,   # release notes handled separately
+      skip_upload_images: true,       # icon / feature graphic left as-is
+      skip_upload_screenshots: false, # <-- the only thing we push
+      validate_only: false
+    )
+  end
+
+  desc "Dry-run the upload (validates, changes nothing on Play)"
+  lane :upload_screens_dryrun do
+    upload_to_play_store(
+      track: "internal",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: false,
+      validate_only: true
+    )
+  end
+end

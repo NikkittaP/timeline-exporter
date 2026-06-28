@@ -1,0 +1,24 @@
+Caption overlay for screenshot #1 (the "hero" image, file 01_hero.png).
+
+Message: emphasise that everything is processed on-device / privacy.
+Each line is "<play-locale>: <caption>". Reuse these whether you add the
+caption with frameit (title.strings) or by hand in an image editor.
+
+en-US: 100% on-device — your location data never leaves your phone
+ar:    ‏100% على جهازك — بيانات موقعك لا تغادر هاتفك أبدًا
+de-DE: 100 % auf dem Gerät — deine Standortdaten verlassen nie dein Handy
+es-ES: 100 % en el dispositivo: tus datos de ubicación nunca salen del teléfono
+fr-FR: 100 % sur l'appareil — vos données de localisation ne quittent jamais votre téléphone
+hi-IN: 100% आपके फ़ोन पर — आपका लोकेशन डेटा कभी फ़ोन से बाहर नहीं जाता
+it-IT: 100% sul dispositivo — i tuoi dati di posizione non lasciano mai il telefono
+ja-JP: 100% 端末内で処理 — 位置データはスマホの外に出ません
+ko-KR: 100% 기기 내 처리 — 위치 데이터가 휴대폰을 벗어나지 않습니다
+nl-NL: 100% op je toestel — je locatiegegevens verlaten je telefoon nooit
+pl-PL: 100% na urządzeniu — dane o lokalizacji nie opuszczają telefonu
+pt-BR: 100% no dispositivo — seus dados de localização nunca saem do telefone
+ru-RU: 100% на устройстве — данные о местоположении не покидают телефон
+sv-SE: 100% på enheten — dina platsdata lämnar aldrig telefonen
+tr-TR: 100% cihazınızda — konum verileriniz telefonunuzdan çıkmaz
+uk-UA: 100% на пристрої — дані про місцезнаходження не залишають телефон
+zh-CN: 100% 在本机处理 — 你的位置信息绝不离开手机
+zh-TW: 100% 在本機處理 — 你的位置資訊絕不離開手機

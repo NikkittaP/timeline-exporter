@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Debug-only manifest. Everything here is merged into the *debug* build that
+  the screenshot tests run against, and is NEVER part of the release AAB.
+
+  It adds:
+   * the permissions Fastlane screengrab needs to switch the device locale
+     and save screenshots, and
+   * a FileProvider the instrumented test uses to hand the bundled demo
+     Timeline file to the app via an ACTION_VIEW intent (the same path a real
+     "Open with" would take), so the test never has to drive the system file
+     picker.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
+    <application>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.screenshot.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/screengrab_file_paths" />
+        </provider>
+    </application>
+
+</manifest>

@@ -42,8 +42,11 @@ android {
         //                                         parser, localization, version footer
         //   versionCode=4, versionName="1.2.0" -> language picker, polish UI,
         //                                         reject non-Timeline
-        versionCode = 4
-        versionName = "1.2.0"
+        //   versionCode=5, versionName="1.2.1" -> fix in-app language switching
+        //                                         on Play installs (disable AAB
+        //                                         language splits)
+        versionCode = 5
+        versionName = "1.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -73,6 +76,18 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+    // Google Play serves an App Bundle and, by default, splits resources by
+    // language — only the device's current locale is delivered at install time.
+    // The in-app language picker (LocaleManager.setApplicationLocales) then has
+    // no resources to switch to, so it appears broken when installed from Play
+    // even though it works in debug builds (which install all locales). Turning
+    // off the language split bundles every locale into the base install.
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -105,6 +120,18 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    // --- Screenshot automation (Fastlane screengrab). androidTest only, so
+    // none of this ships in the release AAB. ---
+    androidTestImplementation("tools.fastlane:screengrab:2.1.1")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
+    // Pin a consistent AndroidX Test stack. ActivityScenario (core) and
+    // ActivityInvoker (monitor) must come from matching versions, otherwise
+    // ActivityScenario.launch throws NoClassDefFoundError at runtime.
+    androidTestImplementation("androidx.test:core:1.6.1")
+    androidTestImplementation("androidx.test:core-ktx:1.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test:rules:1.6.1")
+    androidTestImplementation("androidx.test:monitor:1.7.2")
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

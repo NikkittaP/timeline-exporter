@@ -1,0 +1,5 @@
+# Play service-account key used by `supply` / upload_to_play_store.
+# See SCREENSHOTS_SETUP.md for how to create this JSON. The file is gitignored.
+json_key_file("fastlane/play-service-account.json")
+
+package_name("io.github.nikkittap.timelineexporter")

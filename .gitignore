@@ -16,3 +16,18 @@ local.properties
 keystore.properties
 .kotlin/
 *.hprof
+
+# Build artifacts (generated signed bundle/apk — don't commit)
+app/release/
+*.aab
+*.apk
+
+# Fastlane
+fastlane/play-service-account.json
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output/
+**/.fastlane/
+vendor/bundle/
+.bundle/
+fastlane/metadata/

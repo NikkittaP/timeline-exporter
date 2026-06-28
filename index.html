@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Convert Google Timeline JSON to GPX, KML, GeoJSON & CSV on Android — Timeline Exporter</title>
+<meta name="description" content="Free, open-source Android app that converts your Google Maps Timeline.json to GPX, KML, GeoJSON or CSV — entirely on your phone. No upload, no server, no account, no ads.">
+<link rel="canonical" href="https://nikkittap.github.io/timeline-exporter/">
+<meta name="robots" content="index,follow">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Timeline Exporter — convert Google Timeline JSON to GPX/KML on Android, on-device">
+<meta property="og:description" content="Pick your Timeline.json and export GPX, KML, GeoJSON or CSV. 100% on-device — your location history never leaves the phone. Free, ad-free, open source.">
+<meta property="og:url" content="https://nikkittap.github.io/timeline-exporter/">
+<meta property="og:image" content="https://nikkittap.github.io/timeline-exporter/og-image.png">
+<meta property="og:site_name" content="Timeline Exporter">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Convert Google Timeline JSON to GPX/KML on Android — on-device">
+<meta name="twitter:description" content="Free, open-source on-device converter for the post-2024 Google Maps Timeline export. GPX / KML / GeoJSON / CSV, no upload.">
+<meta name="twitter:image" content="https://nikkittap.github.io/timeline-exporter/og-image.png">
+
+<!-- Structured data: the app -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Timeline Exporter",
+  "operatingSystem": "Android 10+",
+  "applicationCategory": "UtilitiesApplication",
+  "description": "Converts Google Maps Timeline.json to GPX, KML, GeoJSON or CSV entirely on-device. No upload, no account, no ads. Open source.",
+  "url": "https://nikkittap.github.io/timeline-exporter/",
+  "downloadUrl": "https://play.google.com/store/apps/details?id=io.github.nikkittap.timelineexporter",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "license": "https://opensource.org/licenses/MIT"
+}
+</script>
+
+<!-- Structured data: FAQ (eligible for rich results) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I convert Google Timeline JSON to GPX on Android?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Export your data from Google Maps (Settings → Location → Location services → Timeline → Export Timeline data) to get a Timeline.json file, then open it in Timeline Exporter and export to GPX. Everything runs on the phone."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my location history uploaded anywhere?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Timeline Exporter processes everything on your device. There are no servers, accounts, analytics or ads. The only network use is loading map tiles for the optional preview."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which formats can I export to?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "GPX (Strava, Garmin, Komoot, OsmAnd), KML (Google Earth), GeoJSON (QGIS, web maps) and CSV (spreadsheets, data analysis)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work with the new on-device Google Timeline export?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. It supports the current Android on-device export, the iOS variant, older Semantic Location History, and Records.json."
+      }
+    }
+  ]
+}
+</script>
+
+<style>
+:root{
+  --bg:#0f1419; --panel:#161c24; --fg:#e6edf3; --muted:#9fb0c0;
+  --accent:#4ea1ff; --accent-2:#2ee6a6; --border:#243040; --radius:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg); color:var(--fg); line-height:1.6;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:880px; margin:0 auto; padding:0 20px}
+header{padding:64px 0 40px; text-align:center}
+.badge-pill{display:inline-block; font-size:13px; color:var(--accent-2); border:1px solid var(--border); border-radius:999px; padding:5px 14px; margin-bottom:22px; background:rgba(46,230,166,.07)}
+h1{font-size:2.1rem; line-height:1.25; margin:0 0 16px; letter-spacing:-.02em}
+h1 .grad{background:linear-gradient(90deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.sub{font-size:1.15rem; color:var(--muted); max-width:640px; margin:0 auto 30px}
+.cta{display:inline-flex; align-items:center; gap:10px; background:var(--accent); color:#07101c; font-weight:700; padding:14px 26px; border-radius:12px; font-size:1.05rem}
+.cta:hover{text-decoration:none; filter:brightness(1.08)}
+.cta-row{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; align-items:center}
+.ghost{display:inline-flex; align-items:center; gap:8px; padding:14px 22px; border:1px solid var(--border); border-radius:12px; color:var(--fg)}
+.ghost:hover{text-decoration:none; border-color:var(--accent)}
+section{padding:36px 0; border-top:1px solid var(--border)}
+h2{font-size:1.5rem; margin:0 0 18px; letter-spacing:-.01em}
+.grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+.card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:20px}
+.card h3{margin:0 0 6px; font-size:1.05rem}
+.card p{margin:0; color:var(--muted); font-size:.96rem}
+ol.steps{counter-reset:s; list-style:none; padding:0; margin:0}
+ol.steps li{position:relative; padding:14px 0 14px 52px; border-bottom:1px solid var(--border)}
+ol.steps li:last-child{border-bottom:0}
+ol.steps li::before{counter-increment:s; content:counter(s); position:absolute; left:0; top:12px; width:34px; height:34px; border-radius:50%; background:rgba(78,161,255,.12); color:var(--accent); font-weight:700; display:flex; align-items:center; justify-content:center}
+code{background:#0b0f14; border:1px solid var(--border); border-radius:6px; padding:2px 7px; font-size:.9em}
+.formats{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px}
+.formats span{background:rgba(78,161,255,.1); border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:.92rem; color:var(--fg)}
+details{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:0 18px; margin-bottom:12px}
+details summary{cursor:pointer; padding:16px 0; font-weight:600; list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:"+"; float:right; color:var(--accent); font-weight:700}
+details[open] summary::after{content:"\2013"}
+details p{margin:0 0 16px; color:var(--muted)}
+footer{padding:40px 0 60px; text-align:center; color:var(--muted); font-size:.9rem}
+.priv{display:inline-flex; gap:8px; align-items:center; color:var(--accent-2); font-weight:600; margin-top:14px}
+@media(max-width:640px){ h1{font-size:1.7rem} .grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="badge-pill">100% on-device · no upload · open source</span>
+    <h1>Convert your <span class="grad">Google Maps Timeline</span> to GPX, KML, GeoJSON &amp; CSV — on your phone</h1>
+    <p class="sub">Since late 2024, Google Maps Timeline lives only on your device as a single <code>Timeline.json</code>. Timeline Exporter is the free Android app that turns it into open GPS formats — without uploading your location history anywhere.</p>
+    <div class="cta-row">
+      <a class="cta" href="https://play.google.com/store/apps/details?id=io.github.nikkittap.timelineexporter">▶ Get it on Google Play</a>
+      <a class="ghost" href="https://github.com/NikkittaP/timeline-exporter">★ View source on GitHub</a>
+    </div>
+    <div><span class="priv">🔒 Your data never leaves the phone</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="why">
+    <h2>The problem this solves</h2>
+    <p>Google moved Maps Timeline <strong>on-device only</strong> in late 2024 — there's no web view, no Google Takeout export for new data, and older history was deleted unless you backed it up. So your whole location history now sits in a <code>Timeline.json</code> file on your phone with no easy way out.</p>
+    <p>Most converters are <strong>websites that ask you to upload your entire location history to a stranger's server</strong>, or desktop Python scripts. Timeline Exporter does the conversion <strong>right on the device where the file already lives</strong> — nothing is uploaded, ever.</p>
+  </section>
+
+  <section id="formats">
+    <h2>Export to anything that reads GPS tracks</h2>
+    <div class="formats">
+      <span>GPX → Strava, Garmin, Komoot, OsmAnd</span>
+      <span>KML → Google Earth</span>
+      <span>GeoJSON → QGIS, web maps</span>
+      <span>CSV → spreadsheets, analysis</span>
+    </div>
+  </section>
+
+  <section id="how">
+    <h2>How to convert Timeline.json to GPX on Android</h2>
+    <ol class="steps">
+      <li>On your phone: <strong>Settings → Location → Location services → Timeline → Export Timeline data</strong>. This saves a <code>Timeline.json</code>.</li>
+      <li>Open the file in <strong>Timeline Exporter</strong> (or share it to the app from your files).</li>
+      <li>Preview the track on a map and filter by date if you only want part of it.</li>
+      <li>Export to <strong>GPX, KML, GeoJSON or CSV</strong> and open it in any GPS app.</li>
+    </ol>
+  </section>
+
+  <section id="features">
+    <h2>Why Timeline Exporter</h2>
+    <div class="grid">
+      <div class="card"><h3>Private by design</h3><p>No servers, no account, no analytics, no ads. The only network use is map tiles for the preview.</p></div>
+      <div class="card"><h3>Every Google format</h3><p>Current on-device export, the iOS variant, older Semantic Location History, and Records.json.</p></div>
+      <div class="card"><h3>Date filtering</h3><p>Quick presets (last 7 / 30 / 90 days, all data) so you export exactly the range you need.</p></div>
+      <div class="card"><h3>Free &amp; open source</h3><p>MIT-licensed, no catch. Inspect the code, file issues, request features on GitHub.</p></div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2>FAQ</h2>
+    <details open>
+      <summary>How do I convert Google Timeline JSON to GPX on Android?</summary>
+      <p>Export from Google Maps (Settings → Location → Location services → Timeline → Export Timeline data) to get a <code>Timeline.json</code>, then open it in Timeline Exporter and export to GPX. Everything runs on the phone.</p>
+    </details>
+    <details>
+      <summary>Is my location history uploaded anywhere?</summary>
+      <p>No. Timeline Exporter processes everything on your device — no servers, accounts, analytics or ads. The only network use is loading map tiles for the optional preview.</p>
+    </details>
+    <details>
+      <summary>Which formats can I export to?</summary>
+      <p>GPX (Strava, Garmin, Komoot, OsmAnd), KML (Google Earth), GeoJSON (QGIS, web maps) and CSV (spreadsheets, data analysis).</p>
+    </details>
+    <details>
+      <summary>Does it work with the new on-device Google Timeline export?</summary>
+      <p>Yes — it supports the current Android on-device export, the iOS variant, older Semantic Location History, and Records.json.</p>
+    </details>
+    <details>
+      <summary>Is it free? Are there ads?</summary>
+      <p>It's completely free, ad-free and open source under the MIT license.</p>
+    </details>
+  </section>
+
+  <section id="get">
+    <h2>Get the app</h2>
+    <div class="cta-row">
+      <a class="cta" href="https://play.google.com/store/apps/details?id=io.github.nikkittap.timelineexporter">▶ Get it on Google Play</a>
+      <a class="ghost" href="https://github.com/NikkittaP/timeline-exporter">★ Source on GitHub</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Timeline Exporter · free &amp; open source (MIT) · <a href="https://github.com/NikkittaP/timeline-exporter">GitHub</a> · <a href="PRIVACY">Privacy</a></p>
+    <p>Map data © OpenStreetMap contributors · tiles by OpenFreeMap · not affiliated with Google.</p>
+  </div>
+</footer>
+
+</body>
+</html>
