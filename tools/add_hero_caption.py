@@ -36,6 +36,7 @@ BANNER_AT_TOP = True  # False = anchor the banner to the bottom edge
 # ----------------------------------------------------------------------------
 
 import glob
+import locale
 import os
 import re
 import sys
@@ -53,21 +54,38 @@ TARGET_NAME = "01_hero.png"
 DEVICE_DIRS = ("phoneScreenshots", "sevenInchScreenshots", "tenInchScreenshots")
 
 WIN = r"C:\Windows\Fonts"
+LOCAL_FONTS = os.path.join(ROOT, "tools", "fonts")
 
 
 def _win(*names):
     return [os.path.join(WIN, n) for n in names]
 
 
+def _local(*names):
+    return [os.path.join(LOCAL_FONTS, n) for n in names]
+
+
 # Per-script ordered font candidates (bold preferred). Windows first.
 FONTS = {
-    "latin": _win("seguisb.ttf", "arialbd.ttf", "arial.ttf"),
-    "ar": _win("tahomabd.ttf", "tahoma.ttf", "arialbd.ttf", "arial.ttf"),
-    "hi": _win("NirmalaB.ttf", "Nirmala.ttf", "mangalb.ttf", "mangal.ttf"),
-    "zh-CN": _win("msyhbd.ttc", "msyh.ttc", "simhei.ttf"),
-    "zh-TW": _win("msjhbd.ttc", "msjh.ttc"),
-    "ja": _win("YuGothB.ttc", "meiryob.ttc", "meiryo.ttc", "msgothic.ttc"),
-    "ko": _win("malgunbd.ttf", "malgun.ttf"),
+    # Covers: English, Swedish, German, French, Spanish, Italian, Portuguese,
+    # Polish, Dutch, Turkish, Vietnamese, Russian, Ukrainian, etc.
+    "latin": _local("NotoSans-Bold.ttf")
+    + _win("seguisb.ttf", "arialbd.ttf", "arial.ttf"),
+    # Complex scripts
+    "ar": _local("NotoSansArabic-Bold.ttf")
+    + _win("tahomabd.ttf", "tahoma.ttf", "arialbd.ttf", "arial.ttf"),
+    "hi": _local("NotoSansDevanagari-Bold.ttf")
+    + _win("NirmalaB.ttf", "Nirmala.ttf", "mangalb.ttf", "mangal.ttf"),
+    "th": _local("NotoSansThai-Bold.ttf")
+    + _win("NirmalaB.ttf", "Nirmala.ttf", "tahoma.ttf"),
+    "he": _local("NotoSansHebrew-Bold.ttf") + _win("arialbd.ttf", "arial.ttf"),
+    # CJK
+    "zh-CN": _local("NotoSansCJKsc-Bold.otf")
+    + _win("msyhbd.ttc", "msyh.ttc", "simhei.ttf"),
+    "zh-TW": _local("NotoSansCJKtc-Bold.otf") + _win("msjhbd.ttc", "msjh.ttc"),
+    "ja": _local("NotoSansCJKjp-Bold.otf")
+    + _win("YuGothB.ttc", "meiryob.ttc", "meiryo.ttc", "msgothic.ttc"),
+    "ko": _local("NotoSansCJKkr-Bold.otf") + _win("malgunbd.ttf", "malgun.ttf"),
 }
 FONTS_MAC = {
     "latin": ["/System/Library/Fonts/Supplemental/Arial Bold.ttf"],
@@ -112,11 +130,15 @@ HAVE_RAQM = _probe_raqm()
 def script_for(locale):
     if locale in ("zh-CN", "zh-TW"):
         return locale
+
     lang = locale.split("-")[0]
+
     if lang == "zh":
         return "zh-CN"
-    if lang in ("ar", "hi", "ja", "ko"):
+
+    if lang in ("ar", "hi", "ja", "ko", "th", "he"):
         return lang
+
     return "latin"
 
 
@@ -219,7 +241,7 @@ def render(src, dst, locale, caption):
     W, H = img.size
     probe = ImageDraw.Draw(img)
     char_wrap = script_for(locale) in ("zh-CN", "zh-TW", "ja")
-    rtl = locale.split("-")[0] == "ar"
+    rtl = locale.split("-")[0] in ("ar", "he")
     max_w = int(W * 0.88)
 
     # Shrink the font until the caption fits in at most two lines.
@@ -322,15 +344,22 @@ def main():
                     time.sleep(0.5)
             if err is None:
                 count += 1
-                print(f'  {locale}/{dev}  <- "{caption[:48]}..."')
+                safe_caption = (
+                    caption[:48]
+                    .encode(sys.stdout.encoding or "utf-8", errors="replace")
+                    .decode(sys.stdout.encoding or "utf-8")
+                )
+                print(f'  {locale}/{dev}  <- "{safe_caption}..."')
             else:
                 failures.append(f"{locale}/{dev}: {err}")
                 print(f"  ! {locale}/{dev} failed: {err}")
 
     print(f"Done. Wrote {count} hero image(s).")
     if failures:
-        print(f"WARNING: {len(failures)} image(s) failed (see above). Just re-run "
-              "`python tools/add_hero_caption.py` to finish them.")
+        print(
+            f"WARNING: {len(failures)} image(s) failed (see above). Just re-run "
+            "`python tools/add_hero_caption.py` to finish them."
+        )
     if not HAVE_RAQM:
         print(
             "WARNING: this Pillow build lacks libraqm; Arabic/Hindi may render "

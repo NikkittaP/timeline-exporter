@@ -26,6 +26,10 @@ platform :android do
   lane :add_hero_captions do
     # The script resolves its own paths, so cwd doesn't matter. Use `python`
     # (Windows); change to `python3` on macOS/Linux if that's your launcher.
+    ENV["PYTHONUTF8"] = "1"
+    ENV["PYTHONIOENCODING"] = "utf-8"
+    ENV["LANG"] = "en_US.UTF-8"
+    ENV["LC_ALL"] = "en_US.UTF-8"
     sh("python", "../tools/add_hero_caption.py")
   end
 
