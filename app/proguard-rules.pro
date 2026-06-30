@@ -6,9 +6,9 @@
 # kotlinx artifact. So we ONLY need to add rules for libraries that don't
 # ship their own, or for our own code if we ever do reflection on it.
 #
-# The two we need to handle by hand: kotlinx.serialization (its rules are
-# distributed in docs, not embedded) and MapLibre Native (reflective JNI
-# bindings).
+# The one we need to handle by hand: MapLibre Native (reflective JNI
+# bindings). jackson-core is a pure streaming JSON parser with no runtime
+# reflection, so it needs no keep rules — only a defensive -dontwarn.
 # =============================================================================
 
 
@@ -21,42 +21,11 @@
 
 
 # -----------------------------------------------------------------------------
-# kotlinx.serialization — rules straight from upstream
-# (https://github.com/Kotlin/kotlinx.serialization/blob/master/rules/common.pro)
-#
-# Used by parser/TimelineModels.kt @Serializable data classes. Without these,
-# R8 strips the generated $Companion serializers and Json.decodeFromString
-# crashes at runtime with a SerializationException about a missing serializer.
+# Jackson (jackson-core) — streaming JSON parser used by parser/TimelineParser.
+# Pure pull-parser, no reflection, ships no consumer rules. Defensive -dontwarn
+# in case R8 sees optional references it can't resolve.
 # -----------------------------------------------------------------------------
--keepattributes RuntimeVisibleAnnotations,AnnotationDefault
-
-# Keep `Companion` object fields of serializable classes.
--if @kotlinx.serialization.Serializable class **
--keepclassmembers class <1> {
-    static <1>$Companion Companion;
-}
-
-# Keep `serializer()` on companion objects (both default and named).
--if @kotlinx.serialization.Serializable class ** {
-    static **$* *;
-}
--keepclassmembers class <2>$<3> {
-    kotlinx.serialization.KSerializer serializer(...);
-}
-
-# Keep `INSTANCE.serializer()` of serializable objects.
--if @kotlinx.serialization.Serializable class ** {
-    public static ** INSTANCE;
-}
--keepclassmembers class <1> {
-    public static <1> INSTANCE;
-    kotlinx.serialization.KSerializer serializer(...);
-}
-
-# Suppress notes that mostly fire on the library's own internals.
--dontnote kotlinx.serialization.**
--dontwarn kotlinx.serialization.internal.ClassValueReferences
--dontwarn kotlinx.serialization.json.**
+-dontwarn com.fasterxml.jackson.**
 
 
 # -----------------------------------------------------------------------------

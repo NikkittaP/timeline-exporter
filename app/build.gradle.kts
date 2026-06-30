@@ -4,7 +4,6 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 // Load release signing credentials from a gitignored file at the project
@@ -45,8 +44,11 @@ android {
         //   versionCode=5, versionName="1.2.1" -> fix in-app language switching
         //                                         on Play installs (disable AAB
         //                                         language splits)
-        versionCode = 5
-        versionName = "1.2.1"
+        //   versionCode=6, versionName="1.3.0" -> streaming JSON parser (Jackson),
+        //                                         large files no longer OOM,
+        //                                         byte-accurate progress bar
+        versionCode = 6
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -63,8 +65,8 @@ android {
     buildTypes {
         release {
             // R8 strips unused code and obfuscates remaining classes/methods.
-            // Reflection-using libraries (kotlinx.serialization, MapLibre)
-            // are protected by rules in proguard-rules.pro.
+            // Reflection-using libraries (MapLibre) are protected by
+            // rules in proguard-rules.pro.
             isMinifyEnabled = true
             // Strips unused resources (drawables, strings, layouts). Requires
             // isMinifyEnabled = true. Saves a few hundred KB typically.
@@ -111,7 +113,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.jackson.core)
     implementation(libs.maplibre.android.sdk)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.android.billing.ktx)

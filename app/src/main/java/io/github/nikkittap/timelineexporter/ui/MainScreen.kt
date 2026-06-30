@@ -854,7 +854,9 @@ private val ButtonShape = RoundedCornerShape(8.dp)
 
 private fun formatGrouped(n: Int): String = "%,d".format(n)
 
-private fun formatMb(bytes: Long): String = "%.1f MB".format(bytes / 1_048_576.0)
+// Decimal megabytes (1 MB = 1,000,000 bytes) to match the size Android's
+// own file picker reports for the same file.
+private fun formatMb(bytes: Long): String = "%.1f MB".format(bytes / 1_000_000.0)
 
 /**
  * "Last N days" as a real local-day [ClosedRange] of [Instant]s, anchored at

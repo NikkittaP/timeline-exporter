@@ -2,7 +2,6 @@ package io.github.nikkittap.timelineexporter.ui
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.os.SystemClock
 import android.provider.OpenableColumns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,8 +19,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
+import java.io.BufferedInputStream
 import java.io.IOException
+import java.io.InputStream
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -103,13 +103,23 @@ class TimelineViewModel : ViewModel() {
             val newState = withContext(Dispatchers.IO) {
                 try {
                     val totalBytes = queryFileSize(uri, contentResolver)
-                    val json = readUriAsString(uri, contentResolver) { bytesRead ->
-                        _uiState.value = TimelineUiState.Loading(
-                            LoadingPhase.ReadingFile(bytesRead, totalBytes),
-                        )
-                    }
-                    val result = parseTimeline(json) { stage ->
-                        _uiState.value = TimelineUiState.Loading(stage.toLoadingPhase())
+                    val input = contentResolver.openInputStream(uri)
+                        ?: throw IOException("Could not open file: $uri")
+                    // Stream straight from the file: never materialize the whole
+                    // document as a String or object tree, so memory stays
+                    // proportional to the extracted points, not to file size.
+                    val result = CountingInputStream(BufferedInputStream(input)).use { stream ->
+                        parseTimeline(stream) { stage ->
+                            _uiState.value = TimelineUiState.Loading(
+                                when (stage) {
+                                    ParserStage.DecodingJson ->
+                                        LoadingPhase.ReadingFile(stream.bytesRead, totalBytes)
+                                    is ParserStage.ExtractingSegments ->
+                                        LoadingPhase.ReadingFile(stream.bytesRead, totalBytes)
+                                    ParserStage.Sorting -> LoadingPhase.SortingPoints
+                                }
+                            )
+                        }
                     }
                     TimelineUiState.Loaded(result)
                 } catch (e: CancellationException) {
@@ -128,7 +138,6 @@ class TimelineViewModel : ViewModel() {
                     // as the friendly "wrong file" message rather than a stack
                     // trace. Anything truly unexpected keeps the technical detail.
                     val wrong = e is OutOfMemoryError ||
-                        e is kotlinx.serialization.SerializationException ||
                         e is java.io.IOException
                     TimelineUiState.Error(
                         wrongFile = wrong,
@@ -201,12 +210,6 @@ class TimelineViewModel : ViewModel() {
 
 // ---------- private helpers ----------
 
-private fun ParserStage.toLoadingPhase(): LoadingPhase = when (this) {
-    ParserStage.DecodingJson -> LoadingPhase.DecodingJson
-    is ParserStage.ExtractingSegments -> LoadingPhase.ExtractingPoints(done, total)
-    ParserStage.Sorting -> LoadingPhase.SortingPoints
-}
-
 private fun queryFileSize(uri: Uri, resolver: ContentResolver): Long? = try {
     resolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)?.use { cursor ->
         val idx = cursor.getColumnIndex(OpenableColumns.SIZE)
@@ -225,70 +228,29 @@ private fun queryDisplayName(uri: Uri, resolver: ContentResolver): String? = try
     null
 }
 
-private fun readUriAsString(
-    uri: Uri,
-    resolver: ContentResolver,
-    onProgress: (bytesRead: Long) -> Unit,
-): String {
-    val stream = resolver.openInputStream(uri)
-        ?: throw IOException("Could not open file: $uri")
-    return stream.use { input ->
-        val buffer = ByteArray(64 * 1024)
-        val out = ByteArrayOutputStream()
-        var totalRead = 0L
-        var lastReportMs = 0L
-        var sniffed = false
-        while (true) {
-            val n = input.read(buffer)
-            if (n == -1) break
-            // Validate the very first chunk before accumulating anything. A
-            // Timeline export must start with a JSON object or array; anything
-            // else (HTML/XML, an APK or other binary, an image) is rejected
-            // immediately — no full read, no parser, no OOM risk.
-            if (!sniffed) {
-                assertLooksLikeJson(buffer, n)
-                sniffed = true
-            }
-            out.write(buffer, 0, n)
-            totalRead += n
-            val now = SystemClock.uptimeMillis()
-            if (now - lastReportMs >= 50L) {
-                onProgress(totalRead)
-                lastReportMs = now
-            }
-        }
-        if (!sniffed) throw NotTimelineFileException("File is empty")
-        onProgress(totalRead)
-        out.toString(Charsets.UTF_8)
-    }
-}
-
 /**
- * Cheap content sniff over the first bytes of a file: after an optional UTF-8
- * BOM and any leading ASCII whitespace, the first byte must open a JSON object
- * `{` or array `[`. Throws [NotTimelineFileException] otherwise. This catches
- * the common "wrong file" cases (HTML pages, XML, APKs/ZIPs starting with
- * "PK", images) before we read or parse the whole thing.
+ * Wraps an InputStream and counts the bytes pulled through it, so the parser's
+ * progress callbacks can report read progress without ever buffering the file.
  */
-private fun assertLooksLikeJson(buffer: ByteArray, len: Int) {
-    var i = 0
-    if (len >= 3 &&
-        (buffer[0].toInt() and 0xFF) == 0xEF &&
-        (buffer[1].toInt() and 0xFF) == 0xBB &&
-        (buffer[2].toInt() and 0xFF) == 0xBF
-    ) {
-        i = 3 // skip BOM
+private class CountingInputStream(private val wrapped: InputStream) : InputStream() {
+    @Volatile
+    var bytesRead: Long = 0L
+        private set
+
+    override fun read(): Int {
+        val b = wrapped.read()
+        if (b >= 0) bytesRead++
+        return b
     }
-    while (i < len) {
-        when (buffer[i].toInt() and 0xFF) {
-            0x20, 0x09, 0x0A, 0x0D -> i++ // space, tab, LF, CR
-            '{'.code, '['.code -> return // looks like JSON
-            else -> throw NotTimelineFileException(
-                "File does not begin with a JSON object or array",
-            )
-        }
+
+    override fun read(b: ByteArray, off: Int, len: Int): Int {
+        val n = wrapped.read(b, off, len)
+        if (n > 0) bytesRead += n
+        return n
     }
-    throw NotTimelineFileException("File is empty or whitespace only")
+
+    override fun available(): Int = wrapped.available()
+    override fun close() = wrapped.close()
 }
 
 /**

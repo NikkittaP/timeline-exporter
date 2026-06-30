@@ -1,6 +1,9 @@
 package io.github.nikkittap.timelineexporter.parser
 
-import kotlinx.serialization.json.Json
+import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.JsonToken
+import java.io.InputStream
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
@@ -18,7 +21,7 @@ class NotTimelineFileException(message: String) : Exception(message)
  * The UI (or test) decides what to do with them. Parsers stay UI-agnostic.
  */
 sealed interface ParserStage {
-    /** Tree-decoding the raw JSON. Opaque from our side — no sub-progress. */
+    /** Pulling JSON tokens from the stream. */
     data object DecodingJson : ParserStage
 
     /** Walking the decoded segments. [done] of [total] processed so far. */
@@ -32,315 +35,499 @@ sealed interface ParserStage {
  * Parses a Google Maps Timeline / Location History export into a normalized
  * [ParsedTimeline].
  *
- * Google has shipped several incompatible JSON layouts over the years. This
- * parser auto-detects which one a file is and extracts GPS points from each:
+ * The parser is fully STREAMING: it uses a Jackson pull-parser to read one
+ * JSON token at a time and extract GPS points as it goes, discarding each raw
+ * segment immediately. The whole file is never materialized as a String or as
+ * an object tree, so peak memory is proportional to the number of extracted
+ * points — not to the file size. This is what lets multi-hundred-MB exports
+ * load without an OutOfMemoryError.
+ *
+ * Google has shipped several incompatible JSON layouts over the years; this
+ * parser auto-detects and supports all of them:
  *
  *  - **Phone takeout** (`{ "semanticSegments": [...] }`): the current on-device
  *    export. Points come from `timelinePath`; `visit`/`activity` are counted.
- *    Falls back to `rawSignals` positions if no `timelinePath` points exist.
- *  - **Phone takeout, array variant** (`[ {...}, {...} ]`): same segments, but
- *    the top level is a bare array (seen on iOS exports).
+ *    Falls back to `rawSignals` positions only if no path points exist.
+ *  - **Phone takeout, array variant** (`[ {...}, {...} ]`): same segments, bare
+ *    top-level array (seen on iOS exports).
  *  - **Semantic Location History** (`{ "timelineObjects": [...] }`): older
- *    Takeout monthly files. Points come from activity waypoints / raw paths and
- *    place-visit locations, using E7 integer coordinates.
- *  - **Records.json** (`{ "locations": [...] }`): the oldest Takeout format —
- *    raw GPS pings with E7 coordinates.
+ *    Takeout monthly files, E7 integer coordinates.
+ *  - **Records.json** (`{ "locations": [...] }`): the oldest Takeout format.
  *
- * Robustness rules applied throughout:
- *  - Unknown keys are ignored, so new fields Google adds never break the parse.
- *  - Malformed entries (bad coords, bad timestamps) are skipped individually
- *    instead of failing the whole file — real exports routinely contain junk.
+ * Robustness rules:
+ *  - Unknown keys are skipped, so new fields Google adds never break the parse.
+ *  - Malformed entries (bad coords/timestamps) are skipped individually instead
+ *    of failing the whole file.
  *  - Multiple coordinate encodings (degree strings, E7 integers, `geo:` URIs)
  *    and timestamp encodings (ISO-8601 with offset or `Z`, epoch millis/seconds)
  *    are all accepted.
  *
  * Returned [PathPoint]s are sorted ascending by time.
  *
- * @throws kotlinx.serialization.SerializationException if the file isn't valid
- *   JSON or doesn't match any known layout.
+ * @throws NotTimelineFileException if the file matches no known layout.
+ * @throws com.fasterxml.jackson.core.JsonProcessingException if it isn't valid JSON.
  */
-fun parseTimeline(
-    jsonText: String,
-    onProgress: (ParserStage) -> Unit = {},
-): ParsedTimeline {
+
+private const val PROGRESS_STRIDE = 100
+
+private val jsonFactory: JsonFactory = JsonFactory()
+
+/** Parse from an in-memory string (used by tests and small shared text). */
+fun parseTimeline(jsonText: String, onProgress: (ParserStage) -> Unit = {}): ParsedTimeline =
+    jsonFactory.createParser(jsonText).use { streamTimeline(it, onProgress) }
+
+/**
+ * Parse straight from a stream (used for real files). The caller owns the
+ * stream's lifecycle; this only reads from it.
+ */
+fun parseTimeline(input: InputStream, onProgress: (ParserStage) -> Unit = {}): ParsedTimeline =
+    jsonFactory.createParser(input).use { streamTimeline(it, onProgress) }
+
+// ---------- Streaming core ----------
+
+private class SegmentCounters {
+    var path = 0
+    var visit = 0
+    var activity = 0
+}
+
+private fun streamTimeline(p: JsonParser, onProgress: (ParserStage) -> Unit): ParsedTimeline {
     onProgress(ParserStage.DecodingJson)
 
-    // Cheap structural sniff: a bare array can only be the iOS phone variant.
-    // Everything else is an object whose populated top-level key tells us the
-    // format. We still decode exactly once.
-    val isTopLevelArray = jsonText.firstNonWhitespaceChar() == '['
+    val points = ArrayList<PathPoint>()
+    val fallbackSignalPoints = ArrayList<PathPoint>()
+    val counters = SegmentCounters()
+    var total = 0
 
-    if (isTopLevelArray) {
-        val segments = jsonParser.decodeFromString<List<RawSegment>>(jsonText)
-        return extractFromSemanticSegments(
-            segments = segments,
-            rawSignals = null,
-            format = TimelineFormat.PHONE_TAKEOUT_ARRAY,
-            onProgress = onProgress,
+    var sawSemantic = false
+    var sawTimelineObjects = false
+    var sawLocations = false
+    var sawRawSignals = false
+    var arrayVariant = false
+
+    fun tick() {
+        if (total % PROGRESS_STRIDE == 0) onProgress(ParserStage.ExtractingSegments(total, total))
+    }
+
+    when (p.nextToken()) {
+        JsonToken.START_ARRAY -> {
+            // iOS phone variant: a bare top-level array of semantic segments.
+            arrayVariant = true
+            while (p.nextToken() != JsonToken.END_ARRAY) {
+                extractSemanticSegment(p, points, counters)
+                total++; tick()
+            }
+        }
+
+        JsonToken.START_OBJECT -> {
+            while (p.nextToken() != JsonToken.END_OBJECT) {
+                val field = p.currentName()
+                p.nextToken() // advance onto the field's value
+                when (field) {
+                    "semanticSegments" -> {
+                        sawSemantic = true
+                        if (p.currentToken() == JsonToken.START_ARRAY) {
+                            while (p.nextToken() != JsonToken.END_ARRAY) {
+                                extractSemanticSegment(p, points, counters)
+                                total++; tick()
+                            }
+                        } else p.skipChildren()
+                    }
+                    "timelineObjects" -> {
+                        sawTimelineObjects = true
+                        if (p.currentToken() == JsonToken.START_ARRAY) {
+                            while (p.nextToken() != JsonToken.END_ARRAY) {
+                                extractTimelineObject(p, points, counters)
+                                total++; tick()
+                            }
+                        } else p.skipChildren()
+                    }
+                    "locations" -> {
+                        sawLocations = true
+                        if (p.currentToken() == JsonToken.START_ARRAY) {
+                            while (p.nextToken() != JsonToken.END_ARRAY) {
+                                extractLocationRecord(p, points)
+                                counters.path++
+                                total++; tick()
+                            }
+                        } else p.skipChildren()
+                    }
+                    "rawSignals" -> {
+                        sawRawSignals = true
+                        // Only ever used as a fallback when nothing else yielded
+                        // points. If we already have path points (the normal case)
+                        // we skip each entry instead of parsing it — but still walk
+                        // the array element-by-element so byte progress keeps
+                        // advancing through this (often large) trailing section.
+                        if (p.currentToken() == JsonToken.START_ARRAY) {
+                            val collect = points.isEmpty()
+                            var i = 0
+                            while (p.nextToken() != JsonToken.END_ARRAY) {
+                                if (collect) extractRawSignal(p, fallbackSignalPoints) else p.skipChildren()
+                                i++
+                                if (i % PROGRESS_STRIDE == 0) onProgress(ParserStage.ExtractingSegments(total, total))
+                            }
+                        } else p.skipChildren()
+                    }
+                    else -> p.skipChildren()
+                }
+            }
+        }
+
+        else -> throw NotTimelineFileException(
+            "File does not begin with a JSON object or array."
         )
     }
 
-    val root = jsonParser.decodeFromString<RawRoot>(jsonText)
-    return when {
-        root.semanticSegments != null -> extractFromSemanticSegments(
-            segments = root.semanticSegments,
-            rawSignals = root.rawSignals,
-            format = TimelineFormat.PHONE_TAKEOUT,
-            onProgress = onProgress,
-        )
+    var pathSegments = counters.path
+    val visitSegments = counters.visit
+    val activitySegments = counters.activity
 
-        root.timelineObjects != null ->
-            extractFromTimelineObjects(root.timelineObjects, onProgress)
-
-        root.locations != null ->
-            extractFromLocations(root.locations, onProgress)
-
-        // Phone export that somehow only carried rawSignals.
-        root.rawSignals != null ->
-            extractFromRawSignals(root.rawSignals, onProgress)
-
+    val format: TimelineFormat = when {
+        arrayVariant -> TimelineFormat.PHONE_TAKEOUT_ARRAY
+        sawSemantic -> TimelineFormat.PHONE_TAKEOUT
+        sawTimelineObjects -> TimelineFormat.SEMANTIC_LOCATION_HISTORY
+        sawLocations -> TimelineFormat.RECORDS
+        sawRawSignals -> TimelineFormat.PHONE_TAKEOUT
         else -> throw NotTimelineFileException(
             "Unrecognized Timeline format: none of semanticSegments, " +
                 "timelineObjects, locations or rawSignals were present."
         )
     }
-}
 
-private const val PROGRESS_STRIDE = 100
-
-/**
- * Configured once and reused.
- * - `ignoreUnknownKeys` so the parser doesn't choke when Google adds new
- *   fields we haven't modeled (forward-compatibility).
- * - `isLenient` to tolerate minor JSON quirks across export versions.
- */
-private val jsonParser = Json {
-    ignoreUnknownKeys = true
-    isLenient = true
-}
-
-// ---------- Per-format extractors ----------
-
-/**
- * Phone-takeout extraction. Identical in behavior to the original parser for
- * the common case (points from `timelinePath`), with two additions: a per-point
- * time can be derived from `durationMinutesOffsetFromStartTime`, and if a file
- * yields no path points at all we fall back to `rawSignals` positions.
- */
-private fun extractFromSemanticSegments(
-    segments: List<RawSegment>,
-    rawSignals: List<RawSignal>?,
-    format: TimelineFormat,
-    onProgress: (ParserStage) -> Unit,
-): ParsedTimeline {
-    val total = segments.size
-    val points = mutableListOf<PathPoint>()
-    var pathSegments = 0
-    var visitSegments = 0
-    var activitySegments = 0
-
-    segments.forEachIndexed { index, segment ->
-        if (index % PROGRESS_STRIDE == 0) {
-            onProgress(ParserStage.ExtractingSegments(done = index, total = total))
-        }
-        val segmentStart = parseTimestamp(segment.startTime)
-        when {
-            segment.timelinePath != null -> {
-                pathSegments++
-                for (rawPoint in segment.timelinePath) {
-                    val coords = parseCoordinatePair(rawPoint.point) ?: continue
-                    val time = pointTime(rawPoint, segmentStart) ?: continue
-                    points += PathPoint(time, coords.first, coords.second)
-                }
-            }
-            segment.visit != null -> visitSegments++
-            segment.activity != null -> activitySegments++
-        }
-    }
-    onProgress(ParserStage.ExtractingSegments(done = total, total = total))
-
-    // Fallback: a file with only raw signals (no semantic path) still has GPS.
-    if (points.isEmpty() && rawSignals != null) {
-        for (signal in rawSignals) {
-            val pos = signal.position ?: continue
-            val coords = pos.latLng?.let { parseCoordinatePair(it) } ?: continue
-            val time = parseTimestamp(pos.timestamp) ?: continue
-            points += PathPoint(time, coords.first, coords.second)
+    // Fallback: a file whose only usable GPS lived in rawSignals.
+    if (points.isEmpty() && fallbackSignalPoints.isNotEmpty()) {
+        points.addAll(fallbackSignalPoints)
+        if (!sawSemantic && !sawTimelineObjects && !sawLocations) {
+            total = fallbackSignalPoints.size
+            pathSegments = fallbackSignalPoints.size
         }
     }
 
-    return finalize(
-        points = points,
-        totalSegments = total,
-        pathSegments = pathSegments,
-        visitSegments = visitSegments,
-        activitySegments = activitySegments,
-        format = format,
-        onProgress = onProgress,
-    )
-}
-
-/** Resolve a timeline point's instant from either an explicit time or an offset. */
-private fun pointTime(rawPoint: RawPathPoint, segmentStart: Instant?): Instant? {
-    parseTimestamp(rawPoint.time)?.let { return it }
-    val offsetMin = rawPoint.durationMinutesOffsetFromStartTime?.trim()?.toLongOrNull()
-    if (offsetMin != null && segmentStart != null) {
-        return segmentStart.plusSeconds(offsetMin * 60)
-    }
-    return null
-}
-
-/**
- * Takeout "Semantic Location History" extraction. Each timelineObject is either
- * an activitySegment (movement, with a waypoint/raw path) or a placeVisit
- * (a stationary location). All coordinates are E7 integers.
- */
-private fun extractFromTimelineObjects(
-    objects: List<RawTimelineObject>,
-    onProgress: (ParserStage) -> Unit,
-): ParsedTimeline {
-    val total = objects.size
-    val points = mutableListOf<PathPoint>()
-    var pathSegments = 0
-    var visitSegments = 0
-
-    objects.forEachIndexed { index, obj ->
-        if (index % PROGRESS_STRIDE == 0) {
-            onProgress(ParserStage.ExtractingSegments(done = index, total = total))
-        }
-        obj.activitySegment?.let { seg ->
-            pathSegments++
-            val start = parseTimestamp(seg.duration?.startTimestamp ?: seg.duration?.startTimestampMs)
-            val end = parseTimestamp(seg.duration?.endTimestamp ?: seg.duration?.endTimestampMs)
-
-            // Prefer the timestamped raw path; fall back to waypoints + endpoints.
-            val rawPathPoints = seg.simplifiedRawPath?.points.orEmpty()
-            if (rawPathPoints.isNotEmpty()) {
-                for (p in rawPathPoints) {
-                    val coords = e7Pair(p.latitudeE7 ?: p.latE7, p.longitudeE7 ?: p.lngE7) ?: continue
-                    val time = parseTimestamp(p.timestamp ?: p.timestampMs) ?: start ?: continue
-                    points += PathPoint(time, coords.first, coords.second)
-                }
-            } else {
-                start?.let { startLoc(seg.startLocation, it, points) }
-                val waypoints = seg.waypointPath?.waypoints.orEmpty()
-                val mid = start ?: end
-                if (mid != null) {
-                    for (w in waypoints) {
-                        val coords = e7Pair(w.latitudeE7 ?: w.latE7, w.longitudeE7 ?: w.lngE7) ?: continue
-                        points += PathPoint(mid, coords.first, coords.second)
-                    }
-                }
-                end?.let { startLoc(seg.endLocation, it, points) }
-            }
-        }
-        obj.placeVisit?.let { visit ->
-            visitSegments++
-            val time = parseTimestamp(visit.duration?.startTimestamp ?: visit.duration?.startTimestampMs)
-            if (time != null) startLoc(visit.location, time, points)
-        }
-    }
-    onProgress(ParserStage.ExtractingSegments(done = total, total = total))
-
-    return finalize(
-        points = points,
-        totalSegments = total,
-        pathSegments = pathSegments,
-        visitSegments = visitSegments,
-        activitySegments = 0,
-        format = TimelineFormat.SEMANTIC_LOCATION_HISTORY,
-        onProgress = onProgress,
-    )
-}
-
-/** Add a single E7 location to [out] at [time] if its coordinates are valid. */
-private fun startLoc(loc: RawE7Location?, time: Instant, out: MutableList<PathPoint>) {
-    val coords = e7Pair(loc?.latitudeE7 ?: loc?.latE7, loc?.longitudeE7 ?: loc?.lngE7) ?: return
-    out += PathPoint(time, coords.first, coords.second)
-}
-
-/**
- * Takeout "Records.json" extraction: a flat array of raw GPS pings, each with
- * E7 coordinates and a timestamp.
- */
-private fun extractFromLocations(
-    locations: List<RawLocationRecord>,
-    onProgress: (ParserStage) -> Unit,
-): ParsedTimeline {
-    val total = locations.size
-    val points = ArrayList<PathPoint>(total)
-
-    locations.forEachIndexed { index, loc ->
-        if (index % PROGRESS_STRIDE == 0) {
-            onProgress(ParserStage.ExtractingSegments(done = index, total = total))
-        }
-        val coords = e7Pair(loc.latitudeE7, loc.longitudeE7) ?: return@forEachIndexed
-        val time = parseTimestamp(loc.timestamp ?: loc.timestampMs) ?: return@forEachIndexed
-        points += PathPoint(time, coords.first, coords.second)
-    }
-    onProgress(ParserStage.ExtractingSegments(done = total, total = total))
-
-    return finalize(
-        points = points,
-        totalSegments = total,
-        pathSegments = total,
-        visitSegments = 0,
-        activitySegments = 0,
-        format = TimelineFormat.RECORDS,
-        onProgress = onProgress,
-    )
-}
-
-/** Phone export that only carried raw position signals. */
-private fun extractFromRawSignals(
-    signals: List<RawSignal>,
-    onProgress: (ParserStage) -> Unit,
-): ParsedTimeline {
-    val total = signals.size
-    val points = ArrayList<PathPoint>(total)
-
-    signals.forEachIndexed { index, signal ->
-        if (index % PROGRESS_STRIDE == 0) {
-            onProgress(ParserStage.ExtractingSegments(done = index, total = total))
-        }
-        val pos = signal.position ?: return@forEachIndexed
-        val coords = pos.latLng?.let { parseCoordinatePair(it) } ?: return@forEachIndexed
-        val time = parseTimestamp(pos.timestamp) ?: return@forEachIndexed
-        points += PathPoint(time, coords.first, coords.second)
-    }
-    onProgress(ParserStage.ExtractingSegments(done = total, total = total))
-
-    return finalize(
-        points = points,
-        totalSegments = total,
-        pathSegments = total,
-        visitSegments = 0,
-        activitySegments = 0,
-        format = TimelineFormat.PHONE_TAKEOUT,
-        onProgress = onProgress,
-    )
-}
-
-/** Sort by time and assemble the [ParsedTimeline]. */
-private fun finalize(
-    points: MutableList<PathPoint>,
-    totalSegments: Int,
-    pathSegments: Int,
-    visitSegments: Int,
-    activitySegments: Int,
-    format: TimelineFormat,
-    onProgress: (ParserStage) -> Unit,
-): ParsedTimeline {
+    onProgress(ParserStage.ExtractingSegments(total, total))
     onProgress(ParserStage.Sorting)
-    val sorted = points.sortedBy { it.timeUtc }
+    points.sortBy { it.timeUtc }
+
     return ParsedTimeline(
-        pathPoints = sorted,
-        totalSegments = totalSegments,
+        pathPoints = points,
+        totalSegments = total,
         pathSegments = pathSegments,
         visitSegments = visitSegments,
         activitySegments = activitySegments,
         format = format,
     )
+}
+
+// ---------- Per-format streaming extractors ----------
+//
+// Each function is entered with the parser positioned ON the element's start
+// token and returns with the parser positioned ON that element's matching end
+// token, so the enclosing array loop can advance with a single nextToken().
+
+private class RawPt(val point: String?, val time: String?, val offset: String?)
+
+/** Phone-takeout semantic segment: timelinePath points, or visit/activity. */
+private fun extractSemanticSegment(
+    p: JsonParser,
+    out: MutableList<PathPoint>,
+    counters: SegmentCounters,
+) {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return }
+
+    var startTime: Instant? = null
+    var hadTimelinePath = false
+    var hadVisit = false
+    var hadActivity = false
+    // timelinePath points are buffered (a segment is small) so the per-point
+    // time can resolve against startTime regardless of key order in the JSON.
+    var pending: ArrayList<RawPt>? = null
+
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        when (f) {
+            "startTime" -> startTime = parseTimestamp(p.valueAsStringOrNull())
+            "timelinePath" -> {
+                hadTimelinePath = true
+                if (p.currentToken() == JsonToken.START_ARRAY) {
+                    val list = pending ?: ArrayList<RawPt>().also { pending = it }
+                    while (p.nextToken() != JsonToken.END_ARRAY) list.add(readTimelinePoint(p))
+                } else p.skipChildren()
+            }
+            "visit" -> { hadVisit = true; p.skipChildren() }
+            "activity" -> { hadActivity = true; p.skipChildren() }
+            else -> p.skipChildren()
+        }
+    }
+
+    pending?.forEach { rp ->
+        val coords = rp.point?.let { parseCoordinatePair(it) } ?: return@forEach
+        val time = rp.time?.let { parseTimestamp(it) }
+            ?: rp.offset?.trim()?.toLongOrNull()?.let { off -> startTime?.plusSeconds(off * 60) }
+            ?: return@forEach
+        out.add(PathPoint(time, coords.first, coords.second))
+    }
+
+    when {
+        hadTimelinePath -> counters.path++
+        hadVisit -> counters.visit++
+        hadActivity -> counters.activity++
+    }
+}
+
+private fun readTimelinePoint(p: JsonParser): RawPt {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return RawPt(null, null, null) }
+    var point: String? = null
+    var time: String? = null
+    var offset: String? = null
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        when (f) {
+            "point" -> point = p.valueAsStringOrNull()
+            "time" -> time = p.valueAsStringOrNull()
+            "durationMinutesOffsetFromStartTime" -> offset = p.valueAsStringOrNull()
+            else -> p.skipChildren()
+        }
+    }
+    return RawPt(point, time, offset)
+}
+
+/** Takeout "Semantic Location History" object: activitySegment / placeVisit. */
+private fun extractTimelineObject(
+    p: JsonParser,
+    out: MutableList<PathPoint>,
+    counters: SegmentCounters,
+) {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return }
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        when (f) {
+            "activitySegment" -> {
+                if (p.currentToken() == JsonToken.START_OBJECT) {
+                    counters.path++
+                    readActivitySegment(p, out)
+                } else p.skipChildren()
+            }
+            "placeVisit" -> {
+                if (p.currentToken() == JsonToken.START_OBJECT) {
+                    counters.visit++
+                    readPlaceVisit(p, out)
+                } else p.skipChildren()
+            }
+            else -> p.skipChildren()
+        }
+    }
+}
+
+private fun readActivitySegment(p: JsonParser, out: MutableList<PathPoint>) {
+    var durStart: String? = null
+    var durEnd: String? = null
+    var startLoc: Pair<Double, Double>? = null
+    var endLoc: Pair<Double, Double>? = null
+    var waypoints: ArrayList<Pair<Double, Double>>? = null
+    var rawPath: ArrayList<Pair<Pair<Double, Double>, String?>>? = null
+
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        when (f) {
+            "duration" -> { val (s, e) = readDuration(p); durStart = s; durEnd = e }
+            "startLocation" -> startLoc = readE7Location(p)
+            "endLocation" -> endLoc = readE7Location(p)
+            "waypointPath" -> waypoints = readWaypointPath(p)
+            "simplifiedRawPath" -> rawPath = readSimplifiedRawPath(p)
+            else -> p.skipChildren()
+        }
+    }
+
+    val start = parseTimestamp(durStart)
+    val end = parseTimestamp(durEnd)
+    if (rawPath != null && rawPath.isNotEmpty()) {
+        for ((coords, ts) in rawPath) {
+            val time = parseTimestamp(ts) ?: start ?: continue
+            out.add(PathPoint(time, coords.first, coords.second))
+        }
+    } else {
+        if (start != null && startLoc != null) out.add(PathPoint(start, startLoc.first, startLoc.second))
+        val mid = start ?: end
+        if (mid != null && waypoints != null) {
+            for (w in waypoints) out.add(PathPoint(mid, w.first, w.second))
+        }
+        if (end != null && endLoc != null) out.add(PathPoint(end, endLoc.first, endLoc.second))
+    }
+}
+
+private fun readPlaceVisit(p: JsonParser, out: MutableList<PathPoint>) {
+    var loc: Pair<Double, Double>? = null
+    var durStart: String? = null
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        when (f) {
+            "location" -> loc = readE7Location(p)
+            "duration" -> durStart = readDuration(p).first
+            else -> p.skipChildren()
+        }
+    }
+    val time = parseTimestamp(durStart) ?: return
+    if (loc != null) out.add(PathPoint(time, loc.first, loc.second))
+}
+
+/** Returns (startTimestamp ?: startTimestampMs, endTimestamp ?: endTimestampMs). */
+private fun readDuration(p: JsonParser): Pair<String?, String?> {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null to null }
+    var ts: String? = null
+    var tsMs: String? = null
+    var es: String? = null
+    var esMs: String? = null
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        when (f) {
+            "startTimestamp" -> ts = p.valueAsStringOrNull()
+            "startTimestampMs" -> tsMs = p.valueAsStringOrNull()
+            "endTimestamp" -> es = p.valueAsStringOrNull()
+            "endTimestampMs" -> esMs = p.valueAsStringOrNull()
+            else -> p.skipChildren()
+        }
+    }
+    return (ts ?: tsMs) to (es ?: esMs)
+}
+
+private fun readWaypointPath(p: JsonParser): ArrayList<Pair<Double, Double>>? {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
+    var result: ArrayList<Pair<Double, Double>>? = null
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        if (f == "waypoints" && p.currentToken() == JsonToken.START_ARRAY) {
+            val list = ArrayList<Pair<Double, Double>>()
+            while (p.nextToken() != JsonToken.END_ARRAY) readE7Location(p)?.let { list.add(it) }
+            result = list
+        } else p.skipChildren()
+    }
+    return result
+}
+
+private fun readSimplifiedRawPath(p: JsonParser): ArrayList<Pair<Pair<Double, Double>, String?>>? {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
+    var result: ArrayList<Pair<Pair<Double, Double>, String?>>? = null
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        if (f == "points" && p.currentToken() == JsonToken.START_ARRAY) {
+            val list = ArrayList<Pair<Pair<Double, Double>, String?>>()
+            while (p.nextToken() != JsonToken.END_ARRAY) readSimplifiedPoint(p)?.let { list.add(it) }
+            result = list
+        } else p.skipChildren()
+    }
+    return result
+}
+
+private fun readSimplifiedPoint(p: JsonParser): Pair<Pair<Double, Double>, String?>? {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
+    var latP: Long? = null; var latA: Long? = null
+    var lonP: Long? = null; var lonA: Long? = null
+    var ts: String? = null; var tsMs: String? = null
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        when (f) {
+            "latitudeE7" -> latP = p.longOrNull()
+            "latE7" -> latA = p.longOrNull()
+            "longitudeE7" -> lonP = p.longOrNull()
+            "lngE7" -> lonA = p.longOrNull()
+            "timestamp" -> ts = p.valueAsStringOrNull()
+            "timestampMs" -> tsMs = p.valueAsStringOrNull()
+            else -> p.skipChildren()
+        }
+    }
+    val coords = e7Pair(latP ?: latA, lonP ?: lonA) ?: return null
+    return coords to (ts ?: tsMs)
+}
+
+/** E7 location object with either latitudeE7/longitudeE7 or latE7/lngE7. */
+private fun readE7Location(p: JsonParser): Pair<Double, Double>? {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
+    var latP: Long? = null; var latA: Long? = null
+    var lonP: Long? = null; var lonA: Long? = null
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        when (f) {
+            "latitudeE7" -> latP = p.longOrNull()
+            "latE7" -> latA = p.longOrNull()
+            "longitudeE7" -> lonP = p.longOrNull()
+            "lngE7" -> lonA = p.longOrNull()
+            else -> p.skipChildren()
+        }
+    }
+    return e7Pair(latP ?: latA, lonP ?: lonA)
+}
+
+/** Takeout "Records.json" entry: E7 coords + timestamp. */
+private fun extractLocationRecord(p: JsonParser, out: MutableList<PathPoint>) {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return }
+    var latE7: Long? = null; var lonE7: Long? = null
+    var ts: String? = null; var tsMs: String? = null
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        when (f) {
+            "latitudeE7" -> latE7 = p.longOrNull()
+            "longitudeE7" -> lonE7 = p.longOrNull()
+            "timestamp" -> ts = p.valueAsStringOrNull()
+            "timestampMs" -> tsMs = p.valueAsStringOrNull()
+            else -> p.skipChildren()
+        }
+    }
+    val coords = e7Pair(latE7, lonE7) ?: return
+    val time = parseTimestamp(ts ?: tsMs) ?: return
+    out.add(PathPoint(time, coords.first, coords.second))
+}
+
+/** Phone export rawSignals fallback: position.LatLng + position.timestamp. */
+private fun extractRawSignal(p: JsonParser, out: MutableList<PathPoint>) {
+    if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return }
+    var latLng: String? = null
+    var ts: String? = null
+    while (p.nextToken() != JsonToken.END_OBJECT) {
+        val f = p.currentName()
+        p.nextToken()
+        if (f == "position" && p.currentToken() == JsonToken.START_OBJECT) {
+            while (p.nextToken() != JsonToken.END_OBJECT) {
+                val pf = p.currentName()
+                p.nextToken()
+                when (pf) {
+                    "LatLng" -> latLng = p.valueAsStringOrNull()
+                    "timestamp" -> ts = p.valueAsStringOrNull()
+                    else -> p.skipChildren()
+                }
+            }
+        } else p.skipChildren()
+    }
+    val coords = latLng?.let { parseCoordinatePair(it) } ?: return
+    val time = parseTimestamp(ts) ?: return
+    out.add(PathPoint(time, coords.first, coords.second))
+}
+
+// ---------- Token helpers ----------
+
+/** Text of the current scalar value, or null for null / nested structures. */
+private fun JsonParser.valueAsStringOrNull(): String? = when (currentToken()) {
+    JsonToken.VALUE_NULL -> null
+    JsonToken.START_OBJECT, JsonToken.START_ARRAY -> { skipChildren(); null }
+    else -> valueAsString
+}
+
+/** Long value of the current token (int or numeric string), else null. */
+private fun JsonParser.longOrNull(): Long? = when (currentToken()) {
+    JsonToken.VALUE_NUMBER_INT -> longValue
+    JsonToken.VALUE_STRING -> valueAsString?.trim()?.toLongOrNull()
+    JsonToken.START_OBJECT, JsonToken.START_ARRAY -> { skipChildren(); null }
+    else -> null
 }
 
 // ---------- Coordinate / timestamp helpers ----------
@@ -401,8 +588,3 @@ internal fun parseTimestamp(text: String?): Instant? {
 
 /** Kept for source/test compatibility; delegates to [parseTimestamp]. */
 internal fun parseIsoInstant(text: String): Instant? = parseTimestamp(text)
-
-private fun String.firstNonWhitespaceChar(): Char? {
-    for (c in this) if (!c.isWhitespace()) return c
-    return null
-}
