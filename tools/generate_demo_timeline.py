@@ -5,14 +5,21 @@ Generate a small, synthetic Google-Maps-Timeline export for screenshots.
 Why synthetic?
   * Privacy: the real 60 MB export is your actual location history. You do NOT
     want that on a public store listing. This file contains invented tracks.
-  * Looks great: it spans several continents, so the in-app map shows a
-    world-wide route. Two kinds of lines appear:
-      - long ocean hops -> dashed "flight" connectors (the gap-splitting
-        feature: any jump over 80 km is dashed), and
-      - European ROAD TRIPS -> long SOLID red lines, because the points are
-        interpolated close together (~25 km) so they never trip the gap rule.
-  * Small: a few thousand points (~a few hundred KB) load instantly in a test,
-    yet the map still looks rich.
+  * Realistic: this models an ordinary life, not a world tour. You mostly stay
+    in your home city (Malmo, Sweden) — weekday commute to work and back,
+    lazy or errand-y weekends, the occasional day trip across the bridge to
+    Copenhagen or down to Lund/Ystad — with real vacations sprinkled in every
+    couple of months. The last 7 days are a proper car road trip through the
+    Alps (Malmo -> Hamburg -> Zurich -> Lucerne -> Interlaken -> Innsbruck ->
+    Bolzano/Dolomites -> Munich -> home), driven the whole way, ending "today".
+  * Two kinds of lines appear on the map:
+      - long hops (flights) -> dashed connectors (the gap-splitting feature:
+        any jump over 80 km between consecutive samples is dashed), and
+      - drives -> long SOLID red lines, because the points are interpolated
+        close together (well under 80 km) so they never trip the gap rule.
+  * Still small enough: tens of thousands of points (a couple MB) load
+    instantly in a test, but the map now tells a believable two-year story
+    instead of a dense zig-zag around the globe.
 
 Output format: PHONE_TAKEOUT ( { "semanticSegments": [...] } ) — the current
 on-device export the parser auto-detects as "Phone". Points are degree-string
@@ -30,59 +37,52 @@ from datetime import datetime, timedelta, timezone
 
 random.seed(42)  # deterministic — same demo file every run
 
-# (name, lat, lon) of city centres, in travel order around the globe.
-CITIES = [
-    ("New York",    40.7128,  -74.0060),
-    ("London",      51.5074,   -0.1278),
-    ("Paris",       48.8566,    2.3522),
-    ("Cairo",       30.0444,   31.2357),
-    ("Dubai",       25.2048,   55.2708),
-    ("Mumbai",      19.0760,   72.8777),
-    ("Tokyo",       35.6762,  139.6503),
-    ("Sydney",     -33.8688,  151.2093),
-    ("Cape Town",  -33.9249,   18.4241),
-    ("Sao Paulo",  -23.5505,  -46.6333),
+# ---------------------------------------------------------------------------
+# Home base & everyday places
+# ---------------------------------------------------------------------------
+
+HOME_LATLON = (55.6050, 13.0038)   # Malmo, Sweden
+WORK_LATLON = (55.5910, 12.9950)   # a made-up office a couple km away
+
+# Short day-trip destinations across the Oresund bridge / around Skane.
+NEARBY = [
+    ("Lund", 55.7047, 13.1910),         # ~16 km
+    ("Copenhagen", 55.6761, 12.5683),   # ~28 km, over the bridge
+    ("Ystad", 55.4295, 13.8204),        # ~52 km
+    ("Helsingborg", 56.0465, 12.6945),  # ~65 km
 ]
 
-# Road trips, keyed by the city you arrive in. After wandering that city we
-# "drive" through these waypoints; the route is interpolated densely so it
-# renders as one long SOLID red line (no dashing). Each list starts at the
-# host city so the drive connects to that city's cluster.
-ROAD_TRIPS = {
-    # A loop up Great Britain.
-    "London": [
-        ("London",      51.5074,  -0.1278),
-        ("Oxford",      51.7520,  -1.2577),
-        ("Birmingham",  52.4862,  -1.8904),
-        ("Manchester",  53.4808,  -2.2426),
-        ("Leeds",       53.8008,  -1.5491),
-        ("Newcastle",   54.9783,  -1.6178),
-        ("Edinburgh",   55.9533,  -3.1883),
-    ],
-    # A continental drive across central Europe.
-    "Paris": [
-        ("Paris",       48.8566,   2.3522),
-        ("Brussels",    50.8503,   4.3517),
-        ("Amsterdam",   52.3676,   4.9041),
-        ("Cologne",     50.9375,   6.9603),
-        ("Frankfurt",   50.1109,   8.6821),
-        ("Stuttgart",   48.7758,   9.1829),
-        ("Munich",      48.1351,  11.5820),
-        ("Zurich",      47.3769,   8.5417),
-        ("Milan",       45.4642,   9.1900),
-    ],
-}
+# Real vacations over the two years, spaced out so most of life is at home.
+# "offset" = days before the dataset's end date that the trip STARTS.
+# "mode": "flight" (far away, shows up as a dashed line) or "drive" (a solid
+# line road trip, like the weekend hop to Gothenburg).
+VACATIONS = [
+    {"name": "Stockholm",  "lat": 59.3293, "lon": 18.0686,  "offset": 705, "days": 3, "mode": "flight"},
+    {"name": "New York",   "lat": 40.7128, "lon": -74.0060, "offset": 655, "days": 5, "mode": "flight"},
+    {"name": "Gothenburg", "lat": 57.7089, "lon": 11.9746,  "offset": 600, "days": 2, "mode": "drive"},
+    {"name": "Rome",       "lat": 41.9028, "lon": 12.4964,  "offset": 545, "days": 6, "mode": "flight"},
+    {"name": "Prague",     "lat": 50.0755, "lon": 14.4378,  "offset": 470, "days": 4, "mode": "flight"},
+    {"name": "Dubai",      "lat": 25.2048, "lon": 55.2708,  "offset": 405, "days": 6, "mode": "flight"},
+    {"name": "Barcelona",  "lat": 41.3851, "lon": 2.1734,   "offset": 330, "days": 5, "mode": "flight"},
+    {"name": "Tokyo",      "lat": 35.6762, "lon": 139.6503, "offset": 245, "days": 8, "mode": "flight"},
+    {"name": "Lisbon",     "lat": 38.7223, "lon": -9.1393,  "offset": 155, "days": 4, "mode": "flight"},
+    {"name": "Vienna",     "lat": 48.2082, "lon": 16.3738,  "offset": 85,  "days": 4, "mode": "flight"},
+    {"name": "Krakow",     "lat": 50.0647, "lon": 19.9450,  "offset": 35,  "days": 3, "mode": "flight"},
+]
 
-# A point every ~1 min while moving; ~3 days of wandering per city.
-POINTS_PER_CITY = 260
-START = datetime(2026, 4, 1, 8, 0, 0, tzinfo=timezone.utc)
-DAYS_PER_CITY = 3
-DRIVE_STEP_KM = 25.0       # spacing between interpolated drive points (< 80 km)
-DRIVE_MIN_PER_HOP = 9      # minutes of "driving" between those points
+# ---------------------------------------------------------------------------
+# Timeframe: two years, ending "today", with the last 7 days reserved for the
+# Alps road trip.
+# ---------------------------------------------------------------------------
+
+END_DATE = datetime(2026, 7, 1, tzinfo=timezone.utc)     # midnight of the last day
+TOTAL_DAYS = 730
+TRIP_DAYS = 7
+START_DATE = END_DATE - timedelta(days=TOTAL_DAYS)
+TRIP_START = END_DATE - timedelta(days=TRIP_DAYS - 1)    # first day of the road trip
 
 
 def iso(t: datetime) -> str:
-    # e.g. "2026-04-01T08:00:00.000+00:00"
     return t.strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
 
 
@@ -92,27 +92,6 @@ def haversine_km(a, b):
     d_lon = math.radians(b[1] - a[1])
     h = math.sin(d_lat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(d_lon / 2) ** 2
     return 2 * 6371.0 * math.asin(math.sqrt(h))
-
-
-def city_track(lat0, lon0, t0, n):
-    """A plausible meandering walk/drive around a city centre."""
-    pts = []
-    lat, lon = lat0, lon0
-    heading = random.uniform(0, 2 * math.pi)
-    t = t0
-    for i in range(n):
-        # Occasionally turn; otherwise keep roughly the same heading.
-        heading += random.uniform(-0.6, 0.6)
-        step = random.uniform(0.0006, 0.0022)  # ~60..240 m
-        lat += step * math.cos(heading)
-        lon += step * math.sin(heading) / max(0.2, math.cos(math.radians(lat)))
-        # Gentle pull back toward the centre so we don't wander off the map.
-        lat += (lat0 - lat) * 0.03
-        lon += (lon0 - lon) * 0.03
-        # 1..3 min between samples.
-        t += timedelta(minutes=random.choice([1, 1, 2, 3]))
-        pts.append((round(lat, 6), round(lon, 6), t))
-    return pts
 
 
 def _interp(a, b, step_km):
@@ -125,21 +104,60 @@ def _interp(a, b, step_km):
     return out
 
 
-def drive_track(waypoints, t0):
-    """Dense, ~road-following track through waypoints -> one solid line."""
-    pts = []
-    t = t0
-    cur = (waypoints[0][1], waypoints[0][2])
-    pts.append((round(cur[0], 6), round(cur[1], 6), t))  # start point
+def dense_path(waypoints, t0, step_km=20.0, speed_kmh=80.0, jitter_km=1.2):
+    """A ~road-following track through waypoints -> one solid line.
+
+    Points are spaced ~step_km apart (well under the app's 80 km gap
+    threshold) so the whole thing renders as one continuous line no matter
+    how far apart the waypoints are. Per-hop time is derived from the actual
+    (jittered) distance and speed_kmh, with +/-15-25% variance so it doesn't
+    feel like a robot driving at a constant speed.
+    """
+    raw = [(waypoints[0][1], waypoints[0][2])]
+    cur = raw[0]
     for (_, lat, lon) in waypoints[1:]:
         nxt = (lat, lon)
-        for (plat, plon) in _interp(cur, nxt, DRIVE_STEP_KM):
-            # small jitter so the line is not perfectly straight between waypoints
-            jlat = plat + random.uniform(-0.02, 0.02)
-            jlon = plon + random.uniform(-0.02, 0.02)
-            t += timedelta(minutes=DRIVE_MIN_PER_HOP)
-            pts.append((round(jlat, 6), round(jlon, 6), t))
+        raw.extend(_interp(cur, nxt, step_km))
         cur = nxt
+
+    jittered = []
+    for (lat, lon) in raw:
+        jlat = lat + random.uniform(-jitter_km, jitter_km) / 111.0
+        jlon = lon + random.uniform(-jitter_km, jitter_km) / (111.0 * max(0.2, math.cos(math.radians(lat))))
+        jittered.append((jlat, jlon))
+
+    pts = []
+    t = t0
+    pts.append((round(jittered[0][0], 6), round(jittered[0][1], 6), t))
+    for i in range(1, len(jittered)):
+        hop_km = haversine_km(jittered[i - 1], jittered[i])
+        minutes = max(0.5, (hop_km / speed_kmh) * 60 * random.uniform(0.85, 1.25))
+        t += timedelta(minutes=minutes)
+        pts.append((round(jittered[i][0], 6), round(jittered[i][1], 6), t))
+    return pts
+
+
+def wander_track(lat0, lon0, t0, minutes, sample_every=(4, 9)):
+    """A meandering walk/errand loop around a point. Sparse sampling (every
+    ~4-9 min of activity, not every minute) keeps two years of this small."""
+    pts = []
+    lat, lon = lat0, lon0
+    heading = random.uniform(0, 2 * math.pi)
+    t = t0
+    elapsed = 0
+    while elapsed < minutes:
+        heading += random.uniform(-0.7, 0.7)
+        step = random.uniform(0.0008, 0.003)  # ~90..330 m
+        lat += step * math.cos(heading)
+        lon += step * math.sin(heading) / max(0.2, math.cos(math.radians(lat)))
+        lat += (lat0 - lat) * 0.04
+        lon += (lon0 - lon) * 0.04
+        dt = random.randint(*sample_every)
+        t += timedelta(minutes=dt)
+        elapsed += dt
+        pts.append((round(lat, 6), round(lon, 6), t))
+    if not pts:
+        pts.append((round(lat0, 6), round(lon0, 6), t0 + timedelta(minutes=1)))
     return pts
 
 
@@ -153,60 +171,280 @@ def path_segment(track):
     }
 
 
+def visit(lat, lon, t0, t1, place_id, semantic="INFERRED_POINT_OF_INTEREST", prob=0.9):
+    return {
+        "startTime": iso(t0),
+        "endTime": iso(t1),
+        "visit": {
+            "hierarchyLevel": 0,
+            "probability": prob,
+            "topCandidate": {
+                "placeId": f"demo_{place_id}",
+                "semanticType": semantic,
+                "probability": prob,
+                "placeLocation": {"latLng": f"{lat}°, {lon}°"},
+            },
+        },
+    }
+
+
+def activity(t0, t1, distance_m, kind, prob=0.95):
+    return {
+        "startTime": iso(t0),
+        "endTime": iso(t1),
+        "activity": {
+            "distanceMeters": float(distance_m),
+            "probability": prob,
+            "topCandidate": {"type": kind, "probability": prob},
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
+# Ordinary life: a workday, a weekend day, and a vacation.
+# ---------------------------------------------------------------------------
+
+def workday_segments(day_start):
+    segments = []
+    wake = day_start + timedelta(hours=random.uniform(6.4, 7.6))
+    segments.append(visit(*HOME_LATLON, day_start, wake, "home_malmo", "INFERRED_HOME", 0.95))
+
+    commute_out = dense_path([("Home",) + HOME_LATLON, ("Work",) + WORK_LATLON], wake, step_km=0.6, speed_kmh=27)
+    segments.append(path_segment(commute_out))
+    segments.append(activity(commute_out[0][2], commute_out[-1][2],
+                              haversine_km(HOME_LATLON, WORK_LATLON) * 1000, "IN_PASSENGER_VEHICLE", 0.9))
+
+    work_start = commute_out[-1][2]
+    work_end = work_start + timedelta(hours=random.uniform(7.5, 9))
+    segments.append(visit(*WORK_LATLON, work_start, work_end, "work_office", "INFERRED_WORK", 0.9))
+
+    commute_back = dense_path([("Work",) + WORK_LATLON, ("Home",) + HOME_LATLON], work_end, step_km=0.6, speed_kmh=25)
+    segments.append(path_segment(commute_back))
+    segments.append(activity(commute_back[0][2], commute_back[-1][2],
+                              haversine_km(WORK_LATLON, HOME_LATLON) * 1000, "IN_PASSENGER_VEHICLE", 0.9))
+
+    cursor = commute_back[-1][2]
+    if random.random() < 0.18:  # gym / dinner / a friend's place some evenings
+        out_start = cursor + timedelta(minutes=random.uniform(30, 90))
+        outing = wander_track(HOME_LATLON[0] + random.uniform(-0.008, 0.008),
+                               HOME_LATLON[1] + random.uniform(-0.008, 0.008),
+                               out_start, minutes=random.uniform(45, 110))
+        segments.append(path_segment(outing))
+        cursor = outing[-1][2] + timedelta(minutes=random.uniform(5, 20))
+
+    night_end = day_start + timedelta(days=1)
+    segments.append(visit(*HOME_LATLON, cursor, night_end, "home_malmo", "INFERRED_HOME", 0.95))
+    return segments
+
+
+def weekend_segments(day_start):
+    segments = []
+    roll = random.random()
+
+    if roll < 0.20:  # a day trip across the bridge or down the coast
+        wake = day_start + timedelta(hours=random.uniform(8.5, 10))
+        segments.append(visit(*HOME_LATLON, day_start, wake, "home_malmo", "INFERRED_HOME", 0.95))
+
+        dest_name, dest_lat, dest_lon = random.choice(NEARBY)
+        depart = wake + timedelta(minutes=random.uniform(15, 45))
+        out = dense_path([("Home",) + HOME_LATLON, (dest_name, dest_lat, dest_lon)], depart, step_km=15, speed_kmh=82)
+        segments.append(path_segment(out))
+        segments.append(activity(out[0][2], out[-1][2],
+                                  haversine_km(HOME_LATLON, (dest_lat, dest_lon)) * 1000, "IN_PASSENGER_VEHICLE", 0.94))
+
+        arrive = out[-1][2]
+        wander = wander_track(dest_lat, dest_lon, arrive + timedelta(minutes=10), minutes=random.uniform(150, 300))
+        segments.append(path_segment(wander))
+
+        back_start = wander[-1][2] + timedelta(minutes=random.uniform(15, 45))
+        back = dense_path([(dest_name, dest_lat, dest_lon), ("Home",) + HOME_LATLON], back_start, step_km=15, speed_kmh=80)
+        segments.append(path_segment(back))
+        segments.append(activity(back[0][2], back[-1][2],
+                                  haversine_km((dest_lat, dest_lon), HOME_LATLON) * 1000, "IN_PASSENGER_VEHICLE", 0.94))
+        cursor = back[-1][2]
+
+    elif roll < 0.55:  # errands / a walk around town
+        wake = day_start + timedelta(hours=random.uniform(9, 11))
+        segments.append(visit(*HOME_LATLON, day_start, wake, "home_malmo", "INFERRED_HOME", 0.95))
+        out_start = wake + timedelta(minutes=random.uniform(20, 60))
+        walk = wander_track(HOME_LATLON[0], HOME_LATLON[1], out_start, minutes=random.uniform(60, 200))
+        segments.append(path_segment(walk))
+        cursor = walk[-1][2] + timedelta(minutes=random.uniform(10, 30))
+
+    else:  # a quiet weekend at home
+        cursor = day_start
+
+    night_end = day_start + timedelta(days=1)
+    segments.append(visit(*HOME_LATLON, cursor, night_end, "home_malmo", "INFERRED_HOME", 0.95))
+    return segments
+
+
+def vacation_segments(v, t_start):
+    name, lat, lon, days, mode = v["name"], v["lat"], v["lon"], v["days"], v["mode"]
+    dest = (lat, lon)
+    segments = []
+
+    depart = t_start + timedelta(hours=random.uniform(5, 8))
+    segments.append(visit(*HOME_LATLON, t_start, depart, "home_malmo", "INFERRED_HOME", 0.95))
+
+    if mode == "flight":
+        arrive = depart + timedelta(hours=random.uniform(1.5, 4.5)) + timedelta(hours=random.uniform(1.5, 11))
+        segments.append(activity(depart, arrive, haversine_km(HOME_LATLON, dest) * 1000, "FLYING", 0.97))
+        cursor = arrive
+    else:
+        wp = [("Malmo",) + HOME_LATLON, (name, lat, lon)]
+        drive = dense_path(wp, depart, step_km=20, speed_kmh=88)
+        segments.append(path_segment(drive))
+        segments.append(activity(drive[0][2], drive[-1][2],
+                                  haversine_km(HOME_LATLON, dest) * 1000, "IN_PASSENGER_VEHICLE", 0.95))
+        cursor = drive[-1][2]
+
+    for _day_i in range(days):
+        hotel_in = cursor + timedelta(minutes=random.uniform(15, 40))
+        segments.append(visit(lat, lon, cursor, hotel_in, f"{name.lower()}_stay", "INFERRED_POINT_OF_INTEREST", 0.85))
+        wander_start = hotel_in + timedelta(minutes=random.uniform(20, 60))
+        wander = wander_track(lat, lon, wander_start, minutes=random.uniform(140, 280))
+        segments.append(path_segment(wander))
+        cursor = wander[-1][2] + timedelta(minutes=random.uniform(20, 60))
+
+    if mode == "flight":
+        depart2 = cursor + timedelta(hours=random.uniform(1, 4))
+        arrive2 = depart2 + timedelta(hours=random.uniform(1.5, 11))
+        segments.append(activity(depart2, arrive2, haversine_km(dest, HOME_LATLON) * 1000, "FLYING", 0.97))
+        cursor = arrive2
+    else:
+        wp2 = [(name, lat, lon), ("Malmo",) + HOME_LATLON]
+        drive2 = dense_path(wp2, cursor + timedelta(hours=random.uniform(0.5, 2)), step_km=20, speed_kmh=88)
+        segments.append(path_segment(drive2))
+        segments.append(activity(drive2[0][2], drive2[-1][2],
+                                  haversine_km(dest, HOME_LATLON) * 1000, "IN_PASSENGER_VEHICLE", 0.95))
+        cursor = drive2[-1][2]
+
+    next_midnight = datetime(cursor.year, cursor.month, cursor.day, tzinfo=timezone.utc) + timedelta(days=1)
+    segments.append(visit(*HOME_LATLON, cursor, next_midnight, "home_malmo", "INFERRED_HOME", 0.95))
+    return segments, next_midnight
+
+
+# ---------------------------------------------------------------------------
+# The last 7 days: a real car road trip through the Alps.
+# ---------------------------------------------------------------------------
+
+def alps_road_trip_segments(trip_start):
+    """Malmo -> Hamburg -> Zurich -> Lucerne -> Interlaken -> Innsbruck ->
+    Bolzano (+ a Dolomites side loop) -> Munich -> Malmo, driven the whole
+    way. Distances roughly match the real road network; each overnight stop
+    gets an evening walk so the map shows both the drive and the visit."""
+    segments = []
+
+    def overnight_stop(city_lat, city_lon, place_id, arrive_t, walk_minutes, sleep_until):
+        s = []
+        hotel_in = arrive_t + timedelta(minutes=random.uniform(15, 30))
+        s.append(visit(city_lat, city_lon, arrive_t, hotel_in, f"{place_id}_checkin", "INFERRED_POINT_OF_INTEREST", 0.85))
+        walk = wander_track(city_lat, city_lon, hotel_in + timedelta(minutes=random.uniform(30, 60)), minutes=walk_minutes)
+        s.append(path_segment(walk))
+        night_start = walk[-1][2] + timedelta(minutes=random.uniform(10, 25))
+        s.append(visit(city_lat, city_lon, night_start, sleep_until, f"{place_id}_hotel", "INFERRED_POINT_OF_INTEREST", 0.9))
+        return s, sleep_until
+
+    def drive_leg(wp, depart_t, distance_m, step_km=18, speed_kmh=90):
+        d = dense_path(wp, depart_t, step_km=step_km, speed_kmh=speed_kmh)
+        segs = [path_segment(d), activity(d[0][2], d[-1][2], distance_m, "IN_PASSENGER_VEHICLE", 0.96)]
+        return segs, d[-1][2]
+
+    HAMBURG = (53.5511, 9.9937)
+    ZURICH = (47.3769, 8.5417)
+    LUCERNE = (47.0502, 8.3093)
+    INTERLAKEN = (46.6863, 7.8632)
+    INNSBRUCK = (47.2692, 11.4041)
+    BOLZANO = (46.4983, 11.3548)
+    CARE_ZZA = (46.3572, 11.5686)  # Lago di Carezza, Dolomites
+    MUNICH = (48.1351, 11.5820)
+
+    cursor = trip_start + timedelta(hours=8)  # depart Malmo ~08:00
+
+    # Day 0: Malmo -> Hamburg (~320 km)
+    legs, cursor = drive_leg([("Malmo",) + HOME_LATLON, ("Hamburg",) + HAMBURG], cursor, 320_000.0, speed_kmh=92)
+    segments.extend(legs)
+    stop, cursor = overnight_stop(*HAMBURG, "hamburg", cursor, 110, trip_start + timedelta(days=1, hours=7))
+    segments.extend(stop)
+
+    # Day 1: Hamburg -> Zurich (~800 km, the big push south)
+    legs, cursor = drive_leg([("Hamburg",) + HAMBURG, ("Zurich",) + ZURICH], cursor, 800_000.0, speed_kmh=98)
+    segments.extend(legs)
+    stop, cursor = overnight_stop(*ZURICH, "zurich", cursor, 70, trip_start + timedelta(days=2, hours=8))
+    segments.extend(stop)
+
+    # Day 2: Zurich -> Lucerne (stop) -> Interlaken (scenic Alpine foothills)
+    legs, cursor = drive_leg([("Zurich",) + ZURICH, ("Lucerne",) + LUCERNE], cursor, 50_000.0, step_km=12, speed_kmh=72)
+    segments.extend(legs)
+    lucerne_walk = wander_track(*LUCERNE, cursor + timedelta(minutes=10), minutes=70)
+    segments.append(path_segment(lucerne_walk))
+    depart2 = lucerne_walk[-1][2] + timedelta(minutes=random.uniform(15, 30))
+    legs, cursor = drive_leg([("Lucerne",) + LUCERNE, ("Interlaken",) + INTERLAKEN], depart2, 70_000.0, step_km=10, speed_kmh=62)
+    segments.extend(legs)
+    stop, cursor = overnight_stop(*INTERLAKEN, "interlaken", cursor, 140, trip_start + timedelta(days=3, hours=8))
+    segments.extend(stop)
+
+    # Day 3: Interlaken -> Innsbruck, crossing the Alps
+    legs, cursor = drive_leg([("Interlaken",) + INTERLAKEN, ("Innsbruck",) + INNSBRUCK], cursor, 230_000.0, step_km=14, speed_kmh=66)
+    segments.extend(legs)
+    stop, cursor = overnight_stop(*INNSBRUCK, "innsbruck", cursor, 100, trip_start + timedelta(days=4, hours=8))
+    segments.extend(stop)
+
+    # Day 4: Innsbruck -> Bolzano over the Brenner Pass, then a Dolomites loop
+    legs, cursor = drive_leg([("Innsbruck",) + INNSBRUCK, ("Bolzano",) + BOLZANO], cursor, 120_000.0, step_km=12, speed_kmh=70)
+    segments.extend(legs)
+    hotel_in = cursor + timedelta(minutes=random.uniform(15, 30))
+    segments.append(visit(*BOLZANO, cursor, hotel_in, "bolzano_checkin", "INFERRED_POINT_OF_INTEREST", 0.85))
+    loop_depart = hotel_in + timedelta(hours=random.uniform(0.8, 1.3))
+    legs, loop_cursor = drive_leg([("Bolzano",) + BOLZANO, ("Lago di Carezza",) + CARE_ZZA], loop_depart, 35_000.0, step_km=8, speed_kmh=52)
+    segments.extend(legs)
+    lake_walk = wander_track(*CARE_ZZA, loop_cursor + timedelta(minutes=10), minutes=50)
+    segments.append(path_segment(lake_walk))
+    back_depart = lake_walk[-1][2] + timedelta(minutes=random.uniform(15, 30))
+    legs, cursor = drive_leg([("Lago di Carezza",) + CARE_ZZA, ("Bolzano",) + BOLZANO], back_depart, 35_000.0, step_km=8, speed_kmh=55)
+    segments.extend(legs)
+    night_start = cursor + timedelta(minutes=random.uniform(15, 30))
+    sleep_until = trip_start + timedelta(days=5, hours=8)
+    segments.append(visit(*BOLZANO, night_start, sleep_until, "bolzano_hotel", "INFERRED_POINT_OF_INTEREST", 0.9))
+    cursor = sleep_until
+
+    # Day 5: Bolzano -> Munich (~300 km, heading north again)
+    legs, cursor = drive_leg([("Bolzano",) + BOLZANO, ("Munich",) + MUNICH], cursor, 300_000.0, speed_kmh=92)
+    segments.extend(legs)
+    stop, cursor = overnight_stop(*MUNICH, "munich", cursor, 90, trip_start + timedelta(days=6, hours=7))
+    segments.extend(stop)
+
+    # Day 6 (today): Munich -> Malmo, the long final push home (~900 km)
+    legs, cursor = drive_leg([("Munich",) + MUNICH, ("Malmo",) + HOME_LATLON], cursor, 900_000.0, speed_kmh=100)
+    segments.extend(legs)
+    segments.append(visit(*HOME_LATLON, cursor, cursor + timedelta(hours=3), "home_malmo", "INFERRED_HOME", 0.95))
+
+    return segments
+
+
 def main():
     segments = []
-    t = START
+    current = START_DATE
 
-    for idx, (name, lat0, lon0) in enumerate(CITIES):
-        track = city_track(lat0, lon0, t, POINTS_PER_CITY)
-        seg_end = track[-1][2]
-        segments.append(path_segment(track))
+    vacation_by_date = {}
+    for v in VACATIONS:
+        start_date = END_DATE - timedelta(days=v["offset"])
+        vacation_by_date[start_date.date()] = v
 
-        # A "visit" segment at the city centre (adds realism + visit count).
-        segments.append({
-            "startTime": iso(seg_end),
-            "endTime": iso(seg_end + timedelta(hours=10)),
-            "visit": {
-                "hierarchyLevel": 0,
-                "probability": 0.95,
-                "topCandidate": {
-                    "placeId": f"demo_{name.replace(' ', '_').lower()}",
-                    "semanticType": "INFERRED_HOME" if idx == 0 else "INFERRED_POINT_OF_INTEREST",
-                    "probability": 0.9,
-                    "placeLocation": {"latLng": f"{lat0}°, {lon0}°"},
-                },
-            },
-        })
+    while current.date() < TRIP_START.date():
+        d = current.date()
+        if d in vacation_by_date:
+            segs, current = vacation_segments(vacation_by_date[d], current)
+            segments.extend(segs)
+            continue
+        if current.weekday() < 5:
+            segments.extend(workday_segments(current))
+        else:
+            segments.extend(weekend_segments(current))
+        current += timedelta(days=1)
 
-        # Optional road trip out of this city -> long solid red line.
-        last_time = seg_end
-        if name in ROAD_TRIPS:
-            drive = drive_track(ROAD_TRIPS[name], seg_end + timedelta(hours=2))
-            segments.append(path_segment(drive))
-            segments.append({
-                "startTime": iso(drive[0][2]),
-                "endTime": iso(drive[-1][2]),
-                "activity": {
-                    "distanceMeters": 600_000.0,
-                    "probability": 0.97,
-                    "topCandidate": {"type": "IN_PASSENGER_VEHICLE", "probability": 0.95},
-                },
-            })
-            last_time = drive[-1][2]
-
-        # The hop to the next city = a big time + distance gap -> dashed flight.
-        next_city_time = seg_end + timedelta(days=DAYS_PER_CITY)
-        if idx < len(CITIES) - 1:
-            segments.append({
-                "startTime": iso(last_time + timedelta(hours=4)),
-                "endTime": iso(next_city_time),
-                "activity": {
-                    "distanceMeters": 8_000_000.0,
-                    "probability": 0.99,
-                    "topCandidate": {"type": "FLYING", "probability": 0.98},
-                },
-            })
-        t = next_city_time
+    segments.extend(alps_road_trip_segments(TRIP_START))
 
     doc = {"semanticSegments": segments}
 
@@ -221,10 +459,14 @@ def main():
 
     n_pts = sum(len(s.get("timelinePath", [])) for s in segments)
     size_kb = os.path.getsize(out_path) / 1024
+    vac_names = ", ".join(v["name"] for v in VACATIONS)
     print(f"Wrote {out_path}")
     print(f"  segments: {len(segments)}  path points: {n_pts}  size: {size_kb:.0f} KB")
-    print(f"  road trips (solid lines): {', '.join(ROAD_TRIPS.keys())}")
-    print(f"  span: {iso(START)} .. {iso(t)}")
+    print(f"  span: {iso(START_DATE)} .. {iso(END_DATE)}  ({TOTAL_DAYS} days)")
+    print(f"  home base: Malmo, Sweden")
+    print(f"  vacations ({len(VACATIONS)}): {vac_names}")
+    print(f"  last {TRIP_DAYS} days: Alps road trip, Malmo -> Hamburg -> Zurich -> "
+          f"Lucerne -> Interlaken -> Innsbruck -> Bolzano -> Munich -> Malmo")
 
 
 if __name__ == "__main__":

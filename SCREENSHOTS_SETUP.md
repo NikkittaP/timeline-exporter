@@ -40,11 +40,15 @@ fastlane/screenshot_captions.txt          the #1 caption in 18 languages
 Gemfile                                    fastlane
 ```
 
-The demo data is **synthetic** — a made-up trip across 10 cities on 6 continents
-(New York → London → Paris → Cairo → Dubai → Mumbai → Tokyo → Sydney → Cape Town
-→ São Paulo). That gives a striking world map where the ocean hops render as
-dashed "flight" connectors, and it keeps your real 60 MB history (and your
-privacy) out of the store. Regenerate any time with:
+The demo data is **synthetic** — two years of an ordinary life based in Malmö,
+Sweden: weekday commutes, lazy or errand-y weekends, the occasional day trip
+over the bridge to Copenhagen, and about a dozen real vacations spread out
+every couple of months (Stockholm, New York, Gothenburg, Rome, Prague, Dubai,
+Barcelona, Tokyo, Lisbon, Vienna, Krakow). The last 7 days are a car road trip
+through the Alps (Malmö → Hamburg → Zurich → Lucerne → Interlaken → Innsbruck
+→ Bolzano/Dolomites → Munich → home). Flights render as dashed connectors
+across the long gaps, drives render as solid red lines, and it keeps your real
+60 MB history (and your privacy) out of the store. Regenerate any time with:
 
 ```bash
 python tools/generate_demo_timeline.py
@@ -211,7 +215,8 @@ images per language, then save/submit as usual.
 - **Fewer languages:** trim the `locales([...])` list in `fastlane/Screengrabfile`.
 - **Different / more screens:** edit `ScreenshotTest.kt` — add a
   `Screengrab.screenshot("07_xyz")` after navigating to the new state.
-- **Different demo trip:** edit the `CITIES` list in
-  `tools/generate_demo_timeline.py` and re-run it.
+- **Different demo trip:** edit `HOME_LATLON`, `NEARBY`, `VACATIONS`, or the
+  `alps_road_trip_segments` route in `tools/generate_demo_timeline.py` and
+  re-run it.
 - **Promote to production later:** screenshots are shared across tracks, so once
   they look right on internal they're already on the listing.
