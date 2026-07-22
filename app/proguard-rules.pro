@@ -53,6 +53,19 @@
 
 
 # -----------------------------------------------------------------------------
+# Play Billing Library 9.1.0 — no manual rules needed.
+#
+# Checked during the PBL 7 -> 9 migration (v1.4.0): the billing / billing-ktx
+# AARs ship their own consumer-proguard rules, which cover the AIDL service
+# interfaces and the classes Play Services calls back into. The types added in
+# PBL 8/9 that we touch (QueryProductDetailsResult, UnfetchedProduct) are plain
+# result holders we only read from Kotlin — no reflection, no JNI, nothing for
+# R8 to break. Do not add keep rules for com.android.billingclient.** unless a
+# release build actually misbehaves.
+# -----------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------
 # Compose, AndroidX, Kotlin stdlib, coroutines — handled by their own
 # consumer-proguard files via AGP. No manual rules needed here.
 # -----------------------------------------------------------------------------

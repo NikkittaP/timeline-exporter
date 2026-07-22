@@ -1,46 +1,58 @@
-# Release Notes — v1.3.0 (versionCode 6)
+# Release Notes — v1.4.0 (versionCode 7)
 
 ## Highlights
-Large Timeline files now import reliably. The JSON parser was rewritten to be
-fully streaming, so the app no longer loads the whole file into memory before
-parsing. Imports are faster, use far less memory, and very large exports
-(100 MB+) that previously failed now work.
-
-## Fixed
-- **Out-of-memory on large files.** Previously the importer read the entire file
-  into a `String` and decoded the whole document into an object tree, so a large
-  export could exhaust the heap. The failure surfaced as the misleading message
-  *"This doesn't look like a Google Timeline file."* (OOM and parse errors share
-  that friendly message.) Large files now stream and parse without OOM.
-- **Progress bar stalling near the middle on files with `rawSignals`.** The
-  large `rawSignals` tail was skipped in one silent step, freezing the bar and
-  then jumping to done. The parser now walks it incrementally and keeps the bar
-  moving to 100%.
-- **File-size mismatch.** The import screen showed a smaller size (MiB) than
-  Android's file picker (decimal MB) for the same file. Sizes now use decimal MB
-  and match the system picker.
+Maintenance release. Google Play Billing Library was upgraded from 7.1.1 to
+9.1.0 to meet Google's requirement that all app updates published after
+**31 August 2026** use Billing Library 8 or later. Nothing changes for people
+who never open the tip jar — parsing, filtering and export are untouched.
 
 ## Changed (technical)
-- New streaming parser built on **Jackson** (`jackson-core`, Apache-2.0): GPS
-  points are extracted token-by-token and each segment is discarded immediately,
-  so peak memory is proportional to the number of extracted points, not file size.
-- All formats still supported: phone `semanticSegments` (object + iOS array
-  variant), `timelineObjects` (Semantic Location History), `locations`
-  (Records.json), and the `rawSignals` fallback.
-- `rawSignals` are skipped (not parsed) when `timelinePath` points exist, which
-  is the normal case for real exports.
-- The ViewModel parses directly from the file `InputStream` via a
-  `CountingInputStream` for byte-accurate progress.
-- Removed the `kotlinx.serialization` dependency, Gradle plugin and ProGuard
-  rules (no longer used); removed the `@Serializable` model classes.
+- **Play Billing Library 7.1.1 → 9.1.0** (`com.android.billingclient:billing-ktx`).
+  Went straight to 9 rather than 8: the breaking change is identical for both,
+  but PBL 8 is itself retired on 31 August 2027, so 9 buys roughly another year.
+- **`queryProductDetailsAsync` callback rewritten** for the PBL 9 signature.
+  The second parameter is now a non-null `QueryProductDetailsResult` exposing
+  `productDetailsList` and `unfetchedProductList`, replacing PBL 7's nullable
+  `List<ProductDetails>`.
+- **Unfetched products are now logged.** If Play can't return a tip product
+  (not configured, not active, unavailable in the user's country), the product
+  ID, type and status code go to logcat with `Log.w`. Previously such products
+  were silently dropped by `mapNotNull` and the tip jar simply rendered short
+  with no explanation.
+- **Automatic service reconnection enabled** (`enableAutoServiceReconnection()`).
+  The library now re-establishes a dropped billing connection on its own instead
+  of waiting for the user to hit retry. `onBillingServiceDisconnected()` is
+  log-only by design — calling `startConnection()` there would fight the
+  library's own retry.
+- **Blocked-Play-Store errors now classify correctly.** In PBL 9, a Play Store
+  blocked by the system (for example OEM kids mode) reports
+  `BILLING_UNAVAILABLE` instead of a generic `ERROR`. `TipJarViewModel` already
+  routed `BILLING_UNAVAILABLE` to `TipJarState.Unavailable`, so this scenario
+  starts being handled properly with no code change.
+- ProGuard rules unchanged — verified that billing ships its own consumer rules
+  and the new PBL 9 result types need none. Documented in `proguard-rules.pro`.
 
-## Tests
-- Added streaming tests: `InputStream` entry point, `rawSignals` not
-  double-counted (both key orders), a 5,000-segment streamed input, and parser
-  stage ordering. Existing parser tests are unchanged and still pass.
+## Not included
+Sub-response codes (`PAYMENT_DECLINED_DUE_TO_INSUFFICIENT_FUNDS`,
+`USER_INELIGIBLE`) from `launchBillingFlow()` are available in PBL 9 but not
+consumed yet. Deliberately deferred to keep this release a minimal, easily
+revertable diff.
+
+## No changes to
+Parser, filter, export formats, map, localization, UI. No new permissions, no
+new dependencies, still no analytics or telemetry.
 
 ## Pre-release checklist
-- [ ] `./gradlew testDebugUnitTest` (all parser tests, incl. new streaming ones)
-- [ ] `./gradlew assembleRelease` (confirms R8/ProGuard builds without kotlinx.serialization)
-- [ ] Manual import of the 41 MB and 115 MB test files; verify the progress bar
-      fills to 100% and the shown size matches the file picker.
+- [ ] `./gradlew testDebugUnitTest` — parser tests still green (billing is not
+      covered by unit tests)
+- [ ] `./gradlew assembleRelease` — confirms R8 builds against PBL 9 without
+      new keep rules
+- [ ] Confirm no compile warnings about removed PBL APIs
+- [ ] Upload AAB to **internal testing**, install as a licensed tester, and
+      verify: tip jar lists all three products with localized prices; a purchase
+      completes and is consumed; the thank-you state appears; reopening the
+      dialog shows products again (not ITEM_ALREADY_OWNED)
+- [ ] Airplane mode → open tip jar → restore network: verify auto-reconnection
+      recovers without an app restart
+- [ ] Check logcat (`TipJarVM`) for "Product not fetched" warnings — none
+      expected if all three SKUs are active

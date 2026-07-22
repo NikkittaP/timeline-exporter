@@ -113,6 +113,11 @@ class TipJarViewModel(application: Application) : AndroidViewModel(application) 
                     .enableOneTimeProducts()
                     .build()
             )
+            // PBL 8+: the library re-establishes the service connection itself
+            // if an API call happens while disconnected. Cuts SERVICE_DISCONNECTED
+            // responses and means onBillingServiceDisconnected() must NOT call
+            // startConnection() manually (see below).
+            .enableAutoServiceReconnection()
             .build()
 
         billingClient!!.startConnection(object : BillingClientStateListener {
@@ -126,8 +131,9 @@ class TipJarViewModel(application: Application) : AndroidViewModel(application) 
                 }
             }
             override fun onBillingServiceDisconnected() {
-                // Connection dropped. Stay in current state; user can press
-                // retry in the Error path, which calls connect() again.
+                // Log-only by design. Reconnection is handled by
+                // enableAutoServiceReconnection() above; calling startConnection()
+                // here would fight it. Retry in the Error path still works.
                 Log.d(TAG, "Billing service disconnected")
             }
         })
@@ -144,15 +150,30 @@ class TipJarViewModel(application: Application) : AndroidViewModel(application) 
             .setProductList(productQueries)
             .build()
 
-        // Billing 7.1.x callback signature is still (BillingResult,
-        // List<ProductDetails>?); QueryProductDetailsResult is a later
-        // 7.x/8.x addition we don't depend on.
-        billingClient?.queryProductDetailsAsync(params) { result, productDetailsList ->
+        // PBL 9 callback signature: (BillingResult, QueryProductDetailsResult).
+        // The second parameter is non-null and splits the response into
+        // productDetailsList (fetched) and unfetchedProductList (failed, with
+        // a status code per product). Replaces the nullable
+        // List<ProductDetails> of PBL 7.
+        billingClient?.queryProductDetailsAsync(params) { result, queryResult ->
             if (result.responseCode != BillingClient.BillingResponseCode.OK) {
                 _state.value = TipJarState.Error(result.debugMessage)
                 return@queryProductDetailsAsync
             }
-            val details: List<ProductDetails> = productDetailsList ?: emptyList()
+
+            // Products Play couldn't return — typically not configured, not
+            // active, or not available in the user's country. Without this the
+            // tip jar just silently renders short and there's nothing to debug
+            // against.
+            queryResult.unfetchedProductList.forEach { unfetched ->
+                Log.w(
+                    TAG,
+                    "Product not fetched: ${unfetched.productId} " +
+                        "(type=${unfetched.productType}, statusCode=${unfetched.statusCode})"
+                )
+            }
+
+            val details: List<ProductDetails> = queryResult.productDetailsList
             productDetailsCache.clear()
             details.forEach { detail -> productDetailsCache[detail.productId] = detail }
 

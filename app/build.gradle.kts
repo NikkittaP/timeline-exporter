@@ -47,8 +47,12 @@ android {
         //   versionCode=6, versionName="1.3.0" -> streaming JSON parser (Jackson),
         //                                         large files no longer OOM,
         //                                         byte-accurate progress bar
-        versionCode = 6
-        versionName = "1.3.0"
+        //   versionCode=7, versionName="1.4.0" -> Play Billing 7.1.1 -> 9.1.0
+        //                                         (Google deadline 2026-08-31),
+        //                                         auto service reconnection,
+        //                                         unfetched-product logging
+        versionCode = 7
+        versionName = "1.4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
