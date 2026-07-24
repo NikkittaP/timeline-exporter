@@ -120,4 +120,28 @@
     <string name="tipjar_error">खरीद में कुछ गड़बड़ हो गई।</string>
     <string name="tipjar_retry">फिर प्रयास करें</string>
     <string name="tipjar_close">बंद करें</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">कोई सुविधा माँगें या समस्या बताएँ →</string>
+    <string name="feedback_title">क्या कमी है?</string>
+    <string name="feedback_intro">यह ऐप उपयोगकर्ताओं के अनुरोध पर बढ़ता है। इसमें कोई एनालिटिक्स नहीं है — मुझे नहीं दिखता कि आप इसे कैसे इस्तेमाल करते हैं, इसलिए सीधे पूछ रहा हूँ। जो चाहिए उसे चुनें और भेजने का तरीका तय करें।</string>
+    <string name="feedback_option_activity_filter">आवाजाही के प्रकार से फ़िल्टर (सिर्फ़ साइकिल / पैदल / कार)</string>
+    <string name="feedback_option_file_per_trip">एक बड़ी फ़ाइल के बजाय हर यात्रा की अलग फ़ाइल</string>
+    <string name="feedback_option_elevation_speed">GPX में ऊँचाई और गति</string>
+    <string name="feedback_option_places">सिर्फ़ ट्रैक नहीं, देखी गई जगहें भी एक्सपोर्ट करें</string>
+    <string name="feedback_option_stats">आँकड़ों की स्क्रीन (परिवहन के अनुसार किमी, प्रमुख जगहें)</string>
+    <string name="feedback_option_merge">कई Timeline फ़ाइलें जोड़ना</string>
+    <string name="feedback_option_photo_geotag">समय के आधार पर फ़ोटो जियोटैग करना</string>
+    <string name="feedback_other_label">और कुछ?</string>
+    <string name="feedback_diagnostics_label">तकनीकी जानकारी</string>
+    <string name="feedback_diagnostics_note">ऐप अपने आप कुछ नहीं भेजता। ड्राफ़्ट आपके ब्राउज़र या मेल ऐप में खुलेगा — भेजने से पहले आप कुछ भी बदल या हटा सकते हैं।</string>
+    <string name="feedback_send_github">GitHub पर issue खोलें</string>
+    <string name="feedback_send_email">ईमेल भेजें</string>
+    <string name="feedback_channel_hint">GitHub सार्वजनिक है, दूसरे भी उसी अनुरोध का समर्थन कर सकते हैं। ईमेल सिर्फ़ मुझ तक पहुँचता है।</string>
+    <string name="feedback_dismiss">बंद करें</string>
+    <string name="feedback_toast_no_browser">इस डिवाइस पर लिंक खोलने वाला कोई ऐप नहीं है।</string>
+    <string name="feedback_toast_no_email">इस डिवाइस पर कोई ईमेल ऐप नहीं है।</string>
+    <string name="help_note_csv_local_time">• अगर Timeline फ़ाइल में टाइम ज़ोन दर्ज है, तो CSV में UTC समय के साथ स्थानीय समय और UTC ऑफ़सेट भी रहता है।</string>
+    <string name="feedback_prompt_body">यह ऐप उपयोगकर्ताओं के अनुरोध पर बढ़ता है। इसमें कोई एनालिटिक्स नहीं है — बताइए क्या कमी है।</string>
+    <string name="feedback_prompt_action">बताइए क्या जोड़ना है →</string>
 </resources>

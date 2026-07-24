@@ -120,4 +120,28 @@
     <string name="tipjar_error">购买时出了点问题。</string>
     <string name="tipjar_retry">重试</string>
     <string name="tipjar_close">关闭</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">提交功能建议或反馈问题 →</string>
+    <string name="feedback_title">还缺什么？</string>
+    <string name="feedback_intro">这个应用靠用户的需求成长。它没有任何分析统计，我看不到你怎么使用，所以直接问你。勾选你需要的，再选择发送方式。</string>
+    <string name="feedback_option_activity_filter">按出行方式筛选（仅骑行／步行／驾车）</string>
+    <string name="feedback_option_file_per_trip">每次行程单独一个文件，而不是一个大文件</string>
+    <string name="feedback_option_elevation_speed">GPX 中包含海拔和速度</string>
+    <string name="feedback_option_places">导出到访过的地点，而不只是轨迹</string>
+    <string name="feedback_option_stats">统计页面（各交通方式里程、常去地点）</string>
+    <string name="feedback_option_merge">合并多个 Timeline 文件</string>
+    <string name="feedback_option_photo_geotag">按时间为照片添加位置信息</string>
+    <string name="feedback_other_label">还有别的吗？</string>
+    <string name="feedback_diagnostics_label">技术信息</string>
+    <string name="feedback_diagnostics_note">应用不会自行发送任何内容。草稿会在浏览器或邮件应用中打开，发送前你可以随意修改或删除。</string>
+    <string name="feedback_send_github">在 GitHub 提 issue</string>
+    <string name="feedback_send_email">发送邮件</string>
+    <string name="feedback_channel_hint">GitHub 是公开的，其他人可以为同一需求投票。邮件只有我能看到。</string>
+    <string name="feedback_dismiss">关闭</string>
+    <string name="feedback_toast_no_browser">此设备上没有可以打开该链接的应用。</string>
+    <string name="feedback_toast_no_email">此设备上没有邮件应用。</string>
+    <string name="help_note_csv_local_time">• 如果 Timeline 文件记录了时区，CSV 会同时包含 UTC 时间、当地时间和 UTC 偏移。</string>
+    <string name="feedback_prompt_body">这个应用靠用户的需求成长。它没有任何分析统计，请告诉我还缺什么。</string>
+    <string name="feedback_prompt_action">告诉我该加什么 →</string>
 </resources>

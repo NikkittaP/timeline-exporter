@@ -51,8 +51,12 @@ android {
         //                                         (Google deadline 2026-08-31),
         //                                         auto service reconnection,
         //                                         unfetched-product logging
-        versionCode = 7
-        versionName = "1.4.0"
+        //   versionCode=8, versionName="1.5.0" -> feedback dialog (GitHub /
+        //                                         email, no telemetry),
+        //                                         local time + UTC offset
+        //                                         columns in CSV
+        versionCode = 8
+        versionName = "1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -120,4 +120,28 @@
     <string name="tipjar_error">Er ging iets mis met de aankoop.</string>
     <string name="tipjar_retry">Opnieuw proberen</string>
     <string name="tipjar_close">Sluiten</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">Een functie vragen of een probleem melden →</string>
+    <string name="feedback_title">Wat mis je?</string>
+    <string name="feedback_intro">De app groeit op verzoeken van gebruikers. Er zit geen analytics in — ik zie niet hoe je hem gebruikt, dus vraag ik het direct. Vink aan wat je wilt en kies hoe je het verstuurt.</string>
+    <string name="feedback_option_activity_filter">Filter op vervoerstype (alleen fiets / lopen / auto)</string>
+    <string name="feedback_option_file_per_trip">Een apart bestand per rit in plaats van één groot bestand</string>
+    <string name="feedback_option_elevation_speed">Hoogte en snelheid in GPX</string>
+    <string name="feedback_option_places">Bezochte plaatsen exporteren, niet alleen het spoor</string>
+    <string name="feedback_option_stats">Statistiekenscherm (km per vervoerstype, favoriete plaatsen)</string>
+    <string name="feedback_option_merge">Meerdere Timeline-bestanden samenvoegen</string>
+    <string name="feedback_option_photo_geotag">Foto\'s geotaggen op tijd</string>
+    <string name="feedback_other_label">Nog iets?</string>
+    <string name="feedback_diagnostics_label">Technische gegevens</string>
+    <string name="feedback_diagnostics_note">De app verstuurt zelf niets. Het concept opent in je browser of mailapp — je kunt alles nog aanpassen of wissen voordat je verstuurt.</string>
+    <string name="feedback_send_github">GitHub-issue openen</string>
+    <string name="feedback_send_email">E-mail sturen</string>
+    <string name="feedback_channel_hint">GitHub is openbaar en anderen kunnen hetzelfde verzoek steunen. De e-mail komt alleen bij mij.</string>
+    <string name="feedback_dismiss">Sluiten</string>
+    <string name="feedback_toast_no_browser">Geen app op dit apparaat kan de link openen.</string>
+    <string name="feedback_toast_no_email">Er is geen e-mailapp op dit apparaat.</string>
+    <string name="help_note_csv_local_time">• CSV-bestanden bevatten zowel UTC-tijd als lokale tijd met de UTC-offset, als het Timeline-bestand de tijdzone opslaat.</string>
+    <string name="feedback_prompt_body">De app groeit op verzoeken van gebruikers. Er zit geen analytics in — laat weten wat ontbreekt.</string>
+    <string name="feedback_prompt_action">Laat weten wat erbij moet →</string>
 </resources>

@@ -120,4 +120,28 @@
     <string name="tipjar_error">Щось пішло не так із покупкою.</string>
     <string name="tipjar_retry">Повторити</string>
     <string name="tipjar_close">Закрити</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">Запропонувати функцію або повідомити про проблему →</string>
+    <string name="feedback_title">Чого бракує?</string>
+    <string name="feedback_intro">Застосунок розвивається за запитами користувачів. Аналітики в ньому немає — я не бачу, як ви ним користуєтесь, тому питаю напряму. Позначте потрібне й оберіть, як надіслати.</string>
+    <string name="feedback_option_activity_filter">Фільтр за типом руху (лише велосипед / пішки / авто)</string>
+    <string name="feedback_option_file_per_trip">Окремий файл на кожну поїздку замість одного великого</string>
+    <string name="feedback_option_elevation_speed">Висота та швидкість у GPX</string>
+    <string name="feedback_option_places">Експорт відвіданих місць, а не лише треку</string>
+    <string name="feedback_option_stats">Екран статистики (км за видами транспорту, топ місць)</string>
+    <string name="feedback_option_merge">Об\'єднання кількох файлів Timeline</string>
+    <string name="feedback_option_photo_geotag">Геотегування фотографій за часом</string>
+    <string name="feedback_other_label">Щось іще?</string>
+    <string name="feedback_diagnostics_label">Технічні дані</string>
+    <string name="feedback_diagnostics_note">Застосунок нічого не надсилає сам. Чернетка відкриється у браузері або пошті — перед надсиланням усе можна змінити чи видалити.</string>
+    <string name="feedback_send_github">Відкрити issue на GitHub</string>
+    <string name="feedback_send_email">Написати листа</string>
+    <string name="feedback_channel_hint">GitHub публічний: інші можуть підтримати той самий запит. Лист отримаю тільки я.</string>
+    <string name="feedback_dismiss">Закрити</string>
+    <string name="feedback_toast_no_browser">На пристрої немає застосунку, який відкриє посилання.</string>
+    <string name="feedback_toast_no_email">На пристрої немає поштового застосунку.</string>
+    <string name="help_note_csv_local_time">• У CSV є і час UTC, і місцевий час зі зміщенням — якщо у файлі Timeline записано часовий пояс.</string>
+    <string name="feedback_prompt_body">Застосунок розвивається за запитами користувачів. Аналітики немає — розкажіть, чого бракує.</string>
+    <string name="feedback_prompt_action">Написати, що додати →</string>
 </resources>

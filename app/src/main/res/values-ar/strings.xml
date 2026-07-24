@@ -120,4 +120,28 @@
     <string name="tipjar_error">حدث خطأ ما أثناء الشراء.</string>
     <string name="tipjar_retry">أعد المحاولة</string>
     <string name="tipjar_close">إغلاق</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">اطلب ميزة أو أبلغ عن مشكلة ←</string>
+    <string name="feedback_title">ما الذي ينقص؟</string>
+    <string name="feedback_intro">يتطور التطبيق بناءً على طلبات المستخدمين. لا يحتوي على أي تحليلات — لا أرى كيف تستخدمه، لذلك أسألك مباشرة. حدّد ما تريده ثم اختر طريقة الإرسال.</string>
+    <string name="feedback_option_activity_filter">تصفية حسب نوع التنقل (دراجة / سيرًا / سيارة فقط)</string>
+    <string name="feedback_option_file_per_trip">ملف منفصل لكل رحلة بدل ملف واحد كبير</string>
+    <string name="feedback_option_elevation_speed">الارتفاع والسرعة في GPX</string>
+    <string name="feedback_option_places">تصدير الأماكن التي زرتها، وليس المسار فقط</string>
+    <string name="feedback_option_stats">شاشة إحصاءات (الكيلومترات حسب وسيلة التنقل، أكثر الأماكن زيارة)</string>
+    <string name="feedback_option_merge">دمج عدة ملفات Timeline</string>
+    <string name="feedback_option_photo_geotag">إضافة الموقع إلى الصور حسب الوقت</string>
+    <string name="feedback_other_label">أي شيء آخر؟</string>
+    <string name="feedback_diagnostics_label">تفاصيل تقنية</string>
+    <string name="feedback_diagnostics_note">لا يرسل التطبيق أي شيء بنفسه. تُفتح المسودة في المتصفح أو تطبيق البريد — يمكنك تعديل أي جزء منها أو حذفه قبل الإرسال.</string>
+    <string name="feedback_send_github">فتح مشكلة على GitHub</string>
+    <string name="feedback_send_email">إرسال بريد إلكتروني</string>
+    <string name="feedback_channel_hint">GitHub علني ويمكن للآخرين دعم الطلب نفسه. أما البريد فيصلني وحدي.</string>
+    <string name="feedback_dismiss">إغلاق</string>
+    <string name="feedback_toast_no_browser">لا يوجد تطبيق على هذا الجهاز يمكنه فتح الرابط.</string>
+    <string name="feedback_toast_no_email">لا يوجد تطبيق بريد إلكتروني على هذا الجهاز.</string>
+    <string name="help_note_csv_local_time">• تحتوي ملفات CSV على التوقيت العالمي والتوقيت المحلي مع فرق التوقيت، إذا كان ملف Timeline يسجّل المنطقة الزمنية.</string>
+    <string name="feedback_prompt_body">يتطور التطبيق بناءً على طلبات المستخدمين. لا توجد أي تحليلات — أخبرني بما ينقص.</string>
+    <string name="feedback_prompt_action">أخبرني بما يجب إضافته ←</string>
 </resources>

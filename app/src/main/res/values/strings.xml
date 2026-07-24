@@ -133,6 +133,7 @@
     <string name="help_note_file_location">• The exported file is named Timeline.json. It lands wherever you chose during export — some Android versions restrict access to certain folders (e.g. Downloads), so if this app can\'t read it, try moving it.</string>
     <string name="help_note_eu_csv">• EU users may receive a CSV instead of JSON for privacy-law reasons. This version of the app only handles JSON.</string>
     <string name="help_note_slow_first">• The first export can take a minute or two if you have years of location history.</string>
+    <string name="help_note_csv_local_time">• CSV files carry both UTC time and local time (with the UTC offset), when the Timeline file records the timezone.</string>
 
     <string name="help_dismiss">Got it</string>
     <string name="help_toast_no_location_settings">Could not open Location settings on this device.</string>
@@ -159,4 +160,41 @@
     <string name="tipjar_error">Something went wrong with the purchase.</string>
     <string name="tipjar_retry">Try again</string>
     <string name="tipjar_close">Close</string>
+
+    <!-- Feedback dialog. Two entry points: the line under a successful export
+         and a button at the bottom of the help dialog. -->
+    <!-- The plaque shown under a successful export: title reuses
+         feedback_title, then one explanatory line and the action. -->
+    <string name="feedback_prompt_body">This app grows on user requests. There\'s no analytics — tell me what to add.</string>
+    <string name="feedback_prompt_action">Tell me what to add →</string>
+    <string name="feedback_help_button">Request a feature or report a problem →</string>
+    <string name="feedback_title">What\'s missing?</string>
+    <string name="feedback_intro">This app grows on user requests. It has no analytics — I can\'t see how you use it, so I\'m asking directly. Tick anything you\'d like, then choose how to send it.</string>
+
+    <string name="feedback_option_activity_filter">Filter by movement type (cycling / walking / driving only)</string>
+    <string name="feedback_option_file_per_trip">A separate file per trip instead of one large file</string>
+    <string name="feedback_option_elevation_speed">Elevation and speed in GPX</string>
+    <string name="feedback_option_places">Export visited places, not only the track</string>
+    <string name="feedback_option_stats">Statistics screen (km by transport type, top places)</string>
+    <string name="feedback_option_merge">Merging several Timeline files</string>
+    <string name="feedback_option_photo_geotag">Geotagging photos by time</string>
+
+    <string name="feedback_other_label">Anything else?</string>
+    <string name="feedback_diagnostics_label">Technical details</string>
+    <string name="feedback_diagnostics_note">Nothing is sent by the app. The draft opens in your browser or mail app — you can edit or delete any of it before sending.</string>
+
+    <string name="feedback_send_github">Open a GitHub issue</string>
+    <string name="feedback_send_email">Send an email</string>
+    <string name="feedback_channel_hint">GitHub is public and lets others upvote the same request. Email reaches only me.</string>
+    <string name="feedback_dismiss">Close</string>
+
+    <string name="feedback_toast_no_browser">No app on this device can open the link.</string>
+    <string name="feedback_toast_no_email">No email app is available on this device.</string>
+
+    <!-- Outgoing text. Deliberately untranslated: it lands in the issue tracker
+         or an inbox, where the maintainer has to be able to read and
+         de-duplicate it. -->
+    <string name="feedback_message_subject" translatable="false">Timeline Exporter — feature request</string>
+    <string name="feedback_body_requested" translatable="false">Requested features:</string>
+    <string name="feedback_body_notes" translatable="false">Notes:</string>
 </resources>

@@ -120,4 +120,28 @@
     <string name="tipjar_error">구매 중 문제가 발생했습니다.</string>
     <string name="tipjar_retry">다시 시도</string>
     <string name="tipjar_close">닫기</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">기능 요청하거나 문제 신고하기 →</string>
+    <string name="feedback_title">무엇이 빠졌나요?</string>
+    <string name="feedback_intro">이 앱은 사용자 요청으로 자랍니다. 분석 도구가 없어서 어떻게 쓰시는지 볼 수 없기에 직접 여쭤봅니다. 원하는 항목을 선택하고 보낼 방법을 고르세요.</string>
+    <string name="feedback_option_activity_filter">이동 수단으로 필터링(자전거 / 도보 / 자동차만)</string>
+    <string name="feedback_option_file_per_trip">큰 파일 하나 대신 이동마다 파일 분리</string>
+    <string name="feedback_option_elevation_speed">GPX에 고도와 속도 포함</string>
+    <string name="feedback_option_places">경로뿐 아니라 방문한 장소도 내보내기</string>
+    <string name="feedback_option_stats">통계 화면(이동 수단별 거리, 자주 간 장소)</string>
+    <string name="feedback_option_merge">여러 Timeline 파일 합치기</string>
+    <string name="feedback_option_photo_geotag">시간을 기준으로 사진에 위치 정보 넣기</string>
+    <string name="feedback_other_label">그 밖에 필요한 것이 있나요?</string>
+    <string name="feedback_diagnostics_label">기술 정보</string>
+    <string name="feedback_diagnostics_note">앱이 스스로 보내는 것은 없습니다. 초안은 브라우저나 메일 앱에서 열리며, 보내기 전에 얼마든지 고치거나 지울 수 있습니다.</string>
+    <string name="feedback_send_github">GitHub 이슈 열기</string>
+    <string name="feedback_send_email">이메일 보내기</string>
+    <string name="feedback_channel_hint">GitHub는 공개라 다른 사람도 같은 요청에 힘을 보탤 수 있습니다. 이메일은 저에게만 옵니다.</string>
+    <string name="feedback_dismiss">닫기</string>
+    <string name="feedback_toast_no_browser">이 기기에는 링크를 열 수 있는 앱이 없습니다.</string>
+    <string name="feedback_toast_no_email">이 기기에는 이메일 앱이 없습니다.</string>
+    <string name="help_note_csv_local_time">• Timeline 파일에 시간대가 기록되어 있으면 CSV에 UTC 시각과 함께 현지 시각 및 UTC 오프셋이 들어갑니다.</string>
+    <string name="feedback_prompt_body">이 앱은 사용자 요청으로 자랍니다. 분석 도구가 없으니 무엇이 부족한지 알려주세요.</string>
+    <string name="feedback_prompt_action">추가할 기능 알려주기 →</string>
 </resources>

@@ -235,6 +235,11 @@ private fun extractSemanticSegment(
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return }
 
     var startTime: Instant? = null
+    // Timezone in effect for this segment. Google states it explicitly in
+    // `startTimeTimezoneUtcOffsetMinutes`; the ISO `startTime` usually carries
+    // the same offset, and serves as a fallback when the field is absent.
+    var segmentOffset: Int? = null
+    var startTimeOffset: Int? = null
     var hadTimelinePath = false
     var hadVisit = false
     var hadActivity = false
@@ -246,7 +251,13 @@ private fun extractSemanticSegment(
         val f = p.currentName()
         p.nextToken()
         when (f) {
-            "startTime" -> startTime = parseTimestamp(p.valueAsStringOrNull())
+            "startTime" -> {
+                val raw = p.valueAsStringOrNull()
+                startTime = parseTimestamp(raw)
+                startTimeOffset = parseOffsetMinutes(raw)
+            }
+            "startTimeTimezoneUtcOffsetMinutes" ->
+                segmentOffset = p.longOrNull()?.toInt()?.takeIf { it in VALID_OFFSET_RANGE }
             "timelinePath" -> {
                 hadTimelinePath = true
                 if (p.currentToken() == JsonToken.START_ARRAY) {
@@ -265,7 +276,10 @@ private fun extractSemanticSegment(
         val time = rp.time?.let { parseTimestamp(it) }
             ?: rp.offset?.trim()?.toLongOrNull()?.let { off -> startTime?.plusSeconds(off * 60) }
             ?: return@forEach
-        out.add(PathPoint(time, coords.first, coords.second))
+        // Per-point offset wins when the point's own timestamp carries one;
+        // otherwise the segment's timezone applies to every point in it.
+        val tz = rp.time?.let { parseOffsetMinutes(it) } ?: segmentOffset ?: startTimeOffset
+        out.add(PathPoint(time, coords.first, coords.second, tz))
     }
 
     when {
@@ -344,18 +358,26 @@ private fun readActivitySegment(p: JsonParser, out: MutableList<PathPoint>) {
 
     val start = parseTimestamp(durStart)
     val end = parseTimestamp(durEnd)
+    val startTz = parseOffsetMinutes(durStart)
+    val endTz = parseOffsetMinutes(durEnd)
     if (rawPath != null && rawPath.isNotEmpty()) {
         for ((coords, ts) in rawPath) {
             val time = parseTimestamp(ts) ?: start ?: continue
-            out.add(PathPoint(time, coords.first, coords.second))
+            val tz = parseOffsetMinutes(ts) ?: startTz
+            out.add(PathPoint(time, coords.first, coords.second, tz))
         }
     } else {
-        if (start != null && startLoc != null) out.add(PathPoint(start, startLoc.first, startLoc.second))
-        val mid = start ?: end
-        if (mid != null && waypoints != null) {
-            for (w in waypoints) out.add(PathPoint(mid, w.first, w.second))
+        if (start != null && startLoc != null) {
+            out.add(PathPoint(start, startLoc.first, startLoc.second, startTz))
         }
-        if (end != null && endLoc != null) out.add(PathPoint(end, endLoc.first, endLoc.second))
+        val mid = start ?: end
+        val midTz = startTz ?: endTz
+        if (mid != null && waypoints != null) {
+            for (w in waypoints) out.add(PathPoint(mid, w.first, w.second, midTz))
+        }
+        if (end != null && endLoc != null) {
+            out.add(PathPoint(end, endLoc.first, endLoc.second, endTz))
+        }
     }
 }
 
@@ -372,7 +394,7 @@ private fun readPlaceVisit(p: JsonParser, out: MutableList<PathPoint>) {
         }
     }
     val time = parseTimestamp(durStart) ?: return
-    if (loc != null) out.add(PathPoint(time, loc.first, loc.second))
+    if (loc != null) out.add(PathPoint(time, loc.first, loc.second, parseOffsetMinutes(durStart)))
 }
 
 /** Returns (startTimestamp ?: startTimestampMs, endTimestamp ?: endTimestampMs). */
@@ -484,8 +506,9 @@ private fun extractLocationRecord(p: JsonParser, out: MutableList<PathPoint>) {
         }
     }
     val coords = e7Pair(latE7, lonE7) ?: return
-    val time = parseTimestamp(ts ?: tsMs) ?: return
-    out.add(PathPoint(time, coords.first, coords.second))
+    val raw = ts ?: tsMs
+    val time = parseTimestamp(raw) ?: return
+    out.add(PathPoint(time, coords.first, coords.second, parseOffsetMinutes(raw)))
 }
 
 /** Phone export rawSignals fallback: position.LatLng + position.timestamp. */
@@ -510,7 +533,7 @@ private fun extractRawSignal(p: JsonParser, out: MutableList<PathPoint>) {
     }
     val coords = latLng?.let { parseCoordinatePair(it) } ?: return
     val time = parseTimestamp(ts) ?: return
-    out.add(PathPoint(time, coords.first, coords.second))
+    out.add(PathPoint(time, coords.first, coords.second, parseOffsetMinutes(ts)))
 }
 
 // ---------- Token helpers ----------
@@ -584,6 +607,32 @@ internal fun parseTimestamp(text: String?): Instant? {
     } catch (_: DateTimeParseException) {
     }
     return null
+}
+
+/** Sanity bounds for a UTC offset in minutes (-12:00 … +14:00). */
+private val VALID_OFFSET_RANGE = -12 * 60..14 * 60
+
+/**
+ * The UTC offset a timestamp was written in, in minutes (+02:00 -> 120), or
+ * null when the encoding doesn't carry one.
+ *
+ * Deliberately returns null for `Z` timestamps and epoch numbers. Those say
+ * "this instant in UTC" and say nothing about the traveller's local clock —
+ * treating them as offset 0 would print a confident, wrong local time for
+ * everyone outside Greenwich. A genuine "+00:00" in a phone export is kept,
+ * because there the offset really was recorded and really is zero.
+ */
+internal fun parseOffsetMinutes(text: String?): Int? {
+    val t = text?.trim()
+    if (t.isNullOrEmpty()) return null
+    if (t.toLongOrNull() != null) return null
+    if (t.endsWith("Z") || t.endsWith("z")) return null
+    return try {
+        val minutes = OffsetDateTime.parse(t).offset.totalSeconds / 60
+        minutes.takeIf { it in VALID_OFFSET_RANGE }
+    } catch (_: DateTimeParseException) {
+        null
+    }
 }
 
 /** Kept for source/test compatibility; delegates to [parseTimestamp]. */

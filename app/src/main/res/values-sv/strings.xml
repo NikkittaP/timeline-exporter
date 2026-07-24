@@ -120,4 +120,28 @@
     <string name="tipjar_error">Något gick fel med köpet.</string>
     <string name="tipjar_retry">Försök igen</string>
     <string name="tipjar_close">Stäng</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">Föreslå en funktion eller rapportera ett problem →</string>
+    <string name="feedback_title">Vad saknas?</string>
+    <string name="feedback_intro">Appen växer med användarnas önskemål. Den har ingen analys — jag ser inte hur du använder den, så jag frågar direkt. Kryssa i det du vill ha och välj hur du skickar.</string>
+    <string name="feedback_option_activity_filter">Filtrera på färdsätt (bara cykel / gång / bil)</string>
+    <string name="feedback_option_file_per_trip">En egen fil per resa i stället för en stor fil</string>
+    <string name="feedback_option_elevation_speed">Höjd och hastighet i GPX</string>
+    <string name="feedback_option_places">Exportera besökta platser, inte bara spåret</string>
+    <string name="feedback_option_stats">Statistikvy (km per färdsätt, vanligaste platser)</string>
+    <string name="feedback_option_merge">Slå ihop flera Timeline-filer</string>
+    <string name="feedback_option_photo_geotag">Geotagga foton efter tid</string>
+    <string name="feedback_other_label">Något mer?</string>
+    <string name="feedback_diagnostics_label">Tekniska uppgifter</string>
+    <string name="feedback_diagnostics_note">Appen skickar ingenting själv. Utkastet öppnas i webbläsaren eller e-postappen — du kan ändra eller radera allt innan du skickar.</string>
+    <string name="feedback_send_github">Öppna ett GitHub-ärende</string>
+    <string name="feedback_send_email">Skicka e-post</string>
+    <string name="feedback_channel_hint">GitHub är offentligt och andra kan stödja samma önskemål. E-posten når bara mig.</string>
+    <string name="feedback_dismiss">Stäng</string>
+    <string name="feedback_toast_no_browser">Ingen app på enheten kan öppna länken.</string>
+    <string name="feedback_toast_no_email">Det finns ingen e-postapp på enheten.</string>
+    <string name="help_note_csv_local_time">• CSV-filer innehåller både UTC-tid och lokal tid med UTC-offset, om Timeline-filen sparar tidszonen.</string>
+    <string name="feedback_prompt_body">Appen växer med användarnas önskemål. Den har ingen analys — berätta vad som saknas.</string>
+    <string name="feedback_prompt_action">Berätta vad som saknas →</string>
 </resources>

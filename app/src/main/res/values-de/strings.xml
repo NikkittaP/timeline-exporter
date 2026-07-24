@@ -120,4 +120,28 @@
     <string name="tipjar_error">Beim Kauf ist etwas schiefgelaufen.</string>
     <string name="tipjar_retry">Erneut versuchen</string>
     <string name="tipjar_close">Schließen</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">Funktion vorschlagen oder Problem melden →</string>
+    <string name="feedback_title">Was fehlt?</string>
+    <string name="feedback_intro">Die App wächst mit den Wünschen ihrer Nutzer. Sie enthält keine Analytik — ich sehe nicht, wie du sie nutzt, also frage ich direkt. Kreuze an, was du brauchst, und wähle den Weg zum Senden.</string>
+    <string name="feedback_option_activity_filter">Filter nach Fortbewegungsart (nur Rad / zu Fuß / Auto)</string>
+    <string name="feedback_option_file_per_trip">Eine eigene Datei pro Fahrt statt einer großen Datei</string>
+    <string name="feedback_option_elevation_speed">Höhe und Geschwindigkeit in GPX</string>
+    <string name="feedback_option_places">Besuchte Orte exportieren, nicht nur die Strecke</string>
+    <string name="feedback_option_stats">Statistik-Bildschirm (km je Verkehrsmittel, häufigste Orte)</string>
+    <string name="feedback_option_merge">Mehrere Timeline-Dateien zusammenführen</string>
+    <string name="feedback_option_photo_geotag">Fotos anhand der Uhrzeit geotaggen</string>
+    <string name="feedback_other_label">Sonst noch etwas?</string>
+    <string name="feedback_diagnostics_label">Technische Angaben</string>
+    <string name="feedback_diagnostics_note">Die App sendet nichts von selbst. Der Entwurf öffnet sich im Browser oder in der Mail-App — du kannst alles vor dem Senden ändern oder löschen.</string>
+    <string name="feedback_send_github">GitHub-Issue öffnen</string>
+    <string name="feedback_send_email">E-Mail schreiben</string>
+    <string name="feedback_channel_hint">GitHub ist öffentlich, andere können denselben Wunsch unterstützen. Die E-Mail erreicht nur mich.</string>
+    <string name="feedback_dismiss">Schließen</string>
+    <string name="feedback_toast_no_browser">Keine App auf diesem Gerät kann den Link öffnen.</string>
+    <string name="feedback_toast_no_email">Auf diesem Gerät ist keine E-Mail-App verfügbar.</string>
+    <string name="help_note_csv_local_time">• CSV-Dateien enthalten UTC-Zeit und Ortszeit mit UTC-Offset — sofern die Timeline-Datei die Zeitzone speichert.</string>
+    <string name="feedback_prompt_body">Die App wächst mit den Wünschen ihrer Nutzer. Es gibt keine Analytik — sag mir, was fehlt.</string>
+    <string name="feedback_prompt_action">Sag mir, was fehlt →</string>
 </resources>

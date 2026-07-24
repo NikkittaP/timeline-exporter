@@ -15,11 +15,20 @@ import java.time.Instant
  * A single GPS sample with a UTC timestamp.
  * Time is stored as Instant (a precise UTC moment) so downstream code never has
  * to think about timezones.
+ *
+ * [tzOffsetMinutes] is the offset from UTC that was in effect *where and when
+ * the point was recorded* (e.g. 120 for +02:00), when the export carries it —
+ * either in the ISO timestamp itself or in the segment's
+ * `startTimeTimezoneUtcOffsetMinutes`. It is null for formats that only store
+ * UTC (`Z` timestamps, epoch millis), and consumers must treat it as "unknown"
+ * rather than assuming UTC: only CSV uses it, to add a human-readable local
+ * time column next to the UTC one.
  */
 data class PathPoint(
     val timeUtc: Instant,
     val latitude: Double,
     val longitude: Double,
+    val tzOffsetMinutes: Int? = null,
 )
 
 /**

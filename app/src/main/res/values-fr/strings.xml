@@ -120,4 +120,28 @@
     <string name="tipjar_error">Un problème est survenu lors de l\'achat.</string>
     <string name="tipjar_retry">Réessayer</string>
     <string name="tipjar_close">Fermer</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">Proposer une fonction ou signaler un problème →</string>
+    <string name="feedback_title">Qu\'est-ce qui manque ?</string>
+    <string name="feedback_intro">L\'application évolue selon les demandes des utilisateurs. Elle ne contient aucune analytique : je ne vois pas comment vous l\'utilisez, alors je vous le demande directement. Cochez ce qui vous intéresse, puis choisissez comment l\'envoyer.</string>
+    <string name="feedback_option_activity_filter">Filtrer par mode de déplacement (vélo / marche / voiture uniquement)</string>
+    <string name="feedback_option_file_per_trip">Un fichier par trajet plutôt qu\'un seul gros fichier</string>
+    <string name="feedback_option_elevation_speed">Altitude et vitesse dans le GPX</string>
+    <string name="feedback_option_places">Exporter les lieux visités, pas seulement la trace</string>
+    <string name="feedback_option_stats">Écran de statistiques (km par mode de transport, lieux les plus fréquents)</string>
+    <string name="feedback_option_merge">Fusionner plusieurs fichiers Timeline</string>
+    <string name="feedback_option_photo_geotag">Géolocaliser les photos d\'après l\'heure</string>
+    <string name="feedback_other_label">Autre chose ?</string>
+    <string name="feedback_diagnostics_label">Détails techniques</string>
+    <string name="feedback_diagnostics_note">L\'application n\'envoie rien d\'elle-même. Le brouillon s\'ouvre dans votre navigateur ou votre messagerie : vous pouvez tout modifier ou supprimer avant l\'envoi.</string>
+    <string name="feedback_send_github">Ouvrir un ticket GitHub</string>
+    <string name="feedback_send_email">Envoyer un e-mail</string>
+    <string name="feedback_channel_hint">GitHub est public, d\'autres peuvent soutenir la même demande. L\'e-mail n\'arrive qu\'à moi.</string>
+    <string name="feedback_dismiss">Fermer</string>
+    <string name="feedback_toast_no_browser">Aucune application de cet appareil ne peut ouvrir ce lien.</string>
+    <string name="feedback_toast_no_email">Aucune application de messagerie n\'est disponible sur cet appareil.</string>
+    <string name="help_note_csv_local_time">• Les CSV contiennent l\'heure UTC et l\'heure locale avec son décalage, si le fichier Timeline enregistre le fuseau horaire.</string>
+    <string name="feedback_prompt_body">L\'application évolue selon les demandes des utilisateurs. Aucune analytique : dites-moi ce qui manque.</string>
+    <string name="feedback_prompt_action">Dites-moi quoi ajouter →</string>
 </resources>

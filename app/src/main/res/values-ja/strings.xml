@@ -120,4 +120,28 @@
     <string name="tipjar_error">購入中に問題が発生しました。</string>
     <string name="tipjar_retry">もう一度試す</string>
     <string name="tipjar_close">閉じる</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">機能をリクエスト、または問題を報告 →</string>
+    <string name="feedback_title">足りないものは？</string>
+    <string name="feedback_intro">このアプリはユーザーの要望で成長します。解析機能は入っていないため、使われ方が分かりません。だから直接おたずねします。必要なものにチェックを入れて、送信方法を選んでください。</string>
+    <string name="feedback_option_activity_filter">移動手段でフィルター（自転車／徒歩／車のみ）</string>
+    <string name="feedback_option_file_per_trip">大きな1つのファイルではなく、移動ごとに別ファイル</string>
+    <string name="feedback_option_elevation_speed">GPXに標高と速度を含める</string>
+    <string name="feedback_option_places">軌跡だけでなく訪問した場所も書き出す</string>
+    <string name="feedback_option_stats">統計画面（移動手段別の距離、よく行く場所）</string>
+    <string name="feedback_option_merge">複数のTimelineファイルの結合</string>
+    <string name="feedback_option_photo_geotag">時刻をもとに写真へ位置情報を付与</string>
+    <string name="feedback_other_label">そのほかにありますか？</string>
+    <string name="feedback_diagnostics_label">技術情報</string>
+    <string name="feedback_diagnostics_note">アプリが勝手に送信することはありません。下書きはブラウザーまたはメールアプリで開くので、送る前に編集も削除もできます。</string>
+    <string name="feedback_send_github">GitHubでissueを作成</string>
+    <string name="feedback_send_email">メールを送る</string>
+    <string name="feedback_channel_hint">GitHubは公開で、同じ要望に他の人も賛同できます。メールは私にだけ届きます。</string>
+    <string name="feedback_dismiss">閉じる</string>
+    <string name="feedback_toast_no_browser">この端末にはリンクを開けるアプリがありません。</string>
+    <string name="feedback_toast_no_email">この端末にはメールアプリがありません。</string>
+    <string name="help_note_csv_local_time">• Timelineファイルにタイムゾーンが記録されていれば、CSVにはUTC時刻に加えて現地時刻とUTCオフセットが入ります。</string>
+    <string name="feedback_prompt_body">このアプリはユーザーの要望で成長します。解析機能はありません。足りないものを教えてください。</string>
+    <string name="feedback_prompt_action">追加してほしいものを伝える →</string>
 </resources>

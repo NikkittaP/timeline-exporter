@@ -28,6 +28,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,12 +44,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,7 +93,13 @@ fun TimelineExporterApp() {
     var helpDialogOpen by remember { mutableStateOf(false) }
     var tipJarDialogOpen by remember { mutableStateOf(false) }
     var languageDialogOpen by remember { mutableStateOf(false) }
+    var feedbackDialogOpen by remember { mutableStateOf(false) }
     var overflowMenuOpen by remember { mutableStateOf(false) }
+
+    // Same activity-scoped instance MainScreen resolves to; read here only to
+    // pre-fill the feedback diagnostics with what is currently loaded.
+    val viewModel: TimelineViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -161,11 +170,19 @@ fun TimelineExporterApp() {
         MainScreen(
             modifier = Modifier.padding(innerPadding),
             onHelpClick = { helpDialogOpen = true },
+            onFeedbackClick = { feedbackDialogOpen = true },
+            viewModel = viewModel,
         )
     }
 
     if (helpDialogOpen) {
-        HelpDialog(onDismiss = { helpDialogOpen = false })
+        HelpDialog(
+            onDismiss = { helpDialogOpen = false },
+            onFeedbackClick = {
+                helpDialogOpen = false
+                feedbackDialogOpen = true
+            },
+        )
     }
     if (tipJarDialogOpen) {
         TipJarDialog(onDismiss = { tipJarDialogOpen = false })
@@ -173,12 +190,23 @@ fun TimelineExporterApp() {
     if (languageDialogOpen) {
         LanguageDialog(onDismiss = { languageDialogOpen = false })
     }
+    if (feedbackDialogOpen) {
+        val loaded = (uiState as? TimelineUiState.Loaded)?.result
+        FeedbackDialog(
+            feedbackContext = FeedbackContext(
+                format = loaded?.format,
+                pointCount = loaded?.pathPoints?.size,
+            ),
+            onDismiss = { feedbackDialogOpen = false },
+        )
+    }
 }
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     onHelpClick: () -> Unit = {},
+    onFeedbackClick: () -> Unit = {},
     viewModel: TimelineViewModel = viewModel(),
 ) {
     val context = LocalContext.current
@@ -190,6 +218,25 @@ fun MainScreen(
     var mapInteracting by remember { mutableStateOf(false) }
     var mapFullscreen by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
+
+    // A successful export lands at the bottom of a four-step screen the user is
+    // usually somewhere in the middle of, so both the confirmation and the
+    // feedback prompt below it start off-screen. Scroll them into view.
+    //
+    // Keyed on exportState, which always passes through Working before the next
+    // Success — so a repeated export with identical values still re-triggers.
+    LaunchedEffect(exportState) {
+        if (exportState !is ExportState.Success) return@LaunchedEffect
+        // The prompt is composed in this same frame; maxValue only accounts for
+        // it after the next layout pass, so measuring now would stop short.
+        withFrameNanos { }
+        scrollState.animateScrollTo(scrollState.maxValue)
+        // If the content grew while the animation ran (long filename wrapping
+        // onto a second line), finish the trip.
+        if (scrollState.value < scrollState.maxValue) {
+            scrollState.animateScrollTo(scrollState.maxValue)
+        }
+    }
 
     val movableMap = remember {
         movableContentOf<List<PathPoint>, Modifier> { pts, m ->
@@ -345,6 +392,7 @@ fun MainScreen(
                         canSave = filteredPoints.isNotEmpty(),
                         exportState = exportState,
                         onPickFormat = launchSave,
+                        onFeedbackClick = onFeedbackClick,
                     )
                 }
             }
@@ -650,6 +698,7 @@ private fun ExportContent(
     canSave: Boolean,
     exportState: ExportState,
     onPickFormat: (Exporter) -> Unit,
+    onFeedbackClick: () -> Unit = {},
 ) {
     val enabled = canSave && exportState !is ExportState.Working
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -673,15 +722,18 @@ private fun ExportContent(
                 style = MaterialTheme.typography.bodySmall,
             )
         }
-        is ExportState.Success -> Text(
-            text = stringResource(
-                R.string.export_success,
-                formatGrouped(s.pointCount),
-                s.displayName ?: stringResource(R.string.export_fallback_filename),
-            ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.primary,
-        )
+        is ExportState.Success -> {
+            Text(
+                text = stringResource(
+                    R.string.export_success,
+                    formatGrouped(s.pointCount),
+                    s.displayName ?: stringResource(R.string.export_fallback_filename),
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            FeedbackPrompt(onClick = onFeedbackClick)
+        }
         ExportState.Failure.NoPoints -> Text(
             text = stringResource(R.string.export_error_no_points),
             style = MaterialTheme.typography.bodySmall,
@@ -699,6 +751,70 @@ private fun ExportContent(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
             )
+        }
+    }
+}
+
+/**
+ * The feedback ask, shown only after a successful export — the one moment the
+ * user demonstrably got what they came for.
+ *
+ * A tinted plaque rather than a bare text line: the first version was a muted
+ * `bodySmall` link and read as a caption, which is exactly what people skip.
+ * The visual weight comes from the container colour, not from a loud primary
+ * button — the user has finished their task and is being asked a favour, so
+ * this must not compete with the export buttons above it.
+ *
+ * Deliberately `tertiaryContainer` and not `secondaryContainer`: the app runs
+ * with dynamic colour on, where primary and secondary are neighbouring shades
+ * of the same wallpaper hue, so a secondary plaque sitting under blue export
+ * buttons read as one more control. Material You derives tertiary by rotating
+ * the hue, so this is the only container guaranteed to look like a different
+ * kind of thing — which is the point: this is not app functionality, it's the
+ * developer asking a question.
+ */
+@Composable
+private fun FeedbackPrompt(onClick: () -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        // The 12dp text inset is split between this Column and the button's own
+        // contentPadding: the button keeps real horizontal padding (its pressed
+        // state layer is a fully rounded pill, and with zero padding the first
+        // and last glyphs sit outside the curve), while its label still lines up
+        // with the two lines above it.
+        Column(
+            modifier = Modifier.padding(start = 4.dp, end = 12.dp, top = 12.dp, bottom = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.feedback_title),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(start = 8.dp),
+            )
+            Text(
+                text = stringResource(R.string.feedback_prompt_body),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 8.dp),
+            )
+            // The action inherits onTertiaryContainer from the Surface instead
+            // of TextButton's default primary, which would drag the plaque back
+            // to the colour of the export buttons.
+            TextButton(
+                onClick = onClick,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                ),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.feedback_prompt_action),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
         }
     }
 }

@@ -120,4 +120,28 @@
     <string name="tipjar_error">Coś poszło nie tak z zakupem.</string>
     <string name="tipjar_retry">Spróbuj ponownie</string>
     <string name="tipjar_close">Zamknij</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">Zaproponuj funkcję lub zgłoś problem →</string>
+    <string name="feedback_title">Czego brakuje?</string>
+    <string name="feedback_intro">Aplikacja rozwija się dzięki prośbom użytkowników. Nie ma w niej analityki — nie widzę, jak z niej korzystasz, więc pytam wprost. Zaznacz, co Cię interesuje, i wybierz sposób wysyłki.</string>
+    <string name="feedback_option_activity_filter">Filtr według sposobu przemieszczania (tylko rower / pieszo / auto)</string>
+    <string name="feedback_option_file_per_trip">Osobny plik na każdą podróż zamiast jednego dużego</string>
+    <string name="feedback_option_elevation_speed">Wysokość i prędkość w GPX</string>
+    <string name="feedback_option_places">Eksport odwiedzonych miejsc, nie tylko trasy</string>
+    <string name="feedback_option_stats">Ekran statystyk (km wg środka transportu, najczęstsze miejsca)</string>
+    <string name="feedback_option_merge">Łączenie kilku plików Timeline</string>
+    <string name="feedback_option_photo_geotag">Geotagowanie zdjęć według czasu</string>
+    <string name="feedback_other_label">Coś jeszcze?</string>
+    <string name="feedback_diagnostics_label">Dane techniczne</string>
+    <string name="feedback_diagnostics_note">Aplikacja sama nic nie wysyła. Wersja robocza otworzy się w przeglądarce lub poczcie — przed wysłaniem możesz wszystko zmienić lub usunąć.</string>
+    <string name="feedback_send_github">Otwórz zgłoszenie na GitHubie</string>
+    <string name="feedback_send_email">Wyślij e-mail</string>
+    <string name="feedback_channel_hint">GitHub jest publiczny, inni mogą poprzeć tę samą prośbę. E-mail trafia tylko do mnie.</string>
+    <string name="feedback_dismiss">Zamknij</string>
+    <string name="feedback_toast_no_browser">Żadna aplikacja na tym urządzeniu nie otworzy linku.</string>
+    <string name="feedback_toast_no_email">Na tym urządzeniu nie ma aplikacji pocztowej.</string>
+    <string name="help_note_csv_local_time">• Pliki CSV zawierają czas UTC oraz czas lokalny z przesunięciem, jeśli plik Timeline zapisuje strefę czasową.</string>
+    <string name="feedback_prompt_body">Aplikacja rozwija się dzięki prośbom użytkowników. Nie ma analityki — napisz, czego brakuje.</string>
+    <string name="feedback_prompt_action">Napisz, co dodać →</string>
 </resources>

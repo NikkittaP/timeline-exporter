@@ -1,58 +1,109 @@
-# Release Notes — v1.4.0 (versionCode 7)
+# Release Notes — v1.5.0 (versionCode 8)
 
 ## Highlights
-Maintenance release. Google Play Billing Library was upgraded from 7.1.1 to
-9.1.0 to meet Google's requirement that all app updates published after
-**31 August 2026** use Billing Library 8 or later. Nothing changes for people
-who never open the tip jar — parsing, filtering and export are untouched.
+The app finally has a way to talk back. Until now a user who needed something
+had exactly one channel — a public Play Store review — so requests arrived by
+accident, if at all. This release adds a feedback ballot reachable from two
+places, and fixes the one export complaint that didn't need a survey to
+discover: CSV timestamps were UTC-only.
 
-## Changed (technical)
-- **Play Billing Library 7.1.1 → 9.1.0** (`com.android.billingclient:billing-ktx`).
-  Went straight to 9 rather than 8: the breaking change is identical for both,
-  but PBL 8 is itself retired on 31 August 2027, so 9 buys roughly another year.
-- **`queryProductDetailsAsync` callback rewritten** for the PBL 9 signature.
-  The second parameter is now a non-null `QueryProductDetailsResult` exposing
-  `productDetailsList` and `unfetchedProductList`, replacing PBL 7's nullable
-  `List<ProductDetails>`.
-- **Unfetched products are now logged.** If Play can't return a tip product
-  (not configured, not active, unavailable in the user's country), the product
-  ID, type and status code go to logcat with `Log.w`. Previously such products
-  were silently dropped by `mapNotNull` and the tip jar simply rendered short
-  with no explanation.
-- **Automatic service reconnection enabled** (`enableAutoServiceReconnection()`).
-  The library now re-establishes a dropped billing connection on its own instead
-  of waiting for the user to hit retry. `onBillingServiceDisconnected()` is
-  log-only by design — calling `startConnection()` there would fight the
-  library's own retry.
-- **Blocked-Play-Store errors now classify correctly.** In PBL 9, a Play Store
-  blocked by the system (for example OEM kids mode) reports
-  `BILLING_UNAVAILABLE` instead of a generic `ERROR`. `TipJarViewModel` already
-  routed `BILLING_UNAVAILABLE` to `TipJarState.Unavailable`, so this scenario
-  starts being handled properly with no code change.
-- ProGuard rules unchanged — verified that billing ships its own consumer rules
-  and the new PBL 9 result types need none. Documented in `proguard-rules.pro`.
+## Added
+- **Feedback dialog.** A checklist of seven concrete candidate features (all of
+  them backed by data that already exists in `Timeline.json`, so nothing on the
+  list is an empty promise) plus a free-text field. Sends through **GitHub
+  Issues** or **email** — the user picks; neither channel is imposed.
+- **Two entry points, nothing added to the idle main screen.**
+  1. A tinted plaque under a successful export — the moment the user just got
+     what they came for. It started as a muted one-line link and read as a
+     caption, i.e. exactly what people skip, so it now carries a title, one
+     line of reasoning and a real action. Weight comes from the container
+     colour, not from a primary button: the user finished their task and is
+     being asked a favour, so it must not compete with the export buttons.
+     The container is `tertiaryContainer`. With dynamic colour on, primary and
+     secondary are neighbouring shades of the same wallpaper hue, so a
+     secondary plaque under blue export buttons read as one more control;
+     Material You derives tertiary by rotating the hue, which is the only
+     way to signal "this isn't app functionality" without hardcoding a colour
+     that would then fight the user's theme.
+     The screen also auto-scrolls to the bottom when an export succeeds: both
+     the "Saved N points" confirmation and the prompt under it sit below the
+     fold on a four-step screen, so without it the plaque is invisible to
+     anyone who didn't scroll.
+  2. A button at the bottom of the help dialog — permanently available, out of
+     the way.
+- **Email is offered before GitHub.** Filing an issue needs a GitHub account;
+  anyone without one hits a signup wall after composing their request. Mail
+  works for everybody, so it leads.
+- **Diagnostics are shown, not smuggled.** App version, device, Android
+  version, locale, detected file format and point count are pre-filled into an
+  **editable** text field. The app itself transmits nothing: both buttons hand
+  a draft to the browser or the mail client, where the user can still edit or
+  abandon it. This is a deliberate constraint — "100% on-device, zero
+  telemetry" would be worth nothing if a feedback button quietly attached data.
+- **Ballot text travels in English.** The checkbox labels are translated for
+  display, but the outgoing issue/email body uses fixed English strings, so a
+  request filed in Japanese or Turkish still arrives readable and
+  de-duplicable.
 
-## Not included
-Sub-response codes (`PAYMENT_DECLINED_DUE_TO_INSUFFICIENT_FUNDS`,
-`USER_INELIGIBLE`) from `launchBillingFlow()` are available in PBL 9 but not
-consumed yet. Deliberately deferred to keep this release a minimal, easily
-revertable diff.
+## Changed
+- **CSV gained two columns: `time_local` and `utc_offset`.** Every Timeline
+  segment carries the timezone that was in effect where the point was recorded,
+  and the app was throwing it away — a user opening the CSV in Excel saw the
+  UTC clock instead of the one they actually walked by. `time_local` is written
+  as `YYYY-MM-DD HH:MM:SS` (the shape spreadsheets recognise without an import
+  wizard); `utc_offset` keeps the row lossless as `+05:00`.
+  - The columns are **appended after** `time_utc,latitude,longitude`, so any
+    script that reads the first three columns by position keeps working.
+  - Both cells are **left empty when the file doesn't record a timezone**
+    (Records.json and other UTC-only formats). An empty cell is honest; a
+    guessed one silently claims the user lives in Greenwich.
+- `PathPoint` gained a nullable `tzOffsetMinutes`. The parser fills it from the
+  ISO offset on the point's own timestamp, falling back to the segment's
+  `startTimeTimezoneUtcOffsetMinutes`. `Z` timestamps and epoch numbers yield
+  null on purpose: they state an instant in UTC and say nothing about the
+  traveller's clock.
+- `AndroidManifest.xml` declares `<intent>` queries for `https` and `mailto`.
+  Without them, package-visibility filtering on API 30+ can make the two
+  feedback intents fail even when a browser and a mail app are installed.
 
 ## No changes to
-Parser, filter, export formats, map, localization, UI. No new permissions, no
-new dependencies, still no analytics or telemetry.
+Parsing logic, filters, GPX/KML/GeoJSON output, map, billing. No new
+permissions, no new dependencies, no analytics, no telemetry.
+
+## Expectations
+At ~59 MAU and a typical 3–8% response rate on this kind of prompt, this should
+produce roughly **2–5 messages a month**. That is small in absolute terms and
+still enough to tell "several people need this" apart from "I invented it" —
+which is the whole point of shipping the channel before the features it asks
+about. The frozen backlog in `docs/FEATURE_ROADMAP.md` stays frozen until the
+replies arrive.
 
 ## Pre-release checklist
-- [ ] `./gradlew testDebugUnitTest` — parser tests still green (billing is not
-      covered by unit tests)
-- [ ] `./gradlew assembleRelease` — confirms R8 builds against PBL 9 without
-      new keep rules
-- [ ] Confirm no compile warnings about removed PBL APIs
-- [ ] Upload AAB to **internal testing**, install as a licensed tester, and
-      verify: tip jar lists all three products with localized prices; a purchase
-      completes and is consumed; the thank-you state appears; reopening the
-      dialog shows products again (not ITEM_ALREADY_OWNED)
-- [ ] Airplane mode → open tip jar → restore network: verify auto-reconnection
-      recovers without an app restart
-- [ ] Check logcat (`TipJarVM`) for "Product not fetched" warnings — none
-      expected if all three SKUs are active
+- [ ] `./gradlew testDebugUnitTest` — CSV exporter tests cover the new columns,
+      offset formatting and the empty-cell case
+- [ ] `./gradlew lintRelease` — confirms no missing translations across the 17
+      localized `values-*` folders
+- [ ] `./gradlew assembleRelease`
+- [ ] Export a CSV from a real phone-takeout file and open it in Excel /
+      LibreOffice: `time_local` must parse as a date, and must match
+      `time_utc` shifted by `utc_offset`
+- [ ] Export from a `Records.json` file: both new columns empty, no "1970" or
+      UTC-as-local artifacts
+- [ ] Tap the feedback line after an export → tick two boxes → **Open a GitHub
+      issue**: the browser opens GitHub's new-issue form with the title and the
+      body pre-filled, including the diagnostics block
+- [ ] Same, but **Send an email**: the mail app opens with the address, subject
+      and body filled in and nothing sent yet
+- [ ] Edit the diagnostics field before sending — the change must reach the
+      draft
+- [ ] Device with no mail app configured: expect the toast, not a crash
+- [ ] Rotate the screen with boxes ticked — the ballot must survive
+- [ ] Export twice in a row with the same filename: the auto-scroll must fire
+      both times (Success → Working → Success re-keys the effect)
+- [ ] Export on a tall screen where nothing is below the fold — the scroll must
+      be a no-op, not a jump
+- [ ] Check the plaque in dark theme and against a few wallpapers: with dynamic
+      colour on, `tertiaryContainer` is wallpaper-derived, so verify it still
+      reads as a different kind of surface than the export buttons
+- [ ] Check the dialog in a right-to-left locale (Arabic) and in a long-string
+      locale (German) for clipping

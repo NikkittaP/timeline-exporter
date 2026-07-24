@@ -120,4 +120,28 @@
     <string name="tipjar_error">Satın alma sırasında bir şeyler ters gitti.</string>
     <string name="tipjar_retry">Tekrar dene</string>
     <string name="tipjar_close">Kapat</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">Özellik isteyin veya sorun bildirin →</string>
+    <string name="feedback_title">Ne eksik?</string>
+    <string name="feedback_intro">Uygulama kullanıcı istekleriyle büyüyor. İçinde analitik yok — nasıl kullandığınızı göremiyorum, o yüzden doğrudan soruyorum. İstediklerinizi işaretleyin ve nasıl göndereceğinizi seçin.</string>
+    <string name="feedback_option_activity_filter">Hareket türüne göre filtre (yalnızca bisiklet / yürüyüş / araç)</string>
+    <string name="feedback_option_file_per_trip">Tek büyük dosya yerine her yolculuk için ayrı dosya</string>
+    <string name="feedback_option_elevation_speed">GPX\'te yükseklik ve hız</string>
+    <string name="feedback_option_places">Yalnızca izi değil, ziyaret edilen yerleri de dışa aktarma</string>
+    <string name="feedback_option_stats">İstatistik ekranı (ulaşım türüne göre km, en çok gidilen yerler)</string>
+    <string name="feedback_option_merge">Birden fazla Timeline dosyasını birleştirme</string>
+    <string name="feedback_option_photo_geotag">Fotoğrafları zamana göre konumlandırma</string>
+    <string name="feedback_other_label">Başka bir şey?</string>
+    <string name="feedback_diagnostics_label">Teknik bilgiler</string>
+    <string name="feedback_diagnostics_note">Uygulama kendiliğinden hiçbir şey göndermez. Taslak tarayıcınızda veya e-posta uygulamanızda açılır — göndermeden önce her şeyi düzenleyebilir veya silebilirsiniz.</string>
+    <string name="feedback_send_github">GitHub\'da konu aç</string>
+    <string name="feedback_send_email">E-posta gönder</string>
+    <string name="feedback_channel_hint">GitHub herkese açıktır, başkaları aynı isteği destekleyebilir. E-posta yalnızca bana ulaşır.</string>
+    <string name="feedback_dismiss">Kapat</string>
+    <string name="feedback_toast_no_browser">Bu cihazda bağlantıyı açabilecek bir uygulama yok.</string>
+    <string name="feedback_toast_no_email">Bu cihazda e-posta uygulaması yok.</string>
+    <string name="help_note_csv_local_time">• Timeline dosyası saat dilimini kaydettiğinde CSV dosyaları hem UTC saatini hem de yerel saati (UTC farkıyla) içerir.</string>
+    <string name="feedback_prompt_body">Uygulama kullanıcı istekleriyle büyüyor. Analitik yok — neyin eksik olduğunu yazın.</string>
+    <string name="feedback_prompt_action">Ne eklememi istediğinizi yazın →</string>
 </resources>

@@ -120,4 +120,28 @@
     <string name="tipjar_error">Algo salió mal con la compra.</string>
     <string name="tipjar_retry">Reintentar</string>
     <string name="tipjar_close">Cerrar</string>
+
+    <!-- Feedback dialog (v1.5.0) -->
+    <string name="feedback_help_button">Pedir una función o informar de un problema →</string>
+    <string name="feedback_title">¿Qué falta?</string>
+    <string name="feedback_intro">La app crece con las peticiones de quienes la usan. No tiene analítica: no veo cómo la usas, así que te lo pregunto directamente. Marca lo que quieras y elige cómo enviarlo.</string>
+    <string name="feedback_option_activity_filter">Filtrar por tipo de desplazamiento (solo bici / a pie / coche)</string>
+    <string name="feedback_option_file_per_trip">Un archivo por viaje en lugar de uno grande</string>
+    <string name="feedback_option_elevation_speed">Altitud y velocidad en GPX</string>
+    <string name="feedback_option_places">Exportar los lugares visitados, no solo el recorrido</string>
+    <string name="feedback_option_stats">Pantalla de estadísticas (km por medio de transporte, lugares más visitados)</string>
+    <string name="feedback_option_merge">Combinar varios archivos de Timeline</string>
+    <string name="feedback_option_photo_geotag">Geoetiquetar fotos por hora</string>
+    <string name="feedback_other_label">¿Algo más?</string>
+    <string name="feedback_diagnostics_label">Datos técnicos</string>
+    <string name="feedback_diagnostics_note">La app no envía nada por su cuenta. El borrador se abre en tu navegador o tu correo: puedes editarlo o borrarlo antes de enviar.</string>
+    <string name="feedback_send_github">Abrir una incidencia en GitHub</string>
+    <string name="feedback_send_email">Enviar un correo</string>
+    <string name="feedback_channel_hint">GitHub es público y otras personas pueden apoyar la misma petición. El correo llega solo a mí.</string>
+    <string name="feedback_dismiss">Cerrar</string>
+    <string name="feedback_toast_no_browser">Ninguna app de este dispositivo puede abrir el enlace.</string>
+    <string name="feedback_toast_no_email">No hay ninguna app de correo en este dispositivo.</string>
+    <string name="help_note_csv_local_time">• Los CSV incluyen la hora UTC y la hora local con su desfase, si el archivo de Timeline guarda la zona horaria.</string>
+    <string name="feedback_prompt_body">La app crece con las peticiones de quienes la usan. No tiene analítica: dime qué falta.</string>
+    <string name="feedback_prompt_action">Dime qué añadir →</string>
 </resources>

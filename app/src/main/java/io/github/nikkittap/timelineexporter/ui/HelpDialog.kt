@@ -7,6 +7,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -31,7 +32,10 @@ private const val MAPS_PACKAGE = "com.google.android.apps.maps"
  * dialog translates with the device locale.
  */
 @Composable
-fun HelpDialog(onDismiss: () -> Unit) {
+fun HelpDialog(
+    onDismiss: () -> Unit,
+    onFeedbackClick: () -> Unit = {},
+) {
     val context = LocalContext.current
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -108,6 +112,20 @@ fun HelpDialog(onDismiss: () -> Unit) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                Text(
+                    stringResource(R.string.help_note_csv_local_time),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
+                // Always-available second entry point to the feedback ballot —
+                // permanent, but out of the way.
+                TextButton(
+                    onClick = onFeedbackClick,
+                    contentPadding = PaddingValues(0.dp),
+                ) {
+                    Text(stringResource(R.string.feedback_help_button))
+                }
             }
         },
         confirmButton = {

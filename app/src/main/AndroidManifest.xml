@@ -8,6 +8,19 @@
          from our HelpDialog via PackageManager.getLaunchIntentForPackage. -->
     <queries>
         <package android:name="com.google.android.apps.maps" />
+
+        <!-- Required on API 30+ so the feedback dialog can resolve a browser
+             (GitHub issue) and a mail client (mailto:). Without these the
+             implicit intents would fail with ActivityNotFoundException even
+             when a suitable app is installed. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
     </queries>
 
     <application
