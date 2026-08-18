@@ -42,6 +42,23 @@
     <string name="filter_change_button">Cambia periodo</string>
     <string name="filter_clear_button">Cancella</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">Tutti gli spostamenti</string>
+    <string name="filter_movement_none">Nessuna selezione</string>
+    <string name="filter_moving_only_short">solo in movimento</string>
+    <string name="filter_places_count">%1$s luoghi</string>
+    <string name="filter_trip_count">%1$s viaggi</string>
+    <string name="filter_moving_only">Solo in movimento</string>
+    <string name="filter_moving_only_hint">Escludi i punti registrati durante una sosta</string>
+    <string name="filter_drop_repeated">Salta le ripetizioni</string>
+    <string name="filter_drop_repeated_hint">Tieni un solo punto dove la posizione non cambia</string>
+    <string name="movement_walking">A piedi</string>
+    <string name="movement_cycling">In bicicletta</string>
+    <string name="movement_driving">In auto</string>
+    <string name="movement_transit">Trasporto pubblico</string>
+    <string name="movement_flying">Voli</string>
+    <string name="movement_other">Altro</string>
+
     <string name="date_dialog_title">Filtra per data</string>
     <string name="date_dialog_cancel">Annulla</string>
     <string name="date_dialog_apply">Applica</string>

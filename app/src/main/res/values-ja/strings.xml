@@ -42,6 +42,23 @@
     <string name="filter_change_button">期間を変更</string>
     <string name="filter_clear_button">クリア</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">すべての移動手段</string>
+    <string name="filter_movement_none">選択なし</string>
+    <string name="filter_moving_only_short">移動中のみ</string>
+    <string name="filter_places_count">%1$s か所</string>
+    <string name="filter_trip_count">%1$s 件の移動</string>
+    <string name="filter_moving_only">移動中のみ</string>
+    <string name="filter_moving_only_hint">立ち寄り中に記録された地点を除外します</string>
+    <string name="filter_drop_repeated">重複する地点を省く</string>
+    <string name="filter_drop_repeated_hint">位置が変わらないところは地点を 1 つだけ残します</string>
+    <string name="movement_walking">徒歩</string>
+    <string name="movement_cycling">自転車</string>
+    <string name="movement_driving">自動車</string>
+    <string name="movement_transit">公共交通機関</string>
+    <string name="movement_flying">フライト</string>
+    <string name="movement_other">その他</string>
+
     <string name="date_dialog_title">日付で絞り込み</string>
     <string name="date_dialog_cancel">キャンセル</string>
     <string name="date_dialog_apply">適用</string>

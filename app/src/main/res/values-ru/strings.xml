@@ -42,6 +42,23 @@
     <string name="filter_change_button">Изменить период</string>
     <string name="filter_clear_button">Сбросить</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">Все виды передвижения</string>
+    <string name="filter_movement_none">Ничего не выбрано</string>
+    <string name="filter_moving_only_short">только в движении</string>
+    <string name="filter_places_count">%1$s мест</string>
+    <string name="filter_trip_count">%1$s поездок</string>
+    <string name="filter_moving_only">Только в движении</string>
+    <string name="filter_moving_only_hint">Не включать точки, записанные на остановках</string>
+    <string name="filter_drop_repeated">Пропускать повторы</string>
+    <string name="filter_drop_repeated_hint">Оставлять одну точку там, где координаты не меняются</string>
+    <string name="movement_walking">Пешком</string>
+    <string name="movement_cycling">На велосипеде</string>
+    <string name="movement_driving">На машине</string>
+    <string name="movement_transit">Общественный транспорт</string>
+    <string name="movement_flying">Перелёты</string>
+    <string name="movement_other">Прочее</string>
+
     <string name="date_dialog_title">Фильтр по дате</string>
     <string name="date_dialog_cancel">Отмена</string>
     <string name="date_dialog_apply">Применить</string>

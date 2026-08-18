@@ -88,6 +88,18 @@ enum class MovementGroup {
 }
 
 /**
+ * One row of the per-movement breakdown: how far, over how many trips.
+ *
+ * [distanceMeters] is the sum of Google's own figures, not a total measured
+ * off the track — see [Segment.distanceMeters] for why that matters.
+ */
+data class MovementStats(
+    val group: MovementGroup,
+    val trips: Int,
+    val distanceMeters: Double,
+)
+
+/**
  * A place Google matched a visit to.
  *
  * [probability] is Google's confidence in the visit itself. It is worth
@@ -217,6 +229,38 @@ data class ParsedTimeline(
             .mapNotNull { seg -> seg.distanceMeters?.let { (seg.movement ?: MovementGroup.OTHER) to it } }
             .groupingBy { it.first }
             .fold(0.0) { acc, (_, meters) -> acc + meters }
+
+    /**
+     * Per-movement totals for the breakdown shown next to the filter, longest
+     * distance first, groups with nothing in them omitted.
+     *
+     * [range] narrows the summary to activities that start inside it, so the
+     * numbers track whatever date range the user has chosen rather than always
+     * describing the whole file.
+     */
+    fun movementBreakdown(range: ClosedRange<Instant>? = null): List<MovementStats> =
+        segments.asSequence()
+            .filter { it.kind == SegmentKind.ACTIVITY }
+            .filter { range == null || it.start in range }
+            .groupBy { it.movement ?: MovementGroup.OTHER }
+            .map { (group, group_) ->
+                MovementStats(
+                    group = group,
+                    trips = group_.size,
+                    distanceMeters = group_.sumOf { it.distanceMeters ?: 0.0 },
+                )
+            }
+            .sortedByDescending { it.distanceMeters }
+
+    /** Number of distinct places visited within [range]. */
+    fun placeCount(range: ClosedRange<Instant>? = null): Int =
+        segments.asSequence()
+            .filter { it.kind == SegmentKind.VISIT }
+            .filter { range == null || it.start in range }
+            .mapNotNull { it.place?.placeId }
+            .filter { it.isNotEmpty() }
+            .toSet()
+            .size
 
     /**
      * Distinct places, most-visited first, with a visit count each.

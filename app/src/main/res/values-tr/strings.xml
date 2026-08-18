@@ -42,6 +42,23 @@
     <string name="filter_change_button">Tarih aralığını değiştir</string>
     <string name="filter_clear_button">Temizle</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">Tüm hareket türleri</string>
+    <string name="filter_movement_none">Hiçbiri seçilmedi</string>
+    <string name="filter_moving_only_short">yalnızca hareket hâlinde</string>
+    <string name="filter_places_count">%1$s yer</string>
+    <string name="filter_trip_count">%1$s yolculuk</string>
+    <string name="filter_moving_only">Yalnızca hareket hâlinde</string>
+    <string name="filter_moving_only_hint">Durakta kaydedilen noktaları dışarıda bırak</string>
+    <string name="filter_drop_repeated">Tekrarları atla</string>
+    <string name="filter_drop_repeated_hint">Konum değişmediğinde tek nokta bırak</string>
+    <string name="movement_walking">Yürüyerek</string>
+    <string name="movement_cycling">Bisikletle</string>
+    <string name="movement_driving">Arabayla</string>
+    <string name="movement_transit">Toplu taşıma</string>
+    <string name="movement_flying">Uçuşlar</string>
+    <string name="movement_other">Diğer</string>
+
     <string name="date_dialog_title">Tarihe göre filtrele</string>
     <string name="date_dialog_cancel">İptal</string>
     <string name="date_dialog_apply">Uygula</string>

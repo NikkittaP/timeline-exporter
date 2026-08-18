@@ -42,6 +42,23 @@
     <string name="filter_change_button">變更日期範圍</string>
     <string name="filter_clear_button">清除</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">所有交通方式</string>
+    <string name="filter_movement_none">未選擇任何方式</string>
+    <string name="filter_moving_only_short">僅移動中</string>
+    <string name="filter_places_count">%1$s 個地點</string>
+    <string name="filter_trip_count">%1$s 趟行程</string>
+    <string name="filter_moving_only">僅移動中</string>
+    <string name="filter_moving_only_hint">不包含停留期間記錄的點</string>
+    <string name="filter_drop_repeated">略過重複的點</string>
+    <string name="filter_drop_repeated_hint">位置不變的地方只保留一個點</string>
+    <string name="movement_walking">步行</string>
+    <string name="movement_cycling">騎乘</string>
+    <string name="movement_driving">開車</string>
+    <string name="movement_transit">大眾運輸</string>
+    <string name="movement_flying">航班</string>
+    <string name="movement_other">其他</string>
+
     <string name="date_dialog_title">依日期篩選</string>
     <string name="date_dialog_cancel">取消</string>
     <string name="date_dialog_apply">套用</string>

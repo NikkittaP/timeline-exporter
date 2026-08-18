@@ -42,6 +42,23 @@
     <string name="filter_change_button">تغيير النطاق الزمني</string>
     <string name="filter_clear_button">مسح</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">كل وسائل التنقل</string>
+    <string name="filter_movement_none">لم يتم تحديد شيء</string>
+    <string name="filter_moving_only_short">أثناء الحركة فقط</string>
+    <string name="filter_places_count">%1$s أماكن</string>
+    <string name="filter_trip_count">%1$s رحلات</string>
+    <string name="filter_moving_only">أثناء الحركة فقط</string>
+    <string name="filter_moving_only_hint">استبعاد النقاط المسجَّلة أثناء التوقف</string>
+    <string name="filter_drop_repeated">تخطي التكرارات</string>
+    <string name="filter_drop_repeated_hint">الاحتفاظ بنقطة واحدة حيث لا يتغير الموقع</string>
+    <string name="movement_walking">سيراً على الأقدام</string>
+    <string name="movement_cycling">بالدراجة</string>
+    <string name="movement_driving">بالسيارة</string>
+    <string name="movement_transit">النقل العام</string>
+    <string name="movement_flying">الرحلات الجوية</string>
+    <string name="movement_other">أخرى</string>
+
     <string name="date_dialog_title">التصفية حسب التاريخ</string>
     <string name="date_dialog_cancel">إلغاء</string>
     <string name="date_dialog_apply">تطبيق</string>

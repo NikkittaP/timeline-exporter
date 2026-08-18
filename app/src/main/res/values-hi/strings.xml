@@ -42,6 +42,23 @@
     <string name="filter_change_button">तारीख़ सीमा बदलें</string>
     <string name="filter_clear_button">साफ़ करें</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">सभी तरह की आवाजाही</string>
+    <string name="filter_movement_none">कुछ भी नहीं चुना गया</string>
+    <string name="filter_moving_only_short">केवल चलते समय</string>
+    <string name="filter_places_count">%1$s जगहें</string>
+    <string name="filter_trip_count">%1$s यात्राएँ</string>
+    <string name="filter_moving_only">केवल चलते समय</string>
+    <string name="filter_moving_only_hint">रुकने के दौरान दर्ज बिंदु छोड़ दें</string>
+    <string name="filter_drop_repeated">दोहराव छोड़ें</string>
+    <string name="filter_drop_repeated_hint">जहाँ स्थान नहीं बदलता वहाँ एक ही बिंदु रखें</string>
+    <string name="movement_walking">पैदल</string>
+    <string name="movement_cycling">साइकिल से</string>
+    <string name="movement_driving">कार से</string>
+    <string name="movement_transit">सार्वजनिक परिवहन</string>
+    <string name="movement_flying">उड़ानें</string>
+    <string name="movement_other">अन्य</string>
+
     <string name="date_dialog_title">तारीख़ से फ़िल्टर करें</string>
     <string name="date_dialog_cancel">रद्द करें</string>
     <string name="date_dialog_apply">लागू करें</string>

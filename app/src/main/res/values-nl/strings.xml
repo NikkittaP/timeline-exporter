@@ -42,6 +42,23 @@
     <string name="filter_change_button">Periode wijzigen</string>
     <string name="filter_clear_button">Wissen</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">Alle vervoerswijzen</string>
+    <string name="filter_movement_none">Niets geselecteerd</string>
+    <string name="filter_moving_only_short">alleen onderweg</string>
+    <string name="filter_places_count">%1$s plaatsen</string>
+    <string name="filter_trip_count">%1$s ritten</string>
+    <string name="filter_moving_only">Alleen onderweg</string>
+    <string name="filter_moving_only_hint">Punten weglaten die tijdens een stop zijn opgeslagen</string>
+    <string name="filter_drop_repeated">Herhalingen overslaan</string>
+    <string name="filter_drop_repeated_hint">Eén punt bewaren waar de locatie gelijk blijft</string>
+    <string name="movement_walking">Lopen</string>
+    <string name="movement_cycling">Fietsen</string>
+    <string name="movement_driving">Auto</string>
+    <string name="movement_transit">Openbaar vervoer</string>
+    <string name="movement_flying">Vluchten</string>
+    <string name="movement_other">Overig</string>
+
     <string name="date_dialog_title">Op datum filteren</string>
     <string name="date_dialog_cancel">Annuleren</string>
     <string name="date_dialog_apply">Toepassen</string>

@@ -42,6 +42,23 @@
     <string name="filter_change_button">Zmień okres</string>
     <string name="filter_clear_button">Wyczyść</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">Wszystkie sposoby przemieszczania</string>
+    <string name="filter_movement_none">Nic nie wybrano</string>
+    <string name="filter_moving_only_short">tylko w ruchu</string>
+    <string name="filter_places_count">Miejsca: %1$s</string>
+    <string name="filter_trip_count">Podróże: %1$s</string>
+    <string name="filter_moving_only">Tylko w ruchu</string>
+    <string name="filter_moving_only_hint">Pomiń punkty zapisane podczas postoju</string>
+    <string name="filter_drop_repeated">Pomijaj powtórzenia</string>
+    <string name="filter_drop_repeated_hint">Zostaw jeden punkt tam, gdzie lokalizacja się nie zmienia</string>
+    <string name="movement_walking">Pieszo</string>
+    <string name="movement_cycling">Rowerem</string>
+    <string name="movement_driving">Samochodem</string>
+    <string name="movement_transit">Transport publiczny</string>
+    <string name="movement_flying">Loty</string>
+    <string name="movement_other">Inne</string>
+
     <string name="date_dialog_title">Filtruj według daty</string>
     <string name="date_dialog_cancel">Anuluj</string>
     <string name="date_dialog_apply">Zastosuj</string>

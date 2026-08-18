@@ -3,9 +3,11 @@ package io.github.nikkittap.timelineexporter.ui
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,17 +31,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -50,6 +55,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
@@ -75,6 +81,8 @@ import io.github.nikkittap.timelineexporter.export.GpxExporter
 import io.github.nikkittap.timelineexporter.export.KmlExporter
 import io.github.nikkittap.timelineexporter.filter.TimelineFilter
 import io.github.nikkittap.timelineexporter.filter.applyFilter
+import io.github.nikkittap.timelineexporter.parser.MovementGroup
+import io.github.nikkittap.timelineexporter.parser.MovementStats
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import io.github.nikkittap.timelineexporter.parser.TimelineFormat
@@ -353,7 +361,7 @@ fun MainScreen(
             val loaded = (uiState as? TimelineUiState.Loaded)?.result
             if (loaded != null) {
                 val filteredPoints by remember(loaded, filter) {
-                    derivedStateOf { applyFilter(loaded.pathPoints, filter) }
+                    derivedStateOf { applyFilter(loaded.pathPoints, filter, loaded.segments) }
                 }
                 val dataLast = loaded.pathPoints.lastOrNull()?.timeUtc
 
@@ -366,6 +374,13 @@ fun MainScreen(
                         onApply = { viewModel.setDateRange(it) },
                         onClear = { viewModel.clearDateRange() },
                         onCustom = { dateDialogOpen = true },
+                        parsed = loaded,
+                        filter = filter,
+                        onToggleMovement = { group, on, available ->
+                            viewModel.toggleMovement(group, on, available)
+                        },
+                        onMovingOnly = { viewModel.setMovingOnly(it) },
+                        onDropRepeated = { viewModel.setDropRepeatedPoints(it) },
                     )
                 }
 
@@ -404,7 +419,9 @@ fun MainScreen(
             val loadedResult = (uiState as? TimelineUiState.Loaded)?.result
             if (loadedResult != null) {
                 val fullscreenPoints by remember(loadedResult, filter) {
-                    derivedStateOf { applyFilter(loadedResult.pathPoints, filter) }
+                    derivedStateOf {
+                        applyFilter(loadedResult.pathPoints, filter, loadedResult.segments)
+                    }
                 }
                 BackHandler { mapFullscreen = false }
                 ExpandedMap(
@@ -603,6 +620,11 @@ private fun FilterContent(
     onApply: (ClosedRange<Instant>) -> Unit,
     onClear: () -> Unit,
     onCustom: () -> Unit,
+    parsed: ParsedTimeline,
+    filter: TimelineFilter,
+    onToggleMovement: (MovementGroup, Boolean, Set<MovementGroup>) -> Unit,
+    onMovingOnly: (Boolean) -> Unit,
+    onDropRepeated: (Boolean) -> Unit,
 ) {
     if (currentRange == null) {
         Text(
@@ -662,6 +684,208 @@ private fun FilterContent(
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
+
+    MovementSection(
+        parsed = parsed,
+        filter = filter,
+        onToggleMovement = onToggleMovement,
+        onMovingOnly = onMovingOnly,
+        onDropRepeated = onDropRepeated,
+    )
+}
+
+/**
+ * The movement breakdown, collapsed by default.
+ *
+ * Collapsed it is a single summary row, so someone who only ever exported a
+ * date range sees the step they are used to plus one line. Expanded it is both
+ * the statistics and the filter: the km and trip counts a user wants to look at
+ * are the same rows they tick to narrow the export, so there is no separate
+ * screen and no settings sitting apart from the thing they affect.
+ *
+ * Hidden entirely when the file carries no activity segments — older Takeout
+ * formats and rawSignals-only exports have nothing to show, and an empty
+ * expander is worse than no expander.
+ */
+@Composable
+private fun MovementSection(
+    parsed: ParsedTimeline,
+    filter: TimelineFilter,
+    onToggleMovement: (MovementGroup, Boolean, Set<MovementGroup>) -> Unit,
+    onMovingOnly: (Boolean) -> Unit,
+    onDropRepeated: (Boolean) -> Unit,
+) {
+    val breakdown = remember(parsed, filter.dateRange) {
+        parsed.movementBreakdown(filter.dateRange)
+    }
+    if (breakdown.isEmpty()) return
+
+    val available = remember(breakdown) { breakdown.map { it.group }.toSet() }
+    val selected = filter.movements ?: available
+    val places = remember(parsed, filter.dateRange) { parsed.placeCount(filter.dateRange) }
+
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { expanded = !expanded }
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = movementSummaryLabel(selected, available, filter.movingOnly, places),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false),
+        )
+        Text(
+            text = if (expanded) "▲" else "▼",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 8.dp),
+        )
+    }
+
+    if (!expanded) return
+
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        breakdown.forEach { stats ->
+            MovementRow(
+                stats = stats,
+                checked = stats.group in selected,
+                onCheckedChange = { onToggleMovement(stats.group, it, available) },
+            )
+        }
+
+        if (places > 0) {
+            Text(
+                text = stringResource(R.string.filter_places_count, formatGrouped(places)),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
+
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+        ToggleRow(
+            label = stringResource(R.string.filter_moving_only),
+            supporting = stringResource(R.string.filter_moving_only_hint),
+            checked = filter.movingOnly,
+            onCheckedChange = onMovingOnly,
+        )
+        ToggleRow(
+            label = stringResource(R.string.filter_drop_repeated),
+            supporting = stringResource(R.string.filter_drop_repeated_hint),
+            checked = filter.dropRepeatedPoints,
+            onCheckedChange = onDropRepeated,
+        )
+    }
+}
+
+/** One movement group: tick box, name, trips, and Google's own distance. */
+@Composable
+private fun MovementRow(
+    stats: MovementStats,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onCheckedChange(!checked) },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(checked = checked, onCheckedChange = onCheckedChange)
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(movementLabel(stats.group)),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = stringResource(R.string.filter_trip_count, formatGrouped(stats.trips)),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Text(
+            text = formatKm(stats.distanceMeters),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(end = 12.dp),
+        )
+    }
+}
+
+@Composable
+private fun ToggleRow(
+    label: String,
+    supporting: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onCheckedChange(!checked) }
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(label, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = supporting,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
+}
+
+@StringRes
+private fun movementLabel(group: MovementGroup): Int = when (group) {
+    MovementGroup.WALKING -> R.string.movement_walking
+    MovementGroup.CYCLING -> R.string.movement_cycling
+    MovementGroup.DRIVING -> R.string.movement_driving
+    MovementGroup.TRANSIT -> R.string.movement_transit
+    MovementGroup.FLYING -> R.string.movement_flying
+    MovementGroup.OTHER -> R.string.movement_other
+}
+
+/**
+ * The one-line description shown while the section is collapsed.
+ *
+ * Built by joining parts rather than from one format string: which parts apply
+ * depends on state, and a single template would have to spell out every
+ * combination — including "0 places", which is not worth saying.
+ */
+@Composable
+private fun movementSummaryLabel(
+    selected: Set<MovementGroup>,
+    available: Set<MovementGroup>,
+    movingOnly: Boolean,
+    places: Int,
+): String {
+    val parts = mutableListOf(
+        when {
+            selected.isEmpty() -> stringResource(R.string.filter_movement_none)
+            selected == available -> stringResource(R.string.filter_movement_all)
+            else -> selected.sortedBy { it.ordinal }
+                .joinToString(", ") { stringResource(movementLabel(it)) }
+        }
+    )
+    if (movingOnly) parts += stringResource(R.string.filter_moving_only_short)
+    if (places > 0) parts += stringResource(R.string.filter_places_count, formatGrouped(places))
+    return parts.joinToString(" · ")
 }
 
 @Composable
@@ -973,6 +1197,19 @@ private fun formatGrouped(n: Int): String = "%,d".format(n)
 // Decimal megabytes (1 MB = 1,000,000 bytes) to match the size Android's
 // own file picker reports for the same file.
 private fun formatMb(bytes: Long): String = "%.1f MB".format(bytes / 1_000_000.0)
+
+/**
+ * Distance for the movement breakdown.
+ *
+ * Whole kilometres once past 10 km — nobody reads the decimal on a 3 224 km
+ * total — and one decimal below that, so a 400-metre walk does not display as
+ * "0 km". Metres are never shown: the underlying figures are Google's own
+ * estimates, and metre precision would imply an accuracy they do not have.
+ */
+private fun formatKm(meters: Double): String {
+    val km = meters / 1000.0
+    return if (km >= 10) "%,.0f km".format(km) else "%.1f km".format(km)
+}
 
 /**
  * "Last N days" as a real local-day [ClosedRange] of [Instant]s, anchored at

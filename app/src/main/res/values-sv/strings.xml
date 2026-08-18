@@ -42,6 +42,23 @@
     <string name="filter_change_button">Ändra period</string>
     <string name="filter_clear_button">Rensa</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">Alla färdsätt</string>
+    <string name="filter_movement_none">Inget valt</string>
+    <string name="filter_moving_only_short">bara i rörelse</string>
+    <string name="filter_places_count">%1$s platser</string>
+    <string name="filter_trip_count">%1$s resor</string>
+    <string name="filter_moving_only">Bara i rörelse</string>
+    <string name="filter_moving_only_hint">Utelämna punkter som spelats in vid stillastående</string>
+    <string name="filter_drop_repeated">Hoppa över upprepningar</string>
+    <string name="filter_drop_repeated_hint">Behåll en punkt där platsen upprepas oförändrad</string>
+    <string name="movement_walking">Till fots</string>
+    <string name="movement_cycling">Cykel</string>
+    <string name="movement_driving">Bil</string>
+    <string name="movement_transit">Kollektivtrafik</string>
+    <string name="movement_flying">Flyg</string>
+    <string name="movement_other">Övrigt</string>
+
     <string name="date_dialog_title">Filtrera efter datum</string>
     <string name="date_dialog_cancel">Avbryt</string>
     <string name="date_dialog_apply">Tillämpa</string>

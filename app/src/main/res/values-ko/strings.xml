@@ -42,6 +42,23 @@
     <string name="filter_change_button">기간 변경</string>
     <string name="filter_clear_button">지우기</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">모든 이동 수단</string>
+    <string name="filter_movement_none">선택 없음</string>
+    <string name="filter_moving_only_short">이동 중만</string>
+    <string name="filter_places_count">장소 %1$s곳</string>
+    <string name="filter_trip_count">이동 %1$s회</string>
+    <string name="filter_moving_only">이동 중만</string>
+    <string name="filter_moving_only_hint">머무는 동안 기록된 지점 제외</string>
+    <string name="filter_drop_repeated">반복 지점 건너뛰기</string>
+    <string name="filter_drop_repeated_hint">위치가 그대로인 구간은 지점 하나만 남깁니다</string>
+    <string name="movement_walking">도보</string>
+    <string name="movement_cycling">자전거</string>
+    <string name="movement_driving">자동차</string>
+    <string name="movement_transit">대중교통</string>
+    <string name="movement_flying">항공</string>
+    <string name="movement_other">기타</string>
+
     <string name="date_dialog_title">날짜로 필터링</string>
     <string name="date_dialog_cancel">취소</string>
     <string name="date_dialog_apply">적용</string>

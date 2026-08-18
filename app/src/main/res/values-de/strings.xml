@@ -42,6 +42,23 @@
     <string name="filter_change_button">Zeitraum ändern</string>
     <string name="filter_clear_button">Zurücksetzen</string>
 
+    <!-- Movement breakdown -->
+    <string name="filter_movement_all">Alle Fortbewegungsarten</string>
+    <string name="filter_movement_none">Nichts ausgewählt</string>
+    <string name="filter_moving_only_short">nur in Bewegung</string>
+    <string name="filter_places_count">%1$s Orte</string>
+    <string name="filter_trip_count">%1$s Fahrten</string>
+    <string name="filter_moving_only">Nur in Bewegung</string>
+    <string name="filter_moving_only_hint">Punkte auslassen, die im Stehen aufgezeichnet wurden</string>
+    <string name="filter_drop_repeated">Wiederholungen überspringen</string>
+    <string name="filter_drop_repeated_hint">Nur einen Punkt behalten, wo sich der Ort nicht ändert</string>
+    <string name="movement_walking">Zu Fuß</string>
+    <string name="movement_cycling">Fahrrad</string>
+    <string name="movement_driving">Auto</string>
+    <string name="movement_transit">Öffentliche Verkehrsmittel</string>
+    <string name="movement_flying">Flüge</string>
+    <string name="movement_other">Sonstiges</string>
+
     <string name="date_dialog_title">Nach Datum filtern</string>
     <string name="date_dialog_cancel">Abbrechen</string>
     <string name="date_dialog_apply">Anwenden</string>

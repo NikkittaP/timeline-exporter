@@ -5,6 +5,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.Instant
 
 /**
  * Coverage for the segment structure the parser now keeps instead of throwing
@@ -165,6 +166,59 @@ class TimelineSegmentsTest {
         assertEquals(2, places[0].second)
         assertEquals("cafe", places[1].first.placeId)
         assertEquals(1, places[1].second)
+    }
+
+    @Test
+    fun `movement breakdown counts trips, sums distance and honours the date range`() {
+        val json = """
+            { "semanticSegments": [
+                { "startTime": "2025-01-01T00:00:00Z", "endTime": "2025-01-01T01:00:00Z",
+                  "activity": { "distanceMeters": 3000.0, "topCandidate": { "type": "WALKING" } } },
+                { "startTime": "2025-01-01T02:00:00Z", "endTime": "2025-01-01T03:00:00Z",
+                  "activity": { "distanceMeters": 1000.0, "topCandidate": { "type": "WALKING" } } },
+                { "startTime": "2025-06-01T00:00:00Z", "endTime": "2025-06-01T01:00:00Z",
+                  "activity": { "distanceMeters": 90000.0, "topCandidate": { "type": "IN_TRAIN" } } }
+            ] }
+        """.trimIndent()
+
+        val parsed = parseTimeline(json)
+
+        val all = parsed.movementBreakdown()
+        // Sorted by distance, so the train comes first.
+        assertEquals(listOf(MovementGroup.TRANSIT, MovementGroup.WALKING), all.map { it.group })
+        assertEquals(2, all[1].trips)
+        assertEquals(4000.0, all[1].distanceMeters, 0.01)
+
+        val january = parsed.movementBreakdown(
+            Instant.parse("2025-01-01T00:00:00Z")..Instant.parse("2025-01-31T00:00:00Z"),
+        )
+        assertEquals(listOf(MovementGroup.WALKING), january.map { it.group })
+    }
+
+    @Test
+    fun `place count is distinct within the date range`() {
+        val json = """
+            { "semanticSegments": [
+                { "startTime": "2025-01-01T00:00:00Z", "endTime": "2025-01-01T01:00:00Z",
+                  "visit": { "topCandidate": { "placeId": "home",
+                             "placeLocation": { "latLng": "1.0°, 1.0°" } } } },
+                { "startTime": "2025-01-02T00:00:00Z", "endTime": "2025-01-02T01:00:00Z",
+                  "visit": { "topCandidate": { "placeId": "home",
+                             "placeLocation": { "latLng": "1.0°, 1.0°" } } } },
+                { "startTime": "2025-06-01T00:00:00Z", "endTime": "2025-06-01T01:00:00Z",
+                  "visit": { "topCandidate": { "placeId": "beach",
+                             "placeLocation": { "latLng": "2.0°, 2.0°" } } } }
+            ] }
+        """.trimIndent()
+
+        val parsed = parseTimeline(json)
+        assertEquals(2, parsed.placeCount())
+        assertEquals(
+            1,
+            parsed.placeCount(
+                Instant.parse("2025-01-01T00:00:00Z")..Instant.parse("2025-01-31T00:00:00Z"),
+            ),
+        )
     }
 
     @Test

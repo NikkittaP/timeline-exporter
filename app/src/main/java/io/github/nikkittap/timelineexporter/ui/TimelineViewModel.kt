@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import io.github.nikkittap.timelineexporter.export.Exporter
 import io.github.nikkittap.timelineexporter.filter.TimelineFilter
 import io.github.nikkittap.timelineexporter.filter.applyFilter
+import io.github.nikkittap.timelineexporter.parser.MovementGroup
 import io.github.nikkittap.timelineexporter.parser.NotTimelineFileException
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.ParserStage
@@ -162,6 +163,39 @@ class TimelineViewModel : ViewModel() {
         _exportState.value = ExportState.Idle
     }
 
+    /**
+     * Add or remove one movement group from the selection.
+     *
+     * null means "no constraint", and that is what the app starts from. The
+     * first untick has to turn that into a concrete set, and the set it becomes
+     * is every group *except* the one being unticked — otherwise unticking
+     * "walking" would read as selecting only walking.
+     *
+     * Selecting everything collapses back to null, so a filter the user has
+     * effectively cleared stops counting as one. Selecting nothing is left as
+     * an empty set rather than being bounced back to null: it really does match
+     * no points, the count under the chips says so, and export is disabled —
+     * quietly reinterpreting it as "everything" would be worse.
+     */
+    fun toggleMovement(group: MovementGroup, enabled: Boolean, available: Set<MovementGroup>) {
+        val current = _filter.value.movements ?: available
+        val updated = if (enabled) current + group else current - group
+        _filter.value = _filter.value.copy(
+            movements = if (updated == available) null else updated,
+        )
+        _exportState.value = ExportState.Idle
+    }
+
+    fun setMovingOnly(enabled: Boolean) {
+        _filter.value = _filter.value.copy(movingOnly = enabled)
+        _exportState.value = ExportState.Idle
+    }
+
+    fun setDropRepeatedPoints(enabled: Boolean) {
+        _filter.value = _filter.value.copy(dropRepeatedPoints = enabled)
+        _exportState.value = ExportState.Idle
+    }
+
     // ----- export -----
 
     /**
@@ -177,7 +211,8 @@ class TimelineViewModel : ViewModel() {
     ) {
         val loaded = _uiState.value as? TimelineUiState.Loaded ?: return
         val currentFilter = _filter.value
-        val filteredPoints = applyFilter(loaded.result.pathPoints, currentFilter)
+        val filteredPoints =
+            applyFilter(loaded.result.pathPoints, currentFilter, loaded.result.segments)
         if (filteredPoints.isEmpty()) {
             _exportState.value = ExportState.Failure.NoPoints
             return
