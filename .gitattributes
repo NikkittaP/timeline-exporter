@@ -1,0 +1,28 @@
+# Normalize line endings.
+#
+# Without this, editing on Windows rewrites whole files from LF to CRLF and
+# every line shows up as changed — 14 files (.idea/*, .gitignore, gradlew.bat,
+# fastlane/README.md, gradle-wrapper.properties) churned that way with zero
+# real edits. Git now stores text as LF and checks it out as LF everywhere.
+
+* text=auto eol=lf
+
+# Windows-only scripts must keep CRLF or cmd.exe mis-parses them.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Gradle ships gradlew as a shell script and gradlew.bat as a batch file.
+gradlew text eol=lf
+
+# Binaries: never touch, never diff as text.
+*.png binary
+*.webp binary
+*.jpg binary
+*.jpeg binary
+*.mp4 binary
+*.apk binary
+*.aab binary
+*.jar binary
+*.keystore binary
+*.ttf binary
+*.otf binary
