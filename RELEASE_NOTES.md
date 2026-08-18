@@ -1,4 +1,29 @@
-# Release Notes — v1.5.0 (versionCode 8)
+# Release Notes — v1.5.1 (versionCode 9)
+
+> versionCode 8 / v1.5.0 never left internal testing: its **Send an email**
+> button opened a blank draft. Everything below still describes what is new
+> compared to v1.4.0 — that is what a Play user will see on first install —
+> with the fix recorded under **Fixed**.
+
+## Fixed
+- **The email draft arrived empty** (recipient filled, subject and body blank).
+  `sendFeedbackEmail()` passed the text only as `EXTRA_SUBJECT` / `EXTRA_TEXT`
+  extras alongside a bare `mailto:` URI. Gmail — and several OEM mail apps —
+  compose the draft from the URI alone and discard the extras, which is why the
+  recipient survived (it *is* the URI) and nothing else did. Subject and body
+  now travel in the URI query string, percent-encoded with `Uri.encode`
+  (`%20` for spaces, not `URLEncoder`'s `+`, and `%0A` for the newlines that
+  keep the diagnostics block readable). The extras are kept as a fallback for
+  clients that behave the other way round; both carry identical text, so the
+  draft is the same whichever one wins.
+  - `mailto:` is an **opaque** URI, so the `buildUpon().appendQueryParameter()`
+    pattern used for the GitHub URL does not apply — the query is assembled by
+    hand.
+  - `EXTRA_EMAIL` was dropped. Under `ACTION_SENDTO` the recipient is defined
+    by the URI, and a client that reads both puts the address in `To:` twice.
+- GitHub was unaffected and needed no change: `ACTION_VIEW` on an `https` URL
+  carries title and body as ordinary query parameters, which the browser cannot
+  drop.
 
 ## Highlights
 The app finally has a way to talk back. Until now a user who needed something
@@ -93,7 +118,12 @@ replies arrive.
       issue**: the browser opens GitHub's new-issue form with the title and the
       body pre-filled, including the diagnostics block
 - [ ] Same, but **Send an email**: the mail app opens with the address, subject
-      and body filled in and nothing sent yet
+      **and body** filled in and nothing sent yet — this is the v1.5.1 fix, so
+      check it in Gmail specifically, and in one more client if the device has
+      one (the two read the intent differently)
+- [ ] Email draft with a long free-text note and non-Latin characters (Cyrillic
+      or Japanese): the body must arrive intact, with real line breaks rather
+      than `%0A` or `+` showing through
 - [ ] Edit the diagnostics field before sending — the change must reach the
       draft
 - [ ] Device with no mail app configured: expect the toast, not a crash

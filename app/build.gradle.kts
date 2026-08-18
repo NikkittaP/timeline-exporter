@@ -55,8 +55,15 @@ android {
         //                                         email, no telemetry),
         //                                         local time + UTC offset
         //                                         columns in CSV
-        versionCode = 8
-        versionName = "1.5.0"
+        //                                         (internal testing only —
+        //                                         the email intent was broken)
+        //   versionCode=9, versionName="1.5.1" -> fix: mail draft opened empty
+        //                                         because subject and body
+        //                                         rode only in intent extras,
+        //                                         which Gmail ignores; they
+        //                                         now travel in the mailto URI
+        versionCode = 9
+        versionName = "1.5.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

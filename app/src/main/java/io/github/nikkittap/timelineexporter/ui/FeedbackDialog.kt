@@ -298,10 +298,37 @@ private fun openGitHubIssue(context: Context, title: String, body: String) {
 /**
  * ACTION_SENDTO with a mailto: URI, so only mail apps are offered (unlike
  * ACTION_SEND, which pulls in every share target on the device).
+ *
+ * Subject and body are carried **in the URI**, not only in EXTRA_SUBJECT /
+ * EXTRA_TEXT. Several mail clients (Gmail among them) compose the draft from
+ * the mailto URI alone and drop the extras — which is exactly what internal
+ * testing 8 showed: the recipient arrived (it comes from the URI) while the
+ * subject and body were empty. The extras stay on as a fallback for clients
+ * that read them and ignore the query string; both paths carry identical text,
+ * so whichever one the client honours, the draft comes out the same.
+ *
+ * `Uri.encode` rather than `URLEncoder`: the former percent-encodes a space as
+ * `%20`, the latter as `+`, and a mail client pastes that `+` into the draft
+ * literally. Newlines become `%0A`, which is what keeps the diagnostics block
+ * on its own lines.
+ *
+ * `mailto:` is an opaque URI, so `buildUpon().appendQueryParameter()` — the
+ * approach used for the GitHub URL above — silently produces the wrong thing
+ * here; the query has to be assembled by hand.
+ *
+ * EXTRA_EMAIL is gone: with ACTION_SENDTO the recipient is defined by the URI,
+ * and a client that merges both ends up with the address twice in To:.
  */
 private fun sendFeedbackEmail(context: Context, subject: String, body: String) {
-    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:$FEEDBACK_EMAIL")).apply {
-        putExtra(Intent.EXTRA_EMAIL, arrayOf(FEEDBACK_EMAIL))
+    val mailto = buildString {
+        // "@" is whitelisted: RFC 6068 wants a literal one in the address, and
+        // the recipient is the one part that already worked — encoding it to
+        // %40 would be a fine way to break it while fixing something else.
+        append("mailto:").append(Uri.encode(FEEDBACK_EMAIL, "@"))
+        append("?subject=").append(Uri.encode(subject))
+        append("&body=").append(Uri.encode(body))
+    }
+    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse(mailto)).apply {
         putExtra(Intent.EXTRA_SUBJECT, subject)
         putExtra(Intent.EXTRA_TEXT, body)
     }
