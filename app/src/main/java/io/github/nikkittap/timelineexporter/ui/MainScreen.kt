@@ -3,7 +3,6 @@ package io.github.nikkittap.timelineexporter.ui
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -723,6 +722,7 @@ private fun MovementSection(
     val available = remember(breakdown) { breakdown.map { it.group }.toSet() }
     val selected = filter.movements ?: available
     val places = remember(parsed, filter.dateRange) { parsed.placeCount(filter.dateRange) }
+    val labels = movementLabels()
 
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -738,7 +738,7 @@ private fun MovementSection(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = movementSummaryLabel(selected, available, filter.movingOnly, places),
+            text = movementSummaryLabel(selected, available, filter.movingOnly, places, labels),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 2,
@@ -759,6 +759,7 @@ private fun MovementSection(
         breakdown.forEach { stats ->
             MovementRow(
                 stats = stats,
+                label = labels[stats.group] ?: stats.group.name,
                 checked = stats.group in selected,
                 onCheckedChange = { onToggleMovement(stats.group, it, available) },
             )
@@ -794,6 +795,7 @@ private fun MovementSection(
 @Composable
 private fun MovementRow(
     stats: MovementStats,
+    label: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
@@ -807,7 +809,7 @@ private fun MovementRow(
         Checkbox(checked = checked, onCheckedChange = onCheckedChange)
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = stringResource(movementLabel(stats.group)),
+                text = label,
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
@@ -851,15 +853,23 @@ private fun ToggleRow(
     }
 }
 
-@StringRes
-private fun movementLabel(group: MovementGroup): Int = when (group) {
-    MovementGroup.WALKING -> R.string.movement_walking
-    MovementGroup.CYCLING -> R.string.movement_cycling
-    MovementGroup.DRIVING -> R.string.movement_driving
-    MovementGroup.TRANSIT -> R.string.movement_transit
-    MovementGroup.FLYING -> R.string.movement_flying
-    MovementGroup.OTHER -> R.string.movement_other
-}
+/**
+ * Every movement label, resolved once.
+ *
+ * Spelled out rather than derived with `associateWith` or `map`: stringResource
+ * is @Composable and those lambdas are not inline, so it cannot be called
+ * inside them. Resolving all six up front also means callers that need a label
+ * inside a non-inline lambda — joinToString, say — have a plain String to hand.
+ */
+@Composable
+private fun movementLabels(): Map<MovementGroup, String> = mapOf(
+    MovementGroup.WALKING to stringResource(R.string.movement_walking),
+    MovementGroup.CYCLING to stringResource(R.string.movement_cycling),
+    MovementGroup.DRIVING to stringResource(R.string.movement_driving),
+    MovementGroup.TRANSIT to stringResource(R.string.movement_transit),
+    MovementGroup.FLYING to stringResource(R.string.movement_flying),
+    MovementGroup.OTHER to stringResource(R.string.movement_other),
+)
 
 /**
  * The one-line description shown while the section is collapsed.
@@ -874,13 +884,14 @@ private fun movementSummaryLabel(
     available: Set<MovementGroup>,
     movingOnly: Boolean,
     places: Int,
+    labels: Map<MovementGroup, String>,
 ): String {
     val parts = mutableListOf(
         when {
             selected.isEmpty() -> stringResource(R.string.filter_movement_none)
             selected == available -> stringResource(R.string.filter_movement_all)
             else -> selected.sortedBy { it.ordinal }
-                .joinToString(", ") { stringResource(movementLabel(it)) }
+                .joinToString(", ") { labels[it] ?: it.name }
         }
     )
     if (movingOnly) parts += stringResource(R.string.filter_moving_only_short)
