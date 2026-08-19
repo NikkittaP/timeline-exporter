@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "La tua cronologia, {su una mappa}",
+    "sub": "Anni di Google Maps Timeline in un colpo d'occhio"
+  },
+  "overview": {
+    "eyebrow": "Due tocchi",
+    "title": "Ogni viaggio, {pronto da esportare}",
+    "sub": "Legge il tuo file Google Takeout, senza account"
+  },
+  "calendar": {
+    "eyebrow": "Controllo preciso",
+    "title": "Filtra per {intervallo di date}",
+    "sub": "Esporta solo i giorni che ti servono"
+  },
+  "formats": {
+    "eyebrow": "Quattro formati",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Aprili in Strava, Garmin o QGIS"
+  },
+  "privacy": {
+    "eyebrow": "Privacy per progettazione",
+    "title": "100% {sul dispositivo}",
+    "sub": "I tuoi dati di posizione non lasciano mai il telefono"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Google Maps Timeline → GPX · KML · GeoJSON · CSV"
+  }
+}

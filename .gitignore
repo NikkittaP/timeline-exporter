@@ -31,6 +31,7 @@ fastlane/test_output/
 vendor/bundle/
 .bundle/
 fastlane/metadata/
+fastlane/screenshots_raw/
 
 # Local font files for caption rendering (large binaries, downloaded on demand)
 tools/fonts/

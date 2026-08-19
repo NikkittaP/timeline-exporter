@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "履歴を{1枚の地図に}",
+    "sub": "何年分ものタイムラインをひと目で"
+  },
+  "overview": {
+    "eyebrow": "2タップ",
+    "title": "すべての移動を{書き出せる}",
+    "sub": "Google Takeout のファイルを読むだけ。アカウント不要"
+  },
+  "calendar": {
+    "eyebrow": "細かく指定",
+    "title": "{期間で}絞り込み",
+    "sub": "必要な日だけ書き出せます"
+  },
+  "formats": {
+    "eyebrow": "4つの形式",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Strava、Garmin、QGIS でそのまま開けます"
+  },
+  "privacy": {
+    "eyebrow": "プライバシー第一",
+    "title": "100% {端末内で処理}",
+    "sub": "位置データはスマホの外に出ません"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Google マップのタイムライン → GPX · KML · GeoJSON · CSV"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "आपका इतिहास, {एक मैप पर}",
+    "sub": "सालों की Google Maps Timeline एक नज़र में"
+  },
+  "overview": {
+    "eyebrow": "दो टैप",
+    "title": "हर यात्रा, {एक्सपोर्ट के लिए तैयार}",
+    "sub": "आपकी Google Takeout फ़ाइल पढ़ता है — बिना अकाउंट"
+  },
+  "calendar": {
+    "eyebrow": "सटीक नियंत्रण",
+    "title": "{तारीख़ के हिसाब से} फ़िल्टर",
+    "sub": "सिर्फ़ ज़रूरी दिन एक्सपोर्ट करें"
+  },
+  "formats": {
+    "eyebrow": "चार फ़ॉर्मैट",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Strava, Garmin या QGIS में खोलें"
+  },
+  "privacy": {
+    "eyebrow": "निजता पहले",
+    "title": "100% {आपके फ़ोन पर}",
+    "sub": "आपका लोकेशन डेटा कभी फ़ोन से बाहर नहीं जाता"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Google Maps Timeline → GPX · KML · GeoJSON · CSV"
+  }
+}

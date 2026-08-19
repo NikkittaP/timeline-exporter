@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "Уся історія {на одній карті}",
+    "sub": "Роки хронології Google Карт на одному екрані"
+  },
+  "overview": {
+    "eyebrow": "Два дотики",
+    "title": "Кожна поїздка {готова до експорту}",
+    "sub": "Читає файл Google Takeout — без облікового запису"
+  },
+  "calendar": {
+    "eyebrow": "Точний відбір",
+    "title": "Фільтр за {датами}",
+    "sub": "Експортуйте лише потрібні дні"
+  },
+  "formats": {
+    "eyebrow": "Чотири формати",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Відкрийте у Strava, Garmin чи QGIS"
+  },
+  "privacy": {
+    "eyebrow": "Приватність за замовчуванням",
+    "title": "100% {на пристрої}",
+    "sub": "Дані про місцезнаходження не залишають телефон"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Хронологія Google Карт → GPX · KML · GeoJSON · CSV"
+  }
+}

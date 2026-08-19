@@ -1,0 +1,102 @@
+{
+  "$comment": "Timeline Exporter — Play Store screenshot decorator. Paths are relative to this file.",
+
+  "paths": {
+    "raw":      "../../fastlane/screenshots_raw",
+    "metadata": "../../fastlane/metadata/android",
+    "preview":  "./preview",
+    "fontDirs": ["../fonts"]
+  },
+
+  "defaultLocale": "en-US",
+  "locales": ["en-US","ar","de-DE","es-ES","fr-FR","hi-IN","it-IT","ja-JP","ko-KR",
+              "nl-NL","pl-PL","pt-BR","ru-RU","sv-SE","tr-TR","uk","zh-CN","zh-TW"],
+  "rtl": ["ar","he","fa","ur"],
+
+  "slots": [
+    { "id": "phone",     "dir": "phoneScreenshots",     "w": 1080, "h": 1920 },
+    { "id": "sevenInch", "dir": "sevenInchScreenshots", "w": 1200, "h": 1920, "landscape": { "w": 1920, "h": 1200 } },
+    { "id": "tenInch",   "dir": "tenInchScreenshots",   "w": 1600, "h": 2560, "landscape": { "w": 2560, "h": 1600 } }
+  ],
+
+  "featureGraphic": { "w": 1024, "h": 500, "enabled": true, "source": "03_map_fullscreen" },
+
+  "frames": [
+    { "out": "01_map",      "src": "03_map_fullscreen", "key": "map"      },
+    { "out": "02_overview", "src": "02_overview",       "key": "overview" },
+    { "out": "03_calendar", "src": "04_calendar",       "key": "calendar" },
+    { "out": "04_formats",  "src": "05_formats",        "key": "formats"  },
+    { "out": "05_privacy",  "src": "06_start_empty",    "key": "privacy"  }
+  ],
+
+  "palette": "blue",
+  "palettes": {
+    "blue": {
+      "bg": "#F6F9FF", "ink": "#0E1A2B", "muted": "#55637A",
+      "accent": "#1668E3", "eyebrow": "#2B62C4",
+      "glow1": "#8FBAFF", "glow2": "#3E86FF", "glow3": "#FFC3A6",
+      "glow1o": 0.85, "glow2o": 0.45, "glow3o": 0.55
+    },
+    "orange": {
+      "bg": "#FFFBF7", "ink": "#1A1614", "muted": "#6B5B52",
+      "accent": "#EA4E12", "eyebrow": "#C2410C",
+      "glow1": "#FF9E63", "glow2": "#FF6A2B", "glow3": "#9FB4FF",
+      "glow1o": 0.9, "glow2o": 0.5, "glow3o": 0.65
+    },
+    "midnight": {
+      "bg": "#0A1120", "ink": "#FFFFFF", "muted": "#93A4C4",
+      "accent": "#5AA0FF", "eyebrow": "#7FB4FF",
+      "glow1": "#12386E", "glow2": "#0E5BC4", "glow3": "#7A3A22",
+      "glow1o": 0.9, "glow2o": 0.55, "glow3o": 0.35, "dark": true
+    }
+  },
+
+  "device": {
+    "widthRatio":  0.626,
+    "maxWidthRatio": 0.90,
+    "minWidthRatio": 0.44,
+    "bleedBottom": 46,
+    "radius":      52,
+    "bezel":       11,
+    "bodyColor":   "#0B0B0D"
+  },
+
+  "type": {
+    "titleMax": 92, "titleMin": 54, "titleLines": 3,
+    "subMax":   32, "subMin":   23, "subLines":   3,
+    "eyebrow":  24
+  },
+
+  "fonts": {
+    "fontsource": ["inter", "noto-sans"],
+    "stacks": {
+      "default": ["Inter", "Noto Sans"],
+      "ar":      ["Noto Sans Arabic", "Noto Sans", "Inter"],
+      "he":      ["Noto Sans Hebrew", "Noto Sans", "Inter"],
+      "hi-IN":   ["Noto Sans Devanagari", "Noto Sans", "Inter"],
+      "th":      ["Noto Sans Thai", "Noto Sans", "Inter"],
+      "ja-JP":   ["Inter", "Noto Sans CJK JP", "Noto Sans"],
+      "ko-KR":   ["Inter", "Noto Sans CJK KR", "Noto Sans"],
+      "zh-CN":   ["Inter", "Noto Sans CJK SC", "Noto Sans"],
+      "zh-TW":   ["Inter", "Noto Sans CJK TC", "Noto Sans"]
+    },
+    "files": {
+      "NotoSans-Bold":            "Noto Sans",
+      "NotoSansArabic-Bold":      "Noto Sans Arabic",
+      "NotoSansHebrew-Bold":      "Noto Sans Hebrew",
+      "NotoSansDevanagari-Bold":  "Noto Sans Devanagari",
+      "NotoSansThai-Bold":        "Noto Sans Thai",
+      "NotoSansCJKjp-Bold":       "Noto Sans CJK JP",
+      "NotoSansCJKkr-Bold":       "Noto Sans CJK KR",
+      "NotoSansCJKsc-Bold":       "Noto Sans CJK SC",
+      "NotoSansCJKtc-Bold":       "Noto Sans CJK TC"
+    }
+  },
+
+  "script": {
+    "cjk":    { "locales": ["ja-JP","ko-KR","zh-CN","zh-TW"], "letterSpacing": "0",       "titleLh": 1.28, "subLh": 1.5 },
+    "arabic": { "locales": ["ar"],                            "letterSpacing": "0",       "titleLh": 1.45, "subLh": 1.6 },
+    "indic":  { "locales": ["hi-IN"],                         "letterSpacing": "-.01em",  "titleLh": 1.35, "subLh": 1.5 },
+    "thai":   { "locales": ["th"],                            "letterSpacing": "0",       "titleLh": 1.5,  "subLh": 1.6 }
+  }
+}

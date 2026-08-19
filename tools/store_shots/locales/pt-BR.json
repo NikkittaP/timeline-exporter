@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "Seu histórico {em um mapa}",
+    "sub": "Anos da Linha do tempo do Google Maps de uma vez"
+  },
+  "overview": {
+    "eyebrow": "Dois toques",
+    "title": "Cada viagem {pronta para exportar}",
+    "sub": "Lê seu arquivo do Google Takeout, sem conta"
+  },
+  "calendar": {
+    "eyebrow": "Controle preciso",
+    "title": "Filtre por {intervalo de datas}",
+    "sub": "Exporte só os dias que você precisa"
+  },
+  "formats": {
+    "eyebrow": "Quatro formatos",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Abra no Strava, Garmin ou QGIS"
+  },
+  "privacy": {
+    "eyebrow": "Privacidade por padrão",
+    "title": "100% {no dispositivo}",
+    "sub": "Seus dados de localização nunca saem do telefone"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Linha do tempo do Google Maps → GPX · KML · GeoJSON · CSV"
+  }
+}

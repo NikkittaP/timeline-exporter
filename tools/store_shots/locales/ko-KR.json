@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "내 기록을 {지도 한 장에}",
+    "sub": "수년치 타임라인을 한눈에"
+  },
+  "overview": {
+    "eyebrow": "두 번의 탭",
+    "title": "모든 이동을 {내보내기}",
+    "sub": "Google Takeout 파일만 있으면 됩니다"
+  },
+  "calendar": {
+    "eyebrow": "정확한 선택",
+    "title": "{기간별로} 필터링",
+    "sub": "필요한 날짜만 내보내세요"
+  },
+  "formats": {
+    "eyebrow": "네 가지 형식",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Strava, Garmin, QGIS에서 바로 열기"
+  },
+  "privacy": {
+    "eyebrow": "프라이버시 우선",
+    "title": "100% {기기 내 처리}",
+    "sub": "위치 데이터가 휴대폰을 벗어나지 않습니다"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Google 지도 타임라인 → GPX · KML · GeoJSON · CSV"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "سجلّك {على خريطة واحدة}",
+    "sub": "سنوات من سجل خرائط Google في عرض واحد"
+  },
+  "overview": {
+    "eyebrow": "نقرتان",
+    "title": "كل رحلة {جاهزة للتصدير}",
+    "sub": "يقرأ ملف Google Takeout — بدون حساب"
+  },
+  "calendar": {
+    "eyebrow": "تحكّم دقيق",
+    "title": "التصفية حسب {نطاق التاريخ}",
+    "sub": "صدّر الأيام التي تحتاجها فقط"
+  },
+  "formats": {
+    "eyebrow": "أربع صيغ",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "افتحها في Strava أو Garmin أو QGIS"
+  },
+  "privacy": {
+    "eyebrow": "خصوصية بالتصميم",
+    "title": "100% {على جهازك}",
+    "sub": "بيانات موقعك لا تغادر هاتفك أبدًا"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "سجل خرائط Google ← GPX · KML · GeoJSON · CSV"
+  }
+}

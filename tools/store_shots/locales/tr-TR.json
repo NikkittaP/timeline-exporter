@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "Tüm geçmişin {tek haritada}",
+    "sub": "Yılların Google Haritalar Zaman Tüneli tek ekranda"
+  },
+  "overview": {
+    "eyebrow": "İki dokunuş",
+    "title": "Her yolculuk {dışa aktarmaya hazır}",
+    "sub": "Google Takeout dosyanı okur — hesap gerekmez"
+  },
+  "calendar": {
+    "eyebrow": "Hassas kontrol",
+    "title": "{Tarih aralığına} göre filtrele",
+    "sub": "Yalnızca ihtiyacın olan günleri dışa aktar"
+  },
+  "formats": {
+    "eyebrow": "Dört format",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Strava, Garmin veya QGIS'te aç"
+  },
+  "privacy": {
+    "eyebrow": "Tasarımdan gelen gizlilik",
+    "title": "100% {cihazında}",
+    "sub": "Konum verilerin telefonundan çıkmaz"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Google Haritalar Zaman Tüneli → GPX · KML · GeoJSON · CSV"
+  }
+}

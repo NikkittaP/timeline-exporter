@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "Votre historique, {sur une carte}",
+    "sub": "Des années de Google Maps Timeline en un coup d'œil"
+  },
+  "overview": {
+    "eyebrow": "Deux touches",
+    "title": "Chaque trajet, {prêt à exporter}",
+    "sub": "Lit votre fichier Google Takeout, sans compte"
+  },
+  "calendar": {
+    "eyebrow": "Contrôle précis",
+    "title": "Filtrer par {période}",
+    "sub": "N'exportez que les jours utiles"
+  },
+  "formats": {
+    "eyebrow": "Quatre formats",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Ouvrez-les dans Strava, Garmin ou QGIS"
+  },
+  "privacy": {
+    "eyebrow": "Confidentialité native",
+    "title": "100 % {sur l'appareil}",
+    "sub": "Vos données de localisation ne quittent jamais votre téléphone"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Google Maps Timeline → GPX · KML · GeoJSON · CSV"
+  }
+}

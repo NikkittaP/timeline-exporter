@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "Je geschiedenis, {op één kaart}",
+    "sub": "Jaren Google Maps Timeline in één oogopslag"
+  },
+  "overview": {
+    "eyebrow": "Twee tikken",
+    "title": "Elke rit, {klaar om te exporteren}",
+    "sub": "Leest je Google Takeout-bestand, zonder account"
+  },
+  "calendar": {
+    "eyebrow": "Precieze controle",
+    "title": "Filter op {datumbereik}",
+    "sub": "Exporteer alleen de dagen die je nodig hebt"
+  },
+  "formats": {
+    "eyebrow": "Vier formaten",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Open ze in Strava, Garmin of QGIS"
+  },
+  "privacy": {
+    "eyebrow": "Privacy vooraf",
+    "title": "100% {op je toestel}",
+    "sub": "Je locatiegegevens verlaten je telefoon nooit"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Google Maps Timeline → GPX · KML · GeoJSON · CSV"
+  }
+}

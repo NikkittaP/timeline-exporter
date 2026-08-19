@@ -1,15 +1,22 @@
 default_platform(:android)
 
 # ---------------------------------------------------------------------------
-# Timeline Exporter — screenshot capture + Play Store upload.
+# Timeline Exporter — screenshot capture, decoration + Play Store upload.
 #
-# Typical flow (see SCREENSHOTS_SETUP.md for the full walkthrough):
+# Typical flow (see SCREENSHOTS_SETUP.md and tools/store_shots/README.md):
 #   1. boot a PHONE emulator,  then:  bundle exec fastlane screens_phone
 #   2. boot a 7" TABLET emul., then:  bundle exec fastlane screens_tablet7
 #   3. boot a 10" TABLET emul, then:  bundle exec fastlane screens_tablet10
 #   4. review fastlane/metadata/android/<locale>/images/...
 #   5. upload:                        bundle exec fastlane upload_screens
+#
+# The screens_* lanes now do three things: capture raw shots, move them into
+# fastlane/screenshots_raw/, then render the framed store art from them. To
+# re-render after a copy change you do NOT need an emulator — just run
+# `bundle exec fastlane decorate_screens`.
 # ---------------------------------------------------------------------------
+
+SHOTS = "../tools/store_shots"
 
 platform :android do
 
@@ -21,37 +28,59 @@ platform :android do
     )
   end
 
-  desc "Overlay the localized '100% on-device' caption onto 01_hero (built " \
-       "from the clean 03_map_fullscreen shot). Requires Python + Pillow."
-  lane :add_hero_captions do
-    # The script resolves its own paths, so cwd doesn't matter. Use `python`
-    # (Windows); change to `python3` on macOS/Linux if that's your launcher.
-    ENV["PYTHONUTF8"] = "1"
-    ENV["PYTHONIOENCODING"] = "utf-8"
-    ENV["LANG"] = "en_US.UTF-8"
-    ENV["LC_ALL"] = "en_US.UTF-8"
-    sh("python", "../tools/add_hero_caption.py")
+  desc "One-time: install the screenshot renderer's dependencies (Node 18+)"
+  lane :setup_store_shots do
+    sh("npm", "install", "--prefix", SHOTS)
+    sh("npx", "--prefix", SHOTS, "playwright", "install", "chromium")
+  end
+
+  desc "Move fresh screengrab output out of metadata/ into fastlane/screenshots_raw/"
+  private_lane :ingest_raw do |options|
+    sh("node", "#{SHOTS}/render.mjs", "--ingest", "--slot", options[:slot])
+  end
+
+  desc "Render the framed Play Store screenshots from the raw captures. " \
+       "Options: slot:phone|sevenInch|tenInch, locales:ru-RU,ar, palette:blue|orange|midnight"
+  lane :decorate_screens do |options|
+    args = ["node", "#{SHOTS}/render.mjs"]
+    args += ["--slot",    options[:slot]]    if options[:slot]
+    args += ["--locales", options[:locales]] if options[:locales]
+    args += ["--palette", options[:palette]] if options[:palette]
+    sh(*args)
   end
 
   desc "Capture screenshots on a PHONE emulator/device (run one first)"
   lane :screens_phone do
     build_for_screengrab
     capture_android_screenshots(device_type: "phone")
-    add_hero_captions
+    ingest_raw(slot: "phone")
+    decorate_screens(slot: "phone")
   end
 
   desc "Capture screenshots on a 7-inch TABLET emulator/device"
   lane :screens_tablet7 do
     build_for_screengrab
     capture_android_screenshots(device_type: "sevenInch")
-    add_hero_captions
+    ingest_raw(slot: "sevenInch")
+    decorate_screens(slot: "sevenInch")
   end
 
   desc "Capture screenshots on a 10-inch TABLET emulator/device"
   lane :screens_tablet10 do
     build_for_screengrab
     capture_android_screenshots(device_type: "tenInch")
-    add_hero_captions
+    ingest_raw(slot: "tenInch")
+    decorate_screens(slot: "tenInch")
+  end
+
+  desc "DEPRECATED — the old Pillow caption band on 01_hero. Superseded by " \
+       "decorate_screens; kept so old runs stay reproducible."
+  lane :add_hero_captions do
+    ENV["PYTHONUTF8"] = "1"
+    ENV["PYTHONIOENCODING"] = "utf-8"
+    ENV["LANG"] = "en_US.UTF-8"
+    ENV["LC_ALL"] = "en_US.UTF-8"
+    sh("python", "../tools/add_hero_caption.py")
   end
 
   desc "Upload ONLY screenshots to Play (internal track). Leaves your listing " \

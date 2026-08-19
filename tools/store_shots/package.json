@@ -1,0 +1,15 @@
+{
+  "name": "timeline-store-shots",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "shots": "node render.mjs",
+    "preview": "node render.mjs --preview-only --locales en-US,ru-RU,ar,zh-CN --slot phone"
+  },
+  "dependencies": {
+    "playwright": "^1.47.0",
+    "@fontsource/inter": "^5.0.0",
+    "@fontsource/noto-sans": "^5.0.0"
+  }
+}

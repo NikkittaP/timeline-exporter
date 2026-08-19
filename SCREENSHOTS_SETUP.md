@@ -1,25 +1,64 @@
 # Automated Play Store screenshots (Fastlane screengrab)
 
-This captures all six store screenshots, in all 18 languages, on phone + 7"
-tablet + 10" tablet, and uploads them to Play — without you tapping anything.
+This captures every store screenshot, in all 18 languages, on phone + 7"
+tablet + 10" tablet, renders the framed store art from them, and uploads it to
+Play — without you tapping anything.
 
 It works by letting an instrumented UI test (`ScreenshotTest.kt`) drive the app
 while **screengrab** changes the device language for each run and grabs a PNG of
 each screen. **supply** (`upload_to_play_store`) then pushes the PNGs to Play.
 
-The six shots (per language):
+The raw shots the test captures (per language):
 
-| File                 | Screen                                            |
-|----------------------|---------------------------------------------------|
-| `01_hero.png`        | Full-screen map + **auto-added "100% on-device" caption** (generated from 03) |
-| `02_overview.png`    | Main page with the demo Timeline loaded           |
-| `03_map_fullscreen.png` | Expanded world map (clean)                     |
-| `04_calendar.png`    | Date-range picker (calendar)                      |
-| `05_formats.png`     | Export-format buttons (GPX / KML / GeoJSON / CSV) |
-| `06_start_empty.png` | First launch, nothing loaded                      |
+| File                    | Screen                                            |
+|-------------------------|---------------------------------------------------|
+| `02_overview.png`       | Main page with the demo Timeline loaded           |
+| `03_map_fullscreen.png` | Expanded world map (clean)                        |
+| `04_calendar.png`       | Date-range picker (calendar)                      |
+| `05_formats.png`        | Export-format buttons (GPX / KML / GeoJSON / CSV) |
+| `06_start_empty.png`    | First launch, nothing loaded                      |
+
+Those are **not** what Play gets. A second stage ("Aurora", `tools/store_shots/`)
+renders each raw shot into framed store art — gradient background, device frame,
+localized headline — and that is what lands in `fastlane/metadata/`:
+
+| Store file       | Built from              |
+|------------------|-------------------------|
+| `01_map.png`     | `03_map_fullscreen.png` |
+| `02_overview.png`| `02_overview.png`       |
+| `03_calendar.png`| `04_calendar.png`       |
+| `04_formats.png` | `05_formats.png`        |
+| `05_privacy.png` | `06_start_empty.png`    |
+| feature graphic (1024x500) | `03_map_fullscreen.png` |
 
 > Nothing here ships in the release AAB. The test deps are `androidTest`-only,
 > and the FileProvider + permissions live in `src/debug`.
+
+---
+
+## Quick reference (the commands you actually type)
+
+One-time, installs the renderer (Node 18+):
+
+```bash
+cd tools/store_shots && npm install && npx playwright install chromium
+```
+
+Then, from `TimelineApp/`:
+
+```bash
+bundle exec fastlane screens_phone       # capture + decorate (boot the phone AVD first)
+bundle exec fastlane decorate_screens    # re-render everything, NO emulator needed
+bundle exec fastlane upload_screens      # push to Play (internal track)
+```
+
+`screens_phone` does three things now: capture -> ingest (move the raw PNGs to
+`fastlane/screenshots_raw/`) -> decorate. Because the raw shots are kept, any
+copy/palette change afterwards is just `decorate_screens` — no rebuild, no
+emulator, seconds instead of half an hour.
+
+Details of the renderer (config, per-locale texts, palettes, slots) live in
+[`tools/store_shots/README.md`](tools/store_shots/README.md).
 
 ---
 
@@ -30,13 +69,16 @@ app/build.gradle.kts                      + screengrab / test deps
 app/src/debug/AndroidManifest.xml         FileProvider + screengrab permissions
 app/src/debug/res/xml/screengrab_file_paths.xml
 app/src/androidTest/assets/timeline_demo.json   synthetic demo data (see below)
-app/src/androidTest/.../ScreenshotTest.kt        captures 02..06 (01_hero is generated)
+app/src/androidTest/.../ScreenshotTest.kt        captures the raw 02..06 shots
 tools/generate_demo_timeline.py           regenerates the demo data
-tools/add_hero_caption.py                 builds 01_hero by captioning the map shot
+tools/store_shots/                        the "Aurora" store-art renderer (see its README)
+tools/add_hero_caption.py                 DEPRECATED Pillow captioner, superseded by the above
 fastlane/Appfile                          package name + key path
-fastlane/Fastfile                         lanes: screens_phone / _tablet7 / _tablet10 / upload_screens
+fastlane/Fastfile                         lanes: screens_phone / _tablet7 / _tablet10 /
+                                          decorate_screens / upload_screens
 fastlane/Screengrabfile                   18 locales, apk paths
-fastlane/screenshot_captions.txt          the #1 caption in 18 languages
+fastlane/screenshots_raw/                 raw captures, kept so re-rendering needs no emulator
+fastlane/screenshot_captions.txt          old captions, only used by add_hero_caption.py
 Gemfile                                    fastlane
 ```
 
@@ -140,10 +182,12 @@ bundle exec fastlane screens_tablet10
 ```
 
 Each lane rebuilds the debug + test APKs, then loops through all 18 locales.
-Expect ~1–2 min per locale, so a full phone run is ~25–40 min. Results land in:
+Expect ~1–2 min per locale, so a full phone run is ~25–40 min. The lane then
+moves the raw PNGs aside and renders the store art on top of them:
 
 ```
-fastlane/metadata/android/<locale>/images/phoneScreenshots/
+fastlane/screenshots_raw/<locale>/<slot>/                       raw, kept for re-rendering
+fastlane/metadata/android/<locale>/images/phoneScreenshots/     what Play gets
 fastlane/metadata/android/<locale>/images/sevenInchScreenshots/
 fastlane/metadata/android/<locale>/images/tenInchScreenshots/
 ```
@@ -160,33 +204,41 @@ is in the right language.
 
 ---
 
-## The #1 caption ("100% on-device") — automatic
+## Decorating the shots ("Aurora")
 
-`01_hero.png` is **not** captured by the test. Instead, `tools/add_hero_caption.py`
-takes the clean full-screen map (`03_map_fullscreen.png`) and overlays the
-localized caption from `fastlane/screenshot_captions.txt`, writing `01_hero.png`
-for the phone and both tablet sizes. The `screens_*` lanes run it automatically
-after capture, so you normally don't do anything.
+The framed store art is rendered by `tools/store_shots/render.mjs`: an HTML/CSS
+template drawn by headless Chromium (Playwright). Chromium does the text shaping,
+so Arabic (RTL + ligatures), Hindi, Thai and CJK come out right without Pillow or
+libraqm.
 
-One-time dependency:
-
-```bash
-pip install Pillow
-```
-
-Pillow's standard Windows/macOS wheels include the **raqm** layout engine, which
-the script needs to shape Arabic and Hindi correctly (and to render Arabic
-right-to-left). If you ever see a "libraqm missing" warning, reinstall Pillow
-from a wheel that bundles it; Latin/Cyrillic/CJK still render fine without it.
-
-To re-run captioning by hand (e.g. after editing a caption):
+One-time dependency (Node 18+):
 
 ```bash
-python tools/add_hero_caption.py
+cd tools/store_shots && npm install && npx playwright install chromium
 ```
 
-Edit the wording in `fastlane/screenshot_captions.txt` (one line per language).
-The script picks a font that covers each script automatically.
+There is also a `bundle exec fastlane setup_store_shots` wrapper, but it drives
+npx with `--prefix`, which npx accepts without actually resolving from that
+folder — the two-command form above is the one to trust.
+
+The `screens_*` lanes call it for you. To re-render **without** an emulator or a
+rebuild — after a copy edit, a palette change, a template tweak:
+
+```bash
+bundle exec fastlane decorate_screens                     # all locales, all slots
+bundle exec fastlane decorate_screens slot:phone
+bundle exec fastlane decorate_screens locales:ru-RU,ar palette:orange
+```
+
+It reads the raw captures from `fastlane/screenshots_raw/`, so this works as long
+as you have captured at least once. Headline/subtitle wording per language lives
+in `tools/store_shots/locales/<play-locale>.json`; frames, palettes, slot sizes
+and geometry in `tools/store_shots/config.json`. Both are documented in
+[`tools/store_shots/README.md`](tools/store_shots/README.md).
+
+> The old Pillow captioner (`tools/add_hero_caption.py`, `add_hero_captions`
+> lane, `fastlane/screenshot_captions.txt`) is superseded and no longer wired
+> into the capture lanes. It is kept only so older runs stay reproducible.
 
 ---
 
@@ -214,7 +266,12 @@ images per language, then save/submit as usual.
 
 - **Fewer languages:** trim the `locales([...])` list in `fastlane/Screengrabfile`.
 - **Different / more screens:** edit `ScreenshotTest.kt` — add a
-  `Screengrab.screenshot("07_xyz")` after navigating to the new state.
+  `Screengrab.screenshot("07_xyz")` after navigating to the new state, then add a
+  matching entry to `frames` in `tools/store_shots/config.json` and a text block
+  to every `tools/store_shots/locales/*.json`.
+- **Different wording / colours on the store art:** `tools/store_shots/locales/`
+  and the `palette` key in `tools/store_shots/config.json`, then
+  `bundle exec fastlane decorate_screens`.
 - **Different demo trip:** edit `HOME_LATLON`, `NEARBY`, `VACATIONS`, or the
   `alps_road_trip_segments` route in `tools/generate_demo_timeline.py` and
   re-run it.

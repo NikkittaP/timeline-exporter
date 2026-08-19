@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "全部紀錄，{一張地圖}",
+    "sub": "多年的 Google 地圖時間軸，一屏看完"
+  },
+  "overview": {
+    "eyebrow": "兩次點擊",
+    "title": "每段行程，{隨時匯出}",
+    "sub": "讀取你的 Google Takeout 檔案，無需帳號"
+  },
+  "calendar": {
+    "eyebrow": "精確控制",
+    "title": "依{日期範圍}篩選",
+    "sub": "只匯出你需要的日子"
+  },
+  "formats": {
+    "eyebrow": "四種格式",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "可直接在 Strava、Garmin、QGIS 中開啟"
+  },
+  "privacy": {
+    "eyebrow": "隱私優先",
+    "title": "100% {在本機處理}",
+    "sub": "你的位置資訊絕不離開手機"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Google 地圖時間軸 → GPX · KML · GeoJSON · CSV"
+  }
+}

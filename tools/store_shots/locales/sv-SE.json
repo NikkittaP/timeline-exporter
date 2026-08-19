@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "Hela historiken {på en karta}",
+    "sub": "År av Google Maps tidslinje på en gång"
+  },
+  "overview": {
+    "eyebrow": "Två tryck",
+    "title": "Varje resa {redo att exporteras}",
+    "sub": "Läser din Google Takeout-fil – utan konto"
+  },
+  "calendar": {
+    "eyebrow": "Exakt kontroll",
+    "title": "Filtrera på {datumintervall}",
+    "sub": "Exportera bara de dagar du behöver"
+  },
+  "formats": {
+    "eyebrow": "Fyra format",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Öppna dem i Strava, Garmin eller QGIS"
+  },
+  "privacy": {
+    "eyebrow": "Integritet från start",
+    "title": "100 % {på enheten}",
+    "sub": "Dina platsdata lämnar aldrig telefonen"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Google Maps tidslinje → GPX · KML · GeoJSON · CSV"
+  }
+}

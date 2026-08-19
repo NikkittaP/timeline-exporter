@@ -1,0 +1,31 @@
+{
+  "map": {
+    "eyebrow": "Timeline Exporter",
+    "title": "Twoja historia {na jednej mapie}",
+    "sub": "Lata Osi czasu Google Maps na jednym ekranie"
+  },
+  "overview": {
+    "eyebrow": "Dwa dotknięcia",
+    "title": "Każda podróż {gotowa do eksportu}",
+    "sub": "Czyta plik Google Takeout — bez konta"
+  },
+  "calendar": {
+    "eyebrow": "Precyzyjna kontrola",
+    "title": "Filtruj według {zakresu dat}",
+    "sub": "Eksportuj tylko potrzebne dni"
+  },
+  "formats": {
+    "eyebrow": "Cztery formaty",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Otwórz je w Strava, Garmin lub QGIS"
+  },
+  "privacy": {
+    "eyebrow": "Prywatność u podstaw",
+    "title": "100% {na urządzeniu}",
+    "sub": "Dane o lokalizacji nie opuszczają telefonu"
+  },
+  "_feature": {
+    "title": "Timeline Exporter",
+    "sub": "Oś czasu Google Maps → GPX · KML · GeoJSON · CSV"
+  }
+}
