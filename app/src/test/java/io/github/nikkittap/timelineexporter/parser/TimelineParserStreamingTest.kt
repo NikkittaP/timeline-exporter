@@ -3,6 +3,7 @@ package io.github.nikkittap.timelineexporter.parser
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.Instant
 
 /**
  * Tests for the streaming parser: the InputStream entry point, the rawSignals
@@ -88,10 +89,15 @@ class TimelineParserStreamingTest {
         val sb = StringBuilder()
         sb.append("{ \"semanticSegments\": [")
         val n = 5_000
+        val epoch = Instant.parse("2025-01-01T00:00:00Z")
         for (i in 0 until n) {
             if (i > 0) sb.append(',')
-            val minute = (n - i) // descending
-            val ts = "2025-01-01T%02d:%02d:00Z".format(minute / 60, minute % 60)
+            // Minute-spaced and descending. Built by Instant arithmetic rather
+            // than formatting minute/60 as the hour: past i = 1440 that rolls
+            // past hour 23 and yields timestamps like "T83:20:00Z", which the
+            // parser rightly drops — the test then measured the drop, not the
+            // stream.
+            val ts = epoch.plusSeconds((n - i) * 60L).toString()
             sb.append(
                 "{ \"startTime\": \"$ts\", \"timelinePath\": [ { \"point\": \"10.0°, 20.0°\", \"time\": \"$ts\" } ] }"
             )
