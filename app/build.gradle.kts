@@ -62,8 +62,17 @@ android {
         //                                         rode only in intent extras,
         //                                         which Gmail ignores; they
         //                                         now travel in the mailto URI
-        versionCode = 9
-        versionName = "1.5.1"
+        //   versionCode=10, versionName="1.6.0" -> movement filtering: the
+        //                                         parser now keeps visit and
+        //                                         activity segments, step 2
+        //                                         breaks the range down by
+        //                                         movement type with trip
+        //                                         counts and distances, and
+        //                                         exports can drop points
+        //                                         recorded while standing
+        //                                         still or repeated verbatim
+        versionCode = 10
+        versionName = "1.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

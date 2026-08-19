@@ -1,139 +1,127 @@
-# Release Notes — v1.5.1 (versionCode 9)
+# Release Notes — v1.6.0 (versionCode 10)
 
-> versionCode 8 / v1.5.0 never left internal testing: its **Send an email**
-> button opened a blank draft. Everything below still describes what is new
-> compared to v1.4.0 — that is what a Play user will see on first install —
-> with the fix recorded under **Fixed**.
-
-## Fixed
-- **The email draft arrived empty** (recipient filled, subject and body blank).
-  `sendFeedbackEmail()` passed the text only as `EXTRA_SUBJECT` / `EXTRA_TEXT`
-  extras alongside a bare `mailto:` URI. Gmail — and several OEM mail apps —
-  compose the draft from the URI alone and discard the extras, which is why the
-  recipient survived (it *is* the URI) and nothing else did. Subject and body
-  now travel in the URI query string, percent-encoded with `Uri.encode`
-  (`%20` for spaces, not `URLEncoder`'s `+`, and `%0A` for the newlines that
-  keep the diagnostics block readable). The extras are kept as a fallback for
-  clients that behave the other way round; both carry identical text, so the
-  draft is the same whichever one wins.
-  - `mailto:` is an **opaque** URI, so the `buildUpon().appendQueryParameter()`
-    pattern used for the GitHub URL does not apply — the query is assembled by
-    hand.
-  - `EXTRA_EMAIL` was dropped. Under `ACTION_SENDTO` the recipient is defined
-    by the URI, and a client that reads both puts the address in `To:` twice.
-- GitHub was unaffected and needed no change: `ACTION_VIEW` on an `https` URL
-  carries title and body as ordinary query parameters, which the browser cannot
-  drop.
+The export stopped being all-or-nothing. Until now the only question the app
+asked was *when* — pick a date range, get every point Google ever recorded in
+it. This release adds *what*: which kinds of movement to keep, and whether to
+keep the points recorded while you were not moving at all.
 
 ## Highlights
-The app finally has a way to talk back. Until now a user who needed something
-had exactly one channel — a public Play Store review — so requests arrived by
-accident, if at all. This release adds a feedback ballot reachable from two
-places, and fixes the one export complaint that didn't need a survey to
-discover: CSV timestamps were UTC-only.
+A year of real Timeline data is mostly standing still. **71% of its points were
+recorded during a visit** rather than a trip, and **29.6% repeat the previous
+coordinate verbatim** — the phone reporting the same spot again while the owner
+sat in an office. That is what made exports feel padded, and neither could be
+filtered out before.
+
+The same screen that now does the filtering also answers the question the first
+feedback round kept asking: *how far did I actually travel, and by what?* The
+breakdown and the filter are the same rows — read the kilometres, tick the
+group, the export follows.
 
 ## Added
-- **Feedback dialog.** A checklist of seven concrete candidate features (all of
-  them backed by data that already exists in `Timeline.json`, so nothing on the
-  list is an empty promise) plus a free-text field. Sends through **GitHub
-  Issues** or **email** — the user picks; neither channel is imposed.
-- **Two entry points, nothing added to the idle main screen.**
-  1. A tinted plaque under a successful export — the moment the user just got
-     what they came for. It started as a muted one-line link and read as a
-     caption, i.e. exactly what people skip, so it now carries a title, one
-     line of reasoning and a real action. Weight comes from the container
-     colour, not from a primary button: the user finished their task and is
-     being asked a favour, so it must not compete with the export buttons.
-     The container is `tertiaryContainer`. With dynamic colour on, primary and
-     secondary are neighbouring shades of the same wallpaper hue, so a
-     secondary plaque under blue export buttons read as one more control;
-     Material You derives tertiary by rotating the hue, which is the only
-     way to signal "this isn't app functionality" without hardcoding a colour
-     that would then fight the user's theme.
-     The screen also auto-scrolls to the bottom when an export succeeds: both
-     the "Saved N points" confirmation and the prompt under it sit below the
-     fold on a four-step screen, so without it the plaque is invisible to
-     anyone who didn't scroll.
-  2. A button at the bottom of the help dialog — permanently available, out of
-     the way.
-- **Email is offered before GitHub.** Filing an issue needs a GitHub account;
-  anyone without one hits a signup wall after composing their request. Mail
-  works for everybody, so it leads.
-- **Diagnostics are shown, not smuggled.** App version, device, Android
-  version, locale, detected file format and point count are pre-filled into an
-  **editable** text field. The app itself transmits nothing: both buttons hand
-  a draft to the browser or the mail client, where the user can still edit or
-  abandon it. This is a deliberate constraint — "100% on-device, zero
-  telemetry" would be worth nothing if a feedback button quietly attached data.
-- **Ballot text travels in English.** The checkbox labels are translated for
-  display, but the outgoing issue/email body uses fixed English strings, so a
-  request filed in Japanese or Turkish still arrives readable and
-  de-duplicable.
+- **Movement breakdown in step 2.** One collapsed line under the date chips,
+  e.g. *"All movement · 313 places"*. Someone who only ever picked a date range
+  sees the step they already know plus a single extra line.
+- **Per-type trips and distance.** Expanded, the section lists each movement
+  group — Walking, Cycling, Driving, Public transport, Flights, Other — with
+  its trip count and total distance. Several of Google's activity types fold
+  into each group (running counts as walking, trains as transit).
+- **Each group is a checkbox**, so "just the cycling" or "everything except
+  flights" is one tap. The numbers move with the date range, so the section
+  doubles as the statistics screen without being a second screen.
+- **Only while moving.** Drops points recorded during a visit rather than a
+  trip.
+- **Skip repeated points.** Collapses runs of identical coordinates to one.
+- **The parser now keeps visit and activity segments.** `visit` and `activity`
+  used to be two `skipChildren()` calls, which is why four of the five things
+  the first feedback report asked for had no data behind them. A `Segment`
+  model now carries kind, time span, activity type, Google's `distanceMeters`,
+  confidence and the matched place.
 
 ## Changed
-- **CSV gained two columns: `time_local` and `utc_offset`.** Every Timeline
-  segment carries the timezone that was in effect where the point was recorded,
-  and the app was throwing it away — a user opening the CSV in Excel saw the
-  UTC clock instead of the one they actually walked by. `time_local` is written
-  as `YYYY-MM-DD HH:MM:SS` (the shape spreadsheets recognise without an import
-  wizard); `utc_offset` keeps the row lossless as `+05:00`.
-  - The columns are **appended after** `time_utc,latitude,longitude`, so any
-    script that reads the first three columns by position keeps working.
-  - Both cells are **left empty when the file doesn't record a timezone**
-    (Records.json and other UTC-only formats). An empty cell is honest; a
-    guessed one silently claims the user lives in Greenwich.
-- `PathPoint` gained a nullable `tzOffsetMinutes`. The parser fills it from the
-  ISO offset on the point's own timestamp, falling back to the segment's
-  `startTimeTimezoneUtcOffsetMinutes`. `Z` timestamps and epoch numbers yield
-  null on purpose: they state an instant in UTC and say nothing about the
-  traveller's clock.
-- `AndroidManifest.xml` declares `<intent>` queries for `https` and `mailto`.
-  Without them, package-visibility filtering on API 30+ can make the two
-  feedback intents fail even when a browser and a mail app are installed.
+- Nothing changes for an existing user until they touch something: both
+  switches default to off and no group is preselected, so the same file and
+  date range exports byte-identically to v1.5.1.
+- Distances come from **Google's own `distanceMeters`**, shown as whole
+  kilometres past 10 km and one decimal below. Never metres — these are
+  estimates, and metre precision would imply an accuracy they do not have.
+- Unticking every group leaves an **empty** selection rather than silently
+  meaning "everything": it genuinely matches no points, the count under the
+  chips says so, and export is already disabled at zero. Ticking every group
+  collapses back to no constraint, so a cleared filter stops counting as one.
+- The section **hides itself** when a file has no activity segments — the case
+  for older Takeout layouts. An empty expander is worse than none.
+- 15 new strings, translated across all 17 non-default locales; names and
+  format placeholders verified against the default file.
+
+## Under the hood
+- `PathPoint` instances are shared between the flat point list and the new
+  segment list, so keeping segments costs one reference per point rather than a
+  second copy of the track.
+- Movement type and GPS track live in **different** segments: a path segment
+  has points and no label, an activity segment has a label, a distance and its
+  endpoints but no track. "Only the cycling" is therefore a time join, not a
+  field lookup.
+- `TimelineFilter` grew `movements`, `movingOnly` and `dropRepeatedPoints`, and
+  `applyFilter` gained an overload taking the segment list. The old
+  two-argument form behaves exactly as before.
+- Movement labels resolve once into a `Map` via `movementLabels()`.
+  `stringResource` cannot be called from inside a `joinToString` transform —
+  that lambda is a real (non-inline) function, so its body is not composable —
+  and `associateWith` / `map` would hit the same wall.
+- Measured against `Timeline_2.json` (a year, 5432 segments) *before* the code
+  was written, and the tests pin the figures: per-type distance from Google's
+  `distanceMeters` totals 14 501.4 km.
+
+## Fixed (test suite, not the app)
+- `GeoJsonExporterTest` had **never compiled**: it parses the exporter's output
+  with `kotlinx.serialization.json`, which was not a dependency in any scope
+  (the app reads JSON with Jackson). Added as `testImplementation` only — it
+  does not enter the AAB.
+- `TimelineParserStreamingTest.streams a large input and sorts correctly` built
+  its 5 000 timestamps as `minute / 60` hours, which rolls past hour 23 at
+  i = 1440 and emits `"T83:20:00Z"`. The parser rightly drops those, so the
+  test was measuring the drop, not the stream — it expected 5 000 points and
+  got 1 440. Timestamps are now built with `Instant` arithmetic. This failure
+  predates the v1.6.0 work; verified against `bc19edc`.
+
+With both fixed, `./gradlew :app:test` is green: **89 tests, 0 failures**.
 
 ## No changes to
-Parsing logic, filters, GPX/KML/GeoJSON output, map, billing. No new
-permissions, no new dependencies, no analytics, no telemetry.
+- Billing, the paid-export flow, or anything on the purchase path.
+- The exporters themselves — GPX / KML / GeoJSON / CSV write the same bytes for
+  the same points.
+- The feedback dialog shipped in v1.5.x.
+- `minSdk` (29) and `targetSdk` (36).
 
 ## Expectations
-At ~59 MAU and a typical 3–8% response rate on this kind of prompt, this should
-produce roughly **2–5 messages a month**. That is small in absolute terms and
-still enough to tell "several people need this" apart from "I invented it" —
-which is the whole point of shipping the channel before the features it asks
-about. The frozen backlog in `docs/FEATURE_ROADMAP.md` stays frozen until the
-replies arrive.
+`bundleRelease` is green with R8 and `lintVital` passing, and the unit suite is
+green — but **none of this release has been exercised on a device yet**. The
+breakdown UI in particular has never been seen running. Treat internal testing
+as the first real run, and walk the checklist below before promoting anything.
 
 ## Pre-release checklist
-- [ ] `./gradlew testDebugUnitTest` — CSV exporter tests cover the new columns,
-      offset formatting and the empty-cell case
-- [ ] `./gradlew lintRelease` — confirms no missing translations across the 17
-      localized `values-*` folders
-- [ ] `./gradlew assembleRelease`
-- [ ] Export a CSV from a real phone-takeout file and open it in Excel /
-      LibreOffice: `time_local` must parse as a date, and must match
-      `time_utc` shifted by `utc_offset`
-- [ ] Export from a `Records.json` file: both new columns empty, no "1970" or
-      UTC-as-local artifacts
-- [ ] Tap the feedback line after an export → tick two boxes → **Open a GitHub
-      issue**: the browser opens GitHub's new-issue form with the title and the
-      body pre-filled, including the diagnostics block
-- [ ] Same, but **Send an email**: the mail app opens with the address, subject
-      **and body** filled in and nothing sent yet — this is the v1.5.1 fix, so
-      check it in Gmail specifically, and in one more client if the device has
-      one (the two read the intent differently)
-- [ ] Email draft with a long free-text note and non-Latin characters (Cyrillic
-      or Japanese): the body must arrive intact, with real line breaks rather
-      than `%0A` or `+` showing through
-- [ ] Edit the diagnostics field before sending — the change must reach the
-      draft
-- [ ] Device with no mail app configured: expect the toast, not a crash
-- [ ] Rotate the screen with boxes ticked — the ballot must survive
-- [ ] Export twice in a row with the same filename: the auto-scroll must fire
-      both times (Success → Working → Success re-keys the effect)
-- [ ] Export on a tall screen where nothing is below the fold — the scroll must
-      be a no-op, not a jump
-- [ ] Check the plaque in dark theme and against a few wallpapers: with dynamic
-      colour on, `tertiaryContainer` is wallpaper-derived, so verify it still
-      reads as a different kind of surface than the export buttons
-- [ ] Check the dialog in a right-to-left locale (Arabic) and in a long-string
-      locale (German) for clipping
+- [x] `./gradlew bundleRelease` (R8 + lintVital pass; AAB signed)
+- [x] `./gradlew :app:test` — 89 tests, 0 failures
+- [ ] Load a **real phone takeout** and confirm the breakdown appears, with
+      plausible trip counts and distances
+- [ ] Load an older `Records.json` / a file with no activity segments — the
+      section must be absent, not empty
+- [ ] Totals move when the date range changes
+- [ ] Tick one group → export → the track contains only that kind of movement
+- [ ] Untick every group → the count reads zero and export is disabled
+- [ ] Tick every group → behaves as no filter at all
+- [ ] **Only while moving** on a file with long stays: point count drops
+      sharply, the remaining track still starts and ends where the trips do
+- [ ] **Skip repeated points** — no duplicated consecutive coordinates in the
+      output, and the timestamps stay ascending
+- [ ] Both switches on, at once, with a group selected
+- [ ] Export with everything off → byte-identical to a v1.5.1 export of the
+      same file and range (the compatibility claim above)
+- [ ] Rotate the screen with the section expanded and boxes ticked — state must
+      survive
+- [ ] Very large file (100 MB+): the breakdown must not stall the UI or
+      re-introduce the OOM fixed in v1.3.0
+- [ ] Check the section in a right-to-left locale (Arabic) and a long-string
+      locale (German) for clipping, and confirm the km figures use the locale's
+      decimal separator
+- [ ] Dark theme
