@@ -9,6 +9,11 @@
     "title": "Varje resa {redo att exporteras}",
     "sub": "Läser din Google Takeout-fil – utan konto"
   },
+  "movement": {
+    "eyebrow": "Finjustering",
+    "title": "Filtrera på {färdsätt}",
+    "sub": "Gång, cykel, bil, kollektivt, flyg — var och en med sin sträcka"
+  },
   "calendar": {
     "eyebrow": "Exakt kontroll",
     "title": "Filtrera på {datumintervall}",

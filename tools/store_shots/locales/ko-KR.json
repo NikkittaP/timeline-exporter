@@ -9,6 +9,11 @@
     "title": "모든 이동을 {내보내기}",
     "sub": "Google Takeout 파일만 있으면 됩니다"
   },
+  "movement": {
+    "eyebrow": "세밀한 조정",
+    "title": "{이동 수단}으로 필터",
+    "sub": "도보·자전거·자동차·대중교통·비행을 거리와 함께"
+  },
   "calendar": {
     "eyebrow": "정확한 선택",
     "title": "{기간별로} 필터링",

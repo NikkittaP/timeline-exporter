@@ -9,6 +9,11 @@
     "title": "每段行程，{随时导出}",
     "sub": "读取你的 Google Takeout 文件，无需账号"
   },
+  "movement": {
+    "eyebrow": "精细设置",
+    "title": "按{出行方式}筛选",
+    "sub": "步行、骑行、驾车、公共交通、航班，各自标注里程"
+  },
   "calendar": {
     "eyebrow": "精确控制",
     "title": "按{日期范围}筛选",

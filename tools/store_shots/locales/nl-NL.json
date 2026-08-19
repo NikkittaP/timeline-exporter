@@ -9,6 +9,11 @@
     "title": "Elke rit, {klaar om te exporteren}",
     "sub": "Leest je Google Takeout-bestand, zonder account"
   },
+  "movement": {
+    "eyebrow": "Fijnafstemming",
+    "title": "Filter op {vervoerswijze}",
+    "sub": "Lopen, fiets, auto, ov, vluchten — elk met zijn afstand"
+  },
   "calendar": {
     "eyebrow": "Precieze controle",
     "title": "Filter op {datumbereik}",

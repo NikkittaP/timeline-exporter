@@ -9,6 +9,11 @@
     "title": "Chaque trajet, {prêt à exporter}",
     "sub": "Lit votre fichier Google Takeout, sans compte"
   },
+  "movement": {
+    "eyebrow": "Réglage fin",
+    "title": "Filtrer par {mode de déplacement}",
+    "sub": "Marche, vélo, voiture, transports, vols — avec la distance"
+  },
   "calendar": {
     "eyebrow": "Contrôle précis",
     "title": "Filtrer par {période}",

@@ -24,9 +24,10 @@
   "frames": [
     { "out": "01_map",      "src": "03_map_fullscreen", "key": "map"      },
     { "out": "02_overview", "src": "02_overview",       "key": "overview" },
-    { "out": "03_calendar", "src": "04_calendar",       "key": "calendar" },
-    { "out": "04_formats",  "src": "05_formats",        "key": "formats"  },
-    { "out": "05_privacy",  "src": "06_start_empty",    "key": "privacy"  }
+    { "out": "03_movement", "src": "07_movement",       "key": "movement" },
+    { "out": "04_calendar", "src": "04_calendar",       "key": "calendar" },
+    { "out": "05_formats",  "src": "05_formats",        "key": "formats"  },
+    { "out": "06_privacy",  "src": "06_start_empty",    "key": "privacy"  }
   ],
 
   "palette": "blue",

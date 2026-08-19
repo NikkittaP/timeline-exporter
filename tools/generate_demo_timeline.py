@@ -52,6 +52,18 @@ NEARBY = [
     ("Helsingborg", 56.0465, 12.6945),  # ~65 km
 ]
 
+# How the 1.7 km trip to the office gets made. Malmo is a cycling city and the
+# office is walkable, so a car every single day would be the odd choice — and a
+# Timeline with one movement type in it cannot show what the movement filter is
+# for. Weighted, and picked once per day so the trip home matches the trip out.
+#   (activity type, km/h, probability)
+COMMUTE_MODES = [
+    ("CYCLING",             16, 0.42),
+    ("WALKING",              5, 0.16),
+    ("IN_PASSENGER_VEHICLE", 26, 0.24),
+    ("IN_BUS",              18, 0.18),
+]
+
 # Real vacations over the two years, spaced out so most of life is at home.
 # "offset" = days before the dataset's end date that the trip STARTS.
 # "mode": "flight" (far away, shows up as a dashed line) or "drive" (a solid
@@ -161,6 +173,19 @@ def wander_track(lat0, lon0, t0, minutes, sample_every=(4, 9)):
     return pts
 
 
+def track_km(track):
+    """Length of a generated track, summed hop by hop.
+
+    Used as the `distanceMeters` of the activity segment that labels a track.
+    Google reports its own estimate there rather than measuring the polyline,
+    but for synthetic data the polyline IS the ground truth, so summing it is
+    the honest number.
+    """
+    return sum(haversine_km((track[i - 1][0], track[i - 1][1]),
+                            (track[i][0], track[i][1]))
+               for i in range(1, len(track)))
+
+
 def path_segment(track):
     return {
         "startTime": iso(track[0][2]),
@@ -209,19 +234,23 @@ def workday_segments(day_start):
     wake = day_start + timedelta(hours=random.uniform(6.4, 7.6))
     segments.append(visit(*HOME_LATLON, day_start, wake, "home_malmo", "INFERRED_HOME", 0.95))
 
-    commute_out = dense_path([("Home",) + HOME_LATLON, ("Work",) + WORK_LATLON], wake, step_km=0.6, speed_kmh=27)
+    kind, speed, _ = random.choices(COMMUTE_MODES, weights=[m[2] for m in COMMUTE_MODES])[0]
+
+    commute_out = dense_path([("Home",) + HOME_LATLON, ("Work",) + WORK_LATLON], wake,
+                             step_km=0.6, speed_kmh=speed)
     segments.append(path_segment(commute_out))
     segments.append(activity(commute_out[0][2], commute_out[-1][2],
-                              haversine_km(HOME_LATLON, WORK_LATLON) * 1000, "IN_PASSENGER_VEHICLE", 0.9))
+                              track_km(commute_out) * 1000, kind, 0.9))
 
     work_start = commute_out[-1][2]
     work_end = work_start + timedelta(hours=random.uniform(7.5, 9))
     segments.append(visit(*WORK_LATLON, work_start, work_end, "work_office", "INFERRED_WORK", 0.9))
 
-    commute_back = dense_path([("Work",) + WORK_LATLON, ("Home",) + HOME_LATLON], work_end, step_km=0.6, speed_kmh=25)
+    commute_back = dense_path([("Work",) + WORK_LATLON, ("Home",) + HOME_LATLON], work_end,
+                              step_km=0.6, speed_kmh=speed * random.uniform(0.9, 1.05))
     segments.append(path_segment(commute_back))
     segments.append(activity(commute_back[0][2], commute_back[-1][2],
-                              haversine_km(WORK_LATLON, HOME_LATLON) * 1000, "IN_PASSENGER_VEHICLE", 0.9))
+                              track_km(commute_back) * 1000, kind, 0.9))
 
     cursor = commute_back[-1][2]
     if random.random() < 0.18:  # gym / dinner / a friend's place some evenings
@@ -230,6 +259,8 @@ def workday_segments(day_start):
                                HOME_LATLON[1] + random.uniform(-0.008, 0.008),
                                out_start, minutes=random.uniform(45, 110))
         segments.append(path_segment(outing))
+        segments.append(activity(outing[0][2], outing[-1][2],
+                                  track_km(outing) * 1000, "WALKING", 0.88))
         cursor = outing[-1][2] + timedelta(minutes=random.uniform(5, 20))
 
     night_end = day_start + timedelta(days=1)
@@ -246,21 +277,32 @@ def weekend_segments(day_start):
         segments.append(visit(*HOME_LATLON, day_start, wake, "home_malmo", "INFERRED_HOME", 0.95))
 
         dest_name, dest_lat, dest_lon = random.choice(NEARBY)
+        # Copenhagen and Lund are the two you'd sooner take the train to than
+        # drive — the Oresund line goes straight there.
+        by_train = dest_name in ("Copenhagen", "Lund") and random.random() < 0.65
+        kind, speed = ("IN_TRAIN", 74) if by_train else ("IN_PASSENGER_VEHICLE", 82)
+
         depart = wake + timedelta(minutes=random.uniform(15, 45))
-        out = dense_path([("Home",) + HOME_LATLON, (dest_name, dest_lat, dest_lon)], depart, step_km=15, speed_kmh=82)
+        out = dense_path([("Home",) + HOME_LATLON, (dest_name, dest_lat, dest_lon)], depart,
+                         step_km=15, speed_kmh=speed)
         segments.append(path_segment(out))
         segments.append(activity(out[0][2], out[-1][2],
-                                  haversine_km(HOME_LATLON, (dest_lat, dest_lon)) * 1000, "IN_PASSENGER_VEHICLE", 0.94))
+                                  track_km(out) * 1000, kind, 0.94))
 
         arrive = out[-1][2]
         wander = wander_track(dest_lat, dest_lon, arrive + timedelta(minutes=10), minutes=random.uniform(150, 300))
         segments.append(path_segment(wander))
+        # Wandering a city on a day trip is walking, and saying so is what puts
+        # a walking figure on the breakdown next to the drives.
+        segments.append(activity(wander[0][2], wander[-1][2],
+                                  track_km(wander) * 1000, "WALKING", 0.9))
 
         back_start = wander[-1][2] + timedelta(minutes=random.uniform(15, 45))
-        back = dense_path([(dest_name, dest_lat, dest_lon), ("Home",) + HOME_LATLON], back_start, step_km=15, speed_kmh=80)
+        back = dense_path([(dest_name, dest_lat, dest_lon), ("Home",) + HOME_LATLON], back_start,
+                          step_km=15, speed_kmh=speed)
         segments.append(path_segment(back))
         segments.append(activity(back[0][2], back[-1][2],
-                                  haversine_km((dest_lat, dest_lon), HOME_LATLON) * 1000, "IN_PASSENGER_VEHICLE", 0.94))
+                                  track_km(back) * 1000, kind, 0.94))
         cursor = back[-1][2]
 
     elif roll < 0.55:  # errands / a walk around town
@@ -269,6 +311,10 @@ def weekend_segments(day_start):
         out_start = wake + timedelta(minutes=random.uniform(20, 60))
         walk = wander_track(HOME_LATLON[0], HOME_LATLON[1], out_start, minutes=random.uniform(60, 200))
         segments.append(path_segment(walk))
+        # Some of these errands are done on a bike; around here most are.
+        on_bike = random.random() < 0.35
+        segments.append(activity(walk[0][2], walk[-1][2], track_km(walk) * 1000,
+                                  "CYCLING" if on_bike else "WALKING", 0.87))
         cursor = walk[-1][2] + timedelta(minutes=random.uniform(10, 30))
 
     else:  # a quiet weekend at home
@@ -305,6 +351,8 @@ def vacation_segments(v, t_start):
         wander_start = hotel_in + timedelta(minutes=random.uniform(20, 60))
         wander = wander_track(lat, lon, wander_start, minutes=random.uniform(140, 280))
         segments.append(path_segment(wander))
+        segments.append(activity(wander[0][2], wander[-1][2],
+                                  track_km(wander) * 1000, "WALKING", 0.9))
         cursor = wander[-1][2] + timedelta(minutes=random.uniform(20, 60))
 
     if mode == "flight":
@@ -342,6 +390,7 @@ def alps_road_trip_segments(trip_start):
         s.append(visit(city_lat, city_lon, arrive_t, hotel_in, f"{place_id}_checkin", "INFERRED_POINT_OF_INTEREST", 0.85))
         walk = wander_track(city_lat, city_lon, hotel_in + timedelta(minutes=random.uniform(30, 60)), minutes=walk_minutes)
         s.append(path_segment(walk))
+        s.append(activity(walk[0][2], walk[-1][2], track_km(walk) * 1000, "WALKING", 0.9))
         night_start = walk[-1][2] + timedelta(minutes=random.uniform(10, 25))
         s.append(visit(city_lat, city_lon, night_start, sleep_until, f"{place_id}_hotel", "INFERRED_POINT_OF_INTEREST", 0.9))
         return s, sleep_until
@@ -379,6 +428,8 @@ def alps_road_trip_segments(trip_start):
     segments.extend(legs)
     lucerne_walk = wander_track(*LUCERNE, cursor + timedelta(minutes=10), minutes=70)
     segments.append(path_segment(lucerne_walk))
+    segments.append(activity(lucerne_walk[0][2], lucerne_walk[-1][2],
+                              track_km(lucerne_walk) * 1000, "WALKING", 0.9))
     depart2 = lucerne_walk[-1][2] + timedelta(minutes=random.uniform(15, 30))
     legs, cursor = drive_leg([("Lucerne",) + LUCERNE, ("Interlaken",) + INTERLAKEN], depart2, 70_000.0, step_km=10, speed_kmh=62)
     segments.extend(legs)
@@ -401,6 +452,8 @@ def alps_road_trip_segments(trip_start):
     segments.extend(legs)
     lake_walk = wander_track(*CARE_ZZA, loop_cursor + timedelta(minutes=10), minutes=50)
     segments.append(path_segment(lake_walk))
+    segments.append(activity(lake_walk[0][2], lake_walk[-1][2],
+                              track_km(lake_walk) * 1000, "HIKING", 0.88))
     back_depart = lake_walk[-1][2] + timedelta(minutes=random.uniform(15, 30))
     legs, cursor = drive_leg([("Lago di Carezza",) + CARE_ZZA, ("Bolzano",) + BOLZANO], back_depart, 35_000.0, step_km=8, speed_kmh=55)
     segments.extend(legs)

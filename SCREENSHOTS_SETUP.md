@@ -17,19 +17,24 @@ The raw shots the test captures (per language):
 | `04_calendar.png`       | Date-range picker (calendar)                      |
 | `05_formats.png`        | Export-format buttons (GPX / KML / GeoJSON / CSV) |
 | `06_start_empty.png`    | First launch, nothing loaded                      |
+| `07_movement.png`       | Movement breakdown expanded: per-type trips and distance, plus the two point filters |
 
 Those are **not** what Play gets. A second stage ("Aurora", `tools/store_shots/`)
 renders each raw shot into framed store art — gradient background, device frame,
 localized headline — and that is what lands in `fastlane/metadata/`:
 
-| Store file       | Built from              |
-|------------------|-------------------------|
-| `01_map.png`     | `03_map_fullscreen.png` |
-| `02_overview.png`| `02_overview.png`       |
-| `03_calendar.png`| `04_calendar.png`       |
-| `04_formats.png` | `05_formats.png`        |
-| `05_privacy.png` | `06_start_empty.png`    |
+| Store file        | Built from              |
+|-------------------|-------------------------|
+| `01_map.png`      | `03_map_fullscreen.png` |
+| `02_overview.png` | `02_overview.png`       |
+| `03_movement.png` | `07_movement.png`       |
+| `04_calendar.png` | `04_calendar.png`       |
+| `05_formats.png`  | `05_formats.png`        |
+| `06_privacy.png`  | `06_start_empty.png`    |
 | feature graphic (1024x500) | `03_map_fullscreen.png` |
+
+Play orders screenshots by file name and shows the first three without
+scrolling, which is why the movement breakdown sits third.
 
 > Nothing here ships in the release AAB. The test deps are `androidTest`-only,
 > and the FileProvider + permissions live in `src/debug`.
@@ -95,9 +100,11 @@ Gemfile                                    fastlane
 ```
 
 The demo data is **synthetic** — two years of an ordinary life based in Malmö,
-Sweden: weekday commutes, lazy or errand-y weekends, the occasional day trip
-over the bridge to Copenhagen, and about a dozen real vacations spread out
-every couple of months (Stockholm, New York, Gothenburg, Rome, Prague, Dubai,
+Sweden: weekday commutes (by bike, on foot, by bus or by car — the office is
+1.7 km away, so a car every day would be the odd choice, and a Timeline with
+one movement type in it cannot show what the movement filter is for), lazy or
+errand-y weekends, day trips over the bridge to Copenhagen by train, and about
+a dozen real vacations spread out every couple of months (Stockholm, New York, Gothenburg, Rome, Prague, Dubai,
 Barcelona, Tokyo, Lisbon, Vienna, Krakow). The last 7 days are a car road trip
 through the Alps (Malmö → Hamburg → Zurich → Lucerne → Interlaken → Innsbruck
 → Bolzano/Dolomites → Munich → home). Flights render as dashed connectors

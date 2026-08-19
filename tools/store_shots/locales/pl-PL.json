@@ -9,6 +9,11 @@
     "title": "Każda podróż {gotowa do eksportu}",
     "sub": "Czyta plik Google Takeout — bez konta"
   },
+  "movement": {
+    "eyebrow": "Precyzyjne ustawienia",
+    "title": "Filtruj według {sposobu podróży}",
+    "sub": "Pieszo, rower, auto, komunikacja, loty — każde z dystansem"
+  },
   "calendar": {
     "eyebrow": "Precyzyjna kontrola",
     "title": "Filtruj według {zakresu dat}",

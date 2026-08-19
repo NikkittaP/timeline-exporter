@@ -22,20 +22,20 @@ import tools.fastlane.screengrab.locale.LocaleTestRule
 import java.io.File
 
 /**
- * Drives the app through six states and captures a Play-Store screenshot of
- * each, in whatever locale Fastlane screengrab is currently running.
+ * Drives the app through its main states and captures a screenshot of each, in
+ * whatever locale Fastlane screengrab is currently running.
  *
  * Captured (file name -> store screenshot):
- *   01_hero          main page with data loaded  (add the "100% on-device"
  *   02_overview      main page with data loaded
- *   03_map_fullscreen expanded world map (also the source for the hero)
+ *   03_map_fullscreen expanded world map
  *   04_calendar      date-range picker dialog
  *   05_formats       the export-format buttons (GPX / KML / GeoJSON / CSV)
  *   06_start_empty   first launch, nothing loaded
+ *   07_movement      the movement breakdown expanded (per-type trips and
+ *                    distance, "only while moving", "skip repeated points")
  *
- * Note: 01_hero is NOT captured here. tools/add_hero_caption.py takes the
- * clean 03_map_fullscreen.png and overlays the localized "100% on-device"
- * caption to produce 01_hero.png (run automatically by the Fastlane lane).
+ * These are raw captures, not the store art: tools/store_shots renders the
+ * framed, captioned images from them. See tools/store_shots/README.md.
  *
  * How a file gets loaded without touching the system picker: MainActivity
  * already handles an ACTION_VIEW intent that points at a content URI (its
@@ -105,6 +105,24 @@ class ScreenshotTest {
 
         // 02 — the loaded overview (top of the page).
         Screengrab.screenshot("02_overview")
+
+        // 07 — the movement breakdown, expanded: a row per movement group with
+        // its trips and distance, then the two point-level switches. Matched by
+        // the collapsed row's own text, which starts with "All movement"
+        // whenever nothing has been unticked — read from resources, so this
+        // works in every locale without hard-coding a translation.
+        composeRule.onNodeWithText(str(R.string.filter_movement_all), substring = true)
+            .performScrollTo().performClick()
+        composeRule.waitForIdle()
+        // Scroll to the last switch so the whole expanded block is on screen,
+        // not just the part that happened to fit below the date chips.
+        composeRule.onNodeWithText(str(R.string.filter_drop_repeated)).performScrollTo()
+        composeRule.waitForIdle()
+        Screengrab.screenshot("07_movement")
+        // Collapse again so the shots that follow see the page they expect.
+        composeRule.onNodeWithText(str(R.string.filter_movement_all), substring = true)
+            .performScrollTo().performClick()
+        composeRule.waitForIdle()
 
         // 05 — scroll to the version footer, which sits just below the Export
         // card, so the whole card (including its bottom border and the

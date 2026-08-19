@@ -9,6 +9,11 @@
     "title": "每段行程，{隨時匯出}",
     "sub": "讀取你的 Google Takeout 檔案，無需帳號"
   },
+  "movement": {
+    "eyebrow": "精細設定",
+    "title": "依{移動方式}篩選",
+    "sub": "步行、騎行、開車、大眾運輸、航班，各自標示里程"
+  },
   "calendar": {
     "eyebrow": "精確控制",
     "title": "依{日期範圍}篩選",

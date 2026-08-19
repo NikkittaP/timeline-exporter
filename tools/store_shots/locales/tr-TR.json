@@ -9,6 +9,11 @@
     "title": "Her yolculuk {dışa aktarmaya hazır}",
     "sub": "Google Takeout dosyanı okur — hesap gerekmez"
   },
+  "movement": {
+    "eyebrow": "İnce ayar",
+    "title": "{Hareket türüne} göre filtrele",
+    "sub": "Yürüme, bisiklet, araba, toplu taşıma, uçuş — her biri mesafesiyle"
+  },
   "calendar": {
     "eyebrow": "Hassas kontrol",
     "title": "{Tarih aralığına} göre filtrele",

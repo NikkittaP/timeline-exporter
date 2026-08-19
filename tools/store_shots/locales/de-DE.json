@@ -9,6 +9,11 @@
     "title": "Jede Reise, {exportbereit}",
     "sub": "Liest deine Google-Takeout-Datei – ohne Konto"
   },
+  "movement": {
+    "eyebrow": "Feinabstimmung",
+    "title": "Nach {Bewegungsart} filtern",
+    "sub": "Zu Fuß, Rad, Auto, Nahverkehr, Flüge — jeweils mit Distanz"
+  },
   "calendar": {
     "eyebrow": "Genaue Kontrolle",
     "title": "Filtern nach {Zeitraum}",
