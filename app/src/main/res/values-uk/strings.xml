@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Це не схоже на файл Google Timeline. Виберіть файл Timeline.json, експортований із Google Карт — натисніть «Довідка», щоб побачити кроки.</string>
 
     <string name="step_choose_file">Вибір файлу</string>
-    <string name="step_filter">Фільтр за датою</string>
+    <string name="step_filter">Фільтрація даних</string>
     <string name="step_preview">Перегляд</string>
     <string name="step_export">Експорт</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Запропонувати функцію або повідомити про проблему →</string>
     <string name="feedback_title">Чого бракує?</string>
     <string name="feedback_intro">Застосунок розвивається за запитами користувачів. Аналітики в ньому немає — я не бачу, як ви ним користуєтесь, тому питаю напряму. Позначте потрібне й оберіть, як надіслати.</string>
-    <string name="feedback_option_activity_filter">Фільтр за типом руху (лише велосипед / пішки / авто)</string>
+    <string name="feedback_option_area">Залишати лише точки всередині області на карті</string>
     <string name="feedback_option_file_per_trip">Окремий файл на кожну поїздку замість одного великого</string>
     <string name="feedback_option_elevation_speed">Висота та швидкість у GPX</string>
     <string name="feedback_option_places">Експорт відвіданих місць, а не лише треку</string>
-    <string name="feedback_option_stats">Екран статистики (км за видами транспорту, топ місць)</string>
+    <string name="feedback_option_share">Надсилати експорт одразу в інший застосунок, а не зберігати файл</string>
+    <string name="feedback_option_trip_list">Список поїздок із початком, кінцем, часом і відстанню</string>
+    <string name="feedback_option_stats">Підсумки за місяцями й роками, найвідвідуваніші місця</string>
     <string name="feedback_option_merge">Об\'єднання кількох файлів Timeline</string>
     <string name="feedback_option_photo_geotag">Геотегування фотографій за часом</string>
     <string name="feedback_other_label">Щось іще?</string>

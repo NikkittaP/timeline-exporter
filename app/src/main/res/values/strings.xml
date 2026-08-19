@@ -12,7 +12,7 @@
 
     <!-- Step card headers -->
     <string name="step_choose_file">Choose file</string>
-    <string name="step_filter">Filter by date</string>
+    <string name="step_filter">Filter data</string>
     <string name="step_preview">Preview</string>
     <string name="step_export">Export</string>
 
@@ -193,11 +193,13 @@
     <string name="feedback_title">What\'s missing?</string>
     <string name="feedback_intro">This app grows on user requests. It has no analytics — I can\'t see how you use it, so I\'m asking directly. Tick anything you\'d like, then choose how to send it.</string>
 
-    <string name="feedback_option_activity_filter">Filter by movement type (cycling / walking / driving only)</string>
+    <string name="feedback_option_area">Keep only points inside an area on the map</string>
     <string name="feedback_option_file_per_trip">A separate file per trip instead of one large file</string>
     <string name="feedback_option_elevation_speed">Elevation and speed in GPX</string>
     <string name="feedback_option_places">Export visited places, not only the track</string>
-    <string name="feedback_option_stats">Statistics screen (km by transport type, top places)</string>
+    <string name="feedback_option_share">Send the export straight to another app instead of saving a file</string>
+    <string name="feedback_option_trip_list">A list of trips with start, end, time and distance</string>
+    <string name="feedback_option_stats">Monthly and yearly totals, most-visited places</string>
     <string name="feedback_option_merge">Merging several Timeline files</string>
     <string name="feedback_option_photo_geotag">Geotagging photos by time</string>
 

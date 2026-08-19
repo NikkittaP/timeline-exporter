@@ -7,7 +7,7 @@
     <string name="error_not_timeline">यह Google Timeline फ़ाइल नहीं लगती। Google Maps से एक्सपोर्ट की गई Timeline.json फ़ाइल चुनें — चरणों के लिए “मदद” पर टैप करें।</string>
 
     <string name="step_choose_file">फ़ाइल चुनें</string>
-    <string name="step_filter">तारीख़ से फ़िल्टर करें</string>
+    <string name="step_filter">डेटा फ़िल्टर करें</string>
     <string name="step_preview">पूर्वावलोकन</string>
     <string name="step_export">एक्सपोर्ट</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">कोई सुविधा माँगें या समस्या बताएँ →</string>
     <string name="feedback_title">क्या कमी है?</string>
     <string name="feedback_intro">यह ऐप उपयोगकर्ताओं के अनुरोध पर बढ़ता है। इसमें कोई एनालिटिक्स नहीं है — मुझे नहीं दिखता कि आप इसे कैसे इस्तेमाल करते हैं, इसलिए सीधे पूछ रहा हूँ। जो चाहिए उसे चुनें और भेजने का तरीका तय करें।</string>
-    <string name="feedback_option_activity_filter">आवाजाही के प्रकार से फ़िल्टर (सिर्फ़ साइकिल / पैदल / कार)</string>
+    <string name="feedback_option_area">मानचित्र पर चुने गए क्षेत्र के अंदर के बिंदु ही रखें</string>
     <string name="feedback_option_file_per_trip">एक बड़ी फ़ाइल के बजाय हर यात्रा की अलग फ़ाइल</string>
     <string name="feedback_option_elevation_speed">GPX में ऊँचाई और गति</string>
     <string name="feedback_option_places">सिर्फ़ ट्रैक नहीं, देखी गई जगहें भी एक्सपोर्ट करें</string>
-    <string name="feedback_option_stats">आँकड़ों की स्क्रीन (परिवहन के अनुसार किमी, प्रमुख जगहें)</string>
+    <string name="feedback_option_share">फ़ाइल सेव करने के बजाय एक्सपोर्ट सीधे दूसरे ऐप में भेजें</string>
+    <string name="feedback_option_trip_list">यात्राओं की सूची — शुरुआत, अंत, समय और दूरी के साथ</string>
+    <string name="feedback_option_stats">महीने और साल के कुल आँकड़े, सबसे ज़्यादा देखी गई जगहें</string>
     <string name="feedback_option_merge">कई Timeline फ़ाइलें जोड़ना</string>
     <string name="feedback_option_photo_geotag">समय के आधार पर फ़ोटो जियोटैग करना</string>
     <string name="feedback_other_label">और कुछ?</string>

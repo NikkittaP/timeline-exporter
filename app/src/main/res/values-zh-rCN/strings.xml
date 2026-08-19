@@ -7,7 +7,7 @@
     <string name="error_not_timeline">这看起来不是 Google 时间线文件。请选择你从 Google 地图导出的 Timeline.json — 点按“帮助”查看步骤。</string>
 
     <string name="step_choose_file">选择文件</string>
-    <string name="step_filter">按日期筛选</string>
+    <string name="step_filter">筛选数据</string>
     <string name="step_preview">预览</string>
     <string name="step_export">导出</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">提交功能建议或反馈问题 →</string>
     <string name="feedback_title">还缺什么？</string>
     <string name="feedback_intro">这个应用靠用户的需求成长。它没有任何分析统计，我看不到你怎么使用，所以直接问你。勾选你需要的，再选择发送方式。</string>
-    <string name="feedback_option_activity_filter">按出行方式筛选（仅骑行／步行／驾车）</string>
+    <string name="feedback_option_area">仅保留地图上所选区域内的点</string>
     <string name="feedback_option_file_per_trip">每次行程单独一个文件，而不是一个大文件</string>
     <string name="feedback_option_elevation_speed">GPX 中包含海拔和速度</string>
     <string name="feedback_option_places">导出到访过的地点，而不只是轨迹</string>
-    <string name="feedback_option_stats">统计页面（各交通方式里程、常去地点）</string>
+    <string name="feedback_option_share">导出后直接发送到其他应用，而不是保存文件</string>
+    <string name="feedback_option_trip_list">行程列表，含起点、终点、时间和距离</string>
+    <string name="feedback_option_stats">按月和按年的汇总、最常去的地点</string>
     <string name="feedback_option_merge">合并多个 Timeline 文件</string>
     <string name="feedback_option_photo_geotag">按时间为照片添加位置信息</string>
     <string name="feedback_other_label">还有别的吗？</string>

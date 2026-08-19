@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Bu, bir Google Timeline dosyası gibi görünmüyor. Google Haritalar\'dan dışa aktardığınız Timeline.json dosyasını seçin — adımlar için «Yardım»a dokunun.</string>
 
     <string name="step_choose_file">Dosya seç</string>
-    <string name="step_filter">Tarihe göre filtrele</string>
+    <string name="step_filter">Verileri filtrele</string>
     <string name="step_preview">Önizleme</string>
     <string name="step_export">Dışa aktar</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Özellik isteyin veya sorun bildirin →</string>
     <string name="feedback_title">Ne eksik?</string>
     <string name="feedback_intro">Uygulama kullanıcı istekleriyle büyüyor. İçinde analitik yok — nasıl kullandığınızı göremiyorum, o yüzden doğrudan soruyorum. İstediklerinizi işaretleyin ve nasıl göndereceğinizi seçin.</string>
-    <string name="feedback_option_activity_filter">Hareket türüne göre filtre (yalnızca bisiklet / yürüyüş / araç)</string>
+    <string name="feedback_option_area">Yalnızca haritada seçilen alanın içindeki noktaları tut</string>
     <string name="feedback_option_file_per_trip">Tek büyük dosya yerine her yolculuk için ayrı dosya</string>
     <string name="feedback_option_elevation_speed">GPX\'te yükseklik ve hız</string>
     <string name="feedback_option_places">Yalnızca izi değil, ziyaret edilen yerleri de dışa aktarma</string>
-    <string name="feedback_option_stats">İstatistik ekranı (ulaşım türüne göre km, en çok gidilen yerler)</string>
+    <string name="feedback_option_share">Dışa aktarımı dosya kaydetmek yerine doğrudan başka bir uygulamaya gönder</string>
+    <string name="feedback_option_trip_list">Başlangıç, bitiş, süre ve mesafeyle birlikte gezi listesi</string>
+    <string name="feedback_option_stats">Aylık ve yıllık toplamlar, en çok gidilen yerler</string>
     <string name="feedback_option_merge">Birden fazla Timeline dosyasını birleştirme</string>
     <string name="feedback_option_photo_geotag">Fotoğrafları zamana göre konumlandırma</string>
     <string name="feedback_other_label">Başka bir şey?</string>

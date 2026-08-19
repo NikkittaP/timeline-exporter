@@ -68,8 +68,8 @@ private class FeedbackOption(val labelRes: Int, val outgoing: String)
 
 private val FEEDBACK_OPTIONS = listOf(
     FeedbackOption(
-        R.string.feedback_option_activity_filter,
-        "Filter by movement type (cycling / walking / driving only)",
+        R.string.feedback_option_area,
+        "Keep only points inside an area on the map",
     ),
     FeedbackOption(
         R.string.feedback_option_file_per_trip,
@@ -84,8 +84,16 @@ private val FEEDBACK_OPTIONS = listOf(
         "Export visited places, not only the track",
     ),
     FeedbackOption(
+        R.string.feedback_option_share,
+        "Send the export straight to another app instead of saving a file",
+    ),
+    FeedbackOption(
+        R.string.feedback_option_trip_list,
+        "A list of trips with start, end, time and distance",
+    ),
+    FeedbackOption(
         R.string.feedback_option_stats,
-        "Statistics screen (km per transport type, top places)",
+        "Monthly and yearly totals, most-visited places",
     ),
     FeedbackOption(
         R.string.feedback_option_merge,

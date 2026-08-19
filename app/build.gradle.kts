@@ -71,8 +71,15 @@ android {
         //                                         exports can drop points
         //                                         recorded while standing
         //                                         still or repeated verbatim
-        versionCode = 10
-        versionName = "1.6.0"
+        //   versionCode=11, versionName="1.6.1" -> wording: step 2 is "Filter
+        //                                         data", not "Filter by date",
+        //                                         and the feedback ballot drops
+        //                                         the movement-type filter that
+        //                                         1.6.0 shipped, rewords the
+        //                                         statistics item and adds
+        //                                         three new candidates
+        versionCode = 11
+        versionName = "1.6.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

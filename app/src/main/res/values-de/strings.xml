@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Das sieht nicht nach einer Google-Timeline-Datei aus. Wähle die aus Google Maps exportierte Timeline.json — tippe auf „Hilfe“ für die Schritte.</string>
 
     <string name="step_choose_file">Datei wählen</string>
-    <string name="step_filter">Nach Datum filtern</string>
+    <string name="step_filter">Daten filtern</string>
     <string name="step_preview">Vorschau</string>
     <string name="step_export">Export</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Funktion vorschlagen oder Problem melden →</string>
     <string name="feedback_title">Was fehlt?</string>
     <string name="feedback_intro">Die App wächst mit den Wünschen ihrer Nutzer. Sie enthält keine Analytik — ich sehe nicht, wie du sie nutzt, also frage ich direkt. Kreuze an, was du brauchst, und wähle den Weg zum Senden.</string>
-    <string name="feedback_option_activity_filter">Filter nach Fortbewegungsart (nur Rad / zu Fuß / Auto)</string>
+    <string name="feedback_option_area">Nur Punkte innerhalb eines Bereichs auf der Karte behalten</string>
     <string name="feedback_option_file_per_trip">Eine eigene Datei pro Fahrt statt einer großen Datei</string>
     <string name="feedback_option_elevation_speed">Höhe und Geschwindigkeit in GPX</string>
     <string name="feedback_option_places">Besuchte Orte exportieren, nicht nur die Strecke</string>
-    <string name="feedback_option_stats">Statistik-Bildschirm (km je Verkehrsmittel, häufigste Orte)</string>
+    <string name="feedback_option_share">Export direkt an eine andere App senden, statt eine Datei zu speichern</string>
+    <string name="feedback_option_trip_list">Eine Liste der Fahrten mit Start, Ziel, Zeit und Distanz</string>
+    <string name="feedback_option_stats">Monats- und Jahressummen, häufigste Orte</string>
     <string name="feedback_option_merge">Mehrere Timeline-Dateien zusammenführen</string>
     <string name="feedback_option_photo_geotag">Fotos anhand der Uhrzeit geotaggen</string>
     <string name="feedback_other_label">Sonst noch etwas?</string>

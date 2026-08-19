@@ -1,4 +1,8 @@
-# Release Notes — v1.6.0 (versionCode 10)
+# Release Notes — v1.6.1 (versionCode 11)
+
+v1.6.0 was built and signed but never uploaded, so this file covers everything
+since **v1.5.1 (versionCode 9)** — the movement filtering that made up 1.6.0,
+plus the wording pass that followed the first run on a real device.
 
 The export stopped being all-or-nothing. Until now the only question the app
 asked was *when* — pick a date range, get every point Google ever recorded in
@@ -53,6 +57,37 @@ group, the export follows.
 - 15 new strings, translated across all 17 non-default locales; names and
   format placeholders verified against the default file.
 
+## Wording (the 1.6.1 part)
+Text only — no filter, exporter or parser behaviour differs from the 1.6.0
+build.
+
+- **Step 2 is now "Filter data"**, not "Filter by date". The step gained
+  movement groups and two switches, so the old title described a third of what
+  the card does; the new one matches the shape of its neighbours ("Choose
+  file", "Preview", "Export") and survives the next filter. The custom-range
+  dialog keeps **"Filter by date"** — that one really is only dates.
+- **The feedback ballot was re-cut** now that there is a shipped feature to
+  measure it against. *"Filter by movement type (cycling / walking / driving
+  only)"* is **gone**: it is the headline above, and leaving it on the ballot
+  would have collected votes for something already built.
+- *"Statistics screen (km by transport type, top places)"* became **"Monthly
+  and yearly totals, most-visited places"** — the per-type kilometres arrived
+  with the breakdown, so the item now asks only for the half that did not.
+- **Three new candidates**, each an axis the app has no answer for today:
+  - *Keep only points inside an area on the map* — filtering by time and by
+    movement type now exists; filtering by place does not.
+  - *Send the export straight to another app instead of saving a file* — export
+    goes through `CreateDocument` only, so "export, then hand it to OsmAnd" is
+    two manual steps.
+  - *A list of trips with start, end, time and distance* — the breakdown counts
+    trips without ever showing one.
+- The ballot is nine options, ordered filters → export → analysis → the rest.
+  Their **outgoing English text** — what lands in the GitHub issue or the
+  email, whatever the user's locale — was updated along with the labels, so
+  votes stay de-duplicable.
+- Five string keys touched in each of the **18** locale files: one renamed step
+  title, one reworded option, three added, one deleted.
+
 ## Under the hood
 - `PathPoint` instances are shared between the flat point list and the new
   segment list, so keeping segments costs one reference per point rather than a
@@ -90,19 +125,23 @@ With both fixed, `./gradlew :app:test` is green: **89 tests, 0 failures**.
 - Billing, the paid-export flow, or anything on the purchase path.
 - The exporters themselves — GPX / KML / GeoJSON / CSV write the same bytes for
   the same points.
-- The feedback dialog shipped in v1.5.x.
+- The feedback dialog's mechanics — only its list of options changed. The app
+  still sends nothing itself; both buttons hand a draft to the browser or the
+  mail client, where the user can edit or abandon it.
 - `minSdk` (29) and `targetSdk` (36).
 
 ## Expectations
 `bundleRelease` is green with R8 and `lintVital` passing, and the unit suite is
-green — but **none of this release has been exercised on a device yet**. The
-breakdown UI in particular has never been seen running. Treat internal testing
-as the first real run, and walk the checklist below before promoting anything.
+green. The 1.6.0 build was also **run on a device**, where the new step behaved
+as intended in ordinary use — the one thing the 1.6.0 notes could not claim.
+That was a walkthrough, not the list below: the edge cases (empty selection,
+older files with no activity segments, RTL, 100 MB+ inputs) have still not been
+exercised, and the 1.6.1 wording has been built but not seen running.
 
 ## Pre-release checklist
 - [x] `./gradlew bundleRelease` (R8 + lintVital pass; AAB signed)
 - [x] `./gradlew :app:test` — 89 tests, 0 failures
-- [ ] Load a **real phone takeout** and confirm the breakdown appears, with
+- [x] Load a **real phone takeout** and confirm the breakdown appears, with
       plausible trip counts and distances
 - [ ] Load an older `Records.json` / a file with no activity segments — the
       section must be absent, not empty
@@ -125,3 +164,6 @@ as the first real run, and walk the checklist below before promoting anything.
       locale (German) for clipping, and confirm the km figures use the locale's
       decimal separator
 - [ ] Dark theme
+- [ ] Step 2 reads "Filter data" in a couple of locales, and the feedback
+      dialog shows nine options with no movement-type item — the sent draft
+      lists the English text of whatever was ticked

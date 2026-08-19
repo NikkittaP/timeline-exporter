@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Ce fichier ne ressemble pas à un export Google Timeline. Choisissez le fichier Timeline.json exporté depuis Google Maps — appuyez sur « Aide » pour voir les étapes.</string>
 
     <string name="step_choose_file">Choisir un fichier</string>
-    <string name="step_filter">Filtrer par date</string>
+    <string name="step_filter">Filtrer les données</string>
     <string name="step_preview">Aperçu</string>
     <string name="step_export">Exporter</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Proposer une fonction ou signaler un problème →</string>
     <string name="feedback_title">Qu\'est-ce qui manque ?</string>
     <string name="feedback_intro">L\'application évolue selon les demandes des utilisateurs. Elle ne contient aucune analytique : je ne vois pas comment vous l\'utilisez, alors je vous le demande directement. Cochez ce qui vous intéresse, puis choisissez comment l\'envoyer.</string>
-    <string name="feedback_option_activity_filter">Filtrer par mode de déplacement (vélo / marche / voiture uniquement)</string>
+    <string name="feedback_option_area">Ne garder que les points situés dans une zone de la carte</string>
     <string name="feedback_option_file_per_trip">Un fichier par trajet plutôt qu\'un seul gros fichier</string>
     <string name="feedback_option_elevation_speed">Altitude et vitesse dans le GPX</string>
     <string name="feedback_option_places">Exporter les lieux visités, pas seulement la trace</string>
-    <string name="feedback_option_stats">Écran de statistiques (km par mode de transport, lieux les plus fréquents)</string>
+    <string name="feedback_option_share">Envoyer l\'export directement à une autre app au lieu d\'enregistrer un fichier</string>
+    <string name="feedback_option_trip_list">Une liste des trajets avec départ, arrivée, heure et distance</string>
+    <string name="feedback_option_stats">Totaux mensuels et annuels, lieux les plus visités</string>
     <string name="feedback_option_merge">Fusionner plusieurs fichiers Timeline</string>
     <string name="feedback_option_photo_geotag">Géolocaliser les photos d\'après l\'heure</string>
     <string name="feedback_other_label">Autre chose ?</string>

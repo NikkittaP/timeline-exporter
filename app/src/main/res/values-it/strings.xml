@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Questo non sembra un file di Google Timeline. Scegli il file Timeline.json esportato da Google Maps — tocca «Aiuto» per i passaggi.</string>
 
     <string name="step_choose_file">Scegli file</string>
-    <string name="step_filter">Filtra per data</string>
+    <string name="step_filter">Filtra i dati</string>
     <string name="step_preview">Anteprima</string>
     <string name="step_export">Esporta</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Chiedi una funzione o segnala un problema →</string>
     <string name="feedback_title">Cosa manca?</string>
     <string name="feedback_intro">L\'app cresce con le richieste di chi la usa. Non ha analytics: non vedo come la usi, quindi te lo chiedo direttamente. Segna ciò che ti serve e scegli come inviarlo.</string>
-    <string name="feedback_option_activity_filter">Filtro per tipo di spostamento (solo bici / a piedi / auto)</string>
+    <string name="feedback_option_area">Mantenere solo i punti dentro un\'area sulla mappa</string>
     <string name="feedback_option_file_per_trip">Un file per ogni viaggio invece di uno grande</string>
     <string name="feedback_option_elevation_speed">Quota e velocità nel GPX</string>
     <string name="feedback_option_places">Esportare i luoghi visitati, non solo la traccia</string>
-    <string name="feedback_option_stats">Schermata statistiche (km per mezzo di trasporto, luoghi più frequenti)</string>
+    <string name="feedback_option_share">Inviare l\'esportazione direttamente a un\'altra app invece di salvare un file</string>
+    <string name="feedback_option_trip_list">Un elenco dei viaggi con partenza, arrivo, orario e distanza</string>
+    <string name="feedback_option_stats">Totali mensili e annuali, luoghi più visitati</string>
     <string name="feedback_option_merge">Unire più file Timeline</string>
     <string name="feedback_option_photo_geotag">Geotaggare le foto in base all\'ora</string>
     <string name="feedback_other_label">Altro?</string>

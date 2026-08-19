@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Dit lijkt geen Google Timeline-bestand. Kies het Timeline.json-bestand dat je uit Google Maps hebt geëxporteerd — tik op „Help“ voor de stappen.</string>
 
     <string name="step_choose_file">Bestand kiezen</string>
-    <string name="step_filter">Op datum filteren</string>
+    <string name="step_filter">Gegevens filteren</string>
     <string name="step_preview">Voorbeeld</string>
     <string name="step_export">Exporteren</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Een functie vragen of een probleem melden →</string>
     <string name="feedback_title">Wat mis je?</string>
     <string name="feedback_intro">De app groeit op verzoeken van gebruikers. Er zit geen analytics in — ik zie niet hoe je hem gebruikt, dus vraag ik het direct. Vink aan wat je wilt en kies hoe je het verstuurt.</string>
-    <string name="feedback_option_activity_filter">Filter op vervoerstype (alleen fiets / lopen / auto)</string>
+    <string name="feedback_option_area">Alleen punten binnen een gebied op de kaart behouden</string>
     <string name="feedback_option_file_per_trip">Een apart bestand per rit in plaats van één groot bestand</string>
     <string name="feedback_option_elevation_speed">Hoogte en snelheid in GPX</string>
     <string name="feedback_option_places">Bezochte plaatsen exporteren, niet alleen het spoor</string>
-    <string name="feedback_option_stats">Statistiekenscherm (km per vervoerstype, favoriete plaatsen)</string>
+    <string name="feedback_option_share">De export direct naar een andere app sturen in plaats van een bestand op te slaan</string>
+    <string name="feedback_option_trip_list">Een lijst met ritten met start, eind, tijd en afstand</string>
+    <string name="feedback_option_stats">Maand- en jaartotalen, meest bezochte plaatsen</string>
     <string name="feedback_option_merge">Meerdere Timeline-bestanden samenvoegen</string>
     <string name="feedback_option_photo_geotag">Foto\'s geotaggen op tijd</string>
     <string name="feedback_other_label">Nog iets?</string>

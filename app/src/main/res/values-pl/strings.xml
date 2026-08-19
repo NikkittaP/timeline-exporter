@@ -7,7 +7,7 @@
     <string name="error_not_timeline">To nie wygląda na plik Google Timeline. Wybierz plik Timeline.json wyeksportowany z Map Google — dotknij „Pomoc“, aby zobaczyć kroki.</string>
 
     <string name="step_choose_file">Wybierz plik</string>
-    <string name="step_filter">Filtruj według daty</string>
+    <string name="step_filter">Filtruj dane</string>
     <string name="step_preview">Podgląd</string>
     <string name="step_export">Eksport</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Zaproponuj funkcję lub zgłoś problem →</string>
     <string name="feedback_title">Czego brakuje?</string>
     <string name="feedback_intro">Aplikacja rozwija się dzięki prośbom użytkowników. Nie ma w niej analityki — nie widzę, jak z niej korzystasz, więc pytam wprost. Zaznacz, co Cię interesuje, i wybierz sposób wysyłki.</string>
-    <string name="feedback_option_activity_filter">Filtr według sposobu przemieszczania (tylko rower / pieszo / auto)</string>
+    <string name="feedback_option_area">Zachowanie tylko punktów w wybranym obszarze na mapie</string>
     <string name="feedback_option_file_per_trip">Osobny plik na każdą podróż zamiast jednego dużego</string>
     <string name="feedback_option_elevation_speed">Wysokość i prędkość w GPX</string>
     <string name="feedback_option_places">Eksport odwiedzonych miejsc, nie tylko trasy</string>
-    <string name="feedback_option_stats">Ekran statystyk (km wg środka transportu, najczęstsze miejsca)</string>
+    <string name="feedback_option_share">Wysyłanie eksportu prosto do innej aplikacji zamiast zapisu pliku</string>
+    <string name="feedback_option_trip_list">Lista podróży z początkiem, końcem, czasem i dystansem</string>
+    <string name="feedback_option_stats">Podsumowania miesięczne i roczne, najczęściej odwiedzane miejsca</string>
     <string name="feedback_option_merge">Łączenie kilku plików Timeline</string>
     <string name="feedback_option_photo_geotag">Geotagowanie zdjęć według czasu</string>
     <string name="feedback_other_label">Coś jeszcze?</string>

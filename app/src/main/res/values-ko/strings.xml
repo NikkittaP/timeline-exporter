@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Google 타임라인 파일이 아닌 것 같습니다. Google 지도에서 내보낸 Timeline.json 파일을 선택하세요. 단계는 「도움말」을 참고하세요.</string>
 
     <string name="step_choose_file">파일 선택</string>
-    <string name="step_filter">날짜로 필터링</string>
+    <string name="step_filter">데이터 필터링</string>
     <string name="step_preview">미리보기</string>
     <string name="step_export">내보내기</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">기능 요청하거나 문제 신고하기 →</string>
     <string name="feedback_title">무엇이 빠졌나요?</string>
     <string name="feedback_intro">이 앱은 사용자 요청으로 자랍니다. 분석 도구가 없어서 어떻게 쓰시는지 볼 수 없기에 직접 여쭤봅니다. 원하는 항목을 선택하고 보낼 방법을 고르세요.</string>
-    <string name="feedback_option_activity_filter">이동 수단으로 필터링(자전거 / 도보 / 자동차만)</string>
+    <string name="feedback_option_area">지도에서 선택한 영역 안의 지점만 남기기</string>
     <string name="feedback_option_file_per_trip">큰 파일 하나 대신 이동마다 파일 분리</string>
     <string name="feedback_option_elevation_speed">GPX에 고도와 속도 포함</string>
     <string name="feedback_option_places">경로뿐 아니라 방문한 장소도 내보내기</string>
-    <string name="feedback_option_stats">통계 화면(이동 수단별 거리, 자주 간 장소)</string>
+    <string name="feedback_option_share">파일로 저장하지 않고 내보낸 결과를 다른 앱으로 바로 보내기</string>
+    <string name="feedback_option_trip_list">출발지·도착지·시간·거리가 있는 이동 목록</string>
+    <string name="feedback_option_stats">월별·연도별 합계와 자주 간 장소</string>
     <string name="feedback_option_merge">여러 Timeline 파일 합치기</string>
     <string name="feedback_option_photo_geotag">시간을 기준으로 사진에 위치 정보 넣기</string>
     <string name="feedback_other_label">그 밖에 필요한 것이 있나요?</string>

@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Det här ser inte ut som en Google Timeline-fil. Välj filen Timeline.json som du exporterade från Google Maps — tryck på ”Hjälp” för stegen.</string>
 
     <string name="step_choose_file">Välj fil</string>
-    <string name="step_filter">Filtrera efter datum</string>
+    <string name="step_filter">Filtrera data</string>
     <string name="step_preview">Förhandsvisning</string>
     <string name="step_export">Exportera</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Föreslå en funktion eller rapportera ett problem →</string>
     <string name="feedback_title">Vad saknas?</string>
     <string name="feedback_intro">Appen växer med användarnas önskemål. Den har ingen analys — jag ser inte hur du använder den, så jag frågar direkt. Kryssa i det du vill ha och välj hur du skickar.</string>
-    <string name="feedback_option_activity_filter">Filtrera på färdsätt (bara cykel / gång / bil)</string>
+    <string name="feedback_option_area">Behåll bara punkter inom ett område på kartan</string>
     <string name="feedback_option_file_per_trip">En egen fil per resa i stället för en stor fil</string>
     <string name="feedback_option_elevation_speed">Höjd och hastighet i GPX</string>
     <string name="feedback_option_places">Exportera besökta platser, inte bara spåret</string>
-    <string name="feedback_option_stats">Statistikvy (km per färdsätt, vanligaste platser)</string>
+    <string name="feedback_option_share">Skicka exporten direkt till en annan app i stället för att spara en fil</string>
+    <string name="feedback_option_trip_list">En lista över resor med start, slut, tid och sträcka</string>
+    <string name="feedback_option_stats">Månads- och årssummor, mest besökta platser</string>
     <string name="feedback_option_merge">Slå ihop flera Timeline-filer</string>
     <string name="feedback_option_photo_geotag">Geotagga foton efter tid</string>
     <string name="feedback_other_label">Något mer?</string>

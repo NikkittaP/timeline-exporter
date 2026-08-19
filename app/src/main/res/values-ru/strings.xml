@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Это не похоже на файл Google Timeline. Выберите файл Timeline.json, экспортированный из Google Карт — нажмите «Справка», чтобы увидеть шаги.</string>
 
     <string name="step_choose_file">Выбор файла</string>
-    <string name="step_filter">Фильтр по дате</string>
+    <string name="step_filter">Фильтрация данных</string>
     <string name="step_preview">Предпросмотр</string>
     <string name="step_export">Экспорт</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Предложить функцию или сообщить о проблеме →</string>
     <string name="feedback_title">Чего не хватает?</string>
     <string name="feedback_intro">Приложение развивается по запросам пользователей. Аналитики в нём нет — я не вижу, как вы им пользуетесь, поэтому спрашиваю напрямую. Отметьте нужное и выберите, как отправить.</string>
-    <string name="feedback_option_activity_filter">Фильтр по типу передвижения (только вело / пешком / авто)</string>
+    <string name="feedback_option_area">Оставлять только точки внутри области на карте</string>
     <string name="feedback_option_file_per_trip">Отдельный файл на каждую поездку вместо одного большого</string>
     <string name="feedback_option_elevation_speed">Высота и скорость в GPX</string>
     <string name="feedback_option_places">Экспорт посещённых мест, а не только трека</string>
-    <string name="feedback_option_stats">Экран статистики (км по видам транспорта, топ мест)</string>
+    <string name="feedback_option_share">Отправлять экспорт сразу в другое приложение, а не сохранять файл</string>
+    <string name="feedback_option_trip_list">Список поездок с началом, концом, временем и расстоянием</string>
+    <string name="feedback_option_stats">Итоги по месяцам и годам, самые посещаемые места</string>
     <string name="feedback_option_merge">Объединение нескольких файлов Timeline</string>
     <string name="feedback_option_photo_geotag">Геотегирование фотографий по времени</string>
     <string name="feedback_other_label">Что-то ещё?</string>

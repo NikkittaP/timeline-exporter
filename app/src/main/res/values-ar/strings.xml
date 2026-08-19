@@ -7,7 +7,7 @@
     <string name="error_not_timeline">لا يبدو أن هذا ملف Google Timeline. اختر ملف Timeline.json الذي صدّرته من خرائط Google — اضغط على «مساعدة» لمعرفة الخطوات.</string>
 
     <string name="step_choose_file">اختيار ملف</string>
-    <string name="step_filter">التصفية حسب التاريخ</string>
+    <string name="step_filter">تصفية البيانات</string>
     <string name="step_preview">معاينة</string>
     <string name="step_export">تصدير</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">اطلب ميزة أو أبلغ عن مشكلة ←</string>
     <string name="feedback_title">ما الذي ينقص؟</string>
     <string name="feedback_intro">يتطور التطبيق بناءً على طلبات المستخدمين. لا يحتوي على أي تحليلات — لا أرى كيف تستخدمه، لذلك أسألك مباشرة. حدّد ما تريده ثم اختر طريقة الإرسال.</string>
-    <string name="feedback_option_activity_filter">تصفية حسب نوع التنقل (دراجة / سيرًا / سيارة فقط)</string>
+    <string name="feedback_option_area">الاحتفاظ بالنقاط الواقعة داخل منطقة محددة على الخريطة فقط</string>
     <string name="feedback_option_file_per_trip">ملف منفصل لكل رحلة بدل ملف واحد كبير</string>
     <string name="feedback_option_elevation_speed">الارتفاع والسرعة في GPX</string>
     <string name="feedback_option_places">تصدير الأماكن التي زرتها، وليس المسار فقط</string>
-    <string name="feedback_option_stats">شاشة إحصاءات (الكيلومترات حسب وسيلة التنقل، أكثر الأماكن زيارة)</string>
+    <string name="feedback_option_share">إرسال الملف المُصدَّر مباشرة إلى تطبيق آخر بدل حفظه</string>
+    <string name="feedback_option_trip_list">قائمة بالرحلات مع نقطة البداية والنهاية والوقت والمسافة</string>
+    <string name="feedback_option_stats">إجماليات شهرية وسنوية وأكثر الأماكن زيارة</string>
     <string name="feedback_option_merge">دمج عدة ملفات Timeline</string>
     <string name="feedback_option_photo_geotag">إضافة الموقع إلى الصور حسب الوقت</string>
     <string name="feedback_other_label">أي شيء آخر؟</string>

@@ -7,7 +7,7 @@
     <string name="error_not_timeline">これは Google タイムラインのファイルではないようです。Google マップからエクスポートした Timeline.json を選択してください。手順は「ヘルプ」をご覧ください。</string>
 
     <string name="step_choose_file">ファイルを選択</string>
-    <string name="step_filter">日付で絞り込み</string>
+    <string name="step_filter">データを絞り込み</string>
     <string name="step_preview">プレビュー</string>
     <string name="step_export">エクスポート</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">機能をリクエスト、または問題を報告 →</string>
     <string name="feedback_title">足りないものは？</string>
     <string name="feedback_intro">このアプリはユーザーの要望で成長します。解析機能は入っていないため、使われ方が分かりません。だから直接おたずねします。必要なものにチェックを入れて、送信方法を選んでください。</string>
-    <string name="feedback_option_activity_filter">移動手段でフィルター（自転車／徒歩／車のみ）</string>
+    <string name="feedback_option_area">地図上で選んだ範囲内の地点だけを残す</string>
     <string name="feedback_option_file_per_trip">大きな1つのファイルではなく、移動ごとに別ファイル</string>
     <string name="feedback_option_elevation_speed">GPXに標高と速度を含める</string>
     <string name="feedback_option_places">軌跡だけでなく訪問した場所も書き出す</string>
-    <string name="feedback_option_stats">統計画面（移動手段別の距離、よく行く場所）</string>
+    <string name="feedback_option_share">ファイルに保存せず、書き出しを直接ほかのアプリへ送る</string>
+    <string name="feedback_option_trip_list">出発地・目的地・時刻・距離がわかる移動の一覧</string>
+    <string name="feedback_option_stats">月別・年別の合計と、よく行く場所</string>
     <string name="feedback_option_merge">複数のTimelineファイルの結合</string>
     <string name="feedback_option_photo_geotag">時刻をもとに写真へ位置情報を付与</string>
     <string name="feedback_other_label">そのほかにありますか？</string>

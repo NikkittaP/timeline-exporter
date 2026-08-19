@@ -7,7 +7,7 @@
     <string name="error_not_timeline">Esto no parece un archivo de Google Timeline. Elige el archivo Timeline.json que exportaste desde Google Maps — toca «Ayuda» para ver los pasos.</string>
 
     <string name="step_choose_file">Elegir archivo</string>
-    <string name="step_filter">Filtrar por fecha</string>
+    <string name="step_filter">Filtrar datos</string>
     <string name="step_preview">Vista previa</string>
     <string name="step_export">Exportar</string>
 
@@ -142,11 +142,13 @@
     <string name="feedback_help_button">Pedir una función o informar de un problema →</string>
     <string name="feedback_title">¿Qué falta?</string>
     <string name="feedback_intro">La app crece con las peticiones de quienes la usan. No tiene analítica: no veo cómo la usas, así que te lo pregunto directamente. Marca lo que quieras y elige cómo enviarlo.</string>
-    <string name="feedback_option_activity_filter">Filtrar por tipo de desplazamiento (solo bici / a pie / coche)</string>
+    <string name="feedback_option_area">Conservar solo los puntos dentro de una zona del mapa</string>
     <string name="feedback_option_file_per_trip">Un archivo por viaje en lugar de uno grande</string>
     <string name="feedback_option_elevation_speed">Altitud y velocidad en GPX</string>
     <string name="feedback_option_places">Exportar los lugares visitados, no solo el recorrido</string>
-    <string name="feedback_option_stats">Pantalla de estadísticas (km por medio de transporte, lugares más visitados)</string>
+    <string name="feedback_option_share">Enviar la exportación directamente a otra app en vez de guardar un archivo</string>
+    <string name="feedback_option_trip_list">Una lista de trayectos con inicio, fin, hora y distancia</string>
+    <string name="feedback_option_stats">Totales mensuales y anuales, lugares más visitados</string>
     <string name="feedback_option_merge">Combinar varios archivos de Timeline</string>
     <string name="feedback_option_photo_geotag">Geoetiquetar fotos por hora</string>
     <string name="feedback_other_label">¿Algo más?</string>
