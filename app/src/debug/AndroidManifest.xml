@@ -18,6 +18,11 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <!-- screengrab grants this to put the status bar into demo mode (fixed
+         clock, full signal, no stray notification icons). Without it declared
+         the run still works, but every capture logs a SecurityException. -->
+    <uses-permission android:name="android.permission.DUMP"
+        tools:ignore="ProtectedPermissions" />
 
     <application>
         <provider

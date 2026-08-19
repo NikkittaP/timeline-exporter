@@ -44,13 +44,25 @@ One-time, installs the renderer (Node 18+):
 cd tools/store_shots && npm install && npx playwright install chromium
 ```
 
-Then, from `TimelineApp/`:
+Then, from `TimelineApp/`, **once per emulator boot**:
 
 ```bash
-bundle exec fastlane screens_phone       # capture + decorate (boot the phone AVD first)
+adb root
+```
+
+Skipping it is the single most common way this fails — see
+[Troubleshooting](#troubleshooting). Then, with the matching AVD booted:
+
+```bash
+bundle exec fastlane screens_phone       # phone AVD booted
+bundle exec fastlane screens_tablet7     # 7" AVD booted
+bundle exec fastlane screens_tablet10    # 10" AVD booted
 bundle exec fastlane decorate_screens    # re-render everything, NO emulator needed
 bundle exec fastlane upload_screens      # push to Play (internal track)
 ```
+
+One device class per run, one emulator attached at a time. The three lanes
+write into different Play folders and do not overwrite each other.
 
 `screens_phone` does three things now: capture -> ingest (move the raw PNGs to
 `fastlane/screenshots_raw/`) -> decorate. Because the raw shots are kept, any
@@ -153,20 +165,18 @@ set the locale freely.
 Run one device class at a time. Boot the matching emulator first (only one
 device attached, or pass `--specific_device <id>`).
 
-**First, enable adb root on the emulator.** screengrab saves the PNGs into the
-app's private internal storage; without root, `adb pull` gets "Permission
-denied" and the run-as/tar fallback is unreliable on Windows. One command per
-boot fixes it:
+**First, enable adb root on the emulator** — once per boot, every time:
 
 ```bash
-adb root          # Google APIs emulator images allow this; prints "restarting adbd as root"
-adb shell whoami  # should print: root
+adb root          # prints "restarting adbd as root"
+adb shell whoami  # must print: root
 ```
 
-> If `adb root` says "adbd cannot run as root in production builds", your AVD
-> uses a **Google Play** system image. Recreate it with a **Google APIs** image
-> (Device Manager → the AVD has no Play Store icon). Root is only needed to copy
-> the screenshots off the device — it doesn't affect the app itself.
+screengrab writes the PNGs into the app's private storage, and without root
+they cannot be copied back off it. The run does **not** fail loudly when you
+forget: the tests pass, screengrab reports the copy, and you are left with one
+mangled PNG per language. See
+[Troubleshooting](#the-run-succeeds-but-you-get-one-corrupt-png-per-language).
 
 Then capture:
 
@@ -192,15 +202,55 @@ fastlane/metadata/android/<locale>/images/sevenInchScreenshots/
 fastlane/metadata/android/<locale>/images/tenInchScreenshots/
 ```
 
-Open a few and sanity-check the map actually rendered (needs network) and the UI
-is in the right language.
+Open a few and sanity-check the map actually rendered (needs network), the UI is
+in the right language, and the count is five per locale — not one.
 
-> If the map is blank, the emulator had no internet — cold-boot it, confirm a
-> browser loads a page, and bump `MAP_TILE_WAIT_MS` in `ScreenshotTest.kt`.
+Anything odd, go to [Troubleshooting](#troubleshooting).
 
-> If it says **"No screenshots were detected"** even though the tests passed
-> (`OK (N tests)`), the PNGs were captured but couldn't be pulled off the
-> device. Run `adb root` (see above) before the lane and re-run.
+---
+
+## Tablets
+
+Same three steps as the phone, run once per device class. What differs is only
+which AVD is booted and which lane you call.
+
+| Device class | AVD here        | Lane                    | Play folder            |
+|--------------|-----------------|-------------------------|------------------------|
+| Phone        | `Pixel_7`       | `screens_phone`         | `phoneScreenshots`     |
+| 7" tablet    | `7_inch_Tablet` | `screens_tablet7`       | `sevenInchScreenshots` |
+| 10" tablet   | `Pixel_Tablet`  | `screens_tablet10`      | `tenInchScreenshots`   |
+
+```bash
+# list what you have
+emulator -list-avds
+
+# boot one (or start it from Android Studio's Device Manager)
+emulator -avd 7_inch_Tablet &
+
+# once it has booted, per boot:
+adb root
+
+bundle exec fastlane screens_tablet7
+```
+
+Points worth knowing:
+
+- **Only one device attached at a time.** screengrab picks a device on its own;
+  with a phone and a tablet both running it may grab the wrong one. Either shut
+  the others down, or pass `--specific_device emulator-5556`.
+- **Runs do not clobber each other.** `clear_previous_screenshots(true)` in
+  `fastlane/Screengrabfile` clears only the folder for the class being captured,
+  so a tablet run leaves the phone shots alone. Capturing all three is three
+  separate runs, not one.
+- **Tablets capture in landscape** (1920×1080 and 2560×1600 on these AVDs). The
+  renderer detects orientation from the image itself, puts the headline on top
+  and centres the device in what is left. Play accepts both 16:9 and 9:16, so
+  there is nothing to configure.
+- **Re-rendering is per slot**: `bundle exec fastlane decorate_screens
+  slot:sevenInch`. Slot ids are `phone`, `sevenInch`, `tenInch` — the same names
+  the lanes pass internally.
+- Play requires tablet screenshots only if you declare tablet support in the
+  listing, but a listing with phone-only art looks broken on a tablet.
 
 ---
 
@@ -259,6 +309,93 @@ bundle exec fastlane upload_screens
 
 Open Play Console → your app → **Store listing → Phone / Tablet** and confirm the
 images per language, then save/submit as usual.
+
+---
+
+## Troubleshooting
+
+### The run "succeeds" but you get one corrupt PNG per language
+
+Symptom, straight from a real log:
+
+```
+adb: error: failed to stat remote object '/data/data/<pkg>/app_screengrab/en-US/images/screenshots': Permission denied
+$ adb shell run-as <pkg> "tar -cC .../images screenshots" | tar -xv -f- -C ...
+screenshots/06_start_empty.png
+tar: Skipping to next header
+tar: Exiting with failure status due to previous errors
+Screenshots copied to fastlane/metadata/android/en-US/images/phoneScreenshots
+```
+
+The tests pass (`OK (3 tests)`) and screengrab cheerfully reports the copy, but
+each locale ends up with **one** file instead of five, and that one is corrupt.
+
+Two things went wrong, both from the same cause — **you did not run `adb root`**:
+
+1. `adb pull` cannot read the app's private storage, so screengrab falls back to
+   `adb shell run-as … tar | tar -x`.
+2. On Windows `adb shell` runs the stream through text mode, turning every `0A`
+   into `0D 0A`. The tar stream is corrupted after the first member, so tar
+   stops. The PNG that *did* land starts `89 50 4E 47 0D 0D 0A 1A 0D 0A` instead
+   of `89 50 4E 47 0D 0A 1A 0A` — mangled, not merely truncated.
+
+Fix, before the lane, once per emulator boot:
+
+```bash
+adb root          # prints "restarting adbd as root"
+adb shell whoami  # must print: root
+```
+
+**The captures are still on the device**, so a crashed or mangled run does not
+mean re-capturing. After `adb root` you can pull them by hand:
+
+```bash
+adb pull /data/data/io.github.nikkittap.timelineexporter/app_screengrab/en-US/images/screenshots .
+```
+
+> In Git Bash, prefix that with `MSYS_NO_PATHCONV=1` or the `/data/...` path is
+> rewritten to a Windows path and adb reports "No such file or directory".
+
+If `adb root` answers "adbd cannot run as root in production builds", the AVD
+uses a **Google Play** system image; recreate it with **Google APIs**.
+
+### `uninitialized constant TTY::Screen::Fiddle` — fastlane dies mid-run
+
+Ruby 4.0 dropped `fiddle` from the default gems. fastlane's `tty-screen` still
+requires it to measure the terminal, so **every table fastlane prints** blows up
+— including the one it prints while reporting an error, which means the real
+failure never reaches you. The tell-tale line appears at the very top of the
+run:
+
+```
+warning: fiddle used to be loaded from the standard library, but is not part of the default gems since Ruby 4.0.0.
+```
+
+Fixed by `gem "fiddle"` in the Gemfile — run `bundle install`. More broadly,
+fastlane 2.236 predates Ruby 4.0; if odd Ruby errors keep appearing, install
+Ruby 3.3.x and point this project at it.
+
+### `Process crashed (FastlanePtyError)` partway through the locales
+
+`am instrument` returned non-zero for that locale. `pty` is not available on
+Windows, so fastlane uses a `popen` fallback and reports every failure with this
+one unhelpful message. With the `fiddle` fix in place fastlane can at least
+print what actually failed. Check the locale's folder on the device: a partial
+set (four of five) means the instrumented test itself died — usually the map
+never finished loading, so raise `MAP_TILE_WAIT_MS` in `ScreenshotTest.kt` and
+re-run just that language.
+
+### `SecurityException: … has not requested permission android.permission.DUMP`
+
+Cosmetic. screengrab grants `DUMP` to put the status bar in demo mode. The
+permission is now declared in `app/src/debug/AndroidManifest.xml`, so this
+should be gone; if you see it again, that manifest was not merged into the debug
+build.
+
+### Blank map
+
+The emulator had no internet. Cold-boot it, confirm a browser loads a page, then
+raise `MAP_TILE_WAIT_MS` in `ScreenshotTest.kt`.
 
 ---
 

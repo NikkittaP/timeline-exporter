@@ -23,13 +23,21 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Build the debug app + instrumentation APKs that screengrab drives
 
-### android add_hero_captions
+### android setup_store_shots
 
 ```sh
-[bundle exec] fastlane android add_hero_captions
+[bundle exec] fastlane android setup_store_shots
 ```
 
-Overlay the localized '100% on-device' caption onto 01_hero (built from the clean 03_map_fullscreen shot). Requires Python + Pillow.
+One-time: install the screenshot renderer's dependencies (Node 18+)
+
+### android decorate_screens
+
+```sh
+[bundle exec] fastlane android decorate_screens
+```
+
+Render the framed Play Store screenshots from the raw captures. Options: slot:phone|sevenInch|tenInch, locales:ru-RU,ar, palette:blue|orange|midnight
 
 ### android screens_phone
 
@@ -54,6 +62,14 @@ Capture screenshots on a 7-inch TABLET emulator/device
 ```
 
 Capture screenshots on a 10-inch TABLET emulator/device
+
+### android add_hero_captions
+
+```sh
+[bundle exec] fastlane android add_hero_captions
+```
+
+DEPRECATED — the old Pillow caption band on 01_hero. Superseded by decorate_screens; kept so old runs stay reproducible.
 
 ### android upload_screens
 
