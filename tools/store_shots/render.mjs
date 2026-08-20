@@ -46,17 +46,25 @@ if (flag('ingest')) {
     for (const slot of slots) {
       const from = path.join(abs(cfg.paths.metadata), locale, 'images', slot.dir);
       if (!fs.existsSync(from)) continue;
-      if (fs.existsSync(path.join(from, '.decorated'))) {
-        console.log(`skip ${locale}/${slot.id}: already decorated (delete .decorated to re-ingest)`);
-        continue;
-      }
+      // The folder holds last run's finished art AND, right after a screengrab
+      // pass, the fresh captures. screengrab's clear_previous_screenshots only
+      // deletes *.png, so .decorated survives a capture -- skipping on its mere
+      // presence silently strands the new shots. Tell them apart by mtime.
+      const marker = path.join(from, '.decorated');
+      const decoratedAt = fs.existsSync(marker) ? fs.statSync(marker).mtimeMs : 0;
       const to = path.join(abs(cfg.paths.raw), locale, slot.id);
-      fs.mkdirSync(to, { recursive: true });
+      let took = 0;
       for (const f of fs.readdirSync(from)) {
         if (!/\.(png|jpe?g|webp)$/i.test(f)) continue;
-        fs.renameSync(path.join(from, f), path.join(to, f));
-        moved++;
+        const src = path.join(from, f);
+        if (fs.statSync(src).mtimeMs <= decoratedAt) continue;   // our own output
+        if (!took) fs.mkdirSync(to, { recursive: true });
+        fs.renameSync(src, path.join(to, f));
+        took++; moved++;
       }
+      // the marker now describes art we are about to re-render -- drop it
+      if (took && decoratedAt) fs.rmSync(marker, { force: true });
+      if (!took && decoratedAt) console.log(`skip ${locale}/${slot.id}: no capture newer than the last decorate`);
     }
   }
   console.log(`ingested ${moved} raw capture(s) → ${cfg.paths.raw}`);

@@ -52,24 +52,42 @@ platform :android do
   desc "Capture screenshots on a PHONE emulator/device (run one first)"
   lane :screens_phone do
     build_for_screengrab
-    capture_android_screenshots(device_type: "phone")
-    ingest_raw(slot: "phone")
+    begin
+      capture_android_screenshots(device_type: "phone")
+    ensure
+      # a run that dies part-way (adb hiccup, Ctrl-C) still leaves captures in
+      # metadata/ — move them to raw before the error propagates, or the next
+      # run's clear_previous_screenshots deletes them.
+      ingest_raw(slot: "phone")
+    end
     decorate_screens(slot: "phone")
   end
 
   desc "Capture screenshots on a 7-inch TABLET emulator/device"
   lane :screens_tablet7 do
     build_for_screengrab
-    capture_android_screenshots(device_type: "sevenInch")
-    ingest_raw(slot: "sevenInch")
+    begin
+      capture_android_screenshots(device_type: "sevenInch")
+    ensure
+      # a run that dies part-way (adb hiccup, Ctrl-C) still leaves captures in
+      # metadata/ — move them to raw before the error propagates, or the next
+      # run's clear_previous_screenshots deletes them.
+      ingest_raw(slot: "sevenInch")
+    end
     decorate_screens(slot: "sevenInch")
   end
 
   desc "Capture screenshots on a 10-inch TABLET emulator/device"
   lane :screens_tablet10 do
     build_for_screengrab
-    capture_android_screenshots(device_type: "tenInch")
-    ingest_raw(slot: "tenInch")
+    begin
+      capture_android_screenshots(device_type: "tenInch")
+    ensure
+      # a run that dies part-way (adb hiccup, Ctrl-C) still leaves captures in
+      # metadata/ — move them to raw before the error propagates, or the next
+      # run's clear_previous_screenshots deletes them.
+      ingest_raw(slot: "tenInch")
+    end
     decorate_screens(slot: "tenInch")
   end
 
