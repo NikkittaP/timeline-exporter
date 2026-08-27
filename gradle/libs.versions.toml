@@ -13,6 +13,7 @@ maplibre = "11.8.0"
 splashscreen = "1.0.1"
 billing = "9.1.0"
 kotlinxSerialization = "1.9.0"
+desugarJdkLibs = "2.1.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +37,7 @@ maplibre-android-sdk = { group = "org.maplibre.gl", name = "android-sdk", versio
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 android-billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

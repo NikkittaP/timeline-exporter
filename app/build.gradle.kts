@@ -78,8 +78,21 @@ android {
         //                                         1.6.0 shipped, rewords the
         //                                         statistics item and adds
         //                                         three new candidates
-        versionCode = 11
-        versionName = "1.6.1"
+        //   versionCode=12, versionName="1.6.2" -> crash hotfix: every
+        //                                         LocalDate.ofInstant call
+        //                                         (API 34) threw
+        //                                         NoSuchMethodError on
+        //                                         Android 10-13, killing the
+        //                                         day chips, the date picker
+        //                                         and the export filename;
+        //                                         core library desugaring and
+        //                                         a lint gate now stop that
+        //                                         class of bug at build time.
+        //                                         Also hardens the MapLibre
+        //                                         teardown that was aborting
+        //                                         in ~MapRenderer
+        versionCode = 12
+        versionName = "1.6.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -124,6 +137,24 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        // Backports the java.* library APIs that Android added after our
+        // minSdk. Without this, java.time methods introduced in later API
+        // levels compile fine but throw NoSuchMethodError on older devices —
+        // exactly how LocalDate.ofInstant (API 34) crashed 1.6.1 on Android
+        // 10-13. Desugaring makes the whole java.time surface safe at
+        // minSdk 29; the lint config below is the second line of defence.
+        isCoreLibraryDesugaringEnabled = true
+    }
+
+    // Lint is the check that should have caught the API-34-on-minSdk-29 bug
+    // before release, so make it impossible to ship past it. NewApi is
+    // already a fatal-severity issue, which means lintVitalRelease runs it
+    // during bundleRelease; these settings just make sure nothing quietly
+    // turns that off.
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+        warningsAsErrors = false
     }
     buildFeatures {
         compose = true
@@ -134,6 +165,7 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

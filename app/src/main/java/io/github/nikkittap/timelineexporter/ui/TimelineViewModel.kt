@@ -24,7 +24,6 @@ import java.io.BufferedInputStream
 import java.io.IOException
 import java.io.InputStream
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
 
 // ---------- UI state types ----------
@@ -297,7 +296,7 @@ fun suggestFilename(filter: TimelineFilter, exporter: Exporter): String {
     val range = filter.dateRange
         ?: return "Timeline.${exporter.fileExtension}"
     val z = ZoneId.systemDefault()
-    val from = LocalDate.ofInstant(range.start, z)
-    val to = LocalDate.ofInstant(range.endInclusive, z)
+    val from = range.start.atZone(z).toLocalDate()
+    val to = range.endInclusive.atZone(z).toLocalDate()
     return "Timeline_${from}_to_${to}.${exporter.fileExtension}"
 }

@@ -86,7 +86,6 @@ import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import io.github.nikkittap.timelineexporter.parser.TimelineFormat
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
 
 /**
@@ -1229,7 +1228,7 @@ private fun formatKm(meters: Double): String {
  */
 private fun lastNDaysRange(anchor: Instant, days: Int): ClosedRange<Instant> {
     val zone = ZoneId.systemDefault()
-    val endDate = LocalDate.ofInstant(anchor, zone)
+    val endDate = anchor.atZone(zone).toLocalDate()
     val startDate = endDate.minusDays((days - 1).toLong())
     val start = startDate.atStartOfDay(zone).toInstant()
     val end = endDate.plusDays(1).atStartOfDay(zone).toInstant().minusNanos(1)

@@ -43,6 +43,7 @@ import org.maplibre.geojson.Feature
 import org.maplibre.geojson.LineString
 import org.maplibre.geojson.MultiLineString
 import org.maplibre.geojson.Point
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -124,21 +125,58 @@ fun TrackMap(
     var loadedMap by remember { mutableStateOf<MapLibreMap?>(null) }
     var loadedStyle by remember { mutableStateOf<Style?>(null) }
 
+    // MapLibre's async callbacks (getMapAsync, setStyle) and our own render
+    // effect can all fire after this composable has left composition and the
+    // native map has been torn down. Touching a Style or MapLibreMap at that
+    // point dereferences a freed C++ peer and aborts the process — those are
+    // the MapRenderer::~MapRenderer and GeoJSONSource SIGABRTs reported
+    // against 1.6.1. This flag is the single source of truth for "the native
+    // map is gone"; every entry point checks it first.
+    val destroyed = remember { AtomicBoolean(false) }
+
     // Forward Compose lifecycle events to MapView. Without this, MapLibre
     // would never know it should pause GL rendering when the screen is hidden.
     DisposableEffect(lifecycle, mapView) {
         val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_START -> mapView.onStart()
-                Lifecycle.Event.ON_RESUME -> mapView.onResume()
-                Lifecycle.Event.ON_PAUSE -> mapView.onPause()
-                Lifecycle.Event.ON_STOP -> mapView.onStop()
-                else -> {}
+            // A late event after teardown would reach a MapView whose native
+            // peer is already gone.
+            if (!destroyed.get()) {
+                when (event) {
+                    Lifecycle.Event.ON_START -> mapView.onStart()
+                    Lifecycle.Event.ON_RESUME -> mapView.onResume()
+                    Lifecycle.Event.ON_PAUSE -> mapView.onPause()
+                    Lifecycle.Event.ON_STOP -> mapView.onStop()
+                    else -> {}
+                }
             }
         }
         lifecycle.addObserver(observer)
         onDispose {
             lifecycle.removeObserver(observer)
+            if (destroyed.getAndSet(true)) return@onDispose
+
+            mapView.setOnTouchListener(null)
+
+            // Walk the MapView back down the lifecycle it was actually
+            // brought up through. Composition can end while the host is
+            // still RESUMED — the map scrolls out of a conditional, a dialog
+            // replaces it, the user backs out mid-render — and calling
+            // onDestroy() on a still-running render loop is what aborts in
+            // ~MapRenderer.
+            val state = lifecycle.currentState
+            if (state.isAtLeast(Lifecycle.State.RESUMED)) mapView.onPause()
+            if (state.isAtLeast(Lifecycle.State.STARTED)) mapView.onStop()
+
+            // Detach our layers and sources explicitly. MapLibre's own
+            // Style.clear() only detaches the Java peers and leaves the
+            // native ones to be freed underneath them (maplibre-native#3269),
+            // so any GeoJsonSource wrapper that outlives this call would
+            // point at freed memory.
+            runCatching { loadedStyle?.let(::clearTrackOverlays) }
+                .onFailure { Log.w(TAG, "Style teardown failed", it) }
+
+            loadedStyle = null
+            loadedMap = null
             mapView.onDestroy()
         }
     }
@@ -147,9 +185,13 @@ fun TrackMap(
     LaunchedEffect(mapView) {
         Log.d(TAG, "Requesting MapLibreMap…")
         mapView.getMapAsync { map ->
+            // MapLibre holds these callbacks itself and has no way to know we
+            // are gone, so both can land after teardown.
+            if (destroyed.get()) return@getMapAsync
             Log.d(TAG, "Map ready, loading style from $MAP_STYLE_URL")
             loadedMap = map
             map.setStyle(MAP_STYLE_URL) { style ->
+                if (destroyed.get()) return@setStyle
                 Log.d(TAG, "Style loaded successfully (uri=${style.uri})")
                 loadedStyle = style
             }
@@ -158,10 +200,21 @@ fun TrackMap(
 
     // Re-render the track whenever points change OR the style becomes available.
     LaunchedEffect(points, loadedStyle) {
+        if (destroyed.get()) return@LaunchedEffect
         val map = loadedMap ?: return@LaunchedEffect
         val style = loadedStyle ?: return@LaunchedEffect
+        // A style that is not fully loaded (a second setStyle still in
+        // flight, or a map already being torn down) has no valid native peer
+        // to add sources to.
+        if (!style.isFullyLoaded) {
+            Log.d(TAG, "Style not fully loaded — skipping render")
+            return@LaunchedEffect
+        }
         Log.d(TAG, "Rendering track with ${points.size} points")
-        renderTrack(map, style, points)
+        // Last-resort net: a style can go invalid between the check above and
+        // the native call. Losing the overlay beats aborting the process.
+        runCatching { renderTrack(map, style, points) }
+            .onFailure { Log.w(TAG, "Track render failed", it) }
     }
 
     AndroidView(factory = { mapView }, modifier = modifier)
@@ -174,12 +227,7 @@ fun TrackMap(
 private fun renderTrack(map: MapLibreMap, style: Style, points: List<PathPoint>) {
     // Always tear down previous overlays first; addSource/addLayer throw on
     // collisions, and v1 just rebuilds wholesale on every change.
-    listOf(LAYER_GAPS, LAYER_TRACK, LAYER_START, LAYER_END).forEach { id ->
-        style.getLayer(id)?.let { style.removeLayer(it) }
-    }
-    listOf(SOURCE_TRACK, SOURCE_GAPS, SOURCE_START, SOURCE_END).forEach { id ->
-        style.getSource(id)?.let { style.removeSource(it) }
-    }
+    clearTrackOverlays(style)
 
     if (points.isEmpty()) return
 
@@ -272,6 +320,23 @@ private fun renderTrack(map: MapLibreMap, style: Style, points: List<PathPoint>)
         val builder = LatLngBounds.Builder()
         points.forEach { builder.include(LatLng(it.latitude, it.longitude)) }
         map.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 80))
+    }
+}
+
+/**
+ * Remove every layer and source this file owns from [style]. Called both
+ * before a re-render (addSource/addLayer collide on existing ids) and on
+ * teardown, where dropping the native sources before MapView.onDestroy() is
+ * what keeps our Java GeoJsonSource wrappers from outliving their C++ peers
+ * (maplibre-native#3269). Layers go first — a source with a layer still
+ * attached cannot be removed.
+ */
+private fun clearTrackOverlays(style: Style) {
+    listOf(LAYER_GAPS, LAYER_TRACK, LAYER_START, LAYER_END).forEach { id ->
+        style.getLayer(id)?.let { style.removeLayer(it) }
+    }
+    listOf(SOURCE_TRACK, SOURCE_GAPS, SOURCE_START, SOURCE_END).forEach { id ->
+        style.getSource(id)?.let { style.removeSource(it) }
     }
 }
 

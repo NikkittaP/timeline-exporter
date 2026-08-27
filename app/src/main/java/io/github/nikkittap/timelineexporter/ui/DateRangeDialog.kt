@@ -28,7 +28,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.github.nikkittap.timelineexporter.R
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
 
@@ -176,7 +175,7 @@ private fun QuickPresetChips(
  * uses for state, treating the Instant as a moment in [zoneId].
  */
 private fun instantToPickerMillis(instant: Instant, zoneId: ZoneId): Long {
-    val localDate = LocalDate.ofInstant(instant, zoneId)
+    val localDate = instant.atZone(zoneId).toLocalDate()
     return localDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 }
 
@@ -189,8 +188,8 @@ private fun pickerMillisToLocalDayRange(
     endMillis: Long,
     zoneId: ZoneId,
 ): ClosedRange<Instant> {
-    val startDate = LocalDate.ofInstant(Instant.ofEpochMilli(startMillis), ZoneOffset.UTC)
-    val endDate = LocalDate.ofInstant(Instant.ofEpochMilli(endMillis), ZoneOffset.UTC)
+    val startDate = Instant.ofEpochMilli(startMillis).atZone(ZoneOffset.UTC).toLocalDate()
+    val endDate = Instant.ofEpochMilli(endMillis).atZone(ZoneOffset.UTC).toLocalDate()
     val startInstant = startDate.atStartOfDay(zoneId).toInstant()
     val endInstant = endDate.plusDays(1).atStartOfDay(zoneId).toInstant().minusNanos(1)
     return startInstant..endInstant
@@ -203,7 +202,7 @@ private fun pickerMillisToLocalDayRange(
  * E.g. anchor=2026-05-21, N=7 -> (2026-05-15, 2026-05-21).
  */
 private fun lastNDaysPickerRange(anchorInstant: Instant, days: Int, zoneId: ZoneId): Pair<Long, Long> {
-    val endDate = LocalDate.ofInstant(anchorInstant, zoneId)
+    val endDate = anchorInstant.atZone(zoneId).toLocalDate()
     val startDate = endDate.minusDays((days - 1).toLong())
     return startDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli() to
         endDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
