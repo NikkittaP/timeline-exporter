@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• Timeline dosyası saat dilimini kaydettiğinde CSV dosyaları hem UTC saatini hem de yerel saati (UTC farkıyla) içerir.</string>
     <string name="feedback_prompt_body">Uygulama kullanıcı istekleriyle büyüyor. Analitik yok — neyin eksik olduğunu yazın.</string>
     <string name="feedback_prompt_action">Ne eklememi istediğinizi yazın →</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">İz</string>
+    <string name="content_places">Yerler</string>
+    <string name="places_none">Bu dosyada yer kaydı yok.</string>
+    <string name="places_none_filtered">Seçilen tarih aralığında yer yok.</string>
+    <string name="places_visits_label">ziyaret</string>
+    <string name="places_show_all">Tümünü göster: %1$s</string>
+    <string name="places_include_containers">AVM\'leri ve havalimanlarını dahil et</string>
+    <string name="places_include_containers_hint">Google, bir yerin içinde bulunduğu binayı da kaydeder. Varsayılan olarak kapalı — zaten sahip olduğunuz bir konaklamayı tekrarlar.</string>
+    <string name="place_unnamed_hint">Bir yere ad vermek için dokunun.</string>
+    <string name="place_home">Ev</string>
+    <string name="place_work">İş</string>
+    <string name="place_last_visit">son %1$s</string>
+    <string name="place_duration_hours">%1$s sa</string>
+    <string name="place_duration_days">%1$s g</string>
+    <string name="place_dialog_title">Bu yere ad verin</string>
+    <string name="place_dialog_field">Bu yer için kendi adınız</string>
+    <string name="place_dialog_maps">Google Haritalar\'da aç</string>
+    <string name="place_dialog_save">Kaydet</string>
+    <string name="place_dialog_remove">Adı kaldır</string>
+    <string name="place_toast_no_maps">Bu cihazdaki hiçbir uygulama harita bağlantısını açamıyor.</string>
+    <string name="export_success_places">%1$s yer %2$s dosyasına kaydedildi</string>
+    <string name="export_shared_places">%1$s yer %2$s olarak hazırlandı</string>
+    <string name="export_error_no_places">Geçerli tarih aralığında yer yok.</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

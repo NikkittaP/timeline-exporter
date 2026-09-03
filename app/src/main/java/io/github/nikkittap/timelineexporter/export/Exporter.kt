@@ -1,7 +1,5 @@
 package io.github.nikkittap.timelineexporter.export
 
-import io.github.nikkittap.timelineexporter.parser.PathPoint
-
 /**
  * Strategy interface for converting parsed Timeline data into an external file
  * format. Each format is one implementation; the UI iterates [AllExporters]
@@ -22,10 +20,16 @@ interface Exporter {
 
     /**
      * Produce the file contents as a UTF-8 String.
-     * [trackName] is a human label embedded in the output (where the format
-     * supports it). CSV ignores it; XML/JSON-ish formats embed it.
+     *
+     * [content] is either a track or a list of places — every implementation
+     * must handle both, and an exhaustive `when` over the sealed type is what
+     * guarantees a new content kind cannot be added without each format being
+     * updated to write it.
+     *
+     * [name] is a human label embedded in the output where the format supports
+     * one (the track's `<name>`, the KML `<Document><name>`). CSV ignores it.
      */
-    fun export(points: List<PathPoint>, trackName: String): String
+    fun export(content: ExportContent, name: String): String
 }
 
 /**

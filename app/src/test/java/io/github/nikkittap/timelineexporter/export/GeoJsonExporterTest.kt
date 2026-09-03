@@ -17,12 +17,12 @@ class GeoJsonExporterTest {
 
     @Test
     fun `output is well-formed JSON parseable by kotlinx serialization`() {
-        val json = GeoJsonExporter.export(
+        val json = GeoJsonExporter.exportTrack(
             listOf(
                 PathPoint(Instant.parse("2025-01-01T00:00:00Z"), 41.284025, 69.242256),
                 PathPoint(Instant.parse("2025-01-01T00:01:00Z"), 41.290000, 69.250000),
             ),
-            trackName = "My Trip",
+            name = "My Trip",
         )
         // Parsing throws if malformed — proves well-formedness.
         val parsed = Json.parseToJsonElement(json).jsonObject
@@ -33,7 +33,7 @@ class GeoJsonExporterTest {
     fun `coordinates are emitted as lon-then-lat per RFC 7946`() {
         // Same trap as KML: the spec inverts the lat/lon order from how
         // humans usually write it. Pin it down with a test.
-        val json = GeoJsonExporter.export(
+        val json = GeoJsonExporter.exportTrack(
             listOf(PathPoint(Instant.parse("2025-01-01T00:00:00Z"), 41.284025, 69.242256)),
             "T",
         )
@@ -47,9 +47,9 @@ class GeoJsonExporterTest {
 
     @Test
     fun `track name is round-tripped via JSON-string escaping`() {
-        val json = GeoJsonExporter.export(
+        val json = GeoJsonExporter.exportTrack(
             points = emptyList(),
-            trackName = """Trip with "quotes" and \backslashes\""",
+            name = """Trip with "quotes" and \backslashes\""",
         )
         val name = Json.parseToJsonElement(json)
             .jsonObject["features"]!!.jsonArray[0]
@@ -59,7 +59,7 @@ class GeoJsonExporterTest {
 
     @Test
     fun `empty points produces an empty coordinates array`() {
-        val json = GeoJsonExporter.export(emptyList(), "T")
+        val json = GeoJsonExporter.exportTrack(emptyList(), "T")
         val coords: JsonArray = Json.parseToJsonElement(json)
             .jsonObject["features"]!!.jsonArray[0]
             .jsonObject["geometry"]!!.jsonObject["coordinates"]!!.jsonArray

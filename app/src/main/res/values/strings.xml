@@ -224,4 +224,30 @@
     <string name="feedback_message_subject" translatable="false">Timeline Exporter — feature request</string>
     <string name="feedback_body_requested" translatable="false">Requested features:</string>
     <string name="feedback_body_notes" translatable="false">Notes:</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">Track</string>
+    <string name="content_places">Places</string>
+    <string name="places_none">This file records no places.</string>
+    <string name="places_none_filtered">No places in the selected date range.</string>
+    <string name="places_visits_label">visits</string>
+    <string name="places_show_all">Show all %1$s</string>
+    <string name="places_include_containers">Include malls and airports</string>
+    <string name="places_include_containers_hint">Google also records the building a place sits inside. Off by default — it repeats a stay you already have.</string>
+    <string name="place_unnamed_hint">Tap a place to give it a name.</string>
+    <string name="place_home">Home</string>
+    <string name="place_work">Work</string>
+    <string name="place_last_visit">last %1$s</string>
+    <string name="place_duration_hours">%1$s h</string>
+    <string name="place_duration_days">%1$s d</string>
+    <string name="place_dialog_title">Name this place</string>
+    <string name="place_dialog_field">Your name for this place</string>
+    <string name="place_dialog_maps">Open in Google Maps</string>
+    <string name="place_dialog_save">Save</string>
+    <string name="place_dialog_remove">Remove name</string>
+    <string name="place_toast_no_maps">No app on this device can open a map link.</string>
+    <string name="export_success_places">Saved %1$s places to %2$s</string>
+    <string name="export_shared_places">Prepared %1$s places as %2$s</string>
+    <string name="export_error_no_places">No places in the current date range.</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

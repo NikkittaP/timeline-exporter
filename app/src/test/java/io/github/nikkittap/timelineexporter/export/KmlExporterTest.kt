@@ -11,7 +11,7 @@ class KmlExporterTest {
 
     @Test
     fun `emits KML root element and document name`() {
-        val kml = KmlExporter.export(emptyList(), "My Trip")
+        val kml = KmlExporter.exportTrack(emptyList(), "My Trip")
         assertTrue(kml.contains("""<kml xmlns="http://www.opengis.net/kml/2.2">"""))
         assertTrue(kml.contains("<name>My Trip</name>"))
     }
@@ -20,7 +20,7 @@ class KmlExporterTest {
     fun `coordinates are emitted in lon,lat,alt order`() {
         // KML reverses the GPX order. This is the #1 reason KML files render
         // "in the wrong country" — test guards against accidental flip.
-        val kml = KmlExporter.export(
+        val kml = KmlExporter.exportTrack(
             listOf(PathPoint(Instant.parse("2025-01-01T00:00:00Z"), 41.284025, 69.242256)),
             "T",
         )
@@ -32,7 +32,7 @@ class KmlExporterTest {
 
     @Test
     fun `multiple points are separated by whitespace, not commas`() {
-        val kml = KmlExporter.export(
+        val kml = KmlExporter.exportTrack(
             listOf(
                 PathPoint(Instant.parse("2025-01-01T00:00:00Z"), 10.0, 20.0),
                 PathPoint(Instant.parse("2025-01-01T00:01:00Z"), 11.0, 21.0),
@@ -49,7 +49,7 @@ class KmlExporterTest {
 
     @Test
     fun `output is well-formed XML`() {
-        val kml = KmlExporter.export(
+        val kml = KmlExporter.exportTrack(
             listOf(PathPoint(Instant.parse("2025-01-01T00:00:00Z"), 10.0, 20.0)),
             "Sample",
         )

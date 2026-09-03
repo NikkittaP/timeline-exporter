@@ -281,30 +281,24 @@ data class ParsedTimeline(
             }
             .sortedByDescending { it.distanceMeters }
 
-    /** Number of distinct places visited within [range]. */
-    fun placeCount(range: ClosedRange<Instant>? = null): Int =
-        segments.asSequence()
-            .filter { it.kind == SegmentKind.VISIT }
-            .filter { range == null || it.start in range }
-            .mapNotNull { it.place?.placeId }
-            .filter { it.isNotEmpty() }
-            .toSet()
-            .size
-
     /**
-     * Distinct places, most-visited first, with a visit count each.
+     * Number of distinct places visited within [range].
      *
-     * Deduplicated by `placeId`: the sample export records 1071 visits against
-     * only 313 distinct places, so counting raw visits would report the same
-     * café 40 times over. Visits Google could not match to a place are
-     * dropped, since there is no identity to group them on.
+     * Counts exactly what `placeEntries` lists, containers included or
+     * excluded on the same terms — a header that says "282 places" above a
+     * 236-row list is a bug report waiting to happen. See `placeEntries` for
+     * why level-1 places are left out by default.
      */
-    fun placesByVisitCount(): List<Pair<Place, Int>> =
-        segments.asSequence()
-            .filter { it.kind == SegmentKind.VISIT }
-            .mapNotNull { it.place }
-            .filter { !it.placeId.isNullOrEmpty() }
-            .groupBy { it.placeId }
-            .map { (_, group) -> group.first() to group.size }
-            .sortedByDescending { it.second }
+    fun placeCount(
+        range: ClosedRange<Instant>? = null,
+        includeContainers: Boolean = false,
+    ): Int = segments.asSequence()
+        .filter { it.kind == SegmentKind.VISIT }
+        .filter { range == null || it.start in range }
+        .mapNotNull { it.place }
+        .filter { includeContainers || (it.hierarchyLevel ?: 0) == 0 }
+        .mapNotNull { it.placeId }
+        .filter { it.isNotEmpty() }
+        .toSet()
+        .size
 }

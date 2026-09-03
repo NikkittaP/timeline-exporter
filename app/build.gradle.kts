@@ -103,8 +103,20 @@ android {
         //                                         older Takeout layout, and
         //                                         sending an export straight
         //                                         to another app
-        versionCode = 13
-        versionName = "1.6.3"
+        //   versionCode=14, versionName="1.7.0" -> Places: step 3 gains a
+        //                                         Track / Places switch, and
+        //                                         every format can now export
+        //                                         places as well as a track
+        //                                         (GPX waypoints, KML Point
+        //                                         placemarks, GeoJSON Point
+        //                                         features, its own CSV).
+        //                                         Places are listed by visit
+        //                                         count, can be given local
+        //                                         names, and Google's
+        //                                         hierarchy-level containers
+        //                                         are excluded by default
+        versionCode = 14
+        versionName = "1.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

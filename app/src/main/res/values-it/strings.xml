@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• I file CSV contengono l\'ora UTC e l\'ora locale con lo scostamento, se il file Timeline registra il fuso orario.</string>
     <string name="feedback_prompt_body">L\'app cresce con le richieste di chi la usa. Non ha analytics: dimmi cosa manca.</string>
     <string name="feedback_prompt_action">Dimmi cosa aggiungere →</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">Traccia</string>
+    <string name="content_places">Luoghi</string>
+    <string name="places_none">Questo file non registra luoghi.</string>
+    <string name="places_none_filtered">Nessun luogo nell\'intervallo di date selezionato.</string>
+    <string name="places_visits_label">visite</string>
+    <string name="places_show_all">Mostra tutti %1$s</string>
+    <string name="places_include_containers">Includi centri commerciali e aeroporti</string>
+    <string name="places_include_containers_hint">Google registra anche l\'edificio in cui si trova un luogo. Disattivato per impostazione predefinita: ripete una sosta che hai già.</string>
+    <string name="place_unnamed_hint">Tocca un luogo per dargli un nome.</string>
+    <string name="place_home">Casa</string>
+    <string name="place_work">Lavoro</string>
+    <string name="place_last_visit">ultima %1$s</string>
+    <string name="place_duration_hours">%1$s h</string>
+    <string name="place_duration_days">%1$s g</string>
+    <string name="place_dialog_title">Assegna un nome al luogo</string>
+    <string name="place_dialog_field">Il tuo nome per questo luogo</string>
+    <string name="place_dialog_maps">Apri in Google Maps</string>
+    <string name="place_dialog_save">Salva</string>
+    <string name="place_dialog_remove">Rimuovi il nome</string>
+    <string name="place_toast_no_maps">Nessuna app su questo dispositivo può aprire un link a una mappa.</string>
+    <string name="export_success_places">Salvati %1$s luoghi in %2$s</string>
+    <string name="export_shared_places">Preparati %1$s luoghi come %2$s</string>
+    <string name="export_error_no_places">Nessun luogo nell\'intervallo di date attuale.</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

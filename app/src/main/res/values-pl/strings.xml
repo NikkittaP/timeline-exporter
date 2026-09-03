@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• Pliki CSV zawierają czas UTC oraz czas lokalny z przesunięciem, jeśli plik Timeline zapisuje strefę czasową.</string>
     <string name="feedback_prompt_body">Aplikacja rozwija się dzięki prośbom użytkowników. Nie ma analityki — napisz, czego brakuje.</string>
     <string name="feedback_prompt_action">Napisz, co dodać →</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">Trasa</string>
+    <string name="content_places">Miejsca</string>
+    <string name="places_none">Ten plik nie zawiera miejsc.</string>
+    <string name="places_none_filtered">Brak miejsc w wybranym zakresie dat.</string>
+    <string name="places_visits_label">wizyt</string>
+    <string name="places_show_all">Pokaż wszystkie: %1$s</string>
+    <string name="places_include_containers">Uwzględnij centra handlowe i lotniska</string>
+    <string name="places_include_containers_hint">Google zapisuje też budynek, w którym znajduje się miejsce. Domyślnie wyłączone — powtarza pobyt, który już masz.</string>
+    <string name="place_unnamed_hint">Dotknij miejsca, aby nadać mu nazwę.</string>
+    <string name="place_home">Dom</string>
+    <string name="place_work">Praca</string>
+    <string name="place_last_visit">ostatnia %1$s</string>
+    <string name="place_duration_hours">%1$s godz.</string>
+    <string name="place_duration_days">%1$s dn.</string>
+    <string name="place_dialog_title">Nazwij to miejsce</string>
+    <string name="place_dialog_field">Twoja nazwa tego miejsca</string>
+    <string name="place_dialog_maps">Otwórz w Mapach Google</string>
+    <string name="place_dialog_save">Zapisz</string>
+    <string name="place_dialog_remove">Usuń nazwę</string>
+    <string name="place_toast_no_maps">Żadna aplikacja na tym urządzeniu nie otworzy linku do mapy.</string>
+    <string name="export_success_places">Zapisano miejsca (%1$s) do %2$s</string>
+    <string name="export_shared_places">Przygotowano miejsca (%1$s) jako %2$s</string>
+    <string name="export_error_no_places">Brak miejsc w bieżącym zakresie dat.</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

@@ -11,13 +11,13 @@ class CsvExporterTest {
 
     @Test
     fun `first line is the column header`() {
-        val csv = CsvExporter.export(emptyList(), "ignored")
+        val csv = CsvExporter.exportTrack(emptyList(), "ignored")
         assertEquals("time_utc,latitude,longitude,time_local,utc_offset\r\n", csv)
     }
 
     @Test
     fun `each point produces one CRLF-terminated row`() {
-        val csv = CsvExporter.export(
+        val csv = CsvExporter.exportTrack(
             listOf(
                 PathPoint(Instant.parse("2025-06-09T19:58:00Z"), 41.284025, 69.242256),
                 PathPoint(Instant.parse("2025-06-09T20:00:00Z"), 41.290000, 69.250000),
@@ -32,7 +32,7 @@ class CsvExporterTest {
 
     @Test
     fun `local time column uses the point's own offset`() {
-        val csv = CsvExporter.export(
+        val csv = CsvExporter.exportTrack(
             listOf(
                 PathPoint(Instant.parse("2025-06-09T19:58:00Z"), 41.284025, 69.242256, 300),
             ),
@@ -47,7 +47,7 @@ class CsvExporterTest {
 
     @Test
     fun `negative and zero offsets are written in fixed +HH MM form`() {
-        val csv = CsvExporter.export(
+        val csv = CsvExporter.exportTrack(
             listOf(
                 PathPoint(Instant.parse("2025-01-01T12:00:00Z"), 1.0, 2.0, -210),
                 PathPoint(Instant.parse("2025-01-01T12:00:00Z"), 1.0, 2.0, 0),
@@ -61,7 +61,7 @@ class CsvExporterTest {
 
     @Test
     fun `unknown timezone leaves both local columns empty rather than guessing`() {
-        val csv = CsvExporter.export(
+        val csv = CsvExporter.exportTrack(
             listOf(PathPoint(Instant.parse("2025-01-01T12:00:00Z"), 1.0, 2.0, null)),
             "T",
         )
@@ -70,7 +70,7 @@ class CsvExporterTest {
 
     @Test
     fun `uses CRLF line endings per RFC 4180`() {
-        val csv = CsvExporter.export(
+        val csv = CsvExporter.exportTrack(
             listOf(PathPoint(Instant.parse("2025-01-01T00:00:00Z"), 1.0, 2.0)),
             "T",
         )
@@ -82,8 +82,8 @@ class CsvExporterTest {
 
     @Test
     fun `track name is intentionally ignored — CSV has no metadata channel`() {
-        val withName = CsvExporter.export(emptyList(), "Some Trip")
-        val withoutName = CsvExporter.export(emptyList(), "")
+        val withName = CsvExporter.exportTrack(emptyList(), "Some Trip")
+        val withoutName = CsvExporter.exportTrack(emptyList(), "")
         assertEquals(withName, withoutName)
     }
 
@@ -94,7 +94,7 @@ class CsvExporterTest {
         val previous = Locale.getDefault()
         try {
             Locale.setDefault(Locale.forLanguageTag("ar-EG"))
-            val csv = CsvExporter.export(
+            val csv = CsvExporter.exportTrack(
                 listOf(PathPoint(Instant.parse("2025-06-09T19:58:00Z"), 41.0, 69.0, 300)),
                 "T",
             )

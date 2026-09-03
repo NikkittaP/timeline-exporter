@@ -12,7 +12,7 @@ class GpxExporterTest {
 
     @Test
     fun `emits XML declaration, root gpx element, and the expected metadata`() {
-        val gpx = GpxExporter.export(emptyList(), trackName = "My Track")
+        val gpx = GpxExporter.exportTrack(emptyList(), name = "My Track")
         assertTrue(gpx.startsWith("""<?xml version="1.0" encoding="UTF-8"?>"""))
         assertTrue(gpx.contains("""<gpx version="1.1""""))
         assertTrue(gpx.contains("""xmlns="http://www.topografix.com/GPX/1/1""""))
@@ -21,9 +21,9 @@ class GpxExporterTest {
 
     @Test
     fun `serializes a point with lat, lon, and ISO-instant time`() {
-        val gpx = GpxExporter.export(
+        val gpx = GpxExporter.exportTrack(
             listOf(PathPoint(Instant.parse("2025-06-09T19:58:00Z"), 41.284025, 69.242256)),
-            trackName = "T",
+            name = "T",
         )
         assertTrue(gpx.contains("""<trkpt lat="41.284025" lon="69.242256">"""))
         assertTrue(gpx.contains("<time>2025-06-09T19:58:00Z</time>"))
@@ -31,9 +31,9 @@ class GpxExporterTest {
 
     @Test
     fun `escapes XML-special characters in track name`() {
-        val gpx = GpxExporter.export(
+        val gpx = GpxExporter.exportTrack(
             points = emptyList(),
-            trackName = "Trip <Tashkent & Malmö>",
+            name = "Trip <Tashkent & Malmö>",
         )
         assertTrue(gpx.contains("Trip &lt;Tashkent &amp; Malmö&gt;"))
         assertFalse(gpx.contains("Trip <Tashkent"))
@@ -41,12 +41,12 @@ class GpxExporterTest {
 
     @Test
     fun `output is well-formed XML — parseable by standard parser`() {
-        val gpx = GpxExporter.export(
+        val gpx = GpxExporter.exportTrack(
             listOf(
                 PathPoint(Instant.parse("2025-06-09T19:58:00Z"), 41.284, 69.242),
                 PathPoint(Instant.parse("2025-06-09T20:00:00Z"), 41.290, 69.250),
             ),
-            trackName = "Sample",
+            name = "Sample",
         )
         val doc = DocumentBuilderFactory.newInstance()
             .newDocumentBuilder()

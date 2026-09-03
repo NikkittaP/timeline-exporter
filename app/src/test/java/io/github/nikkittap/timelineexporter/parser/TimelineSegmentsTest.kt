@@ -157,15 +157,15 @@ class TimelineSegmentsTest {
             ] }
         """.trimIndent()
 
-        val places = parseTimeline(json).placesByVisitCount()
+        val places = parseTimeline(json).placeEntries()
 
-        // Four visits, two identifiable places; the unmatched one is dropped
-        // because there is no identity to group it on.
-        assertEquals(2, places.size)
-        assertEquals("home", places[0].first.placeId)
-        assertEquals(2, places[0].second)
-        assertEquals("cafe", places[1].first.placeId)
-        assertEquals(1, places[1].second)
+        // Four visits, three places: home twice, the cafe once, and the visit
+        // Google could not match to a place ID grouped on its coordinates
+        // rather than dropped — see PlaceEntryTest for that case in full.
+        assertEquals(3, places.size)
+        assertEquals("home", places[0].placeId)
+        assertEquals(2, places[0].visits)
+        assertEquals(setOf("cafe", null), places.drop(1).map { it.placeId }.toSet())
     }
 
     @Test

@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• У CSV є і час UTC, і місцевий час зі зміщенням — якщо у файлі Timeline записано часовий пояс.</string>
     <string name="feedback_prompt_body">Застосунок розвивається за запитами користувачів. Аналітики немає — розкажіть, чого бракує.</string>
     <string name="feedback_prompt_action">Написати, що додати →</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">Трек</string>
+    <string name="content_places">Місця</string>
+    <string name="places_none">У цьому файлі немає місць.</string>
+    <string name="places_none_filtered">У вибраному діапазоні дат немає місць.</string>
+    <string name="places_visits_label">візитів</string>
+    <string name="places_show_all">Показати всі %1$s</string>
+    <string name="places_include_containers">Включно з ТЦ та аеропортами</string>
+    <string name="places_include_containers_hint">Google записує також будівлю, у якій розташоване місце. Типово вимкнено — це дублює візит, який у вас уже є.</string>
+    <string name="place_unnamed_hint">Торкніться місця, щоб дати йому назву.</string>
+    <string name="place_home">Дім</string>
+    <string name="place_work">Робота</string>
+    <string name="place_last_visit">останній %1$s</string>
+    <string name="place_duration_hours">%1$s год</string>
+    <string name="place_duration_days">%1$s дн.</string>
+    <string name="place_dialog_title">Назва місця</string>
+    <string name="place_dialog_field">Ваша назва для цього місця</string>
+    <string name="place_dialog_maps">Відкрити в Google Картах</string>
+    <string name="place_dialog_save">Зберегти</string>
+    <string name="place_dialog_remove">Прибрати назву</string>
+    <string name="place_toast_no_maps">На цьому пристрої немає застосунку, який відкриє посилання на карту.</string>
+    <string name="export_success_places">Збережено місць: %1$s — у %2$s</string>
+    <string name="export_shared_places">Підготовлено місць: %1$s у форматі %2$s</string>
+    <string name="export_error_no_places">У поточному діапазоні дат немає місць.</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

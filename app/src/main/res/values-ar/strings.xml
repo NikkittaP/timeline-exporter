@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• تحتوي ملفات CSV على التوقيت العالمي والتوقيت المحلي مع فرق التوقيت، إذا كان ملف Timeline يسجّل المنطقة الزمنية.</string>
     <string name="feedback_prompt_body">يتطور التطبيق بناءً على طلبات المستخدمين. لا توجد أي تحليلات — أخبرني بما ينقص.</string>
     <string name="feedback_prompt_action">أخبرني بما يجب إضافته ←</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">المسار</string>
+    <string name="content_places">الأماكن</string>
+    <string name="places_none">لا يحتوي هذا الملف على أماكن.</string>
+    <string name="places_none_filtered">لا توجد أماكن في النطاق الزمني المحدد.</string>
+    <string name="places_visits_label">زيارة</string>
+    <string name="places_show_all">عرض الكل %1$s</string>
+    <string name="places_include_containers">تضمين المراكز التجارية والمطارات</string>
+    <string name="places_include_containers_hint">يسجّل Google أيضًا المبنى الذي يقع فيه المكان. مُعطَّل افتراضيًا — فهو يكرّر إقامة لديك بالفعل.</string>
+    <string name="place_unnamed_hint">انقر على مكان لتسميته.</string>
+    <string name="place_home">المنزل</string>
+    <string name="place_work">العمل</string>
+    <string name="place_last_visit">آخر %1$s</string>
+    <string name="place_duration_hours">%1$s س</string>
+    <string name="place_duration_days">%1$s ي</string>
+    <string name="place_dialog_title">تسمية هذا المكان</string>
+    <string name="place_dialog_field">اسمك لهذا المكان</string>
+    <string name="place_dialog_maps">فتح في خرائط Google</string>
+    <string name="place_dialog_save">حفظ</string>
+    <string name="place_dialog_remove">إزالة الاسم</string>
+    <string name="place_toast_no_maps">لا يوجد تطبيق على هذا الجهاز يمكنه فتح رابط خريطة.</string>
+    <string name="export_success_places">تم حفظ %1$s مكانًا في %2$s</string>
+    <string name="export_shared_places">تم تحضير %1$s مكانًا بصيغة %2$s</string>
+    <string name="export_error_no_places">لا توجد أماكن في النطاق الزمني الحالي.</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

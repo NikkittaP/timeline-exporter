@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• अगर Timeline फ़ाइल में टाइम ज़ोन दर्ज है, तो CSV में UTC समय के साथ स्थानीय समय और UTC ऑफ़सेट भी रहता है।</string>
     <string name="feedback_prompt_body">यह ऐप उपयोगकर्ताओं के अनुरोध पर बढ़ता है। इसमें कोई एनालिटिक्स नहीं है — बताइए क्या कमी है।</string>
     <string name="feedback_prompt_action">बताइए क्या जोड़ना है →</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">ट्रैक</string>
+    <string name="content_places">जगहें</string>
+    <string name="places_none">इस फ़ाइल में कोई जगह दर्ज नहीं है।</string>
+    <string name="places_none_filtered">चुनी गई तारीख़ सीमा में कोई जगह नहीं है।</string>
+    <string name="places_visits_label">बार</string>
+    <string name="places_show_all">सभी %1$s दिखाएँ</string>
+    <string name="places_include_containers">मॉल और हवाई अड्डे शामिल करें</string>
+    <string name="places_include_containers_hint">Google उस इमारत को भी दर्ज करता है जिसमें जगह है। डिफ़ॉल्ट रूप से बंद — यह पहले से मौजूद ठहराव को दोहराता है।</string>
+    <string name="place_unnamed_hint">नाम देने के लिए किसी जगह पर टैप करें।</string>
+    <string name="place_home">घर</string>
+    <string name="place_work">काम</string>
+    <string name="place_last_visit">आख़िरी %1$s</string>
+    <string name="place_duration_hours">%1$s घं.</string>
+    <string name="place_duration_days">%1$s दिन</string>
+    <string name="place_dialog_title">इस जगह को नाम दें</string>
+    <string name="place_dialog_field">इस जगह के लिए आपका नाम</string>
+    <string name="place_dialog_maps">Google Maps में खोलें</string>
+    <string name="place_dialog_save">सहेजें</string>
+    <string name="place_dialog_remove">नाम हटाएँ</string>
+    <string name="place_toast_no_maps">इस डिवाइस पर कोई ऐप मैप लिंक नहीं खोल सकता।</string>
+    <string name="export_success_places">%1$s जगहें %2$s में सहेजी गईं</string>
+    <string name="export_shared_places">%1$s जगहें %2$s के रूप में तैयार की गईं</string>
+    <string name="export_error_no_places">मौजूदा तारीख़ सीमा में कोई जगह नहीं है।</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

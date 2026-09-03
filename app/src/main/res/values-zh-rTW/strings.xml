@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• 若 Timeline 檔案有記錄時區，CSV 會同時包含 UTC 時間、當地時間與 UTC 偏移。</string>
     <string name="feedback_prompt_body">這個應用程式靠使用者的需求成長。它沒有任何分析統計，請告訴我還缺什麼。</string>
     <string name="feedback_prompt_action">告訴我該加什麼 →</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">軌跡</string>
+    <string name="content_places">地點</string>
+    <string name="places_none">此檔案不含地點記錄。</string>
+    <string name="places_none_filtered">所選日期範圍內沒有地點。</string>
+    <string name="places_visits_label">次</string>
+    <string name="places_show_all">查看全部 %1$s</string>
+    <string name="places_include_containers">包含購物中心和機場</string>
+    <string name="places_include_containers_hint">Google 也會記錄地點所在的建築。預設關閉：它會重複你已有的一次停留。</string>
+    <string name="place_unnamed_hint">輕觸地點為它命名。</string>
+    <string name="place_home">住家</string>
+    <string name="place_work">公司</string>
+    <string name="place_last_visit">最近 %1$s</string>
+    <string name="place_duration_hours">%1$s 小時</string>
+    <string name="place_duration_days">%1$s 天</string>
+    <string name="place_dialog_title">為此地點命名</string>
+    <string name="place_dialog_field">你為此地點取的名稱</string>
+    <string name="place_dialog_maps">在 Google 地圖中開啟</string>
+    <string name="place_dialog_save">儲存</string>
+    <string name="place_dialog_remove">移除名稱</string>
+    <string name="place_toast_no_maps">此裝置上沒有應用程式可以開啟地圖連結。</string>
+    <string name="export_success_places">已將 %1$s 個地點儲存到 %2$s</string>
+    <string name="export_shared_places">已將 %1$s 個地點準備為 %2$s</string>
+    <string name="export_error_no_places">目前日期範圍內沒有地點。</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

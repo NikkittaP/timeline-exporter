@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• CSV-filer innehåller både UTC-tid och lokal tid med UTC-offset, om Timeline-filen sparar tidszonen.</string>
     <string name="feedback_prompt_body">Appen växer med användarnas önskemål. Den har ingen analys — berätta vad som saknas.</string>
     <string name="feedback_prompt_action">Berätta vad som saknas →</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">Spår</string>
+    <string name="content_places">Platser</string>
+    <string name="places_none">Den här filen innehåller inga platser.</string>
+    <string name="places_none_filtered">Inga platser i det valda datumintervallet.</string>
+    <string name="places_visits_label">besök</string>
+    <string name="places_show_all">Visa alla %1$s</string>
+    <string name="places_include_containers">Ta med gallerior och flygplatser</string>
+    <string name="places_include_containers_hint">Google registrerar även byggnaden som en plats ligger i. Av som standard – det upprepar ett besök du redan har.</string>
+    <string name="place_unnamed_hint">Tryck på en plats för att ge den ett namn.</string>
+    <string name="place_home">Hem</string>
+    <string name="place_work">Arbete</string>
+    <string name="place_last_visit">senast %1$s</string>
+    <string name="place_duration_hours">%1$s tim</string>
+    <string name="place_duration_days">%1$s d</string>
+    <string name="place_dialog_title">Namnge platsen</string>
+    <string name="place_dialog_field">Ditt namn på den här platsen</string>
+    <string name="place_dialog_maps">Öppna i Google Maps</string>
+    <string name="place_dialog_save">Spara</string>
+    <string name="place_dialog_remove">Ta bort namnet</string>
+    <string name="place_toast_no_maps">Ingen app på den här enheten kan öppna en kartlänk.</string>
+    <string name="export_success_places">Sparade %1$s platser till %2$s</string>
+    <string name="export_shared_places">Förberedde %1$s platser som %2$s</string>
+    <string name="export_error_no_places">Inga platser i det aktuella datumintervallet.</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

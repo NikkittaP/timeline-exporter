@@ -1,6 +1,7 @@
 package io.github.nikkittap.timelineexporter.export
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
+import java.time.format.DateTimeFormatter
 
 /**
  * Export to GeoJSON (RFC 7946) — the standard JSON interchange for geo data.
@@ -8,8 +9,12 @@ import io.github.nikkittap.timelineexporter.parser.PathPoint
  *
  * Coordinate order per RFC 7946 §3.1.1: longitude FIRST, then latitude.
  *
- * Output is a FeatureCollection containing one Feature whose geometry is a
- * single LineString. Properties carry the track name and creator.
+ * A track is a FeatureCollection containing one Feature whose geometry is a
+ * single LineString. Places are a FeatureCollection of Point Features, one per
+ * place, each carrying the whole aggregate in its `properties` — which is the
+ * point of choosing GeoJSON over the two XML formats: QGIS and pandas will
+ * happily sort, filter and join on `visits` or `total_seconds` without anyone
+ * having to parse a description string back apart.
  */
 object GeoJsonExporter : Exporter {
     override val displayName = "GeoJSON"
@@ -18,7 +23,12 @@ object GeoJsonExporter : Exporter {
 
     private const val CREATOR = "Timeline Exporter for Android"
 
-    override fun export(points: List<PathPoint>, trackName: String): String {
+    override fun export(content: ExportContent, name: String): String = when (content) {
+        is ExportContent.Track -> exportTrack(content.points, name)
+        is ExportContent.Places -> exportPlaces(content.places, name)
+    }
+
+    private fun exportTrack(points: List<PathPoint>, trackName: String): String {
         val sb = StringBuilder(points.size * 35 + 500)
         sb.append("{\n")
         sb.append("  \"type\": \"FeatureCollection\",\n")
@@ -43,6 +53,47 @@ object GeoJsonExporter : Exporter {
         sb.append("]\n")
         sb.append("      }\n")
         sb.append("    }\n")
+        sb.append("  ]\n")
+        sb.append("}\n")
+        return sb.toString()
+    }
+
+    private fun exportPlaces(places: List<ExportPlace>, documentName: String): String {
+        val sb = StringBuilder(places.size * 400 + 500)
+        sb.append("{\n")
+        sb.append("  \"type\": \"FeatureCollection\",\n")
+        sb.append("  \"name\": ").append(jsonString(documentName)).append(",\n")
+        sb.append("  \"features\": [\n")
+        for ((i, place) in places.withIndex()) {
+            sb.append("    {\n")
+            sb.append("      \"type\": \"Feature\",\n")
+            sb.append("      \"properties\": {\n")
+            sb.append("        \"name\": ").append(jsonString(place.name)).append(",\n")
+            sb.append("        \"visits\": ").append(place.visits).append(",\n")
+            sb.append("        \"total_seconds\": ").append(place.totalSeconds).append(",\n")
+            sb.append("        \"first_visit\": ")
+                .append(jsonString(DateTimeFormatter.ISO_INSTANT.format(place.firstVisit)))
+                .append(",\n")
+            sb.append("        \"last_visit\": ")
+                .append(jsonString(DateTimeFormatter.ISO_INSTANT.format(place.lastVisit)))
+                .append(",\n")
+            // null rather than an omitted key: a table built from these
+            // features keeps the same columns for every row, which is what
+            // QGIS and pandas both want.
+            sb.append("        \"category\": ").append(jsonOrNull(place.category)).append(",\n")
+            sb.append("        \"address\": ").append(jsonOrNull(place.address)).append(",\n")
+            sb.append("        \"place_id\": ").append(jsonOrNull(place.placeId)).append(",\n")
+            sb.append("        \"google_maps_url\": ").append(jsonOrNull(place.mapsUrl)).append('\n')
+            sb.append("      },\n")
+            sb.append("      \"geometry\": {\n")
+            sb.append("        \"type\": \"Point\",\n")
+            sb.append("        \"coordinates\": [")
+                .append(place.longitude).append(", ").append(place.latitude).append("]\n")
+            sb.append("      }\n")
+            sb.append("    }")
+            if (i < places.size - 1) sb.append(',')
+            sb.append('\n')
+        }
         sb.append("  ]\n")
         sb.append("}\n")
         return sb.toString()
@@ -75,3 +126,7 @@ private fun jsonString(s: String): String {
     sb.append('"')
     return sb.toString()
 }
+
+/** A JSON string, or the literal `null` for a missing or blank value. */
+private fun jsonOrNull(s: String?): String =
+    if (s.isNullOrBlank()) "null" else jsonString(s)

@@ -5,9 +5,10 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.nikkittap.timelineexporter.export.ContentKind
+import io.github.nikkittap.timelineexporter.export.ExportContent
 import io.github.nikkittap.timelineexporter.export.Exporter
 import io.github.nikkittap.timelineexporter.filter.TimelineFilter
-import io.github.nikkittap.timelineexporter.filter.applyFilter
 import io.github.nikkittap.timelineexporter.parser.MovementGroup
 import io.github.nikkittap.timelineexporter.parser.NotTimelineFileException
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
@@ -63,8 +64,20 @@ sealed interface TimelineUiState {
 sealed interface ExportState {
     data object Idle : ExportState
     data object Working : ExportState
-    /** [displayName] may be null if the content provider didn't expose one. */
-    data class Success(val pointCount: Int, val displayName: String?) : ExportState
+
+    /**
+     * [itemCount] counts whatever [kind] says was written — track points, or
+     * places. The two need different wording ("2,481 points" vs "36 places"),
+     * and only the UI can produce a translated, correctly pluralised string,
+     * so the state carries the number and the kind and nothing else.
+     *
+     * [displayName] may be null if the content provider didn't expose one.
+     */
+    data class Success(
+        val itemCount: Int,
+        val kind: ContentKind,
+        val displayName: String?,
+    ) : ExportState
 
     /**
      * The export was written to the cache and handed to the system share
@@ -73,9 +86,15 @@ sealed interface ExportState {
      * because we never learn which app they picked, or whether they picked
      * one at all.
      */
-    data class Shared(val pointCount: Int, val formatName: String) : ExportState
+    data class Shared(
+        val itemCount: Int,
+        val kind: ContentKind,
+        val formatName: String,
+    ) : ExportState
+
     /** Semantic failure kind — UI composes the localized message. */
     sealed interface Failure : ExportState {
+        /** Nothing to write: no points in the track, or no places at all. */
         data object NoPoints : Failure
         /**
          * Anything else. [formatName] e.g. "GPX", [exceptionClass] e.g.
@@ -119,6 +138,28 @@ class TimelineViewModel : ViewModel() {
     private val _pendingShare = MutableStateFlow<PendingShare?>(null)
     val pendingShare: StateFlow<PendingShare?> = _pendingShare.asStateFlow()
 
+    /**
+     * Which of the file's contents the user is looking at, and therefore what
+     * the format buttons in step 4 will write.
+     *
+     * ViewModel state rather than UI state because it decides what gets
+     * exported, and because a rotation in the middle of reviewing a places
+     * list should not bounce the user back to the track.
+     */
+    private val _contentKind = MutableStateFlow(ContentKind.TRACK)
+    val contentKind: StateFlow<ContentKind> = _contentKind.asStateFlow()
+
+    /**
+     * Whether the places list includes Google's level-1 "container" places —
+     * the mall a shop sits in, the airport around a terminal.
+     *
+     * Off by default: every level-1 visit in the reference export overlaps a
+     * level-0 visit, so including them reports one afternoon as two stays.
+     * See `placeEntries` for why it is nevertheless offered.
+     */
+    private val _includeContainers = MutableStateFlow(false)
+    val includeContainers: StateFlow<Boolean> = _includeContainers.asStateFlow()
+
     // ----- parse pipeline -----
 
     fun onFileSelected(uri: Uri, contentResolver: ContentResolver) {
@@ -126,6 +167,9 @@ class TimelineViewModel : ViewModel() {
         _filter.value = TimelineFilter()
         _exportState.value = ExportState.Idle
         _pendingShare.value = null
+        // A new file is a new subject: start on the track, the way step 3 has
+        // always opened, rather than on a places list built from the old one.
+        _contentKind.value = ContentKind.TRACK
 
         viewModelScope.launch {
             val newState = withContext(Dispatchers.IO) {
@@ -223,24 +267,43 @@ class TimelineViewModel : ViewModel() {
         _exportState.value = ExportState.Idle
     }
 
+    // ----- content selection -----
+
+    fun setContentKind(kind: ContentKind) {
+        if (_contentKind.value == kind) return
+        _contentKind.value = kind
+        // The previous result described the other content ("exported 2,481
+        // points"), which would now be read as describing this one.
+        _exportState.value = ExportState.Idle
+    }
+
+    fun setIncludeContainers(enabled: Boolean) {
+        _includeContainers.value = enabled
+        _exportState.value = ExportState.Idle
+    }
+
     // ----- export -----
 
     /**
      * Called after the user picked a destination URI via CreateDocument.
-     * [trackName] is the (already-localized) string the UI wants embedded
-     * inside the exported file as the track's human label.
+     *
+     * [content] is built by the UI rather than recomputed here. Places carry
+     * display names that only `stringResource` can produce, and having the UI
+     * hand over a finished payload also removes the second, independent copy
+     * of the filtering logic this method used to run — the screen already
+     * derives the filtered points to show a count, and the two could disagree
+     * if a filter changed between rendering and the save dialog returning.
+     *
+     * [name] is the (already-localized) label to embed inside the file.
      */
     fun onSaveDestinationSelected(
         uri: Uri,
         exporter: Exporter,
-        trackName: String,
+        content: ExportContent,
+        name: String,
         contentResolver: ContentResolver,
     ) {
-        val loaded = _uiState.value as? TimelineUiState.Loaded ?: return
-        val currentFilter = _filter.value
-        val filteredPoints =
-            applyFilter(loaded.result.pathPoints, currentFilter, loaded.result.segments)
-        if (filteredPoints.isEmpty()) {
+        if (content.isEmpty) {
             _exportState.value = ExportState.Failure.NoPoints
             return
         }
@@ -249,12 +312,13 @@ class TimelineViewModel : ViewModel() {
         viewModelScope.launch {
             val newState = withContext(Dispatchers.IO) {
                 try {
-                    val content = exporter.export(filteredPoints, trackName)
+                    val text = exporter.export(content, name)
                     contentResolver.openOutputStream(uri)?.use { out ->
-                        out.write(content.toByteArray(Charsets.UTF_8))
+                        out.write(text.toByteArray(Charsets.UTF_8))
                     } ?: throw IOException("openOutputStream returned null for $uri")
                     ExportState.Success(
-                        pointCount = filteredPoints.size,
+                        itemCount = content.size,
+                        kind = content.kind,
                         displayName = queryDisplayName(uri, contentResolver),
                     )
                 } catch (e: Exception) {
@@ -270,8 +334,8 @@ class TimelineViewModel : ViewModel() {
     }
 
     /**
-     * Write the current selection to a file in the cache and offer it to
-     * another app, instead of saving it somewhere the user picked.
+     * Write [content] to a file in the cache and offer it to another app,
+     * instead of saving it somewhere the user picked.
      *
      * Requested as "send the export straight to another app instead of saving
      * a file" — the point is to skip the storage round-trip entirely when the
@@ -281,12 +345,14 @@ class TimelineViewModel : ViewModel() {
      * [cacheDir] rather than a Context: the ViewModel needs a directory, not
      * an Android environment, and taking the narrower type keeps it testable.
      */
-    fun onShareRequested(exporter: Exporter, trackName: String, cacheDir: File) {
-        val loaded = _uiState.value as? TimelineUiState.Loaded ?: return
-        val currentFilter = _filter.value
-        val filteredPoints =
-            applyFilter(loaded.result.pathPoints, currentFilter, loaded.result.segments)
-        if (filteredPoints.isEmpty()) {
+    fun onShareRequested(
+        exporter: Exporter,
+        content: ExportContent,
+        name: String,
+        filename: String,
+        cacheDir: File,
+    ) {
+        if (content.isEmpty) {
             _exportState.value = ExportState.Failure.NoPoints
             return
         }
@@ -302,10 +368,10 @@ class TimelineViewModel : ViewModel() {
                     // be tens of megabytes — leaving a pile of them in the
                     // cache for the system to reap eventually is not polite.
                     dir.listFiles()?.forEach { it.delete() }
-                    val file = File(dir, suggestFilename(currentFilter, exporter))
-                    file.writeText(exporter.export(filteredPoints, trackName), Charsets.UTF_8)
+                    val file = File(dir, filename)
+                    file.writeText(exporter.export(content, name), Charsets.UTF_8)
                     _pendingShare.value = PendingShare(file, exporter.mimeType)
-                    ExportState.Shared(filteredPoints.size, exporter.displayName)
+                    ExportState.Shared(content.size, content.kind, exporter.displayName)
                 } catch (e: Exception) {
                     ExportState.Failure.Generic(
                         formatName = exporter.displayName,
@@ -373,12 +439,24 @@ private class CountingInputStream(private val wrapped: InputStream) : InputStrea
  * Suggest a filename for the save dialog. Filenames stay English /
  * ASCII-friendly for cross-platform compatibility — they're not
  * localised even when the rest of the UI is.
+ *
+ * The content kind is part of the name because a user exporting both ends up
+ * with two files in the same folder, and "Timeline.gpx" twice would mean the
+ * second silently replaces the first.
  */
-fun suggestFilename(filter: TimelineFilter, exporter: Exporter): String {
+fun suggestFilename(
+    filter: TimelineFilter,
+    exporter: Exporter,
+    kind: ContentKind = ContentKind.TRACK,
+): String {
+    val stem = when (kind) {
+        ContentKind.TRACK -> "Timeline"
+        ContentKind.PLACES -> "Timeline_places"
+    }
     val range = filter.dateRange
-        ?: return "Timeline.${exporter.fileExtension}"
+        ?: return "$stem.${exporter.fileExtension}"
     val z = ZoneId.systemDefault()
     val from = range.start.atZone(z).toLocalDate()
     val to = range.endInclusive.atZone(z).toLocalDate()
-    return "Timeline_${from}_to_${to}.${exporter.fileExtension}"
+    return "${stem}_${from}_to_${to}.${exporter.fileExtension}"
 }

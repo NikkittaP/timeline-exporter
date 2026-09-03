@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• CSV-bestanden bevatten zowel UTC-tijd als lokale tijd met de UTC-offset, als het Timeline-bestand de tijdzone opslaat.</string>
     <string name="feedback_prompt_body">De app groeit op verzoeken van gebruikers. Er zit geen analytics in — laat weten wat ontbreekt.</string>
     <string name="feedback_prompt_action">Laat weten wat erbij moet →</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">Route</string>
+    <string name="content_places">Plaatsen</string>
+    <string name="places_none">Dit bestand bevat geen plaatsen.</string>
+    <string name="places_none_filtered">Geen plaatsen in het geselecteerde datumbereik.</string>
+    <string name="places_visits_label">bezoeken</string>
+    <string name="places_show_all">Alle %1$s tonen</string>
+    <string name="places_include_containers">Winkelcentra en luchthavens meenemen</string>
+    <string name="places_include_containers_hint">Google registreert ook het gebouw waarin een plaats ligt. Standaard uit: het herhaalt een verblijf dat je al hebt.</string>
+    <string name="place_unnamed_hint">Tik op een plaats om die een naam te geven.</string>
+    <string name="place_home">Thuis</string>
+    <string name="place_work">Werk</string>
+    <string name="place_last_visit">laatst %1$s</string>
+    <string name="place_duration_hours">%1$s u</string>
+    <string name="place_duration_days">%1$s d</string>
+    <string name="place_dialog_title">Plaats een naam geven</string>
+    <string name="place_dialog_field">Jouw naam voor deze plaats</string>
+    <string name="place_dialog_maps">Openen in Google Maps</string>
+    <string name="place_dialog_save">Opslaan</string>
+    <string name="place_dialog_remove">Naam verwijderen</string>
+    <string name="place_toast_no_maps">Geen app op dit apparaat kan een kaartlink openen.</string>
+    <string name="export_success_places">%1$s plaatsen opgeslagen in %2$s</string>
+    <string name="export_shared_places">%1$s plaatsen voorbereid als %2$s</string>
+    <string name="export_error_no_places">Geen plaatsen in het huidige datumbereik.</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

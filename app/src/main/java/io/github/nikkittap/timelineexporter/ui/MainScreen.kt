@@ -78,7 +78,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.nikkittap.timelineexporter.BuildConfig
 import io.github.nikkittap.timelineexporter.R
 import io.github.nikkittap.timelineexporter.export.AllExporters
+import io.github.nikkittap.timelineexporter.export.ContentKind
 import io.github.nikkittap.timelineexporter.export.CsvExporter
+import io.github.nikkittap.timelineexporter.export.ExportContent
 import io.github.nikkittap.timelineexporter.export.Exporter
 import io.github.nikkittap.timelineexporter.export.GeoJsonExporter
 import io.github.nikkittap.timelineexporter.export.GpxExporter
@@ -89,7 +91,9 @@ import io.github.nikkittap.timelineexporter.parser.MovementGroup
 import io.github.nikkittap.timelineexporter.parser.MovementStats
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.PathPoint
+import io.github.nikkittap.timelineexporter.parser.PlaceEntry
 import io.github.nikkittap.timelineexporter.parser.TimelineFormat
+import io.github.nikkittap.timelineexporter.parser.placeEntries
 import java.time.Instant
 import java.time.ZoneId
 
@@ -226,6 +230,12 @@ fun MainScreen(
     val exportState by viewModel.exportState.collectAsStateWithLifecycle()
 
     val pendingShare by viewModel.pendingShare.collectAsStateWithLifecycle()
+    val contentKind by viewModel.contentKind.collectAsStateWithLifecycle()
+    val includeContainers by viewModel.includeContainers.collectAsStateWithLifecycle()
+
+    // The user's own names for places. Lives here rather than in the ViewModel
+    // because reading it needs a Context — see PlaceLabelState.
+    val placeLabels = rememberPlaceLabels()
 
     var dateDialogOpen by remember { mutableStateOf(false) }
     var mapInteracting by remember { mutableStateOf(false) }
@@ -234,6 +244,9 @@ fun MainScreen(
     // destination is not silently reset under the user.
     var shareInstead by rememberSaveable { mutableStateOf(false) }
     var mapFullscreen by remember { mutableStateOf(false) }
+    var placesFullscreen by remember { mutableStateOf(false) }
+    // Non-null while the naming dialog is open, and the place it is about.
+    var placeBeingNamed by remember { mutableStateOf<PlaceEntry?>(null) }
     val scrollState = rememberScrollState()
 
     // A successful export lands at the bottom of a four-step screen the user is
@@ -256,6 +269,30 @@ fun MainScreen(
         }
     }
 
+    // What the user has selected, derived once at the top of the screen.
+    //
+    // Hoisted above the launchers on purpose: a save destination comes back
+    // through a callback that fires long after the card which triggered it has
+    // been recomposed, so the payload cannot be built down inside step 4. It
+    // also collapses what used to be three separate derivations of the same
+    // filtered list — one for the preview, one for the fullscreen map, one
+    // inside the ViewModel — into the single source all three now read.
+    val loadedResult = (uiState as? TimelineUiState.Loaded)?.result
+    val filteredPoints by remember(loadedResult, filter) {
+        derivedStateOf {
+            loadedResult?.let { applyFilter(it.pathPoints, filter, it.segments) } ?: emptyList()
+        }
+    }
+    val places by remember(loadedResult, filter.dateRange, includeContainers) {
+        derivedStateOf {
+            loadedResult?.placeEntries(filter.dateRange, includeContainers) ?: emptyList()
+        }
+    }
+    val exportContent: ExportContent = when (contentKind) {
+        ContentKind.TRACK -> ExportContent.Track(filteredPoints)
+        ContentKind.PLACES -> ExportContent.Places(exportPlaces(places, placeLabels))
+    }
+
     val movableMap = remember {
         movableContentOf<List<PathPoint>, Modifier> { pts, m ->
             TrackMap(
@@ -266,9 +303,11 @@ fun MainScreen(
         }
     }
 
-    // The localized track name to embed in exported files. Recomputes per
+    // The localized label to embed inside exported files, and the filename to
+    // suggest for them. Both depend on what is being exported, so both change
+    // when the user flips the Track / Places switch. They recompute per
     // recomposition; the launcher callbacks below capture the current value.
-    val trackName = buildTrackName(filter)
+    val contentName = buildContentName(filter, contentKind)
 
     val pickFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
@@ -280,33 +319,57 @@ fun MainScreen(
         contract = ActivityResultContracts.CreateDocument(GpxExporter.mimeType),
     ) { uri ->
         uri?.let {
-            viewModel.onSaveDestinationSelected(it, GpxExporter, trackName, context.contentResolver)
+            viewModel.onSaveDestinationSelected(
+                uri = it,
+                exporter = GpxExporter,
+                content = exportContent,
+                name = contentName,
+                contentResolver = context.contentResolver,
+            )
         }
     }
     val kmlLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument(KmlExporter.mimeType),
     ) { uri ->
         uri?.let {
-            viewModel.onSaveDestinationSelected(it, KmlExporter, trackName, context.contentResolver)
+            viewModel.onSaveDestinationSelected(
+                uri = it,
+                exporter = KmlExporter,
+                content = exportContent,
+                name = contentName,
+                contentResolver = context.contentResolver,
+            )
         }
     }
     val geojsonLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument(GeoJsonExporter.mimeType),
     ) { uri ->
         uri?.let {
-            viewModel.onSaveDestinationSelected(it, GeoJsonExporter, trackName, context.contentResolver)
+            viewModel.onSaveDestinationSelected(
+                uri = it,
+                exporter = GeoJsonExporter,
+                content = exportContent,
+                name = contentName,
+                contentResolver = context.contentResolver,
+            )
         }
     }
     val csvLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument(CsvExporter.mimeType),
     ) { uri ->
         uri?.let {
-            viewModel.onSaveDestinationSelected(it, CsvExporter, trackName, context.contentResolver)
+            viewModel.onSaveDestinationSelected(
+                uri = it,
+                exporter = CsvExporter,
+                content = exportContent,
+                name = contentName,
+                contentResolver = context.contentResolver,
+            )
         }
     }
 
     val launchSave: (Exporter) -> Unit = { exporter ->
-        val name = suggestFilename(filter, exporter)
+        val name = suggestFilename(filter, exporter, contentKind)
         when (exporter) {
             GpxExporter -> gpxLauncher.launch(name)
             KmlExporter -> kmlLauncher.launch(name)
@@ -317,7 +380,13 @@ fun MainScreen(
 
     val onPickFormat: (Exporter) -> Unit = { exporter ->
         if (shareInstead) {
-            viewModel.onShareRequested(exporter, trackName, context.cacheDir)
+            viewModel.onShareRequested(
+                exporter = exporter,
+                content = exportContent,
+                name = contentName,
+                filename = suggestFilename(filter, exporter, contentKind),
+                cacheDir = context.cacheDir,
+            )
         } else {
             launchSave(exporter)
         }
@@ -398,11 +467,8 @@ fun MainScreen(
             }
 
             // Remaining steps only make sense once a file is loaded.
-            val loaded = (uiState as? TimelineUiState.Loaded)?.result
+            val loaded = loadedResult
             if (loaded != null) {
-                val filteredPoints by remember(loaded, filter) {
-                    derivedStateOf { applyFilter(loaded.pathPoints, filter, loaded.segments) }
-                }
                 val dataLast = loaded.pathPoints.lastOrNull()?.timeUtc
 
                 StepCard(step = 2, title = stringResource(R.string.step_filter)) {
@@ -416,6 +482,7 @@ fun MainScreen(
                         onCustom = { dateDialogOpen = true },
                         parsed = loaded,
                         filter = filter,
+                        includeContainers = includeContainers,
                         onToggleMovement = { group, on, available ->
                             viewModel.toggleMovement(group, on, available)
                         },
@@ -427,24 +494,51 @@ fun MainScreen(
                 StepCard(
                     step = 3,
                     title = stringResource(R.string.step_preview),
+                    // Only the map has anything to expand into; the places
+                    // list offers "show all" under itself, where the row count
+                    // that motivates it is visible.
                     trailing = {
-                        if (filteredPoints.isNotEmpty()) {
+                        if (contentKind == ContentKind.TRACK && filteredPoints.isNotEmpty()) {
                             TextButton(onClick = { mapFullscreen = true }) {
                                 Text(stringResource(R.string.preview_expand))
                             }
                         }
                     },
                 ) {
-                    PreviewContent(
-                        points = filteredPoints,
-                        inlineMapActive = !mapFullscreen,
-                        mapContent = movableMap,
+                    ContentSwitch(
+                        selected = contentKind,
+                        enabled = exportState !is ExportState.Working,
+                        onSelect = { viewModel.setContentKind(it) },
                     )
+                    when (contentKind) {
+                        ContentKind.TRACK -> PreviewContent(
+                            points = filteredPoints,
+                            inlineMapActive = !mapFullscreen,
+                            mapContent = movableMap,
+                        )
+
+                        ContentKind.PLACES -> {
+                            PlacesPreview(
+                                entries = places,
+                                labels = placeLabels,
+                                dateRangeActive = filter.dateRange != null,
+                                onPlaceClick = { placeBeingNamed = it },
+                                onShowAll = { placesFullscreen = true },
+                            )
+                            ToggleRow(
+                                label = stringResource(R.string.places_include_containers),
+                                supporting = stringResource(R.string.places_include_containers_hint),
+                                checked = includeContainers,
+                                onCheckedChange = { viewModel.setIncludeContainers(it) },
+                            )
+                        }
+                    }
                 }
 
                 StepCard(step = 4, title = stringResource(R.string.step_export)) {
-                    ExportContent(
-                        canSave = filteredPoints.isNotEmpty(),
+                    ExportStep(
+                        canSave = !exportContent.isEmpty,
+                        contentKind = contentKind,
                         exportState = exportState,
                         shareInstead = shareInstead,
                         onShareInsteadChange = { shareInstead = it },
@@ -457,26 +551,39 @@ fun MainScreen(
             VersionFooter(modifier = Modifier.align(Alignment.CenterHorizontally))
         }
 
-        if (mapFullscreen) {
-            val loadedResult = (uiState as? TimelineUiState.Loaded)?.result
-            if (loadedResult != null) {
-                val fullscreenPoints by remember(loadedResult, filter) {
-                    derivedStateOf {
-                        applyFilter(loadedResult.pathPoints, filter, loadedResult.segments)
-                    }
-                }
-                BackHandler { mapFullscreen = false }
-                ExpandedMap(
-                    points = fullscreenPoints,
-                    onClose = { mapFullscreen = false },
-                    mapContent = movableMap,
-                )
-            }
+        if (mapFullscreen && loadedResult != null) {
+            BackHandler { mapFullscreen = false }
+            ExpandedMap(
+                points = filteredPoints,
+                onClose = { mapFullscreen = false },
+                mapContent = movableMap,
+            )
+        }
+
+        if (placesFullscreen && places.isNotEmpty()) {
+            BackHandler { placesFullscreen = false }
+            ExpandedPlaces(
+                entries = places,
+                labels = placeLabels,
+                onPlaceClick = { placeBeingNamed = it },
+                onClose = { placesFullscreen = false },
+            )
         }
     }
 
+    placeBeingNamed?.let { entry ->
+        PlaceLabelDialog(
+            entry = entry,
+            currentLabel = placeLabels[entry.key],
+            onSave = { label ->
+                placeLabels.set(entry.key, label)
+                placeBeingNamed = null
+            },
+            onDismiss = { placeBeingNamed = null },
+        )
+    }
+
     if (dateDialogOpen) {
-        val loadedResult = (uiState as? TimelineUiState.Loaded)?.result
         val dataRange = loadedResult?.let {
             it.pathPoints.firstOrNull()?.timeUtc?.let { first ->
                 first..it.pathPoints.last().timeUtc
@@ -664,6 +771,7 @@ private fun FilterContent(
     onCustom: () -> Unit,
     parsed: ParsedTimeline,
     filter: TimelineFilter,
+    includeContainers: Boolean,
     onToggleMovement: (MovementGroup, Boolean, Set<MovementGroup>) -> Unit,
     onMovingOnly: (Boolean) -> Unit,
     onDropRepeated: (Boolean) -> Unit,
@@ -730,6 +838,7 @@ private fun FilterContent(
     MovementSection(
         parsed = parsed,
         filter = filter,
+        includeContainers = includeContainers,
         onToggleMovement = onToggleMovement,
         onMovingOnly = onMovingOnly,
         onDropRepeated = onDropRepeated,
@@ -753,6 +862,7 @@ private fun FilterContent(
 private fun MovementSection(
     parsed: ParsedTimeline,
     filter: TimelineFilter,
+    includeContainers: Boolean,
     onToggleMovement: (MovementGroup, Boolean, Set<MovementGroup>) -> Unit,
     onMovingOnly: (Boolean) -> Unit,
     onDropRepeated: (Boolean) -> Unit,
@@ -764,7 +874,11 @@ private fun MovementSection(
 
     val available = remember(breakdown) { breakdown.map { it.group }.toSet() }
     val selected = filter.movements ?: available
-    val places = remember(parsed, filter.dateRange) { parsed.placeCount(filter.dateRange) }
+    // Counted on the same terms the Places list uses, so the "236 places" in
+    // this summary and the length of that list can never disagree.
+    val places = remember(parsed, filter.dateRange, includeContainers) {
+        parsed.placeCount(filter.dateRange, includeContainers)
+    }
     val labels = movementLabels()
 
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -970,10 +1084,47 @@ private fun PreviewContent(
     }
 }
 
+/**
+ * The Track / Places switch that sits at the top of step 3 and decides what
+ * step 4 writes.
+ *
+ * In step 3 rather than in step 4, even though it is step 4 that acts on it:
+ * the choice is "what am I looking at", and putting it above the thing it
+ * changes is what makes the export buttons underneath need no label of their
+ * own. Step 4 stays a row of formats, exactly as it has been since 1.0.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ContentSwitch(
+    selected: ContentKind,
+    enabled: Boolean,
+    onSelect: (ContentKind) -> Unit,
+) {
+    val kinds = ContentKind.entries
+    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+        kinds.forEachIndexed { index, kind ->
+            SegmentedButton(
+                selected = kind == selected,
+                onClick = { onSelect(kind) },
+                enabled = enabled,
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = kinds.size),
+            ) {
+                Text(
+                    when (kind) {
+                        ContentKind.TRACK -> stringResource(R.string.content_track)
+                        ContentKind.PLACES -> stringResource(R.string.content_places)
+                    }
+                )
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-private fun ExportContent(
+private fun ExportStep(
     canSave: Boolean,
+    contentKind: ContentKind,
     exportState: ExportState,
     shareInstead: Boolean,
     onShareInsteadChange: (Boolean) -> Unit,
@@ -1027,9 +1178,15 @@ private fun ExportContent(
         }
         is ExportState.Success -> {
             Text(
+                // Phrased by what was written, not by what is selected now:
+                // the switch may have moved since, and "saved 2,481 places"
+                // would be a plainly wrong sentence about a real file.
                 text = stringResource(
-                    R.string.export_success,
-                    formatGrouped(s.pointCount),
+                    when (s.kind) {
+                        ContentKind.TRACK -> R.string.export_success
+                        ContentKind.PLACES -> R.string.export_success_places
+                    },
+                    formatGrouped(s.itemCount),
                     s.displayName ?: stringResource(R.string.export_fallback_filename),
                 ),
                 style = MaterialTheme.typography.bodySmall,
@@ -1043,8 +1200,11 @@ private fun ExportContent(
             // which app they picked or whether they picked one.
             Text(
                 text = stringResource(
-                    R.string.export_shared,
-                    formatGrouped(s.pointCount),
+                    when (s.kind) {
+                        ContentKind.TRACK -> R.string.export_shared
+                        ContentKind.PLACES -> R.string.export_shared_places
+                    },
+                    formatGrouped(s.itemCount),
                     s.formatName,
                 ),
                 style = MaterialTheme.typography.bodySmall,
@@ -1053,7 +1213,12 @@ private fun ExportContent(
             FeedbackPrompt(onClick = onFeedbackClick)
         }
         ExportState.Failure.NoPoints -> Text(
-            text = stringResource(R.string.export_error_no_points),
+            text = stringResource(
+                when (contentKind) {
+                    ContentKind.TRACK -> R.string.export_error_no_points
+                    ContentKind.PLACES -> R.string.export_error_no_places
+                }
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
         )
@@ -1262,12 +1427,17 @@ private fun VersionFooter(modifier: Modifier = Modifier) {
 }
 
 /**
- * Build the human-readable track name that gets embedded inside exported
- * GPX/KML/GeoJSON files. Composed from string resources so it follows the
- * active locale.
+ * Build the human-readable label that gets embedded inside exported
+ * GPX/KML/GeoJSON files — the track's `<name>`, or the document's for a places
+ * export. Composed from string resources so it follows the active locale.
+ *
+ * The two read differently on purpose. Opened in Google Earth, one file says
+ * "Google Timeline 9 Jun 2025 — 21 May 2026" and the other "Google Timeline
+ * places …", which is the only thing distinguishing them once they are sitting
+ * in the same folder as two orange layers.
  */
 @Composable
-private fun buildTrackName(filter: TimelineFilter): String {
+private fun buildContentName(filter: TimelineFilter, kind: ContentKind): String {
     val range = filter.dateRange
     val rangePart = if (range == null) {
         stringResource(R.string.track_name_full_range)
@@ -1278,7 +1448,13 @@ private fun buildTrackName(filter: TimelineFilter): String {
             formatLocalDate(range.endInclusive),
         )
     }
-    return stringResource(R.string.track_name, rangePart)
+    return stringResource(
+        when (kind) {
+            ContentKind.TRACK -> R.string.track_name
+            ContentKind.PLACES -> R.string.track_name_places
+        },
+        rangePart,
+    )
 }
 
 // ---------- shared shapes / formatting helpers ----------

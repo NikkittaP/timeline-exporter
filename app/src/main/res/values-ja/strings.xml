@@ -166,4 +166,30 @@
     <string name="help_note_csv_local_time">• Timelineファイルにタイムゾーンが記録されていれば、CSVにはUTC時刻に加えて現地時刻とUTCオフセットが入ります。</string>
     <string name="feedback_prompt_body">このアプリはユーザーの要望で成長します。解析機能はありません。足りないものを教えてください。</string>
     <string name="feedback_prompt_action">追加してほしいものを伝える →</string>
+
+    <!-- Places (1.7.0) -->
+    <string name="content_track">軌跡</string>
+    <string name="content_places">場所</string>
+    <string name="places_none">このファイルには場所の記録がありません。</string>
+    <string name="places_none_filtered">選択した期間に場所はありません。</string>
+    <string name="places_visits_label">回</string>
+    <string name="places_show_all">すべて表示（%1$s）</string>
+    <string name="places_include_containers">ショッピングモールや空港を含める</string>
+    <string name="places_include_containers_hint">Google は場所が入っている建物も記録します。既定ではオフ: すでにある滞在と重複します。</string>
+    <string name="place_unnamed_hint">場所をタップして名前を付けます。</string>
+    <string name="place_home">自宅</string>
+    <string name="place_work">職場</string>
+    <string name="place_last_visit">最終 %1$s</string>
+    <string name="place_duration_hours">%1$s 時間</string>
+    <string name="place_duration_days">%1$s 日</string>
+    <string name="place_dialog_title">この場所に名前を付ける</string>
+    <string name="place_dialog_field">この場所のあなたの名前</string>
+    <string name="place_dialog_maps">Google マップで開く</string>
+    <string name="place_dialog_save">保存</string>
+    <string name="place_dialog_remove">名前を削除</string>
+    <string name="place_toast_no_maps">この端末には地図リンクを開けるアプリがありません。</string>
+    <string name="export_success_places">%1$s 件の場所を %2$s に保存しました</string>
+    <string name="export_shared_places">%1$s 件の場所を %2$s として準備しました</string>
+    <string name="export_error_no_places">現在の期間に場所はありません。</string>
+    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

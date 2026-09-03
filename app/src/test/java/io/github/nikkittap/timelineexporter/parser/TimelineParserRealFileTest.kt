@@ -88,10 +88,13 @@ class TimelineParserRealFileTest {
         assertEquals(76.3, km.getValue(MovementGroup.CYCLING), 0.1)
         assertEquals(14501.4, km.values.sum(), 0.2)
 
-        // 1071 visits collapse to 313 places once grouped by placeId.
-        val places = result.placesByVisitCount()
-        assertEquals(313, places.size)
-        assertEquals(335, places.first().second)
+        // 1071 visits collapse to 313 places once grouped by placeId — 262 of
+        // them once Google's level-1 containers are left out, which is what
+        // the Places list shows by default. 95 of the visits are containers.
+        assertEquals(262, result.placeEntries().size)
+        assertEquals(313, result.placeEntries(includeContainers = true).size)
+        assertEquals(335, result.placeEntries().first().visits)
+        assertEquals(result.placeEntries().size, result.placeCount())
 
         assertTrue(
             "segments must come out sorted by start time",
