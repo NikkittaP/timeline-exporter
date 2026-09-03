@@ -74,6 +74,9 @@
 
     <string name="export_title">エクスポート</string>
     <string name="export_save_button">名前を付けて保存…</string>
+    <string name="export_action_save">ファイルに保存</string>
+    <string name="export_action_share">アプリに送信</string>
+    <string name="export_shared">%1$s 件の地点を %2$s 形式で準備しました</string>
     <string name="export_writing">ファイルを書き込み中…</string>
     <string name="export_success">%1$s 件のポイントを %2$s に保存しました</string>
     <string name="export_fallback_filename">選択したファイル</string>

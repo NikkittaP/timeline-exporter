@@ -74,6 +74,9 @@
 
     <string name="export_title">Export</string>
     <string name="export_save_button">Speichern unter…</string>
+    <string name="export_action_save">Als Datei speichern</string>
+    <string name="export_action_share">An App senden</string>
+    <string name="export_shared">%1$s Punkte als %2$s vorbereitet</string>
     <string name="export_writing">Datei wird geschrieben…</string>
     <string name="export_success">%1$s Punkte in %2$s gespeichert</string>
     <string name="export_fallback_filename">die gewählte Datei</string>

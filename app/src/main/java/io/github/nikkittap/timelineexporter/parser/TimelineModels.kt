@@ -17,18 +17,22 @@ import java.time.Instant
  * to think about timezones.
  *
  * [tzOffsetMinutes] is the offset from UTC that was in effect *where and when
- * the point was recorded* (e.g. 120 for +02:00), when the export carries it —
- * either in the ISO timestamp itself or in the segment's
- * `startTimeTimezoneUtcOffsetMinutes`. It is null for formats that only store
- * UTC (`Z` timestamps, epoch millis), and consumers must treat it as "unknown"
- * rather than assuming UTC: only CSV uses it, to add a human-readable local
- * time column next to the UTC one.
+ * the point was recorded* (e.g. 120 for +02:00). It is null for formats that
+ * only store UTC (`Z` timestamps, epoch millis), and consumers must treat it
+ * as "unknown" rather than assuming UTC.
+ *
+ * It is a `var` for exactly one reason: the offset a `timelinePath` point
+ * arrives with is usually wrong, and the parser corrects it in a final pass
+ * once the whole file has been read (see `backfillHistoricalOffsets`). The
+ * property is assigned there and nowhere else — by the time a [PathPoint]
+ * leaves the parser it is effectively immutable, and nothing outside the
+ * parser package should write to it.
  */
 data class PathPoint(
     val timeUtc: Instant,
     val latitude: Double,
     val longitude: Double,
-    val tzOffsetMinutes: Int? = null,
+    var tzOffsetMinutes: Int? = null,
 )
 
 /**
@@ -117,6 +121,19 @@ data class Place(
     val longitude: Double,
     val probability: Double? = null,
     val hierarchyLevel: Int? = null,
+    /**
+     * Human-readable place name, e.g. "Malmö Centralstation".
+     *
+     * Only the older Takeout "Semantic Location History" layout carries one.
+     * The phone takeout — which is what nearly every user has — states a
+     * `placeId` and nothing else: measured on the reference export, 273 of its
+     * 282 distinct places are `semanticType` UNKNOWN with no name anywhere in
+     * the file. So this is null far more often than not, and the UI must be
+     * built around the nameless case rather than treating it as an exception.
+     */
+    val name: String? = null,
+    /** Street address, same availability caveat as [name]. */
+    val address: String? = null,
 )
 
 /**
@@ -152,6 +169,18 @@ data class Segment(
     val activityProbability: Double? = null,
     val place: Place? = null,
     val tzOffsetMinutes: Int? = null,
+    /**
+     * True when [tzOffsetMinutes] came from Google's explicit
+     * `startTimeTimezoneUtcOffsetMinutes`, false when it was inferred from the
+     * offset written into the ISO timestamp.
+     *
+     * The distinction matters because the two disagree. The explicit field
+     * states the zone *where the segment happened*; the ISO offset states the
+     * exporting phone's home zone. Only visit and activity segments carry the
+     * explicit field, and only those are trustworthy enough to correct
+     * everything else against — see `backfillHistoricalOffsets`.
+     */
+    val tzOffsetIsExplicit: Boolean = false,
 ) {
     /** Bucket for [activityType]; null for anything that isn't an activity. */
     val movement: MovementGroup?

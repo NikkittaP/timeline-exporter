@@ -74,6 +74,9 @@
 
     <string name="export_title">匯出</string>
     <string name="export_save_button">另存為…</string>
+    <string name="export_action_save">儲存為檔案</string>
+    <string name="export_action_share">傳送到應用程式</string>
+    <string name="export_shared">已以 %2$s 格式準備 %1$s 個點</string>
     <string name="export_writing">正在寫入檔案…</string>
     <string name="export_success">已將 %1$s 個點儲存至 %2$s</string>
     <string name="export_fallback_filename">所選檔案</string>

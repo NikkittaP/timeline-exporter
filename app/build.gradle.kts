@@ -91,8 +91,20 @@ android {
         //                                         Also hardens the MapLibre
         //                                         teardown that was aborting
         //                                         in ~MapRenderer
-        versionCode = 12
-        versionName = "1.6.2"
+        //   versionCode=13, versionName="1.6.3" -> correctness: path points
+        //                                         carried the exporting
+        //                                         phone's home UTC offset
+        //                                         instead of the one in
+        //                                         effect where they were
+        //                                         recorded, so the CSV
+        //                                         local-time column was wrong
+        //                                         for every trip abroad.
+        //                                         Also: place names from the
+        //                                         older Takeout layout, and
+        //                                         sending an export straight
+        //                                         to another app
+        versionCode = 13
+        versionName = "1.6.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

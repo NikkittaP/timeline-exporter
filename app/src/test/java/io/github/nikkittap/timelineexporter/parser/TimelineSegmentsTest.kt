@@ -262,4 +262,62 @@ class TimelineSegmentsTest {
         // Only the timelinePath contributes to the exported track.
         assertEquals(1, result.pathPoints.size)
     }
+
+    @Test
+    fun `Takeout place visits keep the human-readable name and address`() {
+        // The one layout that names its places. The phone takeout states a
+        // placeId and nothing else, so this is the only source of a real name
+        // the app has without going online.
+        val json = """
+            { "timelineObjects": [
+                { "placeVisit": {
+                    "location": {
+                      "latitudeE7": 556049000, "longitudeE7": 130038000,
+                      "placeId": "ChIJabc", "semanticType": "TYPE_HOME",
+                      "name": "Malmö Centralstation",
+                      "address": "Centralplan 3, 211 20 Malmö, Sverige"
+                    },
+                    "duration": {
+                      "startTimestamp": "2025-06-09T08:00:00Z",
+                      "endTimestamp": "2025-06-09T09:00:00Z"
+                    },
+                    "visitConfidence": 91
+                } }
+            ] }
+        """.trimIndent()
+
+        val result = parseTimeline(json)
+        val place = result.visits.single().place
+        assertNotNull(place)
+        assertEquals("Malmö Centralstation", place!!.name)
+        assertEquals("Centralplan 3, 211 20 Malmö, Sverige", place.address)
+        assertEquals("ChIJabc", place.placeId)
+    }
+
+    @Test
+    fun `a blank place name is reported as absent rather than as an empty name`() {
+        // Real files carry empty strings here. The UI has to distinguish "has
+        // a name" from "has none"; a third empty-string case would just be a
+        // bug waiting to render as a blank row.
+        val json = """
+            { "timelineObjects": [
+                { "placeVisit": {
+                    "location": {
+                      "latitudeE7": 556049000, "longitudeE7": 130038000,
+                      "placeId": "ChIJabc", "name": "   ", "address": ""
+                    },
+                    "duration": {
+                      "startTimestamp": "2025-06-09T08:00:00Z",
+                      "endTimestamp": "2025-06-09T09:00:00Z"
+                    }
+                } }
+            ] }
+        """.trimIndent()
+
+        val result = parseTimeline(json)
+        val place = result.visits.single().place
+        assertNotNull(place)
+        assertNull(place!!.name)
+        assertNull(place.address)
+    }
 }

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.time.Instant
@@ -64,6 +65,15 @@ sealed interface ExportState {
     data object Working : ExportState
     /** [displayName] may be null if the content provider didn't expose one. */
     data class Success(val pointCount: Int, val displayName: String?) : ExportState
+
+    /**
+     * The export was written to the cache and handed to the system share
+     * sheet. Distinct from [Success] because nothing was saved anywhere the
+     * user can go back to — telling them a file exists would be a lie — and
+     * because we never learn which app they picked, or whether they picked
+     * one at all.
+     */
+    data class Shared(val pointCount: Int, val formatName: String) : ExportState
     /** Semantic failure kind — UI composes the localized message. */
     sealed interface Failure : ExportState {
         data object NoPoints : Failure
@@ -79,6 +89,20 @@ sealed interface ExportState {
     }
 }
 
+/**
+ * An export written to the cache directory, waiting for the UI to hand it to
+ * another app.
+ *
+ * The file has to exist on disk before it can be shared: `ACTION_SEND` passes
+ * a `content://` URI, not bytes. The ViewModel writes it and stops there —
+ * building the URI needs a `Context` and a FileProvider authority, which are
+ * the UI layer's business.
+ */
+data class PendingShare(val file: File, val mimeType: String)
+
+/** Cache subdirectory backing the FileProvider path of the same name. */
+const val SHARE_CACHE_DIR = "shared"
+
 // ---------- ViewModel ----------
 
 class TimelineViewModel : ViewModel() {
@@ -92,12 +116,16 @@ class TimelineViewModel : ViewModel() {
     private val _exportState = MutableStateFlow<ExportState>(ExportState.Idle)
     val exportState: StateFlow<ExportState> = _exportState.asStateFlow()
 
+    private val _pendingShare = MutableStateFlow<PendingShare?>(null)
+    val pendingShare: StateFlow<PendingShare?> = _pendingShare.asStateFlow()
+
     // ----- parse pipeline -----
 
     fun onFileSelected(uri: Uri, contentResolver: ContentResolver) {
         _uiState.value = TimelineUiState.Loading(LoadingPhase.OpeningFile)
         _filter.value = TimelineFilter()
         _exportState.value = ExportState.Idle
+        _pendingShare.value = null
 
         viewModelScope.launch {
             val newState = withContext(Dispatchers.IO) {
@@ -239,6 +267,60 @@ class TimelineViewModel : ViewModel() {
             }
             _exportState.value = newState
         }
+    }
+
+    /**
+     * Write the current selection to a file in the cache and offer it to
+     * another app, instead of saving it somewhere the user picked.
+     *
+     * Requested as "send the export straight to another app instead of saving
+     * a file" — the point is to skip the storage round-trip entirely when the
+     * destination is a mail client or a map app, so this deliberately does not
+     * go through SAF.
+     *
+     * [cacheDir] rather than a Context: the ViewModel needs a directory, not
+     * an Android environment, and taking the narrower type keeps it testable.
+     */
+    fun onShareRequested(exporter: Exporter, trackName: String, cacheDir: File) {
+        val loaded = _uiState.value as? TimelineUiState.Loaded ?: return
+        val currentFilter = _filter.value
+        val filteredPoints =
+            applyFilter(loaded.result.pathPoints, currentFilter, loaded.result.segments)
+        if (filteredPoints.isEmpty()) {
+            _exportState.value = ExportState.Failure.NoPoints
+            return
+        }
+        _exportState.value = ExportState.Working
+
+        viewModelScope.launch {
+            val newState = withContext(Dispatchers.IO) {
+                try {
+                    val dir = File(cacheDir, SHARE_CACHE_DIR)
+                    dir.mkdirs()
+                    // Only ever one share pending. The previous file has
+                    // already been handed over, and a full Timeline export can
+                    // be tens of megabytes — leaving a pile of them in the
+                    // cache for the system to reap eventually is not polite.
+                    dir.listFiles()?.forEach { it.delete() }
+                    val file = File(dir, suggestFilename(currentFilter, exporter))
+                    file.writeText(exporter.export(filteredPoints, trackName), Charsets.UTF_8)
+                    _pendingShare.value = PendingShare(file, exporter.mimeType)
+                    ExportState.Shared(filteredPoints.size, exporter.displayName)
+                } catch (e: Exception) {
+                    ExportState.Failure.Generic(
+                        formatName = exporter.displayName,
+                        exceptionClass = e::class.simpleName ?: "Exception",
+                        exceptionMessage = e.message,
+                    )
+                }
+            }
+            _exportState.value = newState
+        }
+    }
+
+    /** Called once the UI has launched the share sheet for [pendingShare]. */
+    fun onShareConsumed() {
+        _pendingShare.value = null
     }
 }
 

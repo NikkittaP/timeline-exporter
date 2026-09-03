@@ -212,6 +212,8 @@ private fun streamTimeline(p: JsonParser, onProgress: (ParserStage) -> Unit): Pa
     // and the point↔activity join below assumes sorted, non-overlapping spans.
     segments.sortBy { it.start }
 
+    backfillHistoricalOffsets(points, segments)
+
     return ParsedTimeline(
         pathPoints = points,
         totalSegments = total,
@@ -221,6 +223,93 @@ private fun streamTimeline(p: JsonParser, onProgress: (ParserStage) -> Unit): Pa
         format = format,
         segments = segments,
     )
+}
+
+// ---------- Historical timezone back-fill ----------
+
+/**
+ * How far a point may be from the nearest segment that states its timezone
+ * before we stop believing that segment applies to it. A day is generous:
+ * within a day of a stated offset the user is almost certainly still in that
+ * zone, and beyond it the nearest segment is no longer evidence of anything.
+ */
+private const val MAX_OFFSET_BORROW_SECONDS = 24L * 60 * 60
+
+/**
+ * Replace each point's timezone offset with the one that was really in effect
+ * where it was recorded.
+ *
+ * This exists because the offset a `timelinePath` point arrives with is
+ * usually wrong. A path segment never carries
+ * `startTimeTimezoneUtcOffsetMinutes` — not once in 2872 of them in the
+ * reference export — so all the parser has to go on is the offset written
+ * into the ISO timestamp, and that is the *exporting phone's home offset*, not
+ * the local time where the point was taken. In the reference file every single
+ * path segment reads +02:00 or +01:00 (Stockholm, summer and winter),
+ * including the ones recorded in Tashkent, where the visit segments wrapped
+ * around them state 300 (+05:00). 75 segments disagree that way.
+ *
+ * Visit and activity segments do state the offset explicitly, so those are the
+ * anchors. Both lists are already sorted by time, so this walks them together:
+ * one forward pass, no per-point search.
+ *
+ * A point inside an anchor takes that anchor's offset, which is exact and is
+ * the normal case — measured over a year of real data, every path point falls
+ * inside either an activity or a visit. A point in a gap takes the offset of
+ * whichever anchor is nearest in time, which is the best available answer and
+ * still beats the home offset. A point further than
+ * [MAX_OFFSET_BORROW_SECONDS] from any anchor keeps whatever it had.
+ *
+ * Nested visits (a shop inside its mall) can mean the anchor picked is not
+ * strictly the innermost one covering the point. That does not matter here:
+ * two nested visits are in the same place and therefore the same timezone.
+ *
+ * Formats with no explicit offsets anywhere — Records.json and the older
+ * Takeout layouts — have no anchors, so this is a no-op for them and their
+ * ISO offsets, which are genuinely local, are left alone.
+ */
+private fun backfillHistoricalOffsets(points: List<PathPoint>, segments: List<Segment>) {
+    if (points.isEmpty()) return
+    val anchors = segments.filter {
+        it.tzOffsetIsExplicit &&
+            it.tzOffsetMinutes != null &&
+            (it.kind == SegmentKind.ACTIVITY || it.kind == SegmentKind.VISIT)
+    }
+    if (anchors.isEmpty()) return
+
+    val starts = LongArray(anchors.size) { anchors[it].start.epochSecond }
+    val ends = LongArray(anchors.size) { anchors[it].end.epochSecond }
+
+    // Distance from [t] to an anchor: zero while inside it, otherwise the gap
+    // to whichever edge is closer.
+    fun distance(i: Int, t: Long): Long = when {
+        t < starts[i] -> starts[i] - t
+        t > ends[i] -> t - ends[i]
+        else -> 0L
+    }
+
+    var i = 0
+    for (point in points) {
+        val t = point.timeUtc.epochSecond
+        // Points are sorted, so the cursor only ever moves forward and the
+        // whole pass is linear in the number of points.
+        while (i + 1 < anchors.size && starts[i + 1] <= t) i++
+
+        // Consider the anchor at the cursor and its immediate neighbours: the
+        // next one covers points sitting in a gap just before it, and the
+        // previous one covers the nesting case where the cursor landed on an
+        // inner span that ends early.
+        var best = -1
+        var bestDistance = Long.MAX_VALUE
+        for (j in (i - 1)..(i + 1)) {
+            if (j < 0 || j >= anchors.size) continue
+            val d = distance(j, t)
+            if (d < bestDistance) { bestDistance = d; best = j }
+            if (d == 0L) break
+        }
+        if (best < 0 || bestDistance > MAX_OFFSET_BORROW_SECONDS) continue
+        point.tzOffsetMinutes = anchors[best].tzOffsetMinutes
+    }
 }
 
 // ---------- Per-format streaming extractors ----------
@@ -322,6 +411,7 @@ private fun extractSemanticSegment(
             activityProbability = activity?.topProbability,
             place = place,
             tzOffsetMinutes = segmentOffset ?: startTimeOffset,
+            tzOffsetIsExplicit = segmentOffset != null,
         )
     )
 }
@@ -570,17 +660,21 @@ private fun readPlaceVisit(
     var durStart: String? = null
     var durEnd: String? = null
     var confidence: Double? = null
+    var name: String? = null
+    var address: String? = null
     while (p.nextToken() != JsonToken.END_OBJECT) {
         val f = p.currentName()
         p.nextToken()
         when (f) {
             // `location` carries the coordinates and, in most files, the
-            // placeId and semanticType alongside them.
+            // placeId, semanticType and human-readable name alongside them.
             "location" -> {
                 val v = readVisitLocation(p)
                 loc = v.coords
                 placeId = v.placeId
                 semanticType = v.semanticType
+                name = v.name
+                address = v.address
             }
             "duration" -> { val (s, e) = readDuration(p); durStart = s; durEnd = e }
             "visitConfidence", "placeConfidence" -> confidence = p.doubleOrNull()
@@ -605,6 +699,8 @@ private fun readPlaceVisit(
                 // as a 0..1 probability. Normalize to the latter so callers
                 // never have to ask which format a number came from.
                 probability = confidence?.let { if (it > 1.0) it / 100.0 else it },
+                name = name,
+                address = address,
             ),
             tzOffsetMinutes = parseOffsetMinutes(durStart),
         )
@@ -616,6 +712,8 @@ private class VisitLocation(
     val coords: Pair<Double, Double>?,
     val placeId: String?,
     val semanticType: String?,
+    val name: String? = null,
+    val address: String? = null,
 )
 
 private fun readVisitLocation(p: JsonParser): VisitLocation {
@@ -626,6 +724,8 @@ private fun readVisitLocation(p: JsonParser): VisitLocation {
     var lonP: Long? = null; var lonA: Long? = null
     var placeId: String? = null
     var semanticType: String? = null
+    var name: String? = null
+    var address: String? = null
     while (p.nextToken() != JsonToken.END_OBJECT) {
         val f = p.currentName()
         p.nextToken()
@@ -636,10 +736,15 @@ private fun readVisitLocation(p: JsonParser): VisitLocation {
             "lngE7" -> lonA = p.longOrNull()
             "placeId" -> placeId = p.valueAsStringOrNull()
             "semanticType" -> semanticType = p.valueAsStringOrNull()
+            // The one layout that names its places. Blank strings appear in
+            // real files and are normalized away, so the UI only has to
+            // handle "a name" or "no name" rather than a third empty case.
+            "name" -> name = p.valueAsStringOrNull()?.trim()?.takeIf { it.isNotEmpty() }
+            "address" -> address = p.valueAsStringOrNull()?.trim()?.takeIf { it.isNotEmpty() }
             else -> p.skipChildren()
         }
     }
-    return VisitLocation(e7Pair(latP ?: latA, lonP ?: lonA), placeId, semanticType)
+    return VisitLocation(e7Pair(latP ?: latA, lonP ?: lonA), placeId, semanticType, name, address)
 }
 
 /** Returns (startTimestamp ?: startTimestampMs, endTimestamp ?: endTimestampMs). */

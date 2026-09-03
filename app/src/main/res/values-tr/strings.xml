@@ -74,6 +74,9 @@
 
     <string name="export_title">Dışa aktar</string>
     <string name="export_save_button">Farklı kaydet…</string>
+    <string name="export_action_save">Dosya olarak kaydet</string>
+    <string name="export_action_share">Uygulamaya gönder</string>
+    <string name="export_shared">%1$s nokta %2$s biçiminde hazırlandı</string>
     <string name="export_writing">Dosya yazılıyor…</string>
     <string name="export_success">%1$s nokta %2$s konumuna kaydedildi</string>
     <string name="export_fallback_filename">seçilen dosya</string>

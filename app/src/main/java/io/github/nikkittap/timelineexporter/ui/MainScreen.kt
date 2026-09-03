@@ -1,5 +1,6 @@
 package io.github.nikkittap.timelineexporter.ui
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -42,6 +43,9 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -68,6 +72,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.nikkittap.timelineexporter.BuildConfig
@@ -220,8 +225,14 @@ fun MainScreen(
     val filter by viewModel.filter.collectAsStateWithLifecycle()
     val exportState by viewModel.exportState.collectAsStateWithLifecycle()
 
+    val pendingShare by viewModel.pendingShare.collectAsStateWithLifecycle()
+
     var dateDialogOpen by remember { mutableStateOf(false) }
     var mapInteracting by remember { mutableStateOf(false) }
+    // What the format buttons in step 4 do: write a file the user picks a home
+    // for, or hand it straight to another app. Survives rotation so a chosen
+    // destination is not silently reset under the user.
+    var shareInstead by rememberSaveable { mutableStateOf(false) }
     var mapFullscreen by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
@@ -232,7 +243,8 @@ fun MainScreen(
     // Keyed on exportState, which always passes through Working before the next
     // Success — so a repeated export with identical values still re-triggers.
     LaunchedEffect(exportState) {
-        if (exportState !is ExportState.Success) return@LaunchedEffect
+        val finished = exportState is ExportState.Success || exportState is ExportState.Shared
+        if (!finished) return@LaunchedEffect
         // The prompt is composed in this same frame; maxValue only accounts for
         // it after the next layout pass, so measuring now would stop short.
         withFrameNanos { }
@@ -301,6 +313,36 @@ fun MainScreen(
             GeoJsonExporter -> geojsonLauncher.launch(name)
             CsvExporter -> csvLauncher.launch(name)
         }
+    }
+
+    val onPickFormat: (Exporter) -> Unit = { exporter ->
+        if (shareInstead) {
+            viewModel.onShareRequested(exporter, trackName, context.cacheDir)
+        } else {
+            launchSave(exporter)
+        }
+    }
+
+    // The ViewModel writes the file; turning it into something another app can
+    // read needs a Context, so the hand-off happens here.
+    //
+    // No chooser title: from API 30 the system sheet ignores it for
+    // ACTION_SEND, so a string set here would be translated into 18 languages
+    // and never shown.
+    LaunchedEffect(pendingShare) {
+        val share = pendingShare ?: return@LaunchedEffect
+        val uri = FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            share.file,
+        )
+        val send = Intent(Intent.ACTION_SEND).apply {
+            type = share.mimeType
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(Intent.createChooser(send, null))
+        viewModel.onShareConsumed()
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -404,7 +446,9 @@ fun MainScreen(
                     ExportContent(
                         canSave = filteredPoints.isNotEmpty(),
                         exportState = exportState,
-                        onPickFormat = launchSave,
+                        shareInstead = shareInstead,
+                        onShareInsteadChange = { shareInstead = it },
+                        onPickFormat = onPickFormat,
                         onFeedbackClick = onFeedbackClick,
                     )
                 }
@@ -926,15 +970,40 @@ private fun PreviewContent(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun ExportContent(
     canSave: Boolean,
     exportState: ExportState,
+    shareInstead: Boolean,
+    onShareInsteadChange: (Boolean) -> Unit,
     onPickFormat: (Exporter) -> Unit,
     onFeedbackClick: () -> Unit = {},
 ) {
     val enabled = canSave && exportState !is ExportState.Working
+
+    // Destination first, format second — one row of format buttons either way.
+    // The alternative, a second row of "share as GPX / KML / …" buttons, would
+    // double the controls in this step to express one binary choice.
+    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+        SegmentedButton(
+            selected = !shareInstead,
+            onClick = { onShareInsteadChange(false) },
+            enabled = enabled,
+            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
+        ) {
+            Text(stringResource(R.string.export_action_save))
+        }
+        SegmentedButton(
+            selected = shareInstead,
+            onClick = { onShareInsteadChange(true) },
+            enabled = enabled,
+            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
+        ) {
+            Text(stringResource(R.string.export_action_share))
+        }
+    }
+
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         AllExporters.forEach { exporter ->
             FilledTonalButton(
@@ -962,6 +1031,21 @@ private fun ExportContent(
                     R.string.export_success,
                     formatGrouped(s.pointCount),
                     s.displayName ?: stringResource(R.string.export_fallback_filename),
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            FeedbackPrompt(onClick = onFeedbackClick)
+        }
+        is ExportState.Shared -> {
+            // Deliberately not phrased as "sent": the share sheet is open and
+            // the user may still back out of it, and the app is never told
+            // which app they picked or whether they picked one.
+            Text(
+                text = stringResource(
+                    R.string.export_shared,
+                    formatGrouped(s.pointCount),
+                    s.formatName,
                 ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,

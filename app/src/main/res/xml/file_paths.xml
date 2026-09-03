@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The one directory the FileProvider exposes: the cache subfolder an export is
+  written to on its way to another app (see TimelineViewModel.SHARE_CACHE_DIR).
+
+  Nothing else is shared. In particular the user's Timeline.json is never
+  copied anywhere the provider can reach it — the app reads it through the URI
+  the picker handed over and streams it, so there is no second copy to leak.
+-->
+<paths>
+    <cache-path name="shared" path="shared/" />
+</paths>

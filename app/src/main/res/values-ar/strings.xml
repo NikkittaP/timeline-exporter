@@ -74,6 +74,9 @@
 
     <string name="export_title">تصدير</string>
     <string name="export_save_button">حفظ باسم…</string>
+    <string name="export_action_save">حفظ كملف</string>
+    <string name="export_action_share">إرسال إلى تطبيق</string>
+    <string name="export_shared">تم تجهيز %1$s نقطة بصيغة %2$s</string>
     <string name="export_writing">جارٍ كتابة الملف…</string>
     <string name="export_success">تم حفظ %1$s نقطة في %2$s</string>
     <string name="export_fallback_filename">الملف المختار</string>

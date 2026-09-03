@@ -74,6 +74,9 @@
 
     <string name="export_title">Exporteren</string>
     <string name="export_save_button">Opslaan als…</string>
+    <string name="export_action_save">Opslaan als bestand</string>
+    <string name="export_action_share">Naar app sturen</string>
+    <string name="export_shared">%1$s punten voorbereid als %2$s</string>
     <string name="export_writing">Bestand schrijven…</string>
     <string name="export_success">%1$s punten opgeslagen in %2$s</string>
     <string name="export_fallback_filename">het gekozen bestand</string>

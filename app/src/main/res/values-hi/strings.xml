@@ -74,6 +74,9 @@
 
     <string name="export_title">एक्सपोर्ट</string>
     <string name="export_save_button">इस रूप में सहेजें…</string>
+    <string name="export_action_save">फ़ाइल सेव करें</string>
+    <string name="export_action_share">ऐप में भेजें</string>
+    <string name="export_shared">%2$s के रूप में %1$s पॉइंट तैयार किए गए</string>
     <string name="export_writing">फ़ाइल लिखी जा रही है…</string>
     <string name="export_success">%1$s पॉइंट %2$s में सहेजे गए</string>
     <string name="export_fallback_filename">चुनी गई फ़ाइल</string>

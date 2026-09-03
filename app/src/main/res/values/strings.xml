@@ -102,6 +102,9 @@
     <!-- Export section -->
     <string name="export_title">Export</string>
     <string name="export_save_button">Save as…</string>
+    <string name="export_action_save">Save as file</string>
+    <string name="export_action_share">Send to app</string>
+    <string name="export_shared">Prepared %1$s points as %2$s</string>
     <string name="export_writing">Writing file…</string>
     <string name="export_success">Saved %1$s points to %2$s</string>
     <string name="export_fallback_filename">the chosen file</string>

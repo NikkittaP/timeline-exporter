@@ -74,6 +74,9 @@
 
     <string name="export_title">내보내기</string>
     <string name="export_save_button">다른 이름으로 저장…</string>
+    <string name="export_action_save">파일로 저장</string>
+    <string name="export_action_share">앱으로 보내기</string>
+    <string name="export_shared">%1$s개 지점을 %2$s 형식으로 준비했습니다</string>
     <string name="export_writing">파일 쓰는 중…</string>
     <string name="export_success">%1$s개 포인트를 %2$s에 저장했습니다</string>
     <string name="export_fallback_filename">선택한 파일</string>

@@ -74,6 +74,9 @@
 
     <string name="export_title">Экспорт</string>
     <string name="export_save_button">Сохранить как…</string>
+    <string name="export_action_save">Сохранить файл</string>
+    <string name="export_action_share">Отправить в приложение</string>
+    <string name="export_shared">Подготовлено %1$s точек в формате %2$s</string>
     <string name="export_writing">Запись файла…</string>
     <string name="export_success">Сохранено %1$s точек в %2$s</string>
     <string name="export_fallback_filename">выбранный файл</string>

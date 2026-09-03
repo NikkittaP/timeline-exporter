@@ -74,6 +74,9 @@
 
     <string name="export_title">Exportera</string>
     <string name="export_save_button">Spara som…</string>
+    <string name="export_action_save">Spara som fil</string>
+    <string name="export_action_share">Skicka till app</string>
+    <string name="export_shared">%1$s punkter förberedda som %2$s</string>
     <string name="export_writing">Skriver fil…</string>
     <string name="export_success">Sparade %1$s punkter till %2$s</string>
     <string name="export_fallback_filename">den valda filen</string>

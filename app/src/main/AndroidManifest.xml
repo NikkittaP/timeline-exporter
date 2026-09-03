@@ -63,6 +63,21 @@
                 <data android:mimeType="application/json" />
             </intent-filter>
         </activity>
+
+        <!--
+          Serves the cached export file to whichever app the user picks from
+          the share sheet. Not exported: the only way anything comes out of it
+          is the one-shot read permission attached to the ACTION_SEND intent.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>
