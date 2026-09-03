@@ -51,7 +51,7 @@ You can verify any of the above claims by reading it.
 ## Contact
 
 For questions about this policy or the app's behavior, contact
-**nikitapetroff@gmail.com**.
+**nikitapetrovapps@gmail.com**.
 
 ## Changes
 
