@@ -215,6 +215,23 @@ and none of it could leave the app.
     complement must cover every point exactly once, which a magic number cannot
     prove and a filter dropping points on the floor cannot fake.
 
+- **Places on the map.** Switching step 3 to Places replaced the map with a
+  list — 262 rows of names, counts and coordinates, and no answer to *where is
+  that*. The map now follows the switch: places are drawn as dots sized by how
+  often each was visited, above the list rather than instead of it, with the
+  same expand button the track has. Size rather than colour, because "which of
+  these is my life and which is a one-off" is the first question a places map
+  is asked and area answers it without a legend; the scale flattens fast, since
+  one visit against 335 is a factor of 335 and a dot 335 times the area would
+  be the size of a city. No labels on the dots — the list underneath already
+  names every row.
+
+  The map composable became `TimelineMap` over a `MapSubject`, because the two
+  pictures share everything except what they draw: the MapLibre lifecycle and
+  its teardown, the theme-driven basemap, the scale bar, the way back to the
+  data. Framing the camera walks the coordinates rather than collecting them,
+  so a year of history no longer allocates 30,000 pairs to find four numbers.
+
 
 ## Pre-release checklist for this span
 
@@ -250,6 +267,10 @@ Map preview:
       when the track is framed by hand
 - [ ] A day's track shows chevrons pointing the way it was walked; a year of
       history shows none, at any zoom
+- [ ] Flipping Track / Places redraws the map and re-frames it; flipping back
+      does not leave places dots on the track
+- [ ] Home is visibly the biggest dot; a place visited once is visibly small
+- [ ] Expand works from the Places side, and the map survives closing it
 
 Time of day:
 

@@ -91,7 +91,6 @@ import io.github.nikkittap.timelineexporter.filter.applyFilter
 import io.github.nikkittap.timelineexporter.parser.MovementGroup
 import io.github.nikkittap.timelineexporter.parser.MovementStats
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
-import io.github.nikkittap.timelineexporter.parser.PathPoint
 import io.github.nikkittap.timelineexporter.parser.PlaceEntry
 import io.github.nikkittap.timelineexporter.parser.TimelineFormat
 import io.github.nikkittap.timelineexporter.parser.placeEntries
@@ -296,10 +295,22 @@ fun MainScreen(
         ContentKind.PLACES -> ExportContent.Places(exportPlaces(places, placeLabels))
     }
 
+    // What the map is drawing follows the Track / Places switch, so the
+    // preview shows the thing step 4 is about to write rather than always the
+    // track. Remembered so the instance is stable across recompositions: the
+    // map re-frames its camera when the subject changes, and a new wrapper
+    // every frame would re-frame every frame.
+    val mapSubject = remember(contentKind, filteredPoints, places) {
+        when (contentKind) {
+            ContentKind.TRACK -> MapSubject.Track(filteredPoints)
+            ContentKind.PLACES -> MapSubject.Places(places)
+        }
+    }
+
     val movableMap = remember {
-        movableContentOf<List<PathPoint>, Modifier> { pts, m ->
-            TrackMap(
-                points = pts,
+        movableContentOf<MapSubject, Modifier> { subject, m ->
+            TimelineMap(
+                subject = subject,
                 onInteractionChange = { mapInteracting = it },
                 modifier = m,
             )
@@ -502,7 +513,10 @@ fun MainScreen(
                     // list offers "show all" under itself, where the row count
                     // that motivates it is visible.
                     trailing = {
-                        if (contentKind == ContentKind.TRACK && filteredPoints.isNotEmpty()) {
+                        // Both kinds have a map to expand now; the places list
+                        // keeps its own "show all" underneath, where the row
+                        // count that motivates it is visible.
+                        if (!mapSubject.isEmpty) {
                             TextButton(onClick = { mapFullscreen = true }) {
                                 Text(stringResource(R.string.preview_expand))
                             }
@@ -516,12 +530,23 @@ fun MainScreen(
                     )
                     when (contentKind) {
                         ContentKind.TRACK -> PreviewContent(
-                            points = filteredPoints,
+                            subject = mapSubject,
                             inlineMapActive = !mapFullscreen,
                             mapContent = movableMap,
                         )
 
                         ContentKind.PLACES -> {
+                            // Map first, list second. A place list is 262 rows
+                            // of coordinates and counts; the one thing it
+                            // cannot answer is "where is that", and until now
+                            // nothing on this screen could.
+                            if (!mapSubject.isEmpty) {
+                                MapTile(
+                                    subject = mapSubject,
+                                    inlineMapActive = !mapFullscreen,
+                                    mapContent = movableMap,
+                                )
+                            }
                             PlacesPreview(
                                 entries = places,
                                 labels = placeLabels,
@@ -572,7 +597,7 @@ fun MainScreen(
         if (mapFullscreen && loadedResult != null) {
             BackHandler { mapFullscreen = false }
             ExpandedMap(
-                points = filteredPoints,
+                subject = mapSubject,
                 onClose = { mapFullscreen = false },
                 mapContent = movableMap,
             )
@@ -1097,28 +1122,44 @@ private fun movementSummaryLabel(
 
 @Composable
 private fun PreviewContent(
-    points: List<PathPoint>,
+    subject: MapSubject,
     inlineMapActive: Boolean,
-    mapContent: @Composable (List<PathPoint>, Modifier) -> Unit,
+    mapContent: @Composable (MapSubject, Modifier) -> Unit,
 ) {
-    if (points.isEmpty()) {
+    if (subject.isEmpty) {
         Text(
             stringResource(R.string.preview_no_points),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     } else {
-        val shape = RoundedCornerShape(8.dp)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(280.dp)
-                .clip(shape)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
-        ) {
-            if (inlineMapActive) {
-                mapContent(points, Modifier.fillMaxSize())
-            }
+        MapTile(subject, inlineMapActive, mapContent)
+    }
+}
+
+/**
+ * The bordered tile the map lives in.
+ *
+ * [inlineMapActive] is false while the fullscreen map is up: the map itself is
+ * `movableContent` and can only be in one place at a time, so the tile stays
+ * as a hole of the right size rather than collapsing the step under it.
+ */
+@Composable
+private fun MapTile(
+    subject: MapSubject,
+    inlineMapActive: Boolean,
+    mapContent: @Composable (MapSubject, Modifier) -> Unit,
+) {
+    val shape = RoundedCornerShape(8.dp)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(280.dp)
+            .clip(shape)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
+    ) {
+        if (inlineMapActive) {
+            mapContent(subject, Modifier.fillMaxSize())
         }
     }
 }
@@ -1504,9 +1545,9 @@ private fun LoadingDisplay(phase: LoadingPhase) {
 
 @Composable
 private fun ExpandedMap(
-    points: List<PathPoint>,
+    subject: MapSubject,
     onClose: () -> Unit,
-    mapContent: @Composable (List<PathPoint>, Modifier) -> Unit,
+    mapContent: @Composable (MapSubject, Modifier) -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -1522,7 +1563,7 @@ private fun ExpandedMap(
                     .clip(shape)
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
             ) {
-                mapContent(points, Modifier.fillMaxSize())
+                mapContent(subject, Modifier.fillMaxSize())
             }
             // Top-*end*: the map's own top-left corner now carries the scale
             // bar, and a button parked on top of it would hide the one piece

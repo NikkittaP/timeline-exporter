@@ -49,6 +49,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.nikkittap.timelineexporter.R
 import io.github.nikkittap.timelineexporter.parser.PathPoint
+import io.github.nikkittap.timelineexporter.parser.PlaceEntry
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.camera.CameraUpdateFactory
@@ -87,6 +88,7 @@ import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
 import org.maplibre.geojson.MultiLineString
 import org.maplibre.geojson.Point
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -98,12 +100,13 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-private const val TAG = "TrackMap"
+private const val TAG = "TimelineMap"
 
 private const val SOURCE_TRACK = "track-source"
 private const val SOURCE_GAPS = "gaps-source"
 private const val SOURCE_START = "start-source"
 private const val SOURCE_END = "end-source"
+private const val SOURCE_PLACES = "places-source"
 private const val LAYER_TRACK_GLOW = "track-glow"
 private const val LAYER_TRACK = "track-line"
 private const val LAYER_TRACK_ARROWS = "track-arrows"
@@ -112,13 +115,20 @@ private const val LAYER_START_HALO = "start-halo"
 private const val LAYER_START = "start-circle"
 private const val LAYER_END_HALO = "end-halo"
 private const val LAYER_END = "end-circle"
+private const val LAYER_PLACES_HALO = "places-halo"
+private const val LAYER_PLACES = "places-circle"
 
-/** Bottom-to-top; also the order [clearTrackOverlays] tears them down in reverse. */
+/** Feature property the places circle radius interpolates on. */
+private const val PROPERTY_VISITS = "visits"
+
+/** Bottom-to-top; also the order [clearOverlays] tears them down in reverse. */
 private val OWNED_LAYERS = listOf(
     LAYER_TRACK_GLOW, LAYER_GAPS, LAYER_TRACK, LAYER_TRACK_ARROWS,
     LAYER_START_HALO, LAYER_START, LAYER_END_HALO, LAYER_END,
+    LAYER_PLACES_HALO, LAYER_PLACES,
 )
-private val OWNED_SOURCES = listOf(SOURCE_TRACK, SOURCE_GAPS, SOURCE_START, SOURCE_END)
+private val OWNED_SOURCES =
+    listOf(SOURCE_TRACK, SOURCE_GAPS, SOURCE_START, SOURCE_END, SOURCE_PLACES)
 
 /** Sprite id for the direction chevron repeated along the track. */
 private const val IMAGE_TRACK_ARROW = "track-arrow"
@@ -182,6 +192,8 @@ private data class MapPalette(
     val endFill: String,
     /** Ring around the endpoint dots — the basemap ground color. */
     val markerStroke: String,
+    /** Places, when the map is showing those instead of a track. */
+    val placeFill: String,
 )
 
 private val LightPalette = MapPalette(
@@ -192,6 +204,7 @@ private val LightPalette = MapPalette(
     startFill = "#0E9F86",
     endFill = "#E5533D",
     markerStroke = "#F5F4F1",
+    placeFill = "#4C3BD6",
 )
 
 private val DarkPalette = MapPalette(
@@ -202,6 +215,7 @@ private val DarkPalette = MapPalette(
     startFill = "#2FD3A5",
     endFill = "#FF6B57",
     markerStroke = "#191D23",
+    placeFill = "#4FC3E8",
 )
 
 /**
@@ -231,9 +245,48 @@ private val HEAT_ANCHORS = listOf(
     400_000 to HeatWeights(0.75f, 0.12f, 4.5f, 0.05f, 2.0f),
 )
 
+/**
+ * What the map is showing.
+ *
+ * The two are different pictures of the same file rather than two maps: a
+ * track is a line whose weight says how often it was walked, a set of places
+ * is dots whose size says how often they were visited. Everything around them
+ * — the MapLibre lifecycle, the theme-driven basemap, the scale bar, the way
+ * back to the data — is the same, and this is what keeps it from being written
+ * twice.
+ */
+sealed interface MapSubject {
+    data class Track(val points: List<PathPoint>) : MapSubject
+    data class Places(val entries: List<PlaceEntry>) : MapSubject
+
+    val isEmpty: Boolean
+        get() = when (this) {
+            is Track -> points.isEmpty()
+            is Places -> entries.isEmpty()
+        }
+}
+
+/**
+ * Walk the subject's coordinates without building a list of them: a year of
+ * history is 30,000 points, and framing the camera should not allocate a
+ * parallel copy of it to find four numbers.
+ */
+private inline fun MapSubject.forEachCoordinate(action: (lat: Double, lon: Double) -> Unit) {
+    when (this) {
+        is MapSubject.Track -> points.forEach { action(it.latitude, it.longitude) }
+        is MapSubject.Places -> entries.forEach { action(it.latitude, it.longitude) }
+    }
+}
+
+/** Somewhere to point the camera when there is no box to fit. */
+private fun MapSubject.firstCoordinate(): LatLng? = when (this) {
+    is MapSubject.Track -> points.firstOrNull()?.let { LatLng(it.latitude, it.longitude) }
+    is MapSubject.Places -> entries.firstOrNull()?.let { LatLng(it.latitude, it.longitude) }
+}
+
 @Composable
-fun TrackMap(
-    points: List<PathPoint>,
+fun TimelineMap(
+    subject: MapSubject,
     modifier: Modifier = Modifier,
     /**
      * Called with `true` on ACTION_DOWN and `false` on ACTION_UP/CANCEL.
@@ -284,15 +337,15 @@ fun TrackMap(
     var loadedMap by remember { mutableStateOf<MapLibreMap?>(null) }
     var loadedStyle by remember { mutableStateOf<Style?>(null) }
 
-    // The camera is fitted to the data, not to the style. Remembering which
-    // list we last framed keeps a theme switch (which reloads the style and
-    // so re-runs the render) from yanking a camera the user has since panned.
-    var lastFittedPoints by remember { mutableStateOf<List<PathPoint>?>(null) }
+    // The camera is fitted to the data, not to the style. Remembering what we
+    // last framed keeps a theme switch (which reloads the style and so re-runs
+    // the render) from yanking a camera the user has since panned.
+    var lastFitted by remember { mutableStateOf<MapSubject?>(null) }
 
-    // The box the whole track fits in. Null for a track with nothing to
-    // frame — no points, or every point in the same spot — which is also the
-    // case where "back to the track" has nowhere to go.
-    val dataBounds = remember(points) { trackBounds(points) }
+    // The box the whole subject fits in. Null when there is nothing to frame —
+    // no data, or all of it in one spot — which is also the case where "back
+    // to the data" has nowhere to go.
+    val dataBounds = remember(subject) { subjectBounds(subject) }
 
     // What the last camera-idle told us: how big things are, and whether the
     // view has left the track behind. Null until the first idle, which is
@@ -346,7 +399,7 @@ fun TrackMap(
             // native ones to be freed underneath them (maplibre-native#3269),
             // so any GeoJsonSource wrapper that outlives this call would
             // point at freed memory.
-            runCatching { loadedStyle?.let(::clearTrackOverlays) }
+            runCatching { loadedStyle?.let(::clearOverlays) }
                 .onFailure { Log.w(TAG, "Style teardown failed", it) }
 
             loadedStyle = null
@@ -399,8 +452,8 @@ fun TrackMap(
         onDispose { runCatching { map.removeOnCameraIdleListener(listener) } }
     }
 
-    // Re-render the track whenever points change OR the style becomes available.
-    LaunchedEffect(points, loadedStyle) {
+    // Re-render whenever the subject changes OR the style becomes available.
+    LaunchedEffect(subject, loadedStyle) {
         if (destroyed.get()) return@LaunchedEffect
         val map = loadedMap ?: return@LaunchedEffect
         val style = loadedStyle ?: return@LaunchedEffect
@@ -411,13 +464,13 @@ fun TrackMap(
             Log.d(TAG, "Style not fully loaded — skipping render")
             return@LaunchedEffect
         }
-        Log.d(TAG, "Rendering track with ${points.size} points")
+        Log.d(TAG, "Rendering $subject")
         // Last-resort net: a style can go invalid between the check above and
         // the native call. Losing the overlay beats aborting the process.
-        val fitCamera = lastFittedPoints !== points
-        runCatching { renderTrack(map, style, points, palette, dataBounds, density, fitCamera) }
-            .onFailure { Log.w(TAG, "Track render failed", it) }
-            .onSuccess { if (fitCamera) lastFittedPoints = points }
+        val fitCamera = lastFitted != subject
+        runCatching { renderSubject(map, style, subject, palette, dataBounds, density, fitCamera) }
+            .onFailure { Log.w(TAG, "Map render failed", it) }
+            .onSuccess { if (fitCamera) lastFitted = subject }
 
         // Seed the chrome. A map that is never touched never goes idle, so
         // waiting for the listener alone would mean no scale bar at all on a
@@ -476,13 +529,13 @@ private fun Context.readAsset(name: String): String =
     assets.open(name).use { it.readBytes().decodeToString() }
 
 /**
- * Replace the existing track + endpoint markers on [style] with new ones
- * derived from [points]. Empty input clears the map.
+ * Replace whatever this file owns on [style] with a drawing of [subject], and
+ * frame it if [fitCamera] says this is new data rather than a re-render.
  */
-private fun renderTrack(
+private fun renderSubject(
     map: MapLibreMap,
     style: Style,
-    points: List<PathPoint>,
+    subject: MapSubject,
     palette: MapPalette,
     bounds: LatLngBounds?,
     density: Float,
@@ -490,8 +543,35 @@ private fun renderTrack(
 ) {
     // Always tear down previous overlays first; addSource/addLayer throw on
     // collisions, and we rebuild wholesale on every change.
-    clearTrackOverlays(style)
+    clearOverlays(style)
 
+    when (subject) {
+        is MapSubject.Track -> renderTrack(style, subject.points, palette, density)
+        is MapSubject.Places -> renderPlaces(style, subject.entries, palette)
+    }
+
+    if (!fitCamera || subject.isEmpty) return
+
+    // A subject with no area to frame - one point, or several in the same
+    // spot - has no bounds to fit, so it gets a fixed zoom instead.
+    if (bounds == null) {
+        val anchor = subject.firstCoordinate() ?: return
+        map.cameraPosition = CameraPosition.Builder()
+            .target(anchor)
+            .zoom(14.0)
+            .build()
+    } else {
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, FIT_PADDING_PX))
+    }
+}
+
+/** The travelled line, its gaps, its direction and its two endpoints. */
+private fun renderTrack(
+    style: Style,
+    points: List<PathPoint>,
+    palette: MapPalette,
+    density: Float,
+) {
     if (points.isEmpty()) return
 
     // Split the ordered points into continuous runs, breaking wherever two
@@ -629,49 +709,114 @@ private fun renderTrack(
     )
     style.addLayer(endpointHalo(LAYER_END_HALO, SOURCE_END, palette.endFill))
     style.addLayer(endpointDot(LAYER_END, SOURCE_END, palette.endFill, palette.markerStroke))
-
-    if (!fitCamera) return
-
-    // Camera fit. A track with no area to frame — one point, or several in
-    // the same spot — has no bounds to fit, so it gets a fixed zoom instead.
-    if (bounds == null) {
-        map.cameraPosition = CameraPosition.Builder()
-            .target(LatLng(first.latitude, first.longitude))
-            .zoom(14.0)
-            .build()
-    } else {
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, FIT_PADDING_PX))
-    }
 }
 
 /**
- * The box every point fits in, or null when there is nothing to frame.
+ * Places as dots sized by how often they were visited.
  *
- * MapLibre's builder rejects fewer than two points, and a track whose points
- * are all in the same spot builds a zero-area box the camera cannot fit
- * either. Both are answered with null rather than an exception, because both
- * are ordinary data — one sample, or an afternoon spent indoors.
+ * Size rather than colour, because the first question a places map answers is
+ * "which of these is my life and which is a one-off", and area reads as
+ * quantity without a legend. The scale is piecewise and flattens fast: one
+ * visit against 335 - the range in the reference export - is a factor of 335,
+ * and a dot 335 times the area of another would be the size of a city.
+ *
+ * No labels. The list under the map already names every row, and 262 place
+ * names would bury the map they are drawn on.
  */
-private fun trackBounds(points: List<PathPoint>): LatLngBounds? {
-    if (points.size < 2) return null
-    // Checked on our own copy of the numbers rather than on the built box:
-    // LatLngBounds' accessors differ between MapLibre versions, and the
-    // condition is about the data, not about the box.
-    val first = points.first()
-    var minLat = first.latitude
-    var maxLat = first.latitude
-    var minLon = first.longitude
-    var maxLon = first.longitude
-    for (p in points) {
-        if (p.latitude < minLat) minLat = p.latitude
-        if (p.latitude > maxLat) maxLat = p.latitude
-        if (p.longitude < minLon) minLon = p.longitude
-        if (p.longitude > maxLon) maxLon = p.longitude
-    }
-    if (minLat == maxLat && minLon == maxLon) return null
+private fun renderPlaces(style: Style, entries: List<PlaceEntry>, palette: MapPalette) {
+    if (entries.isEmpty()) return
 
+    // Built as GeoJSON text rather than through Feature and a properties
+    // object: the values come from our own model, the app already writes
+    // GeoJSON by hand elsewhere, and this needs no gson types on the classpath.
+    style.addSource(GeoJsonSource(SOURCE_PLACES, placesGeoJson(entries)))
+
+    // The halo is what keeps a cluster of overlapping dots readable: the
+    // fills blend into one blob, the strokes do not.
+    style.addLayer(
+        CircleLayer(LAYER_PLACES_HALO, SOURCE_PLACES).withProperties(
+            circleColor(palette.placeFill),
+            circleOpacity(0.16f),
+            circleBlur(0.6f),
+            circleRadius(visitScaled(7f, 10f, 15f, 19f, 24f)),
+        )
+    )
+    style.addLayer(
+        CircleLayer(LAYER_PLACES, SOURCE_PLACES).withProperties(
+            circleColor(palette.placeFill),
+            circleOpacity(0.85f),
+            circleRadius(visitScaled(3.5f, 5.5f, 8f, 10.5f, 13f)),
+            circleStrokeColor(palette.markerStroke),
+            circleStrokeWidth(1.6f),
+        )
+    )
+}
+
+/** Circle radius interpolated on the visit count, at 1, 5, 25, 100 and 400. */
+private fun visitScaled(one: Float, five: Float, many: Float, lots: Float, most: Float): Expression =
+    Expression.interpolate(
+        Expression.linear(), Expression.get(PROPERTY_VISITS),
+        Expression.stop(1, one),
+        Expression.stop(5, five),
+        Expression.stop(25, many),
+        Expression.stop(100, lots),
+        Expression.stop(400, most),
+    )
+
+/**
+ * A FeatureCollection of the places, carrying the visit count the radius
+ * interpolates on.
+ *
+ * Coordinates are formatted through `Locale.ROOT`: a phone set to a locale
+ * with a decimal comma would otherwise emit `13,00554`, which is two numbers
+ * to a JSON parser and a blank map to the user.
+ */
+private fun placesGeoJson(entries: List<PlaceEntry>): String = buildString {
+    append("{\"type\":\"FeatureCollection\",\"features\":[")
+    entries.forEachIndexed { index, entry ->
+        if (index > 0) append(',')
+        append("{\"type\":\"Feature\",\"properties\":{\"")
+        append(PROPERTY_VISITS)
+        append("\":")
+        append(entry.visits)
+        append("},\"geometry\":{\"type\":\"Point\",\"coordinates\":[")
+        append(String.format(Locale.ROOT, "%.6f", entry.longitude))
+        append(',')
+        append(String.format(Locale.ROOT, "%.6f", entry.latitude))
+        append("]}}")
+    }
+    append("]}")
+}
+
+/**
+ * The box the whole subject fits in, or null when there is nothing to frame.
+ *
+ * MapLibre's builder rejects fewer than two coordinates, and data that is all
+ * in the same spot builds a zero-area box the camera cannot fit either. Both
+ * are answered with null rather than an exception, because both are ordinary:
+ * one sample, or an afternoon spent indoors.
+ */
+private fun subjectBounds(subject: MapSubject): LatLngBounds? {
+    val anchor = subject.firstCoordinate() ?: return null
+    // Min/max is tracked on our own copy of the numbers rather than read back
+    // off the built box: LatLngBounds' accessors differ between MapLibre
+    // versions, and the condition is about the data, not about the box.
+    var minLat = anchor.latitude
+    var maxLat = anchor.latitude
+    var minLon = anchor.longitude
+    var maxLon = anchor.longitude
+    var count = 0
     val builder = LatLngBounds.Builder()
-    points.forEach { builder.include(LatLng(it.latitude, it.longitude)) }
+    subject.forEachCoordinate { lat, lon ->
+        if (lat < minLat) minLat = lat
+        if (lat > maxLat) maxLat = lat
+        if (lon < minLon) minLon = lon
+        if (lon > maxLon) maxLon = lon
+        builder.include(LatLng(lat, lon))
+        count++
+    }
+    if (count < 2) return null
+    if (minLat == maxLat && minLon == maxLon) return null
     return runCatching { builder.build() }.getOrNull()
 }
 
@@ -683,7 +828,7 @@ private fun trackBounds(points: List<PathPoint>): LatLngBounds? {
  * (maplibre-native#3269). Layers go first — a source with a layer still
  * attached cannot be removed.
  */
-private fun clearTrackOverlays(style: Style) {
+private fun clearOverlays(style: Style) {
     OWNED_LAYERS.forEach { id -> style.getLayer(id)?.let { style.removeLayer(it) } }
     OWNED_SOURCES.forEach { id -> style.getSource(id)?.let { style.removeSource(it) } }
     runCatching { style.removeImage(IMAGE_TRACK_ARROW) }
