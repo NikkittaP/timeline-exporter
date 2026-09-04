@@ -4,10 +4,25 @@
     "title": "Tüm geçmişin {tek haritada}",
     "sub": "Yılların Google Haritalar Zaman Tüneli tek ekranda"
   },
+  "places": {
+    "eyebrow": "Her durak",
+    "title": "Sadece rota değil, {yerler}",
+    "sub": "Ziyaretler, süre ve adresler — her formatta"
+  },
   "overview": {
     "eyebrow": "İki dokunuş",
     "title": "Her yolculuk {dışa aktarmaya hazır}",
     "sub": "Google Takeout dosyanı okur — hesap gerekmez"
+  },
+  "timeofday": {
+    "eyebrow": "Saat saat",
+    "title": "{Günün saatine} göre filtrele",
+    "sub": "Yalnızca sabahlar ya da yalnızca geceler"
+  },
+  "formats": {
+    "eyebrow": "Dört format",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Strava, Garmin veya QGIS'te aç"
   },
   "movement": {
     "eyebrow": "İnce ayar",
@@ -18,11 +33,6 @@
     "eyebrow": "Hassas kontrol",
     "title": "{Tarih aralığına} göre filtrele",
     "sub": "Yalnızca ihtiyacın olan günleri dışa aktar"
-  },
-  "formats": {
-    "eyebrow": "Dört format",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "Strava, Garmin veya QGIS'te aç"
   },
   "privacy": {
     "eyebrow": "Tasarımdan gelen gizlilik",

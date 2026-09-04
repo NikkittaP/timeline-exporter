@@ -4,10 +4,25 @@
     "title": "Votre historique, {sur une carte}",
     "sub": "Des années de Google Maps Timeline en un coup d'œil"
   },
+  "places": {
+    "eyebrow": "Chaque arrêt",
+    "title": "{Les lieux}, pas seulement le trajet",
+    "sub": "Visites, durée et adresses — dans tous les formats"
+  },
   "overview": {
     "eyebrow": "Deux touches",
     "title": "Chaque trajet, {prêt à exporter}",
     "sub": "Lit votre fichier Google Takeout, sans compte"
+  },
+  "timeofday": {
+    "eyebrow": "Heure par heure",
+    "title": "Filtrer par {moment de la journée}",
+    "sub": "Seulement vos matinées, ou seulement vos nuits"
+  },
+  "formats": {
+    "eyebrow": "Quatre formats",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Ouvrez-les dans Strava, Garmin ou QGIS"
   },
   "movement": {
     "eyebrow": "Réglage fin",
@@ -18,11 +33,6 @@
     "eyebrow": "Contrôle précis",
     "title": "Filtrer par {période}",
     "sub": "N'exportez que les jours utiles"
-  },
-  "formats": {
-    "eyebrow": "Quatre formats",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "Ouvrez-les dans Strava, Garmin ou QGIS"
   },
   "privacy": {
     "eyebrow": "Confidentialité native",

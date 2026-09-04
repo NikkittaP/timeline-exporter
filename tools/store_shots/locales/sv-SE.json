@@ -4,10 +4,25 @@
     "title": "Hela historiken {på en karta}",
     "sub": "År av Google Maps tidslinje på en gång"
   },
+  "places": {
+    "eyebrow": "Varje stopp",
+    "title": "{Platser}, inte bara spåret",
+    "sub": "Besök, tid och adresser — i alla format"
+  },
   "overview": {
     "eyebrow": "Två tryck",
     "title": "Varje resa {redo att exporteras}",
     "sub": "Läser din Google Takeout-fil – utan konto"
+  },
+  "timeofday": {
+    "eyebrow": "Timme för timme",
+    "title": "Filtrera på {tid på dygnet}",
+    "sub": "Bara dina morgnar, eller bara dina nätter"
+  },
+  "formats": {
+    "eyebrow": "Fyra format",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Öppna dem i Strava, Garmin eller QGIS"
   },
   "movement": {
     "eyebrow": "Finjustering",
@@ -18,11 +33,6 @@
     "eyebrow": "Exakt kontroll",
     "title": "Filtrera på {datumintervall}",
     "sub": "Exportera bara de dagar du behöver"
-  },
-  "formats": {
-    "eyebrow": "Fyra format",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "Öppna dem i Strava, Garmin eller QGIS"
   },
   "privacy": {
     "eyebrow": "Integritet från start",

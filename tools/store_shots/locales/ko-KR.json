@@ -4,10 +4,25 @@
     "title": "내 기록을 {지도 한 장에}",
     "sub": "수년치 타임라인을 한눈에"
   },
+  "places": {
+    "eyebrow": "머문 곳 전부",
+    "title": "경로뿐 아니라 {장소}까지",
+    "sub": "방문 횟수·머문 시간·주소를 모든 형식으로"
+  },
   "overview": {
     "eyebrow": "두 번의 탭",
     "title": "모든 이동을 {내보내기}",
     "sub": "Google Takeout 파일만 있으면 됩니다"
+  },
+  "timeofday": {
+    "eyebrow": "시간대별",
+    "title": "{시간대}로 필터링",
+    "sub": "아침만, 또는 밤만"
+  },
+  "formats": {
+    "eyebrow": "네 가지 형식",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Strava, Garmin, QGIS에서 바로 열기"
   },
   "movement": {
     "eyebrow": "세밀한 조정",
@@ -18,11 +33,6 @@
     "eyebrow": "정확한 선택",
     "title": "{기간별로} 필터링",
     "sub": "필요한 날짜만 내보내세요"
-  },
-  "formats": {
-    "eyebrow": "네 가지 형식",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "Strava, Garmin, QGIS에서 바로 열기"
   },
   "privacy": {
     "eyebrow": "프라이버시 우선",

@@ -36,8 +36,22 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   0 60px 120px -30px rgba(0,0,0,${dark ? .7 : .45}),
   0 18px 40px -12px rgba(0,0,0,${dark ? .55 : .30})}
 .phone::after{content:'';position:absolute;inset:0;border:1px solid rgba(255,255,255,.14);pointer-events:none;border-radius:inherit}
-.screen{overflow:hidden;background:#fff;width:100%;height:100%}
-.screen img{display:block;width:100%;height:100%;object-fit:cover;object-position:top center}
+.screen{position:relative;overflow:hidden;background:#fff;width:100%;height:100%}
+/* The capture is laid in at its own aspect and pulled up by the height of the
+   device's status bar, so the emulator's bar is off the top of the screen and
+   .sysbar takes its place. min-height guards the sub-pixel gap that rounding
+   the phone's height can leave at the bottom. */
+.screen img{display:block;position:absolute;top:0;left:0;width:100%;height:auto;min-height:100%}
+
+/* Our own status bar. Height, type size and colours are set by STYLE_BAR in
+   render.mjs once the device's real width is known; the background is sampled
+   from the capture's own pixels just below the bar. Under dir=rtl the flex row
+   reverses on its own, which is where an Arabic status bar puts the clock. */
+.sysbar{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;
+  justify-content:space-between;font-weight:600;line-height:1}
+.sysbar .sb-time{font-variant-numeric:tabular-nums;letter-spacing:0;white-space:nowrap}
+.sysbar .sb-icons{display:flex;align-items:center}
+.sysbar svg{display:block}
 
 /* feature graphic ------------------------------------------------------- */
 .fg{position:relative;overflow:hidden;background:${pal.bg};display:flex;align-items:center}
@@ -46,6 +60,23 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 .fg .t2{font-weight:500;color:${pal.muted};margin-top:12px}
 [dir="rtl"] .fg{flex-direction:row-reverse}
 `;
+}
+
+/* Status bar drawn by us, in place of the emulator's. Tight viewBoxes so each
+   icon keeps its own width when only the height is set. Material 24dp glyphs. */
+const SB_ICON = {
+  wifi:     '<svg viewBox="1 5 22 15" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 3.93 7.07 3.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.86 9.14 5 13z"/></svg>',
+  cellular: '<svg viewBox="2 2 20 20" fill="currentColor"><path d="M2 22h20V2z"/></svg>',
+  battery:  '<svg viewBox="6.6 2 10.8 20" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.34C7 21.4 7.6 22 8.33 22h7.34c.73 0 1.33-.6 1.33-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>',
+};
+
+export function sysbarHtml(cfg, cap) {
+  const sb = cfg.statusBar;
+  if (!sb || sb.enabled === false || !cap.crop) return '';
+  const icons = ['wifi', 'cellular', 'battery'].filter(k => sb[k] !== false).map(k => SB_ICON[k]).join('');
+  return `<div class="sysbar" style="height:${cap.barPct}%">` +
+         `<span class="sb-time">${sb.clock ?? '9:41'}</span>` +
+         `<span class="sb-icons">${icons}</span></div>`;
 }
 
 const accent = (s) => String(s).replace(/\{(.+?)\}/g, '<em>$1</em>');
@@ -80,7 +111,7 @@ export function frameHtml(cfg, slot, t, cap, ctx) {
     ${t.sub ? `<div class="sub" style="font-size:${Math.round(ty.subMax * k)}px;line-height:${sc?.subLh ?? 1.35};margin-top:${Math.round(h * .0125)}px">${accent(t.sub)}</div>` : ''}
   </div>
   <div class="dev" data-geo='${JSON.stringify(geo)}' style="bottom:${-geo.bleed}px">
-    <div class="phone"><div class="screen"><img src="${cap.src}"></div></div>
+    <div class="phone"><div class="screen"><img src="${cap.src}" style="transform:translateY(-${cap.cropPct}%)">${sysbarHtml(cfg, cap)}</div></div>
   </div>
 </div>`;
 }
@@ -100,7 +131,7 @@ export function featureHtml(cfg, fg, meta, cap, ctx) {
   </div>
   <div class="dev" style="left:auto;right:${Math.round(w * .05)}px;transform:none;bottom:-38%">
     <div class="phone" style="width:${phoneW}px;height:${phoneH}px;padding:${bezel}px;border-radius:26px">
-      <div class="screen" style="border-radius:20px"><img src="${cap.src}"></div>
+      <div class="screen" style="border-radius:20px"><img src="${cap.src}" style="transform:translateY(-${cap.cropPct}%)">${sysbarHtml(cfg, cap)}</div>
     </div>
   </div>
 </div>`;

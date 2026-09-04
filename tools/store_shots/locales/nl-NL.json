@@ -4,10 +4,25 @@
     "title": "Je geschiedenis, {op één kaart}",
     "sub": "Jaren Google Maps Timeline in één oogopslag"
   },
+  "places": {
+    "eyebrow": "Elke stop",
+    "title": "{Plaatsen}, niet alleen de route",
+    "sub": "Bezoeken, duur en adressen — in elk formaat"
+  },
   "overview": {
     "eyebrow": "Twee tikken",
     "title": "Elke rit, {klaar om te exporteren}",
     "sub": "Leest je Google Takeout-bestand, zonder account"
+  },
+  "timeofday": {
+    "eyebrow": "Uur voor uur",
+    "title": "Filter op {tijdstip van de dag}",
+    "sub": "Alleen je ochtenden, of alleen je nachten"
+  },
+  "formats": {
+    "eyebrow": "Vier formaten",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Open ze in Strava, Garmin of QGIS"
   },
   "movement": {
     "eyebrow": "Fijnafstemming",
@@ -18,11 +33,6 @@
     "eyebrow": "Precieze controle",
     "title": "Filter op {datumbereik}",
     "sub": "Exporteer alleen de dagen die je nodig hebt"
-  },
-  "formats": {
-    "eyebrow": "Vier formaten",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "Open ze in Strava, Garmin of QGIS"
   },
   "privacy": {
     "eyebrow": "Privacy vooraf",

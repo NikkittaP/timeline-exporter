@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -33,6 +34,14 @@ import java.io.File
  *   06_start_empty   first launch, nothing loaded
  *   07_movement      the movement breakdown expanded (per-type trips and
  *                    distance, "only while moving", "skip repeated points")
+ *   08_places        step 3 switched to Places: the map draws a dot per place
+ *                    sized by its visit count, over the list that names them
+ *   09_time_of_day   the time-of-day window dialog, a preset chosen
+ *
+ * The order of the captures inside captureLoadedFlow is not cosmetic. The
+ * Track / Places switch in step 3 decides what step 4 says it will export, so
+ * 05_formats is taken while Track is still selected and the switch is put back
+ * before the fullscreen map, which would otherwise open on the places dots.
  *
  * These are raw captures, not the store art: tools/store_shots renders the
  * framed, captioned images from them. See tools/store_shots/README.md.
@@ -124,12 +133,43 @@ class ScreenshotTest {
             .performScrollTo().performClick()
         composeRule.waitForIdle()
 
+        // 09 — the time-of-day window. Before a window is set the chip carries
+        // the same string the dialog is titled with, so the chip is matched
+        // while it is still the only one on screen, and the dialog is waited
+        // for on a label of its own. Cancel, not Apply: the shots that follow
+        // expect the unfiltered data.
+        composeRule.onNodeWithText(str(R.string.filter_time_any))
+            .performScrollTo().performClick()
+        waitForText(R.string.time_dialog_from, timeoutMs = 10_000)
+        composeRule.onNodeWithText(str(R.string.time_preset_day)).performClick()
+        composeRule.waitForIdle()
+        Screengrab.screenshot("09_time_of_day")
+        composeRule.onNodeWithText(str(R.string.date_dialog_cancel)).performClick()
+        composeRule.waitForIdle()
+
         // 05 — scroll to the version footer, which sits just below the Export
         // card, so the whole card (including its bottom border and the
         // GPX/KML/GeoJSON/CSV buttons) is on screen.
         composeRule.onNodeWithText(BuildConfig.VERSION_NAME, substring = true).performScrollTo()
         composeRule.waitForIdle()
         Screengrab.screenshot("05_formats")
+
+        // 08 — step 3 on the Places side: the map above, the list below.
+        // onFirst() rather than onNodeWithText: "Places" is the switch's label
+        // and, in some languages, a word the step-4 heading repeats.
+        composeRule.onAllNodesWithText(str(R.string.content_places)).onFirst()
+            .performScrollTo().performClick()
+        composeRule.waitForIdle()
+        settle(MAP_TILE_WAIT_MS)
+        // Frame it from the top of the step, so the switch, the map and the
+        // first rows of the list are all in the shot.
+        composeRule.onAllNodesWithText(str(R.string.content_places)).onFirst().performScrollTo()
+        composeRule.waitForIdle()
+        Screengrab.screenshot("08_places")
+        // Back to Track before the map is expanded, or the hero shot is dots.
+        composeRule.onAllNodesWithText(str(R.string.content_track)).onFirst().performClick()
+        composeRule.waitForIdle()
+        settle(MAP_TILE_WAIT_MS)
 
         // 03 — open the full-screen map. This is also the base image that
         // add_hero_caption.py turns into the captioned 01_hero.

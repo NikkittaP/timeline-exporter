@@ -122,13 +122,31 @@ function imageSize(file) {
 }
 const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp' };
 
-function capture(locale, slotId, name) {
+function capture(locale, slot, name) {
   for (const loc of [locale, cfg.defaultLocale]) {
     for (const ext of ['png', 'jpg', 'jpeg', 'webp']) {
-      const f = path.join(abs(cfg.paths.raw), loc, slotId, `${name}.${ext}`);
+      const f = path.join(abs(cfg.paths.raw), loc, slot.id, `${name}.${ext}`);
       if (!fs.existsSync(f)) continue;
       const { w, h } = ext === 'webp' ? { w: 1080, h: 2400 } : imageSize(f);
-      return { src: `data:${MIME[ext]};base64,${fs.readFileSync(f).toString('base64')}`, aspect: h / w, w, h, fallback: loc !== locale };
+      // How much of the top of the raw capture is the device's own status bar.
+      // It is cropped off and redrawn (see template/theme.js sysbarHtml), so
+      // the store art does not carry the emulator's clock, its notification
+      // icons, or whatever that AVD's SystemUI does with its side padding.
+      const enabled = cfg.statusBar && cfg.statusBar.enabled !== false;
+      const crop = enabled ? Math.min(slot.statusBarPx || 0, Math.round(h * 0.2)) : 0;
+      // ...and the system bar at the bottom: the gesture pill on the phone, the
+      // taskbar full of Google's own app icons on a tablet. Cropped, not
+      // redrawn — there is nothing there a store screenshot wants.
+      const bottom = Math.min(slot.bottomCropPx || 0, Math.round(h * 0.2));
+      const shown = h - crop - bottom;
+      return {
+        src: `data:${MIME[ext]};base64,${fs.readFileSync(f).toString('base64')}`,
+        aspect: shown / w,               // the device frame is sized to what is left
+        w, h, crop, bottom,
+        cropPct: +(crop / h * 100).toFixed(4),      // of the image's own height
+        barPct:  +(crop / shown * 100).toFixed(4),  // of the visible screen's height
+        fallback: loc !== locale,
+      };
     }
   }
   return null;
@@ -201,6 +219,46 @@ const FIT_DEVICE = `({frameW, frameH, titleMin}) => {
   return { width: parseInt(phone.style.width), shrunk, overlap: Math.max(0, Math.round(r.top - r.deviceTop) - 3) };
 }`;
 
+const STYLE_BAR = `({crop, rawW, pad, text, icon, gap}) => {
+  const bar = document.querySelector('.sysbar');
+  if (!bar || !crop) return null;
+  const screen = document.querySelector('.screen');
+  const img = screen.querySelector('img');
+  const S = screen.getBoundingClientRect().width;
+  const barPx = S * crop / rawW;
+
+  // Background: the app's own pixels one row below where the status bar ended.
+  // A median across the middle of that row, so a stray icon or a map label does
+  // not decide the colour. This is what lets one bar sit on a near-white screen
+  // and on a dark map without either looking like a pasted-on band.
+  let bg = [255, 255, 255];
+  try {
+    const c = document.createElement('canvas');
+    c.width = rawW; c.height = 1;
+    const g = c.getContext('2d', { willReadFrequently: true });
+    g.drawImage(img, 0, -(crop + 2), rawW, img.naturalHeight);
+    const d = g.getImageData(0, 0, rawW, 1).data;
+    const ch = [[], [], []];
+    for (let x = Math.round(rawW * 0.08); x < rawW * 0.92; x++) {
+      ch[0].push(d[x * 4]); ch[1].push(d[x * 4 + 1]); ch[2].push(d[x * 4 + 2]);
+    }
+    bg = ch.map(a => { a.sort((p, q) => p - q); return a[a.length >> 1]; });
+  } catch (e) { /* tainted canvas: fall back to white */ }
+
+  const lum = (0.2126 * bg[0] + 0.7152 * bg[1] + 0.0722 * bg[2]) / 255;
+  bar.style.background = 'rgb(' + bg.join(',') + ')';
+  bar.style.color = lum > 0.55 ? 'rgba(0,0,0,.84)' : 'rgba(255,255,255,.95)';
+  // The screen is rounded, and on a wide tablet that arc is deeper than the bar
+  // is tall — a clock at the nominal inset would be clipped away by it.
+  const r = parseFloat(getComputedStyle(screen).borderTopLeftRadius) || 0;
+  const inset = Math.max(barPx * pad, r * 0.42);
+  bar.style.fontSize = (barPx * text) + 'px';
+  bar.style.paddingLeft = bar.style.paddingRight = inset + 'px';
+  bar.querySelector('.sb-icons').style.gap = (barPx * gap) + 'px';
+  for (const svg of bar.querySelectorAll('svg')) { svg.style.height = (barPx * icon) + 'px'; svg.style.width = 'auto'; }
+  return { barPx: Math.round(barPx), bg, lum: +lum.toFixed(3) };
+}`;
+
 /* ------------------------------------------------------------------ run */
 const FONTS = fontCss();
 const STYLES = css(cfg, pal, FONTS);
@@ -211,7 +269,7 @@ const warn = [];
 const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
 let total = 0;
 
-async function shoot(page, html, w, h, sel, outFile, ctx, autofit) {
+async function shoot(page, html, w, h, sel, outFile, ctx, autofit, cap) {
   const file = path.join(TMP, 'page.html');
   fs.writeFileSync(file, `<!doctype html><html dir="${ctx.dir}"><head><meta charset="utf-8"><style>${STYLES}
     body{font-family:${ctx.stack.map(f => `'${f}'`).join(',')},system-ui,sans-serif}</style></head><body>${html}</body></html>`);
@@ -222,6 +280,15 @@ async function shoot(page, html, w, h, sel, outFile, ctx, autofit) {
   const fix = autofit.length > 1
     ? await page.evaluate(`(${FIT_DEVICE})({frameW:${w}, frameH:${h}, titleMin:${Math.round((cfg.type.titleMin - 10) * (Math.min(w,h)/1080))}})`)
     : { width: 0, shrunk: 0, overlap: 0 };
+  // after fitDevice: the bar is sized from the device's final on-frame width
+  if (cap && cap.crop) {
+    const sb = cfg.statusBar || {};
+    await page.evaluate(`(${STYLE_BAR})(${JSON.stringify({
+      crop: cap.crop, rawW: cap.w,
+      pad: sb.padRatio ?? 0.26, text: sb.textRatio ?? 0.27,
+      icon: sb.iconRatio ?? 0.30, gap: sb.gapRatio ?? 0.11,
+    })})`);
+  }
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   await page.locator(sel).screenshot({ path: outFile });
   return fix;
@@ -243,7 +310,7 @@ for (const slot of slots) {
     for (const f of frames) {
       const t = str[f.key];
       if (!t) { warn.push(`${locale}: missing key "${f.key}"`); continue; }
-      const cap = capture(locale, slot.id, f.src);
+      const cap = capture(locale, slot, f.src);
       if (!cap) { warn.push(`${locale}/${slot.id}: no raw capture "${f.src}"`); continue; }
       if (cap.fallback) warn.push(`${locale}/${slot.id}/${f.src}: using ${cfg.defaultLocale} capture`);
 
@@ -256,25 +323,39 @@ for (const slot of slots) {
       const fix = await shoot(page, frameHtml(cfg, view, t, cap, ctx), box.w, box.h, '.frame', outFile, ctx, [
         `(${AUTOFIT})('.title', ${Math.round(cfg.type.titleMax * k2)}, ${Math.round(cfg.type.titleMin * k2)}, ${cfg.type.titleLines})`,
         `(${AUTOFIT})('.sub', ${Math.round(cfg.type.subMax * k2)}, ${Math.round(cfg.type.subMin * k2)}, ${cfg.type.subLines})`,
-      ]);
+      ], cap);
       if (fix.overlap > 0) warn.push(`${locale}/${slot.id}/${f.out}: headline overlaps the device by ${fix.overlap}px — shorten the string`);
       else if (fix.shrunk) warn.push(`${locale}/${slot.id}/${f.out}: tight — title shrunk ${fix.shrunk}px`);
       made.push(outFile); total++;
     }
 
     if (!noFeature && cfg.featureGraphic.enabled && slot.id === cfg.slots[0].id && str._feature) {
-      const cap = capture(locale, slot.id, cfg.featureGraphic.source);
+      const cap = capture(locale, slot, cfg.featureGraphic.source);
       if (cap) {
         const out = previewOnly
           ? path.join(abs(cfg.paths.preview), '_frames', 'feature', `${locale}.png`)
           : path.join(abs(cfg.paths.metadata), locale, 'images', 'featureGraphic.png');
         await shoot(page, featureHtml(cfg, cfg.featureGraphic, str._feature, cap, ctx),
           cfg.featureGraphic.w, cfg.featureGraphic.h, '.fg', out, ctx,
-          [`(${AUTOFIT})('.t1', ${Math.round(cfg.featureGraphic.w * .0605)}, 34, 2)`]);
+          [`(${AUTOFIT})('.t1', ${Math.round(cfg.featureGraphic.w * .0605)}, 34, 2)`], cap);
       }
     }
 
     await page.close();
+
+    // Renaming or dropping a frame leaves last run's PNG in the metadata
+    // folder, and `supply` uploads whatever it finds there — which is how a
+    // renamed set becomes twelve images and Play refuses the lot (it takes
+    // eight). Only when this run was asked for every frame, so a deliberate
+    // `--frames 01_map` does not delete the other seven.
+    if (made.length && !previewOnly && !opt('frames')) {
+      const keep = new Set(made.map(f => path.basename(f)));
+      for (const f of fs.readdirSync(outDir)) {
+        if (!/\.(png|jpe?g|webp)$/i.test(f) || keep.has(f)) continue;
+        fs.rmSync(path.join(outDir, f), { force: true });
+        console.log(`  removed stale ${slot.id}/${locale}/${f}`);
+      }
+    }
     if (made.length && !previewOnly) fs.writeFileSync(path.join(outDir, '.decorated'), new Date().toISOString());
     console.log(`${slot.id.padEnd(10)} ${locale.padEnd(6)} ${made.length} shot(s)`);
   }

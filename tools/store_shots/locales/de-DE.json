@@ -4,10 +4,25 @@
     "title": "Deine Historie, {auf einer Karte}",
     "sub": "Jahre Google Maps Timeline auf einen Blick"
   },
+  "places": {
+    "eyebrow": "Jeder Halt",
+    "title": "{Orte}, nicht nur die Strecke",
+    "sub": "Besuche, Dauer und Adressen — in jedem Format"
+  },
   "overview": {
     "eyebrow": "Zwei Tipps",
     "title": "Jede Reise, {exportbereit}",
     "sub": "Liest deine Google-Takeout-Datei – ohne Konto"
+  },
+  "timeofday": {
+    "eyebrow": "Stunde für Stunde",
+    "title": "Filtern nach {Tageszeit}",
+    "sub": "Nur die Morgen oder nur die Nächte"
+  },
+  "formats": {
+    "eyebrow": "Vier Formate",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Öffne sie in Strava, Garmin oder QGIS"
   },
   "movement": {
     "eyebrow": "Feinabstimmung",
@@ -18,11 +33,6 @@
     "eyebrow": "Genaue Kontrolle",
     "title": "Filtern nach {Zeitraum}",
     "sub": "Exportiere nur die Tage, die du brauchst"
-  },
-  "formats": {
-    "eyebrow": "Vier Formate",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "Öffne sie in Strava, Garmin oder QGIS"
   },
   "privacy": {
     "eyebrow": "Datenschutz zuerst",

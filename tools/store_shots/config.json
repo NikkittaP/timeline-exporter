@@ -13,21 +13,40 @@
               "nl-NL","pl-PL","pt-BR","ru-RU","sv-SE","tr-TR","uk","zh-CN","zh-TW"],
   "rtl": ["ar","he","fa","ur"],
 
+  "$slots": "statusBarPx / bottomCropPx are the heights, in RAW capture pixels, of the device's own system bars. Both are cropped off; the top one is redrawn (see statusBar below). Re-measure them if the AVDs change: the top one is about twice the y-centre of the clock in a raw capture. Tablets carry their own device geometry — a phone's corner radius on a 2000px-wide device is a 150px arc that swallows the status bar.",
   "slots": [
-    { "id": "phone",     "dir": "phoneScreenshots",     "w": 1080, "h": 1920 },
-    { "id": "sevenInch", "dir": "sevenInchScreenshots", "w": 1200, "h": 1920, "landscape": { "w": 1920, "h": 1200 } },
-    { "id": "tenInch",   "dir": "tenInchScreenshots",   "w": 1600, "h": 2560, "landscape": { "w": 2560, "h": 1600 } }
+    { "id": "phone",     "dir": "phoneScreenshots",     "w": 1080, "h": 1920, "statusBarPx": 137, "bottomCropPx": 63 },
+    { "id": "sevenInch", "dir": "sevenInchScreenshots", "w": 1200, "h": 1920, "statusBarPx": 48,  "bottomCropPx": 48,
+      "landscape": { "w": 1920, "h": 1200 }, "device": { "radius": 22, "bezel": 9 } },
+    { "id": "tenInch",   "dir": "tenInchScreenshots",   "w": 1600, "h": 2560, "statusBarPx": 48,  "bottomCropPx": 144,
+      "landscape": { "w": 2560, "h": 1600 }, "device": { "radius": 22, "bezel": 9 } }
   ],
+
+  "$statusBar": "Drawn in place of the emulator's, so the art carries no emulator clock, no SD-card or debug notification icons, and no dependence on how a given AVD's SystemUI lays its bar out. The background is sampled from the app's own pixels just below the bar, so one bar works on a white screen and on the map alike. Ratios are fractions of the bar's own height. enabled:false puts the real bars back.",
+  "statusBar": {
+    "enabled": true,
+    "clock": "9:41",
+    "wifi": true,
+    "cellular": true,
+    "battery": true,
+    "padRatio":  0.26,
+    "textRatio": 0.27,
+    "iconRatio": 0.30,
+    "gapRatio":  0.13
+  },
 
   "featureGraphic": { "w": 1024, "h": 500, "enabled": true, "source": "03_map_fullscreen" },
 
+  "$frames": "Play shows the first three without scrolling and takes at most eight. Places is second: it is the one thing 1.7.0 adds that a 1.6 user does not already have.",
   "frames": [
-    { "out": "01_map",      "src": "03_map_fullscreen", "key": "map"      },
-    { "out": "02_overview", "src": "02_overview",       "key": "overview" },
-    { "out": "03_movement", "src": "07_movement",       "key": "movement" },
-    { "out": "04_calendar", "src": "04_calendar",       "key": "calendar" },
-    { "out": "05_formats",  "src": "05_formats",        "key": "formats"  },
-    { "out": "06_privacy",  "src": "06_start_empty",    "key": "privacy"  }
+    { "out": "01_map",       "src": "03_map_fullscreen", "key": "map"       },
+    { "out": "02_places",    "src": "08_places",         "key": "places"    },
+    { "out": "03_overview",  "src": "02_overview",       "key": "overview"  },
+    { "out": "04_timeofday", "src": "09_time_of_day",    "key": "timeofday" },
+    { "out": "05_formats",   "src": "05_formats",        "key": "formats"   },
+    { "out": "06_movement",  "src": "07_movement",       "key": "movement"  },
+    { "out": "07_calendar",  "src": "04_calendar",       "key": "calendar"  },
+    { "out": "08_privacy",   "src": "06_start_empty",    "key": "privacy"   }
   ],
 
   "palette": "blue",

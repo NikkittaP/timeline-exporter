@@ -4,10 +4,25 @@
     "title": "سجلّك {على خريطة واحدة}",
     "sub": "سنوات من سجل خرائط Google في عرض واحد"
   },
+  "places": {
+    "eyebrow": "كل توقف",
+    "title": "{الأماكن}، لا المسار وحده",
+    "sub": "الزيارات والمدة والعناوين — بكل الصيغ"
+  },
   "overview": {
     "eyebrow": "نقرتان",
     "title": "كل رحلة {جاهزة للتصدير}",
     "sub": "يقرأ ملف Google Takeout — بدون حساب"
+  },
+  "timeofday": {
+    "eyebrow": "ساعة بساعة",
+    "title": "تصفية حسب {وقت اليوم}",
+    "sub": "صباحاتك فقط، أو لياليك فقط"
+  },
+  "formats": {
+    "eyebrow": "أربع صيغ",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "افتحها في Strava أو Garmin أو QGIS"
   },
   "movement": {
     "eyebrow": "ضبط دقيق",
@@ -18,11 +33,6 @@
     "eyebrow": "تحكّم دقيق",
     "title": "التصفية حسب {نطاق التاريخ}",
     "sub": "صدّر الأيام التي تحتاجها فقط"
-  },
-  "formats": {
-    "eyebrow": "أربع صيغ",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "افتحها في Strava أو Garmin أو QGIS"
   },
   "privacy": {
     "eyebrow": "خصوصية بالتصميم",

@@ -4,10 +4,25 @@
     "title": "全部记录，{一张地图}",
     "sub": "多年的 Google 地图时间线，一屏看完"
   },
+  "places": {
+    "eyebrow": "每一次停留",
+    "title": "不只是轨迹，还有{地点}",
+    "sub": "访问次数、停留时长和地址——四种格式都支持"
+  },
   "overview": {
     "eyebrow": "两次点击",
     "title": "每段行程，{随时导出}",
     "sub": "读取你的 Google Takeout 文件，无需账号"
+  },
+  "timeofday": {
+    "eyebrow": "按小时",
+    "title": "按{时段}筛选",
+    "sub": "只要早晨，或者只要夜晚"
+  },
+  "formats": {
+    "eyebrow": "四种格式",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "可直接在 Strava、Garmin、QGIS 中打开"
   },
   "movement": {
     "eyebrow": "精细设置",
@@ -18,11 +33,6 @@
     "eyebrow": "精确控制",
     "title": "按{日期范围}筛选",
     "sub": "只导出你需要的日子"
-  },
-  "formats": {
-    "eyebrow": "四种格式",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "可直接在 Strava、Garmin、QGIS 中打开"
   },
   "privacy": {
     "eyebrow": "隐私优先",

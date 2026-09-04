@@ -4,10 +4,25 @@
     "title": "आपका इतिहास, {एक मैप पर}",
     "sub": "सालों की Google Maps Timeline एक नज़र में"
   },
+  "places": {
+    "eyebrow": "हर ठहराव",
+    "title": "सिर्फ़ रास्ता नहीं, {जगहें}",
+    "sub": "विज़िट, अवधि और पते — हर फ़ॉर्मैट में"
+  },
   "overview": {
     "eyebrow": "दो टैप",
     "title": "हर यात्रा, {एक्सपोर्ट के लिए तैयार}",
     "sub": "आपकी Google Takeout फ़ाइल पढ़ता है — बिना अकाउंट"
+  },
+  "timeofday": {
+    "eyebrow": "घंटे दर घंटे",
+    "title": "{दिन के समय} से फ़िल्टर करें",
+    "sub": "सिर्फ़ आपकी सुबहें, या सिर्फ़ आपकी रातें"
+  },
+  "formats": {
+    "eyebrow": "चार फ़ॉर्मैट",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Strava, Garmin या QGIS में खोलें"
   },
   "movement": {
     "eyebrow": "बारीक नियंत्रण",
@@ -18,11 +33,6 @@
     "eyebrow": "सटीक नियंत्रण",
     "title": "{तारीख़ के हिसाब से} फ़िल्टर",
     "sub": "सिर्फ़ ज़रूरी दिन एक्सपोर्ट करें"
-  },
-  "formats": {
-    "eyebrow": "चार फ़ॉर्मैट",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "Strava, Garmin या QGIS में खोलें"
   },
   "privacy": {
     "eyebrow": "निजता पहले",

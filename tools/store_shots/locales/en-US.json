@@ -4,10 +4,25 @@
     "title": "Your history, {on one map}",
     "sub": "Years of Google Maps Timeline in one view"
   },
+  "places": {
+    "eyebrow": "Every stop",
+    "title": "{Places}, not just the track",
+    "sub": "Visits, duration and addresses — in every format"
+  },
   "overview": {
     "eyebrow": "Two taps",
     "title": "Every trip, {ready to export}",
     "sub": "Reads your Google Takeout file — no account needed"
+  },
+  "timeofday": {
+    "eyebrow": "Hour by hour",
+    "title": "Filter by {time of day}",
+    "sub": "Only your mornings, or only your nights"
+  },
+  "formats": {
+    "eyebrow": "Four formats",
+    "title": "GPX · KML · {GeoJSON} · CSV",
+    "sub": "Open them in Strava, Garmin, QGIS or anything else"
   },
   "movement": {
     "eyebrow": "Fine-tuned",
@@ -18,11 +33,6 @@
     "eyebrow": "Precise control",
     "title": "Filter by {date range}",
     "sub": "Export only the days you need"
-  },
-  "formats": {
-    "eyebrow": "Four formats",
-    "title": "GPX · KML · {GeoJSON} · CSV",
-    "sub": "Open them in Strava, Garmin, QGIS or anything else"
   },
   "privacy": {
     "eyebrow": "Private by design",

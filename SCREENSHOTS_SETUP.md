@@ -18,23 +18,44 @@ The raw shots the test captures (per language):
 | `05_formats.png`        | Export-format buttons (GPX / KML / GeoJSON / CSV) |
 | `06_start_empty.png`    | First launch, nothing loaded                      |
 | `07_movement.png`       | Movement breakdown expanded: per-type trips and distance, plus the two point filters |
+| `08_places.png`         | Step 3 on the Places side: the map of visited places above the list that names them |
+| `09_time_of_day.png`    | The time-of-day window dialog, a preset chosen     |
 
 Those are **not** what Play gets. A second stage ("Aurora", `tools/store_shots/`)
 renders each raw shot into framed store art — gradient background, device frame,
 localized headline — and that is what lands in `fastlane/metadata/`:
 
-| Store file        | Built from              |
-|-------------------|-------------------------|
-| `01_map.png`      | `03_map_fullscreen.png` |
-| `02_overview.png` | `02_overview.png`       |
-| `03_movement.png` | `07_movement.png`       |
-| `04_calendar.png` | `04_calendar.png`       |
-| `05_formats.png`  | `05_formats.png`        |
-| `06_privacy.png`  | `06_start_empty.png`    |
+| Store file         | Built from              |
+|--------------------|-------------------------|
+| `01_map.png`       | `03_map_fullscreen.png` |
+| `02_places.png`    | `08_places.png`         |
+| `03_overview.png`  | `02_overview.png`       |
+| `04_timeofday.png` | `09_time_of_day.png`    |
+| `05_formats.png`   | `05_formats.png`        |
+| `06_movement.png`  | `07_movement.png`       |
+| `07_calendar.png`  | `04_calendar.png`       |
+| `08_privacy.png`   | `06_start_empty.png`    |
 | feature graphic (1024x500) | `03_map_fullscreen.png` |
 
-Play orders screenshots by file name and shows the first three without
-scrolling, which is why the movement breakdown sits third.
+Play orders screenshots by file name, shows the first three without scrolling
+and takes at most eight. That is the whole budget, and it is why Places sits
+second: it is the one thing 1.7.0 added that a 1.6 user does not already have.
+
+### The status bar is ours, not the emulator's
+
+Every capture has its top and bottom system bars cropped off, and a status bar
+of our own drawn in place of the top one — a fixed 9:41, Wi-Fi, signal and a
+full battery. That is what keeps the art free of the emulator's clock, its
+SD-card and debug notification icons, and whatever a given AVD's SystemUI does
+with its side padding (the Pixel_7 image collapses the left inset to ~1 dp,
+which is why the clock looks jammed into the corner on screen). The bottom crop
+takes the gesture pill on the phone and, on a tablet, the taskbar full of
+Google's own app icons.
+
+The heights are per slot, in raw capture pixels, in `config.json`:
+`slots[].statusBarPx` and `slots[].bottomCropPx`. Change the AVD and those two
+numbers may need re-measuring — the top one is roughly twice the y-centre of
+the clock in a raw capture. `statusBar.enabled: false` puts the real bars back.
 
 > Nothing here ships in the release AAB. The test deps are `androidTest`-only,
 > and the FileProvider + permissions live in `src/debug`.
