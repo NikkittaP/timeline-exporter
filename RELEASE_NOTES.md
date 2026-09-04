@@ -117,6 +117,34 @@ and none of it could leave the app.
   directly below — is `secondaryContainer`, and a tonal plaque there reads as
   one more control. Three new strings across 18 locales; the now-unused
   `step_export` was removed from all of them.
+- **The map is our own basemap now, and the track is drawn as accumulation.**
+  The preview used OpenFreeMap's *Liberty* style — a full-colour general
+  purpose map — under a flat 4 px orange line. On a week of walking that was
+  legible; on a year of history it was an orange blanket, and the ground
+  underneath competed with it for every pixel. Two things changed:
+
+  - **Two bundled styles, light and dark, in `assets/`.** Same OpenMapTiles
+    vector source as before, but a near-monochrome ground whose only job is to
+    stay out of the track's way: 18 layers instead of Liberty's ~150. They
+    follow the system theme, and switching theme reloads the style locally
+    rather than downloading one. The camera is fitted to the data, not to the
+    style, so a theme flip no longer yanks a camera the user has panned.
+  - **The track accumulates.** A hairline drawn at low alpha over a blurred
+    wash, so a street walked once stays faint and one walked two hundred times
+    builds to a solid corridor. Alpha accumulation only works if a single pass
+    is faint enough to leave headroom — which is the wrong answer for a single
+    afternoon's walk, with nothing to accumulate against. So the base weight
+    is interpolated on the log of the sample count: a small track is drawn as
+    a confident route line, a year of history as a heat map. Opacity is also a
+    U over zoom: held high at continent scale, where a long-haul flight is one
+    pass and heat-map alpha would erase the trip; dipping through zoom 10–13,
+    where a year of local movement overlaps itself and the gradient does the
+    work; solid again past 16, where the map is one street wide.
+  - Track and gap layers are inserted *below* the basemap's first symbol
+    layer, so place names stay readable through a dense track. The endpoint
+    dots stay on top of everything — they are the one thing the user hunts for
+    by eye — and each gained a soft halo so it reads against a busy track.
+
 
 ## Pre-release checklist for this span
 
@@ -137,6 +165,16 @@ Timezones (1.6.3):
       not the phone's
 - [ ] An export spanning a DST change
 - [ ] An older `Records.json` layout keeps its place names
+
+Map preview:
+
+- [ ] A year of history and a single day's walk: both legible, neither a blanket
+- [ ] Light and dark, and a theme flip mid-session — the style follows and the
+      camera stays where the user left it
+- [ ] Zoom from continent to street: the track never disappears at either end
+- [ ] The attribution button still credits OpenStreetMap now that the style is
+      ours rather than Liberty's
+- [ ] Airplane mode: no basemap tiles, but the track still draws
 
 Export step wording:
 
