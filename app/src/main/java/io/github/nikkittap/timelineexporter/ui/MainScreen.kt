@@ -1500,11 +1500,14 @@ private fun ExpandedMap(
             ) {
                 mapContent(points, Modifier.fillMaxSize())
             }
+            // Top-*end*: the map's own top-left corner now carries the scale
+            // bar, and a button parked on top of it would hide the one piece
+            // of chrome that says how big what you are looking at is.
             FilledTonalButton(
                 onClick = onClose,
                 shape = ButtonShape,
                 modifier = Modifier
-                    .align(Alignment.TopStart)
+                    .align(Alignment.TopEnd)
                     .padding(8.dp),
             ) {
                 Text(stringResource(R.string.preview_close))

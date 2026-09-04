@@ -196,4 +196,8 @@
     <string name="step_export_track">ट्रैक निर्यात करें</string>
     <string name="step_export_places">स्थान निर्यात करें</string>
     <string name="export_writes_label">यह लिखा जाएगा</string>
+
+    <string name="map_recenter">पूरा ट्रैक दिखाएँ</string>
+    <string name="map_scale_m">%1$s मी</string>
+    <string name="map_scale_km">%1$s किमी</string>
 </resources>

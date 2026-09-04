@@ -196,4 +196,8 @@
     <string name="step_export_track">匯出軌跡</string>
     <string name="step_export_places">匯出地點</string>
     <string name="export_writes_label">將寫入</string>
+
+    <string name="map_recenter">顯示完整軌跡</string>
+    <string name="map_scale_m">%1$s 公尺</string>
+    <string name="map_scale_km">%1$s 公里</string>
 </resources>

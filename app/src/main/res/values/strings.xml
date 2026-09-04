@@ -256,4 +256,9 @@
     <string name="step_export_places">Export places</string>
     <string name="export_writes_label">This will write</string>
     <string name="export_writes_value" translatable="false">%1$s — %2$s</string>
+
+    <!-- Map chrome: the scale bar, and the button that reframes the track -->
+    <string name="map_recenter">Show the whole track</string>
+    <string name="map_scale_m">%1$s m</string>
+    <string name="map_scale_km">%1$s km</string>
 </resources>

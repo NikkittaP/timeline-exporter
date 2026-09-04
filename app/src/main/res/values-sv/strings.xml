@@ -196,4 +196,8 @@
     <string name="step_export_track">Exportera spåret</string>
     <string name="step_export_places">Exportera platserna</string>
     <string name="export_writes_label">Detta skrivs</string>
+
+    <string name="map_recenter">Visa hela spåret</string>
+    <string name="map_scale_m">%1$s m</string>
+    <string name="map_scale_km">%1$s km</string>
 </resources>

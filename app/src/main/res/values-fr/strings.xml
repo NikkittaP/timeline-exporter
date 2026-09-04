@@ -196,4 +196,8 @@
     <string name="step_export_track">Exporter le trajet</string>
     <string name="step_export_places">Exporter les lieux</string>
     <string name="export_writes_label">Sera écrit</string>
+
+    <string name="map_recenter">Afficher tout le trajet</string>
+    <string name="map_scale_m">%1$s m</string>
+    <string name="map_scale_km">%1$s km</string>
 </resources>

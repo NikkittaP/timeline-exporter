@@ -196,4 +196,8 @@
     <string name="step_export_track">تصدير المسار</string>
     <string name="step_export_places">تصدير الأماكن</string>
     <string name="export_writes_label">ما سيُكتب</string>
+
+    <string name="map_recenter">عرض المسار بالكامل</string>
+    <string name="map_scale_m">%1$s م</string>
+    <string name="map_scale_km">%1$s كم</string>
 </resources>

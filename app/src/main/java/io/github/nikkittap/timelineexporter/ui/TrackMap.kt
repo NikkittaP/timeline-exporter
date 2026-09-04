@@ -1,9 +1,27 @@
 package io.github.nikkittap.timelineexporter.ui
 
 import android.content.Context
+import android.graphics.PointF
 import android.util.Log
 import android.view.MotionEvent
+import android.view.View
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -12,12 +30,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import io.github.nikkittap.timelineexporter.R
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
@@ -51,9 +76,13 @@ import org.maplibre.geojson.Feature
 import org.maplibre.geojson.MultiLineString
 import org.maplibre.geojson.Point
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.floor
 import kotlin.math.log10
+import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -91,6 +120,18 @@ private val OWNED_SOURCES = listOf(SOURCE_TRACK, SOURCE_GAPS, SOURCE_START, SOUR
 private const val GAP_DISTANCE_METERS = 80_000.0
 
 private const val EARTH_RADIUS_METERS = 6_371_000.0
+
+/** Gap, in pixels, between the fitted track and the edges of the view. */
+private const val FIT_PADDING_PX = 80
+
+/**
+ * How far the camera may leave the fitted view before the "back to the track"
+ * button appears: two fifths of a screen width, or about half a zoom level.
+ * Under that the user has nudged the map and can still see where they are;
+ * over it the track can be off screen entirely with nothing saying so.
+ */
+private const val ADRIFT_SCREEN_FRACTION = 0.4
+private const val ADRIFT_ZOOM_LEVELS = 0.45
 
 /**
  * Colors and basemap for one system theme. The two basemaps are our own
@@ -214,6 +255,16 @@ fun TrackMap(
     // so re-runs the render) from yanking a camera the user has since panned.
     var lastFittedPoints by remember { mutableStateOf<List<PathPoint>?>(null) }
 
+    // The box the whole track fits in. Null for a track with nothing to
+    // frame — no points, or every point in the same spot — which is also the
+    // case where "back to the track" has nowhere to go.
+    val dataBounds = remember(points) { trackBounds(points) }
+
+    // What the last camera-idle told us: how big things are, and whether the
+    // view has left the track behind. Null until the first idle, which is
+    // also before there is anything worth drawing chrome for.
+    var readout by remember { mutableStateOf<MapReadout?>(null) }
+
     // MapLibre's async callbacks (getMapAsync, setStyle) and our own render
     // effect can all fire after this composable has left composition and the
     // native map has been torn down. Touching a Style or MapLibreMap at that
@@ -301,6 +352,19 @@ fun TrackMap(
         }
     }
 
+    // Scale bar and "back to the track" both describe the camera, so both are
+    // recomputed when it stops moving — once per gesture, not per frame.
+    DisposableEffect(loadedMap, dataBounds) {
+        val map = loadedMap ?: return@DisposableEffect onDispose { }
+        val listener = MapLibreMap.OnCameraIdleListener {
+            if (!destroyed.get()) {
+                readout = runCatching { readCamera(map, mapView, dataBounds) }.getOrNull()
+            }
+        }
+        map.addOnCameraIdleListener(listener)
+        onDispose { runCatching { map.removeOnCameraIdleListener(listener) } }
+    }
+
     // Re-render the track whenever points change OR the style becomes available.
     LaunchedEffect(points, loadedStyle) {
         if (destroyed.get()) return@LaunchedEffect
@@ -317,12 +381,61 @@ fun TrackMap(
         // Last-resort net: a style can go invalid between the check above and
         // the native call. Losing the overlay beats aborting the process.
         val fitCamera = lastFittedPoints !== points
-        runCatching { renderTrack(map, style, points, palette, fitCamera) }
+        runCatching { renderTrack(map, style, points, palette, dataBounds, fitCamera) }
             .onFailure { Log.w(TAG, "Track render failed", it) }
             .onSuccess { if (fitCamera) lastFittedPoints = points }
+
+        // Seed the chrome. A map that is never touched never goes idle, so
+        // waiting for the listener alone would mean no scale bar at all on a
+        // track the user only looks at. The camera fit above is animated, so
+        // this reading can be one frame stale; the first idle corrects it.
+        withFrameNanos { }
+        if (!destroyed.get()) {
+            readout = runCatching { readCamera(map, mapView, dataBounds) }.getOrNull()
+        }
     }
 
-    AndroidView(factory = { mapView }, modifier = modifier)
+    Box(modifier = modifier) {
+        AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+
+        val scale = readout
+        if (scale != null) {
+            ScaleBar(
+                metersPerPixel = scale.metersPerPixel,
+                // Top-start because MapLibre puts its own logo and the
+                // attribution button bottom-left, where a scale bar would
+                // normally live.
+                modifier = Modifier.align(Alignment.TopStart).padding(8.dp),
+            )
+        }
+
+        if (scale?.adrift == true) {
+            SmallFloatingActionButton(
+                onClick = {
+                    val map = loadedMap
+                    val bounds = dataBounds
+                    if (map != null && bounds != null && !destroyed.get()) {
+                        runCatching {
+                            map.animateCamera(
+                                CameraUpdateFactory.newLatLngBounds(bounds, FIT_PADDING_PX)
+                            )
+                        }
+                    }
+                },
+                // Deliberately not the primary container colour: this is a
+                // way back, not the thing to do on this screen.
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_fit_bounds),
+                    contentDescription = stringResource(R.string.map_recenter),
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+        }
+    }
 }
 
 private fun Context.readAsset(name: String): String =
@@ -337,6 +450,7 @@ private fun renderTrack(
     style: Style,
     points: List<PathPoint>,
     palette: MapPalette,
+    bounds: LatLngBounds?,
     fitCamera: Boolean,
 ) {
     // Always tear down previous overlays first; addSource/addLayer throw on
@@ -453,17 +567,47 @@ private fun renderTrack(
 
     if (!fitCamera) return
 
-    // Camera fit. Single-point edge case can't use bounds (zero area).
-    if (points.size == 1) {
+    // Camera fit. A track with no area to frame — one point, or several in
+    // the same spot — has no bounds to fit, so it gets a fixed zoom instead.
+    if (bounds == null) {
         map.cameraPosition = CameraPosition.Builder()
             .target(LatLng(first.latitude, first.longitude))
             .zoom(14.0)
             .build()
     } else {
-        val builder = LatLngBounds.Builder()
-        points.forEach { builder.include(LatLng(it.latitude, it.longitude)) }
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 80))
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, FIT_PADDING_PX))
     }
+}
+
+/**
+ * The box every point fits in, or null when there is nothing to frame.
+ *
+ * MapLibre's builder rejects fewer than two points, and a track whose points
+ * are all in the same spot builds a zero-area box the camera cannot fit
+ * either. Both are answered with null rather than an exception, because both
+ * are ordinary data — one sample, or an afternoon spent indoors.
+ */
+private fun trackBounds(points: List<PathPoint>): LatLngBounds? {
+    if (points.size < 2) return null
+    // Checked on our own copy of the numbers rather than on the built box:
+    // LatLngBounds' accessors differ between MapLibre versions, and the
+    // condition is about the data, not about the box.
+    val first = points.first()
+    var minLat = first.latitude
+    var maxLat = first.latitude
+    var minLon = first.longitude
+    var maxLon = first.longitude
+    for (p in points) {
+        if (p.latitude < minLat) minLat = p.latitude
+        if (p.latitude > maxLat) maxLat = p.latitude
+        if (p.longitude < minLon) minLon = p.longitude
+        if (p.longitude > maxLon) maxLon = p.longitude
+    }
+    if (minLat == maxLat && minLon == maxLon) return null
+
+    val builder = LatLngBounds.Builder()
+    points.forEach { builder.include(LatLng(it.latitude, it.longitude)) }
+    return runCatching { builder.build() }.getOrNull()
 }
 
 /**
@@ -590,12 +734,143 @@ private fun PathPoint.toPoint(): Point = Point.fromLngLat(longitude, latitude)
  * decide whether two consecutive samples are far enough apart to count as a
  * gap, so the small-angle accuracy of haversine is more than sufficient.
  */
-private fun haversineMeters(a: PathPoint, b: PathPoint): Double {
-    val lat1 = Math.toRadians(a.latitude)
-    val lat2 = Math.toRadians(b.latitude)
+private fun haversineMeters(a: PathPoint, b: PathPoint): Double =
+    haversineMeters(a.latitude, a.longitude, b.latitude, b.longitude)
+
+private fun haversineMeters(lat1Deg: Double, lon1Deg: Double, lat2Deg: Double, lon2Deg: Double): Double {
+    val lat1 = Math.toRadians(lat1Deg)
+    val lat2 = Math.toRadians(lat2Deg)
     val dLat = lat2 - lat1
-    val dLon = Math.toRadians(b.longitude - a.longitude)
+    val dLon = Math.toRadians(lon2Deg - lon1Deg)
     val h = sin(dLat / 2) * sin(dLat / 2) +
         cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2)
     return 2 * EARTH_RADIUS_METERS * atan2(sqrt(h), sqrt(1 - h))
+}
+
+// ---------- On-map chrome ----------
+
+/** What one camera-idle told us about the view. */
+private data class MapReadout(
+    /** Metres one screen pixel covers, measured across the middle of the view. */
+    val metersPerPixel: Double,
+    /** True when the camera has left the fitted track behind. */
+    val adrift: Boolean,
+)
+
+/**
+ * Measure the current view.
+ *
+ * The scale is measured rather than derived from the zoom level: the
+ * relationship between zoom, screen density and metres on the ground is a
+ * convention that has changed between renderers, and two points projected
+ * back out of the view cannot be wrong about it. It also stays correct if the
+ * camera is ever tilted, where a formula would not be.
+ */
+private fun readCamera(map: MapLibreMap, view: View, bounds: LatLngBounds?): MapReadout? {
+    val width = view.width
+    val height = view.height
+    if (width <= 0 || height <= 0) return null
+
+    val projection = map.projection
+    val y = height / 2f
+    val left = projection.fromScreenLocation(PointF(width * 0.25f, y))
+    val right = projection.fromScreenLocation(PointF(width * 0.75f, y))
+    val spanMeters = haversineMeters(left.latitude, left.longitude, right.latitude, right.longitude)
+    if (!spanMeters.isFinite() || spanMeters <= 0.0) return null
+    val metersPerPixel = spanMeters / (width * 0.5)
+
+    return MapReadout(metersPerPixel, isAdrift(map, bounds, metersPerPixel, width))
+}
+
+/**
+ * Whether the camera has wandered far enough from the fitted view to be worth
+ * offering a way back.
+ *
+ * Compared against where the camera *would* sit if the track were fitted now,
+ * rather than against where it was left after the last fit: the user can zoom
+ * back out by hand, and a button offering to undo something they have already
+ * undone is noise.
+ */
+private fun isAdrift(
+    map: MapLibreMap,
+    bounds: LatLngBounds?,
+    metersPerPixel: Double,
+    widthPx: Int,
+): Boolean {
+    if (bounds == null) return false
+    val padding = intArrayOf(FIT_PADDING_PX, FIT_PADDING_PX, FIT_PADDING_PX, FIT_PADDING_PX)
+    val fitted = map.getCameraForLatLngBounds(bounds, padding) ?: return false
+    val home = fitted.target ?: return false
+    val current = map.cameraPosition
+    val here = current.target ?: return false
+    if (abs(current.zoom - fitted.zoom) > ADRIFT_ZOOM_LEVELS) return true
+    val drift = haversineMeters(here.latitude, here.longitude, home.latitude, home.longitude)
+    return drift > ADRIFT_SCREEN_FRACTION * widthPx * metersPerPixel
+}
+
+/** Widest the scale bar is allowed to be drawn. */
+private val SCALE_BAR_MAX_WIDTH = 96.dp
+
+/**
+ * A scale bar in the top corner of the map.
+ *
+ * The basemap is deliberately near-monochrome and thin on labels, which costs
+ * the reader the usual cues for how big anything is: the same knot of track
+ * could be a campus or a city. One bar of known length gives that back, and
+ * costs a corner of the view.
+ *
+ * The bar is a round distance drawn at whatever width that comes to, not a
+ * fixed width labelled with whatever distance it works out as — "137 m" makes
+ * the reader do arithmetic that "100 m" does for them.
+ */
+@Composable
+private fun ScaleBar(metersPerPixel: Double, modifier: Modifier = Modifier) {
+    val density = LocalDensity.current
+    val maxMeters = with(density) { SCALE_BAR_MAX_WIDTH.toPx() } * metersPerPixel
+    if (!maxMeters.isFinite() || maxMeters < 1.0) return
+
+    val meters = niceDistance(maxMeters)
+    val barWidth = with(density) { (meters / metersPerPixel).toFloat().toDp() }
+    val label = if (meters >= 1000.0) {
+        stringResource(R.string.map_scale_km, "%,d".format((meters / 1000.0).roundToInt()))
+    } else {
+        stringResource(R.string.map_scale_m, "%,d".format(meters.roundToInt()))
+    }
+
+    Surface(
+        // Translucent rather than opaque: the bar has to be readable over both
+        // basemaps without becoming a panel sitting on top of the map.
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.78f),
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        shape = RoundedCornerShape(6.dp),
+        modifier = modifier,
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)) {
+            Text(text = label, style = MaterialTheme.typography.labelSmall)
+            Spacer(modifier = Modifier.height(3.dp))
+            Box(
+                modifier = Modifier
+                    .width(barWidth)
+                    .height(2.dp)
+                    .background(LocalContentColor.current),
+            )
+        }
+    }
+}
+
+/**
+ * The largest 1, 2 or 5 times a power of ten that fits in [meters].
+ *
+ * Those three are what a reader can divide by in their head, which is the
+ * whole job of a scale bar.
+ */
+private fun niceDistance(meters: Double): Double {
+    val magnitude = 10.0.pow(floor(log10(meters)))
+    val leading = meters / magnitude
+    val step = when {
+        leading >= 5.0 -> 5.0
+        leading >= 2.0 -> 2.0
+        else -> 1.0
+    }
+    return step * magnitude
 }

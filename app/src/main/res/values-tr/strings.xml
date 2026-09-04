@@ -196,4 +196,8 @@
     <string name="step_export_track">Rotayı dışa aktar</string>
     <string name="step_export_places">Yerleri dışa aktar</string>
     <string name="export_writes_label">Yazılacak olan</string>
+
+    <string name="map_recenter">Tüm rotayı göster</string>
+    <string name="map_scale_m">%1$s m</string>
+    <string name="map_scale_km">%1$s km</string>
 </resources>

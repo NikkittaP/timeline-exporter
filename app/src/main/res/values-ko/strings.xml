@@ -196,4 +196,8 @@
     <string name="step_export_track">경로 내보내기</string>
     <string name="step_export_places">장소 내보내기</string>
     <string name="export_writes_label">저장될 내용</string>
+
+    <string name="map_recenter">전체 경로 보기</string>
+    <string name="map_scale_m">%1$s m</string>
+    <string name="map_scale_km">%1$s km</string>
 </resources>

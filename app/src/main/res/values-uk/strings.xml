@@ -196,4 +196,8 @@
     <string name="step_export_track">Експорт маршруту</string>
     <string name="step_export_places">Експорт місць</string>
     <string name="export_writes_label">Буде записано</string>
+
+    <string name="map_recenter">Показати весь маршрут</string>
+    <string name="map_scale_m">%1$s м</string>
+    <string name="map_scale_km">%1$s км</string>
 </resources>
