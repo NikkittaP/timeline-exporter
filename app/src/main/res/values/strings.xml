@@ -234,7 +234,7 @@
     <string name="places_show_all">Show all %1$s</string>
     <string name="places_include_containers">Include malls and airports</string>
     <string name="places_include_containers_hint">Google also records the building a place sits inside. Off by default — it repeats a stay you already have.</string>
-    <string name="place_unnamed_hint">Tap a place to give it a name.</string>
+    <string name="place_unnamed_hint">Tap a place on the map or in the list to find it. Tap it again to give it a name.</string>
     <string name="place_home">Home</string>
     <string name="place_work">Work</string>
     <string name="place_last_visit">last %1$s</string>

@@ -176,7 +176,7 @@
     <string name="places_show_all">عرض الكل %1$s</string>
     <string name="places_include_containers">تضمين المراكز التجارية والمطارات</string>
     <string name="places_include_containers_hint">يسجّل Google أيضًا المبنى الذي يقع فيه المكان. مُعطَّل افتراضيًا — فهو يكرّر إقامة لديك بالفعل.</string>
-    <string name="place_unnamed_hint">انقر على مكان لتسميته.</string>
+    <string name="place_unnamed_hint">انقر على مكان في الخريطة أو في القائمة لتحديد موقعه. انقر عليه مرة أخرى لتسميته.</string>
     <string name="place_home">المنزل</string>
     <string name="place_work">العمل</string>
     <string name="place_last_visit">آخر %1$s</string>

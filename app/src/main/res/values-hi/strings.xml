@@ -176,7 +176,7 @@
     <string name="places_show_all">सभी %1$s दिखाएँ</string>
     <string name="places_include_containers">मॉल और हवाई अड्डे शामिल करें</string>
     <string name="places_include_containers_hint">Google उस इमारत को भी दर्ज करता है जिसमें जगह है। डिफ़ॉल्ट रूप से बंद — यह पहले से मौजूद ठहराव को दोहराता है।</string>
-    <string name="place_unnamed_hint">नाम देने के लिए किसी जगह पर टैप करें।</string>
+    <string name="place_unnamed_hint">किसी जगह को ढूँढने के लिए उसे मानचित्र या सूची में टैप करें। नाम देने के लिए दोबारा टैप करें।</string>
     <string name="place_home">घर</string>
     <string name="place_work">काम</string>
     <string name="place_last_visit">आख़िरी %1$s</string>

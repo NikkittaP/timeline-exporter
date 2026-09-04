@@ -176,7 +176,7 @@
     <string name="places_show_all">Visa alla %1$s</string>
     <string name="places_include_containers">Ta med gallerior och flygplatser</string>
     <string name="places_include_containers_hint">Google registrerar även byggnaden som en plats ligger i. Av som standard – det upprepar ett besök du redan har.</string>
-    <string name="place_unnamed_hint">Tryck på en plats för att ge den ett namn.</string>
+    <string name="place_unnamed_hint">Tryck på en plats på kartan eller i listan för att hitta den. Tryck igen för att ge den ett namn.</string>
     <string name="place_home">Hem</string>
     <string name="place_work">Arbete</string>
     <string name="place_last_visit">senast %1$s</string>

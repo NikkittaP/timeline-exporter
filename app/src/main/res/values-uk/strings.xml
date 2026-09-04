@@ -176,7 +176,7 @@
     <string name="places_show_all">Показати всі %1$s</string>
     <string name="places_include_containers">Включно з ТЦ та аеропортами</string>
     <string name="places_include_containers_hint">Google записує також будівлю, у якій розташоване місце. Типово вимкнено — це дублює візит, який у вас уже є.</string>
-    <string name="place_unnamed_hint">Торкніться місця, щоб дати йому назву.</string>
+    <string name="place_unnamed_hint">Торкніться місця на карті або в списку, щоб знайти його. Торкніться ще раз, щоб дати назву.</string>
     <string name="place_home">Дім</string>
     <string name="place_work">Робота</string>
     <string name="place_last_visit">останній %1$s</string>

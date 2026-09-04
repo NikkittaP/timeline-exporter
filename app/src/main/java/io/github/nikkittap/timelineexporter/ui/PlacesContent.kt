@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -24,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -154,6 +157,8 @@ fun PlacesPreview(
     entries: List<PlaceEntry>,
     labels: PlaceLabelState,
     dateRangeActive: Boolean,
+    /** [PlaceEntry.key] of the place the map and this list both have selected. */
+    selectedKey: String?,
     onPlaceClick: (PlaceEntry) -> Unit,
     onShowAll: () -> Unit,
 ) {
@@ -189,9 +194,14 @@ fun PlacesPreview(
         // gives it an unbounded height constraint and crashes. Eight rows is
         // cheap to compose anyway; the fullscreen list is where laziness pays.
         Column {
-            entries.take(INLINE_PLACE_LIMIT).forEachIndexed { index, entry ->
+            inlinePlaces(entries, selectedKey).forEachIndexed { index, entry ->
                 if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                PlaceRow(entry, labels[entry.key], onClick = { onPlaceClick(entry) })
+                PlaceRow(
+                    entry = entry,
+                    label = labels[entry.key],
+                    selected = entry.key == selectedKey,
+                    onClick = { onPlaceClick(entry) },
+                )
             }
         }
     }
@@ -203,17 +213,40 @@ fun PlacesPreview(
     }
 }
 
+/**
+ * The rows the inline list actually shows.
+ *
+ * The top [INLINE_PLACE_LIMIT] — plus, pinned in front of them, the selected
+ * place when it is not already among them. A tap on a dot out in the tail
+ * would otherwise draw a ring on the map and change nothing in the list, which
+ * is exactly the disconnection this selection exists to fix.
+ */
+private fun inlinePlaces(entries: List<PlaceEntry>, selectedKey: String?): List<PlaceEntry> {
+    val head = entries.take(INLINE_PLACE_LIMIT)
+    if (selectedKey == null || head.any { it.key == selectedKey }) return head
+    val selected = entries.firstOrNull { it.key == selectedKey } ?: return head
+    return listOf(selected) + head
+}
+
 /** One place: name and details on the left, visit count on the right. */
 @Composable
 private fun PlaceRow(
     entry: PlaceEntry,
     label: String?,
+    selected: Boolean,
     onClick: () -> Unit,
 ) {
     val name = placeDisplayName(entry, label)
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            // Before `clickable`, so the ripple lands on top of the tint
+            // rather than under it. Tinted rather than outlined: a border
+            // inside a divided list reads as a text field.
+            .background(
+                if (selected) MaterialTheme.colorScheme.secondaryContainer
+                else MaterialTheme.colorScheme.surfaceVariant
+            )
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -254,9 +287,18 @@ private fun PlaceRow(
 fun ExpandedPlaces(
     entries: List<PlaceEntry>,
     labels: PlaceLabelState,
+    selectedKey: String?,
     onPlaceClick: (PlaceEntry) -> Unit,
     onClose: () -> Unit,
 ) {
+    val listState = rememberLazyListState()
+    // Bring the selection into view. Nothing else scrolls this list for the
+    // user, so a place selected on the map before the list was opened would
+    // otherwise be highlighted three hundred rows down.
+    LaunchedEffect(selectedKey, entries) {
+        val index = entries.indexOfFirst { it.key == selectedKey }
+        if (index >= 0) listState.animateScrollToItem(index)
+    }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
@@ -281,9 +323,14 @@ fun ExpandedPlaces(
                 // list items off the bottom of the screen.
                 modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
-                LazyColumn {
+                LazyColumn(state = listState) {
                     items(entries, key = { it.key }) { entry ->
-                        PlaceRow(entry, labels[entry.key], onClick = { onPlaceClick(entry) })
+                        PlaceRow(
+                            entry = entry,
+                            label = labels[entry.key],
+                            selected = entry.key == selectedKey,
+                            onClick = { onPlaceClick(entry) },
+                        )
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                     }
                 }

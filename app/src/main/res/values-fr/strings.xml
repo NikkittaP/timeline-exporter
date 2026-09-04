@@ -176,7 +176,7 @@
     <string name="places_show_all">Afficher les %1$s</string>
     <string name="places_include_containers">Inclure centres commerciaux et aéroports</string>
     <string name="places_include_containers_hint">Google enregistre aussi le bâtiment dans lequel se trouve un lieu. Désactivé par défaut : cela répète un séjour que vous avez déjà.</string>
-    <string name="place_unnamed_hint">Appuyez sur un lieu pour le nommer.</string>
+    <string name="place_unnamed_hint">Appuyez sur un lieu sur la carte ou dans la liste pour le situer. Appuyez à nouveau pour le nommer.</string>
     <string name="place_home">Domicile</string>
     <string name="place_work">Travail</string>
     <string name="place_last_visit">dernière %1$s</string>

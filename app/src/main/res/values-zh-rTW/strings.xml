@@ -176,7 +176,7 @@
     <string name="places_show_all">查看全部 %1$s</string>
     <string name="places_include_containers">包含購物中心和機場</string>
     <string name="places_include_containers_hint">Google 也會記錄地點所在的建築。預設關閉：它會重複你已有的一次停留。</string>
-    <string name="place_unnamed_hint">輕觸地點為它命名。</string>
+    <string name="place_unnamed_hint">在地圖或清單中輕觸地點即可找到它，再次輕觸可為它命名。</string>
     <string name="place_home">住家</string>
     <string name="place_work">公司</string>
     <string name="place_last_visit">最近 %1$s</string>

@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
+import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -83,6 +84,17 @@ import org.maplibre.android.style.layers.PropertyFactory.lineOpacity
 import org.maplibre.android.style.layers.PropertyFactory.lineWidth
 import org.maplibre.android.style.layers.PropertyFactory.symbolPlacement
 import org.maplibre.android.style.layers.PropertyFactory.symbolSpacing
+import org.maplibre.android.style.layers.PropertyFactory.textAllowOverlap
+import org.maplibre.android.style.layers.PropertyFactory.textAnchor
+import org.maplibre.android.style.layers.PropertyFactory.textColor
+import org.maplibre.android.style.layers.PropertyFactory.textField
+import org.maplibre.android.style.layers.PropertyFactory.textFont
+import org.maplibre.android.style.layers.PropertyFactory.textHaloColor
+import org.maplibre.android.style.layers.PropertyFactory.textHaloWidth
+import org.maplibre.android.style.layers.PropertyFactory.textIgnorePlacement
+import org.maplibre.android.style.layers.PropertyFactory.textMaxWidth
+import org.maplibre.android.style.layers.PropertyFactory.textOffset
+import org.maplibre.android.style.layers.PropertyFactory.textSize
 import org.maplibre.android.style.layers.SymbolLayer
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
@@ -90,10 +102,12 @@ import org.maplibre.geojson.MultiLineString
 import org.maplibre.geojson.Point
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.floor
+import kotlin.math.hypot
 import kotlin.math.log10
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -117,18 +131,56 @@ private const val LAYER_END_HALO = "end-halo"
 private const val LAYER_END = "end-circle"
 private const val LAYER_PLACES_HALO = "places-halo"
 private const val LAYER_PLACES = "places-circle"
+private const val SOURCE_PLACE_SELECTED = "place-selected-source"
+private const val LAYER_PLACE_SELECTED_RING = "place-selected-ring"
+private const val LAYER_PLACE_SELECTED_LABEL = "place-selected-label"
 
 /** Feature property the places circle radius interpolates on. */
 private const val PROPERTY_VISITS = "visits"
+
+/**
+ * Feature property carrying [PlaceEntry.key], so a tap on a dot can be
+ * turned back into the row it belongs to. Without it the places layer is a
+ * picture: MapLibre hands back the feature it hit, and a feature with no
+ * identity answers nothing.
+ */
+private const val PROPERTY_KEY = "key"
+
+/**
+ * How far from a dot a tap still counts as hitting it, in dp.
+ *
+ * The dots are 3.5-13 px of radius; a fingertip is about 9 mm. Querying the
+ * tap point alone would make the one-visit places — the ones a user most
+ * needs to identify — practically untappable.
+ */
+private const val TAP_SLOP_DP = 18f
+
+/**
+ * Where the camera lands when a place is picked from the list. Clamped at
+ * both ends: from a continent-wide view "where is that" means zooming in,
+ * and from a street-level one it does not mean zooming back out to it.
+ */
+private const val SELECT_ZOOM_MIN = 12.0
+private const val SELECT_ZOOM_MAX = 16.0
+private const val SELECT_CAMERA_MS = 600
+
+/** Font stack for the selected place's label; present in both basemaps. */
+private const val FONT_LABEL = "Noto Sans Regular"
 
 /** Bottom-to-top; also the order [clearOverlays] tears them down in reverse. */
 private val OWNED_LAYERS = listOf(
     LAYER_TRACK_GLOW, LAYER_GAPS, LAYER_TRACK, LAYER_TRACK_ARROWS,
     LAYER_START_HALO, LAYER_START, LAYER_END_HALO, LAYER_END,
     LAYER_PLACES_HALO, LAYER_PLACES,
+    LAYER_PLACE_SELECTED_RING, LAYER_PLACE_SELECTED_LABEL,
 )
-private val OWNED_SOURCES =
-    listOf(SOURCE_TRACK, SOURCE_GAPS, SOURCE_START, SOURCE_END, SOURCE_PLACES)
+private val OWNED_SOURCES = listOf(
+    SOURCE_TRACK, SOURCE_GAPS, SOURCE_START, SOURCE_END, SOURCE_PLACES,
+    SOURCE_PLACE_SELECTED,
+)
+
+/** The selection overlay alone, rebuilt on its own without a full re-render. */
+private val SELECTION_LAYERS = listOf(LAYER_PLACE_SELECTED_RING, LAYER_PLACE_SELECTED_LABEL)
 
 /** Sprite id for the direction chevron repeated along the track. */
 private const val IMAGE_TRACK_ARROW = "track-arrow"
@@ -194,6 +246,10 @@ private data class MapPalette(
     val markerStroke: String,
     /** Places, when the map is showing those instead of a track. */
     val placeFill: String,
+    /** Ring around the one place the list and the map both have selected. */
+    val placeSelected: String,
+    /** The selected place's name, drawn under its dot. */
+    val placeLabelText: String,
 )
 
 private val LightPalette = MapPalette(
@@ -205,6 +261,8 @@ private val LightPalette = MapPalette(
     endFill = "#E5533D",
     markerStroke = "#F5F4F1",
     placeFill = "#4C3BD6",
+    placeSelected = "#E5533D",
+    placeLabelText = "#33302B",
 )
 
 private val DarkPalette = MapPalette(
@@ -216,6 +274,8 @@ private val DarkPalette = MapPalette(
     endFill = "#FF6B57",
     markerStroke = "#191D23",
     placeFill = "#4FC3E8",
+    placeSelected = "#FF6B57",
+    placeLabelText = "#EAF1F8",
 )
 
 /**
@@ -289,6 +349,20 @@ fun TimelineMap(
     subject: MapSubject,
     modifier: Modifier = Modifier,
     /**
+     * The place the screen currently has selected, if any. Drawn as a ring
+     * around its dot, and the camera is eased to it when the selection came
+     * from somewhere other than a tap on this map — which is what makes a row
+     * in the list answer "where is that".
+     */
+    selectedPlace: PlaceEntry? = null,
+    /** The selected place's display name, drawn under its dot. */
+    selectedPlaceName: String? = null,
+    /**
+     * A tap on a place dot, or `null` for a tap on empty map. The caller
+     * decides what selection means; this only reports what was hit.
+     */
+    onPlaceSelected: (PlaceEntry?) -> Unit = {},
+    /**
      * Called with `true` on ACTION_DOWN and `false` on ACTION_UP/CANCEL.
      * Parent uses this to disable its own verticalScroll while the user is
      * panning/pinching the map, so the screen doesn't scroll out from
@@ -360,6 +434,11 @@ fun TimelineMap(
     // against 1.6.1. This flag is the single source of truth for "the native
     // map is gone"; every entry point checks it first.
     val destroyed = remember { AtomicBoolean(false) }
+
+    // The key this map's own tap last reported. A selection the user made by
+    // touching a dot they can already see must not also move the camera out
+    // from under their finger; one made in the list must.
+    val selfSelected = remember { AtomicReference<String?>(null) }
 
     // Forward Compose lifecycle events to MapView. Without this, MapLibre
     // would never know it should pause GL rendering when the screen is hidden.
@@ -479,6 +558,85 @@ fun TimelineMap(
         withFrameNanos { }
         if (!destroyed.get()) {
             readout = runCatching { readCamera(map, mapView, dataBounds) }.getOrNull()
+        }
+    }
+
+    // Which place a tapped dot is. Built from the subject rather than looked
+    // up by scanning the list on every tap: 262 entries is nothing, but this
+    // also makes "the map is showing a track" a single empty-map check.
+    val placesByKey = remember(subject) {
+        (subject as? MapSubject.Places)?.entries?.associateBy { it.key } ?: emptyMap()
+    }
+    val latestPlaceSelected by rememberUpdatedState(onPlaceSelected)
+
+    DisposableEffect(loadedMap, placesByKey) {
+        val map = loadedMap
+        if (map == null || placesByKey.isEmpty()) return@DisposableEffect onDispose { }
+        val slop = TAP_SLOP_DP * density
+        val listener = MapLibreMap.OnMapClickListener { latLng ->
+            val hit = if (destroyed.get()) null else runCatching {
+                val tap = map.projection.toScreenLocation(latLng)
+                val box = RectF(tap.x - slop, tap.y - slop, tap.x + slop, tap.y + slop)
+                map.queryRenderedFeatures(box, LAYER_PLACES)
+                    .mapNotNull { f -> f.getStringProperty(PROPERTY_KEY)?.let(placesByKey::get) }
+                    // Nearest centre wins. Where a one-visit dot sits inside a
+                    // 335-visit one, the small dot is the one the user aimed
+                    // at — it is the one they cannot identify from the list.
+                    .minByOrNull { entry ->
+                        val at = map.projection.toScreenLocation(
+                            LatLng(entry.latitude, entry.longitude)
+                        )
+                        hypot((at.x - tap.x).toDouble(), (at.y - tap.y).toDouble())
+                    }
+            }.getOrNull()
+            if (!destroyed.get()) {
+                selfSelected.set(hit?.key)
+                latestPlaceSelected(hit)
+            }
+            // Consume only a hit: a tap on empty map still clears the
+            // selection, but MapLibre keeps whatever else it does with it.
+            hit != null
+        }
+        map.addOnMapClickListener(listener)
+        onDispose { runCatching { map.removeOnMapClickListener(listener) } }
+    }
+
+    // The selection overlay is its own source and its own effect, deliberately
+    // separate from the render above: selecting a place must not rebuild 262
+    // features, and must not count as new data and re-frame the camera.
+    //
+    // Declared after the render effect so that on a subject change — where
+    // both re-run and the render clears every layer this file owns — this one
+    // puts the ring back.
+    LaunchedEffect(selectedPlace, selectedPlaceName, subject, loadedStyle, palette) {
+        if (destroyed.get()) return@LaunchedEffect
+        val map = loadedMap ?: return@LaunchedEffect
+        val style = loadedStyle ?: return@LaunchedEffect
+        if (!style.isFullyLoaded) return@LaunchedEffect
+        runCatching { clearSelection(style) }
+            .onFailure { Log.w(TAG, "Selection teardown failed", it) }
+        val place = selectedPlace ?: return@LaunchedEffect
+        if (subject !is MapSubject.Places) return@LaunchedEffect
+        runCatching { renderSelection(style, place, selectedPlaceName, palette) }
+            .onFailure { Log.w(TAG, "Selection render failed", it) }
+
+        // Only when the selection arrived from outside this map. A ring drawn
+        // around a dot the user just touched is the whole answer; moving the
+        // camera as well would throw away the view they picked it from.
+        if (place.key != selfSelected.get()) {
+            runCatching {
+                map.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(place.latitude, place.longitude),
+                        map.cameraPosition.zoom.coerceIn(SELECT_ZOOM_MIN, SELECT_ZOOM_MAX),
+                    ),
+                    SELECT_CAMERA_MS,
+                )
+            }.onFailure { Log.w(TAG, "Selection camera failed", it) }
+            // The camera has now been where this selection asked it to go.
+            // Renaming the place re-runs this effect, and flying to the same
+            // spot a second time would look like a glitch.
+            selfSelected.set(place.key)
         }
     }
 
@@ -720,8 +878,9 @@ private fun renderTrack(
  * visit against 335 - the range in the reference export - is a factor of 335,
  * and a dot 335 times the area of another would be the size of a city.
  *
- * No labels. The list under the map already names every row, and 262 place
- * names would bury the map they are drawn on.
+ * No labels, except on the one place that is selected — see [renderSelection].
+ * The list under the map already names every row, and 262 place names would
+ * bury the map they are drawn on.
  */
 private fun renderPlaces(style: Style, entries: List<PlaceEntry>, palette: MapPalette) {
     if (entries.isEmpty()) return
@@ -780,17 +939,126 @@ private fun placesGeoJson(entries: List<PlaceEntry>): String = buildString {
     append("{\"type\":\"FeatureCollection\",\"features\":[")
     entries.forEachIndexed { index, entry ->
         if (index > 0) append(',')
-        append("{\"type\":\"Feature\",\"properties\":{\"")
-        append(PROPERTY_VISITS)
-        append("\":")
-        append(entry.visits)
-        append("},\"geometry\":{\"type\":\"Point\",\"coordinates\":[")
-        append(String.format(Locale.ROOT, "%.6f", entry.longitude))
-        append(',')
-        append(String.format(Locale.ROOT, "%.6f", entry.latitude))
-        append("]}}")
+        appendPlaceFeature(entry, name = null)
     }
     append("]}")
+}
+
+/** The selected place on its own, carrying the name to draw beside it. */
+private fun selectedPlaceGeoJson(entry: PlaceEntry, name: String?): String = buildString {
+    append("{\"type\":\"FeatureCollection\",\"features\":[")
+    appendPlaceFeature(entry, name)
+    append("]}")
+}
+
+/**
+ * One place as a GeoJSON feature: its position, the visit count the radii
+ * interpolate on, and the key a tap is resolved back through.
+ */
+private fun StringBuilder.appendPlaceFeature(entry: PlaceEntry, name: String?) {
+    append("{\"type\":\"Feature\",\"properties\":{\"")
+    append(PROPERTY_VISITS)
+    append("\":")
+    append(entry.visits)
+    append(",\"")
+    append(PROPERTY_KEY)
+    append("\":\"")
+    appendJsonEscaped(entry.key)
+    append('"')
+    if (name != null) {
+        append(",\"name\":\"")
+        appendJsonEscaped(name)
+        append('"')
+    }
+    append("},\"geometry\":{\"type\":\"Point\",\"coordinates\":[")
+    append(String.format(Locale.ROOT, "%.6f", entry.longitude))
+    append(',')
+    append(String.format(Locale.ROOT, "%.6f", entry.latitude))
+    append("]}}")
+}
+
+/**
+ * Escape a string into a JSON string body.
+ *
+ * A place key is a Google place ID or a rounded coordinate pair and needs
+ * none of this; a user's own label is whatever they typed, quotes and
+ * backslashes included, and one of those would turn the whole overlay into a
+ * parse error and a blank map.
+ */
+private fun StringBuilder.appendJsonEscaped(value: String) {
+    for (ch in value) {
+        when {
+            ch == '"' -> append("\\\"")
+            ch == '\\' -> append("\\\\")
+            ch == '\n' -> append("\\n")
+            ch == '\r' -> append("\\r")
+            ch == '\t' -> append("\\t")
+            ch < ' ' -> append(String.format(Locale.ROOT, "\\u%04x", ch.code))
+            else -> append(ch)
+        }
+    }
+}
+
+/**
+ * The selected place: a ring around its dot, and its name under it.
+ *
+ * A ring rather than a recoloured dot, because the dot's size is already
+ * carrying the visit count and a second meaning on the same mark would cost
+ * the first one. It is drawn outside the halo so it reads as "this one" even
+ * where a dozen places overlap.
+ *
+ * The label is the one place name on the map, and it is here rather than on
+ * every dot for the reason [renderPlaces] gives. It needs glyphs, which the
+ * basemaps fetch from the tile host; with no network the ring still draws and
+ * only the text is missing, which is the right way round.
+ */
+private fun renderSelection(
+    style: Style,
+    place: PlaceEntry,
+    name: String?,
+    palette: MapPalette,
+) {
+    val source = GeoJsonSource(SOURCE_PLACE_SELECTED)
+    style.addSource(source)
+    source.setGeoJson(selectedPlaceGeoJson(place, name))
+
+    style.addLayer(
+        CircleLayer(LAYER_PLACE_SELECTED_RING, SOURCE_PLACE_SELECTED).withProperties(
+            circleColor(palette.placeSelected),
+            circleOpacity(0.12f),
+            circleRadius(visitScaled(9f, 12f, 17f, 22f, 27f)),
+            circleStrokeColor(palette.placeSelected),
+            circleStrokeWidth(2.4f),
+        )
+    )
+
+    if (name.isNullOrBlank()) return
+    style.addLayer(
+        SymbolLayer(LAYER_PLACE_SELECTED_LABEL, SOURCE_PLACE_SELECTED).withProperties(
+            textField(name),
+            textFont(arrayOf(FONT_LABEL)),
+            textSize(13f),
+            textAnchor(Property.TEXT_ANCHOR_TOP),
+            // Below the dot, in ems of the text size: the ring is above it and
+            // the scale bar sits in the top corner.
+            textOffset(arrayOf(0f, 1.6f)),
+            // There is exactly one of these, and it is the thing the user just
+            // asked to see; letting the basemap's own labels push it out would
+            // make the selection look like it failed.
+            textAllowOverlap(true),
+            textIgnorePlacement(true),
+            textMaxWidth(9f),
+            textColor(palette.placeLabelText),
+            textHaloColor(palette.markerStroke),
+            textHaloWidth(1.4f),
+        )
+    )
+}
+
+/** Drop just the selection overlay, leaving the places underneath alone. */
+private fun clearSelection(style: Style) {
+    SELECTION_LAYERS.forEach { id -> style.getLayer(id)?.let { style.removeLayer(it) } }
+    style.getSource(SOURCE_PLACE_SELECTED)?.let { style.removeSource(it) }
 }
 
 /**

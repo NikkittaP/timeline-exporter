@@ -176,7 +176,7 @@
     <string name="places_show_all">전체 %1$s개 보기</string>
     <string name="places_include_containers">쇼핑몰과 공항 포함</string>
     <string name="places_include_containers_hint">Google은 장소가 속한 건물도 기록합니다. 기본적으로 꺼져 있습니다. 이미 있는 방문과 중복됩니다.</string>
-    <string name="place_unnamed_hint">장소를 탭하여 이름을 지정하세요.</string>
+    <string name="place_unnamed_hint">지도나 목록에서 장소를 탭하면 위치를 확인할 수 있습니다. 다시 탭하면 이름을 지정합니다.</string>
     <string name="place_home">집</string>
     <string name="place_work">직장</string>
     <string name="place_last_visit">최근 %1$s</string>

@@ -176,7 +176,7 @@
     <string name="places_show_all">Pokaż wszystkie: %1$s</string>
     <string name="places_include_containers">Uwzględnij centra handlowe i lotniska</string>
     <string name="places_include_containers_hint">Google zapisuje też budynek, w którym znajduje się miejsce. Domyślnie wyłączone — powtarza pobyt, który już masz.</string>
-    <string name="place_unnamed_hint">Dotknij miejsca, aby nadać mu nazwę.</string>
+    <string name="place_unnamed_hint">Dotknij miejsca na mapie lub na liście, aby je znaleźć. Dotknij ponownie, aby nadać mu nazwę.</string>
     <string name="place_home">Dom</string>
     <string name="place_work">Praca</string>
     <string name="place_last_visit">ostatnia %1$s</string>

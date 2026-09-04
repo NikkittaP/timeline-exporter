@@ -176,7 +176,7 @@
     <string name="places_show_all">Mostra tutti %1$s</string>
     <string name="places_include_containers">Includi centri commerciali e aeroporti</string>
     <string name="places_include_containers_hint">Google registra anche l\'edificio in cui si trova un luogo. Disattivato per impostazione predefinita: ripete una sosta che hai già.</string>
-    <string name="place_unnamed_hint">Tocca un luogo per dargli un nome.</string>
+    <string name="place_unnamed_hint">Tocca un luogo sulla mappa o nell’elenco per individuarlo. Toccalo di nuovo per dargli un nome.</string>
     <string name="place_home">Casa</string>
     <string name="place_work">Lavoro</string>
     <string name="place_last_visit">ultima %1$s</string>

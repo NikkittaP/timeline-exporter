@@ -176,7 +176,7 @@
     <string name="places_show_all">Показать все %1$s</string>
     <string name="places_include_containers">Включая ТЦ и аэропорты</string>
     <string name="places_include_containers_hint">Google записывает и здание, внутри которого находится место. По умолчанию выключено — это дублирует визит, который у вас уже есть.</string>
-    <string name="place_unnamed_hint">Нажмите на место, чтобы дать ему название.</string>
+    <string name="place_unnamed_hint">Нажмите на место на карте или в списке, чтобы найти его. Нажмите ещё раз, чтобы дать название.</string>
     <string name="place_home">Дом</string>
     <string name="place_work">Работа</string>
     <string name="place_last_visit">последний %1$s</string>

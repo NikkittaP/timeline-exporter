@@ -176,7 +176,7 @@
     <string name="places_show_all">すべて表示（%1$s）</string>
     <string name="places_include_containers">ショッピングモールや空港を含める</string>
     <string name="places_include_containers_hint">Google は場所が入っている建物も記録します。既定ではオフ: すでにある滞在と重複します。</string>
-    <string name="place_unnamed_hint">場所をタップして名前を付けます。</string>
+    <string name="place_unnamed_hint">地図かリストで場所をタップすると位置がわかります。もう一度タップすると名前を付けられます。</string>
     <string name="place_home">自宅</string>
     <string name="place_work">職場</string>
     <string name="place_last_visit">最終 %1$s</string>

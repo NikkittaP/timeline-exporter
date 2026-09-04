@@ -176,7 +176,7 @@
     <string name="places_show_all">Tümünü göster: %1$s</string>
     <string name="places_include_containers">AVM\'leri ve havalimanlarını dahil et</string>
     <string name="places_include_containers_hint">Google, bir yerin içinde bulunduğu binayı da kaydeder. Varsayılan olarak kapalı — zaten sahip olduğunuz bir konaklamayı tekrarlar.</string>
-    <string name="place_unnamed_hint">Bir yere ad vermek için dokunun.</string>
+    <string name="place_unnamed_hint">Bir yeri bulmak için haritada veya listede ona dokunun. Ad vermek için tekrar dokunun.</string>
     <string name="place_home">Ev</string>
     <string name="place_work">İş</string>
     <string name="place_last_visit">son %1$s</string>

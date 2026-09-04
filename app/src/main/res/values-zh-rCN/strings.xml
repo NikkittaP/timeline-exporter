@@ -176,7 +176,7 @@
     <string name="places_show_all">查看全部 %1$s</string>
     <string name="places_include_containers">包含商场和机场</string>
     <string name="places_include_containers_hint">Google 还会记录地点所在的建筑。默认关闭：它会重复你已有的一次停留。</string>
-    <string name="place_unnamed_hint">点按地点为其命名。</string>
+    <string name="place_unnamed_hint">在地图或列表中点按地点即可找到它，再次点按可为其命名。</string>
     <string name="place_home">住所</string>
     <string name="place_work">工作地点</string>
     <string name="place_last_visit">最近 %1$s</string>

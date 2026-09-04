@@ -176,7 +176,7 @@
     <string name="places_show_all">Alle %1$s tonen</string>
     <string name="places_include_containers">Winkelcentra en luchthavens meenemen</string>
     <string name="places_include_containers_hint">Google registreert ook het gebouw waarin een plaats ligt. Standaard uit: het herhaalt een verblijf dat je al hebt.</string>
-    <string name="place_unnamed_hint">Tik op een plaats om die een naam te geven.</string>
+    <string name="place_unnamed_hint">Tik op een plaats op de kaart of in de lijst om te zien waar die ligt. Tik nogmaals om die een naam te geven.</string>
     <string name="place_home">Thuis</string>
     <string name="place_work">Werk</string>
     <string name="place_last_visit">laatst %1$s</string>

@@ -59,6 +59,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
@@ -248,6 +249,11 @@ fun MainScreen(
     var placesFullscreen by remember { mutableStateOf(false) }
     // Non-null while the naming dialog is open, and the place it is about.
     var placeBeingNamed by remember { mutableStateOf<PlaceEntry?>(null) }
+    // The one place the map and the list both point at. Held as a key rather
+    // than an entry so that re-filtering — which rebuilds every PlaceEntry —
+    // either keeps the selection or drops it, instead of leaving a ring around
+    // a place that is no longer in the data.
+    var selectedPlaceKey by rememberSaveable { mutableStateOf<String?>(null) }
     val scrollState = rememberScrollState()
 
     // A successful export lands at the bottom of a four-step screen the user is
@@ -290,6 +296,31 @@ fun MainScreen(
                 ?: emptyList()
         }
     }
+    // The entry behind the selected key, and what to call it. Derived rather
+    // than stored, so a change of filter — which rebuilds every PlaceEntry —
+    // resolves to the new instance or to nothing at all.
+    val selectedPlace = remember(places, selectedPlaceKey) {
+        selectedPlaceKey?.let { key -> places.firstOrNull { it.key == key } }
+    }
+    val selectedPlaceName = selectedPlace?.let { placeDisplayName(it, placeLabels[it.key]) }
+
+    /**
+     * One tap selects, a second names.
+     *
+     * Selecting first is what makes the two halves of the step one thing: the
+     * row a user taps lights up on the map, and the dot they tap lights up in
+     * the list. Opening the naming dialog straight away — which is what a row
+     * used to do — would mean a modal covering the map every time someone
+     * wanted to know where a place was.
+     */
+    val onPlacePicked: (PlaceEntry?) -> Unit = { entry ->
+        when {
+            entry == null -> selectedPlaceKey = null
+            entry.key == selectedPlaceKey -> placeBeingNamed = entry
+            else -> selectedPlaceKey = entry.key
+        }
+    }
+
     val exportContent: ExportContent = when (contentKind) {
         ContentKind.TRACK -> ExportContent.Track(filteredPoints)
         ContentKind.PLACES -> ExportContent.Places(exportPlaces(places, placeLabels))
@@ -307,10 +338,24 @@ fun MainScreen(
         }
     }
 
+    // `movableContentOf` is built once by `remember`, so whatever its body
+    // closes over is frozen at first composition — and `places` is a
+    // `derivedStateOf` with keys, so a new file or a new filter replaces the
+    // State object itself, not just its value. Routing the three moving parts
+    // through `rememberUpdatedState` gives the body a holder that is created
+    // once and refilled every composition, which is what keeps the map's
+    // selection from silently belonging to the previously loaded file.
+    val currentSelectedPlace by rememberUpdatedState(selectedPlace)
+    val currentSelectedName by rememberUpdatedState(selectedPlaceName)
+    val currentPlacePicked by rememberUpdatedState(onPlacePicked)
+
     val movableMap = remember {
         movableContentOf<MapSubject, Modifier> { subject, m ->
             TimelineMap(
                 subject = subject,
+                selectedPlace = currentSelectedPlace,
+                selectedPlaceName = currentSelectedName,
+                onPlaceSelected = currentPlacePicked,
                 onInteractionChange = { mapInteracting = it },
                 modifier = m,
             )
@@ -551,7 +596,8 @@ fun MainScreen(
                                 entries = places,
                                 labels = placeLabels,
                                 dateRangeActive = filter.dateRange != null,
-                                onPlaceClick = { placeBeingNamed = it },
+                                selectedKey = selectedPlaceKey,
+                                onPlaceClick = onPlacePicked,
                                 onShowAll = { placesFullscreen = true },
                             )
                             ToggleRow(
@@ -608,7 +654,8 @@ fun MainScreen(
             ExpandedPlaces(
                 entries = places,
                 labels = placeLabels,
-                onPlaceClick = { placeBeingNamed = it },
+                selectedKey = selectedPlaceKey,
+                onPlaceClick = onPlacePicked,
                 onClose = { placesFullscreen = false },
             )
         }

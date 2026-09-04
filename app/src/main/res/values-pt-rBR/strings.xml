@@ -176,7 +176,7 @@
     <string name="places_show_all">Mostrar todos os %1$s</string>
     <string name="places_include_containers">Incluir shoppings e aeroportos</string>
     <string name="places_include_containers_hint">O Google também registra o prédio em que um lugar fica. Desativado por padrão: repete uma estadia que você já tem.</string>
-    <string name="place_unnamed_hint">Toque em um lugar para dar um nome a ele.</string>
+    <string name="place_unnamed_hint">Toque em um lugar no mapa ou na lista para localizá-lo. Toque de novo para dar um nome a ele.</string>
     <string name="place_home">Casa</string>
     <string name="place_work">Trabalho</string>
     <string name="place_last_visit">última %1$s</string>

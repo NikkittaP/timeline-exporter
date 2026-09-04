@@ -176,7 +176,7 @@
     <string name="places_show_all">Alle %1$s anzeigen</string>
     <string name="places_include_containers">Einkaufszentren und Flughäfen einbeziehen</string>
     <string name="places_include_containers_hint">Google erfasst auch das Gebäude, in dem ein Ort liegt. Standardmäßig aus – es wiederholt einen Aufenthalt, den du bereits hast.</string>
-    <string name="place_unnamed_hint">Tippe auf einen Ort, um ihm einen Namen zu geben.</string>
+    <string name="place_unnamed_hint">Tippe auf der Karte oder in der Liste auf einen Ort, um ihn zu finden. Tippe erneut, um ihm einen Namen zu geben.</string>
     <string name="place_home">Zuhause</string>
     <string name="place_work">Arbeit</string>
     <string name="place_last_visit">zuletzt %1$s</string>
