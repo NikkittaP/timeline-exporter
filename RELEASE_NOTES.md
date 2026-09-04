@@ -31,30 +31,42 @@ this section is built and unreleased. The next upload's changelog must cover
 | Internal version | Code | Theme | Status |
 | --- | --- | --- | --- |
 | 1.6.3 | 13 | Correct timezones, place names, share sheet | built, not uploaded |
-| 1.7.0 | 14 | Places: export where you were, not just the line between | built, not uploaded |
-| — | — | Follow-up fixes and wording | in progress |
+| 1.7.0 | 14 | Places, a map of our own, filtering by time of day | to upload |
+
+Everything after the commit that named 1.7.0 — the Maps link fix, the step-4
+plaque, the basemap rewrite, the time-of-day window, places on the map — sits
+under **the same versionCode 14**, because nothing in between was ever
+uploaded. `app/build.gradle.kts` carries the full entry; the sections below are
+grouped the way the work happened, not the way the codes ran.
 
 ## Store changelog — draft for the next upload
 
 Four bullets, because that is what fits above the fold. Written from the whole
-span 1.6.2 → now; re-cut before upload if anything lands after this.
+span 1.6.2 → now; re-cut before upload if anything lands after this. **Cut for
+versionCode 14 and written out to `fastlane/metadata/android/<locale>/changelogs/14.txt`
+in all 18 locales, and to `F:\Timeline\Whats_New_v1.7.0_tagged.txt`.** Play
+allows 500 characters per language; the longest translation here is 479.
 
 ```
-• New: export your places, not just your track. Every format now writes the
-  places you actually visited — with visit counts, times and addresses — and
-  you can give any of them your own name.
-• Fixed local times in CSV exports. Points recorded abroad were stamped with
-  your home time zone, so a trip could be off by hours.
-• Exports can go straight to another app — mail, chat, a map — instead of
-  being saved as a file first.
-• Older Takeout exports now keep the real place names and addresses they
-  contain. Everything still runs entirely on your device: no uploads, no
-  accounts, no ads, no tracking.
+• Export your places, not just your track: where you were, how often and for
+  how long — in all four formats.
+• Filter by time of day: only your mornings, or only your nights, on the local
+  clock.
+• A quieter map, where the track builds up along the streets you walk most.
+• CSV local times are now correct abroad, and exports can go straight to
+  another app. Still no uploads, no accounts, no ads, no tracking.
 ```
+
+This is the second cut. The first was written when the span ended at 1.7.0, and
+it spent three of its four bullets on the 1.6.3 correctness work; the map
+rewrite, the time-of-day window and the places map all landed afterwards. The
+new map earns a bullet because it is the first thing a returning user sees, and
+the three 1.6.3 fixes are folded into the last one.
 
 Not in the bullets, deliberately: the container-place default, the Maps link
-fix and the export-step wording. They matter to someone using the app, not to
-someone deciding whether to update.
+fix, the export-step wording, the scale bar, the chevrons and the place
+selection. They matter to someone using the app, not to someone deciding
+whether to update.
 
 ## v1.6.3 (versionCode 13) — correctness
 
@@ -96,7 +108,9 @@ and none of it could leave the app.
 - 26 new strings across all 18 locales. `PlaceEntryTest` and `PlacesExportTest`
   (~410 lines) cover aggregation and all four writers.
 
-## Since v1.7.0 — follow-ups
+## Also in versionCode 14 — the map, time of day, places on the map
+
+Written after the commit tagged 1.7.0, shipped in the same build.
 
 - **The Google Maps link was undocumented and broken.** It used
   `maps/place/?q=place_id:…`, which Maps treats as literal search text: the app
@@ -232,6 +246,75 @@ and none of it could leave the app.
   data. Framing the camera walks the coordinates rather than collecting them,
   so a year of history no longer allocates 30,000 pairs to find four numbers.
 
+- **The places map and the places list are now one thing.** Putting the map
+  above the list answered *where is that* in general and nothing in
+  particular: the dots could not be touched, the rows could not be found on
+  the map, and the two halves of step 3 described the same data without ever
+  referring to each other. They now share one selection.
+
+  - **A tap on a dot selects it**, and a tap on a row selects it. The selected
+    place gets a ring on the map — outside the halo, so it reads as *this one*
+    even where a dozen places overlap — and its row is tinted in the list.
+    Ring rather than a recoloured dot: the dot's size already carries the
+    visit count, and a second meaning on the same mark would cost the first.
+  - **One tap selects, a second names.** A row used to open the naming dialog
+    immediately, which meant a modal covering the map every time someone
+    wanted to know where a place was. Now the first tap answers *where*, and
+    the second — on the row or on the dot — opens the same dialog as before.
+    The hint above the list says so, reworded in all 18 locales.
+  - **Selecting from the list moves the camera; selecting on the map does
+    not.** A ring around a dot the user just touched is the whole answer, and
+    moving the view as well would throw away the frame they picked it from.
+    The map tracks which selection it emitted itself and skips the camera for
+    that one. The camera eases to the place at the current zoom clamped to
+    12–16: from a continent-wide view *where is that* means zooming in, and
+    from a street-level one it does not mean zooming back out.
+  - **The selected place is labelled on the map** — the one place name on it,
+    for the reason the dots carry none. Needs glyphs, which the basemaps fetch
+    from the tile host; with no network the ring still draws and only the text
+    is missing, which is the right way round.
+  - **A place selected out in the tail is pinned to the front of the inline
+    list**, which shows eight rows. Without that, tapping a one-visit dot drew
+    a ring and changed nothing in the list — exactly the disconnection this
+    was built to fix. The fullscreen list scrolls to the selection instead.
+  - Under the hood: the places source carries `PlaceEntry.key` per feature, so
+    a hit test resolves back to a row, and a tap queries an 18 dp box rather
+    than a point — the one-visit dots are 3.5 px of radius and a fingertip is
+    9 mm. Where several dots are hit, the nearest centre wins: a small dot
+    sitting inside a large one is the one the user aimed at, because it is the
+    one they cannot identify from the list. The selection is its own source
+    and its own effect, so selecting does not rebuild 262 features and does
+    not count as new data and re-frame the camera. Selection is held as a key,
+    not an entry, so re-filtering either keeps it or drops it rather than
+    leaving a ring on a place that is no longer in the data. No new strings —
+    `place_unnamed_hint` was rewritten in place across all 18 locales.
+
+
+## Store art for this upload
+
+Eight screenshots instead of six, and the emulator's own chrome is no longer in
+any of them.
+
+- **Two new frames.** `08_places` — step 3 on the Places side, the map of
+  visited places over the list that names them — goes *second*, inside the
+  three Play shows without scrolling, because it is the one thing in this span
+  a 1.6.2 user does not already have. `09_time_of_day` — the window dialog with
+  a preset chosen — goes fourth. `ScreenshotTest` captures both; the Track /
+  Places switch is put back before the fullscreen map, which would otherwise
+  open on the places dots.
+- **The status bar is drawn by the renderer now.** The top and bottom system
+  bars are cropped off every capture and a bar of our own — 9:41, Wi-Fi,
+  signal, full battery — is drawn in place of the top one, its background
+  sampled from the app's own pixels just below it so it works on a white screen
+  and on the map alike. This is what removes the emulator's clock, its SD-card
+  and debug notification icons, and the Pixel_7 image's collapsed left inset,
+  which had the clock sitting hard against the edge while the battery floated
+  28 dp off the other one. The bottom crop takes the gesture pill and, on the
+  tablets, a taskbar full of Google's own app icons that had been sitting in
+  the middle of the store art.
+- Tablets also got their own device geometry: a phone's corner radius applied
+  to a 2000 px-wide tablet is a 150 px arc, and it was swallowing the whole
+  status bar.
 
 ## Pre-release checklist for this span
 
@@ -271,6 +354,35 @@ Map preview:
       does not leave places dots on the track
 - [ ] Home is visibly the biggest dot; a place visited once is visibly small
 - [ ] Expand works from the Places side, and the map survives closing it
+
+Places selection (map ↔ list):
+
+- [ ] Tap a dot: it rings, its row tints, and the camera does *not* move
+- [ ] Tap a row: the camera eases to that dot and rings it
+- [ ] Tap the same row or dot again: the naming dialog opens, on the right place
+- [ ] Tap empty map: the selection clears
+- [ ] Tap a one-visit dot far down the list: it appears pinned above the eight
+      inline rows
+- [ ] Open "show all" with something selected: the list scrolls to it
+- [ ] The selected place's name is drawn under its dot, and follows a rename
+      without the camera flying a second time
+- [ ] Airplane mode: the ring still draws (the label may not)
+- [ ] Two dots on top of each other at low zoom: the smaller one is selectable
+- [ ] Select a place, then change the date range so it drops out of the data:
+      no ring, no crash
+- [ ] Select a place, flip to Track and back: no stray ring on the track
+- [ ] Expand to fullscreen with a selection, and back: the selection survives
+- [ ] Rotate with a selection: it survives
+
+Store art:
+
+- [ ] `screens_phone`, `screens_tablet7`, `screens_tablet10` on their AVDs, then
+      the contact sheets in `tools/store_shots/preview/`
+- [ ] All eight frames present in all 18 locales; no "no raw capture" warnings
+- [ ] No emulator clock, notification icons or taskbar anywhere in the art
+- [ ] `08_places` shows the dots *and* the first rows of the list
+- [ ] The headline does not collide with the device in any language (the
+      renderer warns; ar, de-DE, fr-FR and hi-IN are the tight ones)
 
 Time of day:
 

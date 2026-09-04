@@ -108,18 +108,68 @@ android {
         //                                         older Takeout layout, and
         //                                         sending an export straight
         //                                         to another app
-        //   versionCode=14, versionName="1.7.0" -> Places: step 3 gains a
-        //                                         Track / Places switch, and
-        //                                         every format can now export
-        //                                         places as well as a track
-        //                                         (GPX waypoints, KML Point
-        //                                         placemarks, GeoJSON Point
-        //                                         features, its own CSV).
-        //                                         Places are listed by visit
-        //                                         count, can be given local
-        //                                         names, and Google's
-        //                                         hierarchy-level containers
-        //                                         are excluded by default
+        //   versionCode=14, versionName="1.7.0" -> Places, a map of our own,
+        //       and filtering by time of day.
+        //
+        //       This code kept accumulating long after the commit that named
+        //       it: five more commits and the work below all landed under the
+        //       same 14, because nothing in between was ever uploaded. Read
+        //       this entry, not the tag, for what an AAB built at 14 contains.
+        //
+        //       - Places. Step 3 gains a Track / Places switch and every format
+        //         writes places as well as a track: GPX waypoints, KML Point
+        //         placemarks, GeoJSON Point features, a places-shaped CSV.
+        //         Places are listed by visit count, with duration, last visit
+        //         and address, and any of them can be given a local name that
+        //         is kept on device and written into the export. Google's
+        //         container places - the mall or airport a stay sits inside -
+        //         are off by default. Each place carries two UTC offsets, one
+        //         for the first visit and one for the last, so an aggregate
+        //         spanning a DST change cannot reintroduce the bug 13 had just
+        //         fixed.
+        //
+        //       - Step 4 says what it will write. Its heading reads "Export
+        //         track" or "Export places" and a read-only plaque above the
+        //         format buttons carries the kind and the count, so flipping
+        //         the switch one card up is visible before the filename is. The
+        //         "Open in Google Maps" link was also broken and undocumented:
+        //         it passed place_id: as literal search text, and now uses the
+        //         documented coordinates + query_place_id form, formatted
+        //         through Locale.ROOT so a coordinate near the equator is not
+        //         emitted as 1.0E-5.
+        //
+        //       - The map is our own. Two bundled styles in assets/, light and
+        //         dark, over the same OpenMapTiles source as before but near-
+        //         monochrome and 18 layers deep instead of Liberty's ~150; they
+        //         follow the system theme without a download and without
+        //         yanking a camera the user has panned. The track is drawn as
+        //         accumulation - a hairline at low alpha over a blurred wash,
+        //         its base weight interpolated on the log of the sample count -
+        //         so a single walk reads as a route line and a year of history
+        //         as a heat map, with direction chevrons where direction is
+        //         still a real question (at most 2000 samples, zoom 13 and
+        //         above). Replacing Liberty also meant restoring what it had
+        //         been carrying for us: the OSM attribution, a measured scale
+        //         bar, and a button back to the track once the camera has
+        //         drifted off it.
+        //
+        //       - Places are on that map too, as dots sized by visit count,
+        //         sharing one selection with the list beneath. A tap rings the
+        //         dot and tints its row; a second tap opens the naming dialog.
+        //         Selecting from the list moves the camera, selecting on the
+        //         map does not.
+        //
+        //       - Filter by time of day. One more chip in step 2 opens a window
+        //         that applies to every day in the range, tested against the
+        //         clock where each point was recorded rather than the phone's -
+        //         the offset fix in 13 paying for itself one layer up. Windows
+        //         wrap through midnight (22:00-06:00), a place is kept when a
+        //         visit to it overlaps the window, and the window is written
+        //         into both the filename and the track name.
+        //
+        //       40 new strings across all 18 locales; the now-unused
+        //       step_export was removed from each. New tests: PlaceEntryTest,
+        //       PlacesExportTest, TimeOfDayWindowTest, TimeOfDayFilterTest.
         versionCode = 14
         versionName = "1.7.0"
 
