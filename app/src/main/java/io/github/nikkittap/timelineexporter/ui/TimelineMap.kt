@@ -729,7 +729,12 @@ private fun renderPlaces(style: Style, entries: List<PlaceEntry>, palette: MapPa
     // Built as GeoJSON text rather than through Feature and a properties
     // object: the values come from our own model, the app already writes
     // GeoJSON by hand elsewhere, and this needs no gson types on the classpath.
-    style.addSource(GeoJsonSource(SOURCE_PLACES, placesGeoJson(entries)))
+    // Attached first and filled second, so the data goes through the one
+    // setter whose behaviour is documented rather than through a constructor
+    // overload that has come and gone between MapLibre versions.
+    val source = GeoJsonSource(SOURCE_PLACES)
+    style.addSource(source)
+    source.setGeoJson(placesGeoJson(entries))
 
     // The halo is what keeps a cluster of overlapping dots readable: the
     // fills blend into one blob, the strokes do not.
