@@ -9,7 +9,6 @@
     <string name="step_choose_file">फ़ाइल चुनें</string>
     <string name="step_filter">डेटा फ़िल्टर करें</string>
     <string name="step_preview">पूर्वावलोकन</string>
-    <string name="step_export">एक्सपोर्ट</string>
 
     <string name="loaded_badge">लोड हो गया</string>
     <string name="metric_points">पॉइंट</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">%1$s जगहें %2$s में सहेजी गईं</string>
     <string name="export_shared_places">%1$s जगहें %2$s के रूप में तैयार की गईं</string>
     <string name="export_error_no_places">मौजूदा तारीख़ सीमा में कोई जगह नहीं है।</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">ट्रैक निर्यात करें</string>
+    <string name="step_export_places">स्थान निर्यात करें</string>
+    <string name="export_writes_label">यह लिखा जाएगा</string>
 </resources>

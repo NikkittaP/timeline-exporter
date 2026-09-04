@@ -38,6 +38,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -535,7 +536,20 @@ fun MainScreen(
                     }
                 }
 
-                StepCard(step = 4, title = stringResource(R.string.step_export)) {
+                // The step's own title carries the Track / Places choice made
+                // one card up. Someone who flips the switch and scrolls down
+                // used to meet the identical word "Export" either way; now the
+                // heading itself changes, before the plaque underneath spells
+                // out the count.
+                StepCard(
+                    step = 4,
+                    title = stringResource(
+                        when (contentKind) {
+                            ContentKind.TRACK -> R.string.step_export_track
+                            ContentKind.PLACES -> R.string.step_export_places
+                        }
+                    ),
+                ) {
                     ExportStep(
                         canSave = !exportContent.isEmpty,
                         contentKind = contentKind,
@@ -1090,9 +1104,11 @@ private fun PreviewContent(
  * step 4 writes.
  *
  * In step 3 rather than in step 4, even though it is step 4 that acts on it:
- * the choice is "what am I looking at", and putting it above the thing it
- * changes is what makes the export buttons underneath need no label of their
- * own. Step 4 stays a row of formats, exactly as it has been since 1.0.
+ * the choice is "what am I looking at", and the preview underneath is the
+ * fastest way to tell whether it is the right one. Step 4 does not repeat the
+ * control — it repeats the *answer*, in its heading and in the plaque above
+ * the format buttons (see [ExportSubjectPlaque]), so the two cards can never
+ * disagree about which one is live.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -1121,6 +1137,88 @@ private fun ContentSwitch(
     }
 }
 
+/**
+ * The first thing in step 4: an icon, the kind, and the count of what the
+ * format buttons underneath are about to write.
+ *
+ * A bare "313 places" line lived here first and was not enough. The Track /
+ * Places switch sits two cards up in step 3, where it reads as "what am I
+ * looking at"; by the time the user has scrolled past the preview to the
+ * format buttons, nothing on screen said which of the two those buttons would
+ * export, and a one-line caption above four buttons is exactly the kind of
+ * text people skip. Flipping the switch therefore looked like it did nothing.
+ *
+ * Deliberately a neutral `surfaceVariant` panel with a tinted icon, and not a
+ * `secondaryContainer` one: `FilledTonalButton` — the GPX / KML / GeoJSON /
+ * CSV row directly below — is `secondaryContainer` by default, so a tonal
+ * plaque would be the same colour as the buttons it introduces and would read
+ * as one more (broken) control. Neutral ground plus a primary-tinted icon
+ * gives it the weight without the affordance.
+ *
+ * Read-only on purpose. The switch stays the single place the choice is made;
+ * duplicating it here would put two controls on one piece of state, and the
+ * plaque would then have to answer "which one is the real one?" every time
+ * they are both on screen.
+ */
+@Composable
+private fun ExportSubjectPlaque(contentKind: ContentKind, itemCount: Int) {
+    val kindLabel = stringResource(
+        when (contentKind) {
+            ContentKind.TRACK -> R.string.content_track
+            ContentKind.PLACES -> R.string.content_places
+        }
+    )
+    val countLabel = stringResource(
+        when (contentKind) {
+            ContentKind.TRACK -> R.string.points_count
+            ContentKind.PLACES -> R.string.places_count
+        },
+        formatGrouped(itemCount),
+    )
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                painter = painterResource(
+                    when (contentKind) {
+                        ContentKind.TRACK -> R.drawable.ic_content_track
+                        ContentKind.PLACES -> R.drawable.ic_content_places
+                    }
+                ),
+                // The two lines next to it say the same thing in words, and a
+                // screen reader announcing "route icon, this will write, track
+                // — 313 points" is worse than the sentence alone.
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(24.dp),
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    text = stringResource(R.string.export_writes_label),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                Text(
+                    text = stringResource(
+                        R.string.export_writes_value,
+                        kindLabel,
+                        countLabel,
+                    ),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun ExportStep(
@@ -1135,20 +1233,7 @@ private fun ExportStep(
 ) {
     val enabled = canSave && exportState !is ExportState.Working
 
-    // What is about to be written. Without this the step is four format
-    // buttons that look identical whichever side of the Track / Places switch
-    // the user is on, so flipping it appears to do nothing at all — the choice
-    // is made two cards up and only shows in the filename afterwards.
-    Text(
-        text = stringResource(
-            when (contentKind) {
-                ContentKind.TRACK -> R.string.points_count
-                ContentKind.PLACES -> R.string.places_count
-            },
-            formatGrouped(itemCount),
-        ),
-        style = MaterialTheme.typography.bodyMedium,
-    )
+    ExportSubjectPlaque(contentKind = contentKind, itemCount = itemCount)
 
     // Destination first, format second — one row of format buttons either way.
     // The alternative, a second row of "share as GPX / KML / …" buttons, would

@@ -9,7 +9,6 @@
     <string name="step_choose_file">Välj fil</string>
     <string name="step_filter">Filtrera data</string>
     <string name="step_preview">Förhandsvisning</string>
-    <string name="step_export">Exportera</string>
 
     <string name="loaded_badge">Inläst</string>
     <string name="metric_points">Punkter</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">Sparade %1$s platser till %2$s</string>
     <string name="export_shared_places">Förberedde %1$s platser som %2$s</string>
     <string name="export_error_no_places">Inga platser i det aktuella datumintervallet.</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">Exportera spåret</string>
+    <string name="step_export_places">Exportera platserna</string>
+    <string name="export_writes_label">Detta skrivs</string>
 </resources>

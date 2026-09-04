@@ -91,6 +91,11 @@ android {
         //                                         Also hardens the MapLibre
         //                                         teardown that was aborting
         //                                         in ~MapRenderer
+        // ---- everything above is LIVE ON PLAY; 1.6.2 is what users have ----
+        // Below this line: built, tagged here, never uploaded. The next store
+        // changelog must therefore cover the whole span 1.6.2 -> the uploaded
+        // code, not just the last versionName bump. See RELEASE_NOTES.md,
+        // which accumulates those entries under "Unreleased".
         //   versionCode=13, versionName="1.6.3" -> correctness: path points
         //                                         carried the exporting
         //                                         phone's home UTC offset

@@ -9,7 +9,6 @@
     <string name="step_choose_file">Dosya seç</string>
     <string name="step_filter">Verileri filtrele</string>
     <string name="step_preview">Önizleme</string>
-    <string name="step_export">Dışa aktar</string>
 
     <string name="loaded_badge">Yüklendi</string>
     <string name="metric_points">Noktalar</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">%1$s yer %2$s dosyasına kaydedildi</string>
     <string name="export_shared_places">%1$s yer %2$s olarak hazırlandı</string>
     <string name="export_error_no_places">Geçerli tarih aralığında yer yok.</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">Rotayı dışa aktar</string>
+    <string name="step_export_places">Yerleri dışa aktar</string>
+    <string name="export_writes_label">Yazılacak olan</string>
 </resources>

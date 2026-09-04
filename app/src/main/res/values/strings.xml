@@ -14,7 +14,6 @@
     <string name="step_choose_file">Choose file</string>
     <string name="step_filter">Filter data</string>
     <string name="step_preview">Preview</string>
-    <string name="step_export">Export</string>
 
     <!-- Loaded summary -->
     <string name="loaded_badge">Loaded</string>
@@ -251,4 +250,10 @@
     <string name="export_shared_places">Prepared %1$s places as %2$s</string>
     <string name="export_error_no_places">No places in the current date range.</string>
     <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">Export track</string>
+    <string name="step_export_places">Export places</string>
+    <string name="export_writes_label">This will write</string>
+    <string name="export_writes_value" translatable="false">%1$s — %2$s</string>
 </resources>

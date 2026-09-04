@@ -9,7 +9,6 @@
     <string name="step_choose_file">Choisir un fichier</string>
     <string name="step_filter">Filtrer les données</string>
     <string name="step_preview">Aperçu</string>
-    <string name="step_export">Exporter</string>
 
     <string name="loaded_badge">Chargé</string>
     <string name="metric_points">Points</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">%1$s lieux enregistrés dans %2$s</string>
     <string name="export_shared_places">%1$s lieux préparés au format %2$s</string>
     <string name="export_error_no_places">Aucun lieu dans la période actuelle.</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">Exporter le trajet</string>
+    <string name="step_export_places">Exporter les lieux</string>
+    <string name="export_writes_label">Sera écrit</string>
 </resources>

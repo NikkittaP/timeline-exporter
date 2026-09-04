@@ -9,7 +9,6 @@
     <string name="step_choose_file">Bestand kiezen</string>
     <string name="step_filter">Gegevens filteren</string>
     <string name="step_preview">Voorbeeld</string>
-    <string name="step_export">Exporteren</string>
 
     <string name="loaded_badge">Geladen</string>
     <string name="metric_points">Punten</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">%1$s plaatsen opgeslagen in %2$s</string>
     <string name="export_shared_places">%1$s plaatsen voorbereid als %2$s</string>
     <string name="export_error_no_places">Geen plaatsen in het huidige datumbereik.</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">Route exporteren</string>
+    <string name="step_export_places">Plaatsen exporteren</string>
+    <string name="export_writes_label">Dit wordt weggeschreven</string>
 </resources>

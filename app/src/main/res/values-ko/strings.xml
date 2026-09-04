@@ -9,7 +9,6 @@
     <string name="step_choose_file">파일 선택</string>
     <string name="step_filter">데이터 필터링</string>
     <string name="step_preview">미리보기</string>
-    <string name="step_export">내보내기</string>
 
     <string name="loaded_badge">불러옴</string>
     <string name="metric_points">포인트</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">장소 %1$s개를 %2$s에 저장했습니다</string>
     <string name="export_shared_places">장소 %1$s개를 %2$s(으)로 준비했습니다</string>
     <string name="export_error_no_places">현재 기간에 장소가 없습니다.</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">경로 내보내기</string>
+    <string name="step_export_places">장소 내보내기</string>
+    <string name="export_writes_label">저장될 내용</string>
 </resources>

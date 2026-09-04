@@ -9,7 +9,6 @@
     <string name="step_choose_file">اختيار ملف</string>
     <string name="step_filter">تصفية البيانات</string>
     <string name="step_preview">معاينة</string>
-    <string name="step_export">تصدير</string>
 
     <string name="loaded_badge">تم التحميل</string>
     <string name="metric_points">النقاط</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">تم حفظ %1$s مكانًا في %2$s</string>
     <string name="export_shared_places">تم تحضير %1$s مكانًا بصيغة %2$s</string>
     <string name="export_error_no_places">لا توجد أماكن في النطاق الزمني الحالي.</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">تصدير المسار</string>
+    <string name="step_export_places">تصدير الأماكن</string>
+    <string name="export_writes_label">ما سيُكتب</string>
 </resources>

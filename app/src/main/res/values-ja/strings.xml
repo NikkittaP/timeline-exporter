@@ -9,7 +9,6 @@
     <string name="step_choose_file">ファイルを選択</string>
     <string name="step_filter">データを絞り込み</string>
     <string name="step_preview">プレビュー</string>
-    <string name="step_export">エクスポート</string>
 
     <string name="loaded_badge">読み込み済み</string>
     <string name="metric_points">ポイント</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">%1$s 件の場所を %2$s に保存しました</string>
     <string name="export_shared_places">%1$s 件の場所を %2$s として準備しました</string>
     <string name="export_error_no_places">現在の期間に場所はありません。</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">経路を書き出す</string>
+    <string name="step_export_places">場所を書き出す</string>
+    <string name="export_writes_label">書き出される内容</string>
 </resources>

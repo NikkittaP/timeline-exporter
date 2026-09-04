@@ -9,7 +9,6 @@
     <string name="step_choose_file">选择文件</string>
     <string name="step_filter">筛选数据</string>
     <string name="step_preview">预览</string>
-    <string name="step_export">导出</string>
 
     <string name="loaded_badge">已加载</string>
     <string name="metric_points">点</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">已将 %1$s 个地点保存到 %2$s</string>
     <string name="export_shared_places">已将 %1$s 个地点准备为 %2$s</string>
     <string name="export_error_no_places">当前日期范围内没有地点。</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">导出轨迹</string>
+    <string name="step_export_places">导出地点</string>
+    <string name="export_writes_label">将写入</string>
 </resources>

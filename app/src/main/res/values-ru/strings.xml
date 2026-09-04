@@ -9,7 +9,6 @@
     <string name="step_choose_file">Выбор файла</string>
     <string name="step_filter">Фильтрация данных</string>
     <string name="step_preview">Предпросмотр</string>
-    <string name="step_export">Экспорт</string>
 
     <string name="loaded_badge">Загружено</string>
     <string name="metric_points">Точки</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">Сохранено мест: %1$s — в %2$s</string>
     <string name="export_shared_places">Подготовлено мест: %1$s в формате %2$s</string>
     <string name="export_error_no_places">В выбранном диапазоне дат нет мест.</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">Экспорт маршрута</string>
+    <string name="step_export_places">Экспорт мест</string>
+    <string name="export_writes_label">Будет записано</string>
 </resources>

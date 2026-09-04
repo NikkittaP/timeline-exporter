@@ -1,4 +1,175 @@
-# Release Notes — v1.6.1 (versionCode 11)
+# Release Notes
+
+**This file accumulates.** Every change lands in *Unreleased* as it is made;
+nothing is rewritten at release time. When a build is actually published to
+Play, its whole *Unreleased* section moves down into *Released* under one
+heading and the store changelog is cut from that section — not from the last
+`versionName` bump.
+
+That distinction is the reason for the format. Version codes 13 and 14 were
+built, tagged in `build.gradle.kts` and never uploaded, so a store changelog
+written per `versionName` would have described one third of what a 1.6.2 user
+is about to receive. **The store changelog covers the span from the last
+*published* build to this one**, however many internal versions it contains.
+
+Where things go at release time:
+
+| Artefact | Path |
+| --- | --- |
+| Store changelog, 18 locales | `fastlane/metadata/android/<locale>/changelogs/<versionCode>.txt` |
+| Same text, one tagged file | `F:\Timeline\Whats_New_v<versionName>_tagged.txt` |
+| The long-form notes | this file, under *Released* |
+
+---
+
+# Unreleased — everything since v1.6.2
+
+**Published on Play: v1.6.2 (versionCode 12), 27 August 2026.** Everything in
+this section is built and unreleased. The next upload's changelog must cover
+*all of it*, not just the newest version bump.
+
+| Internal version | Code | Theme | Status |
+| --- | --- | --- | --- |
+| 1.6.3 | 13 | Correct timezones, place names, share sheet | built, not uploaded |
+| 1.7.0 | 14 | Places: export where you were, not just the line between | built, not uploaded |
+| — | — | Follow-up fixes and wording | in progress |
+
+## Store changelog — draft for the next upload
+
+Four bullets, because that is what fits above the fold. Written from the whole
+span 1.6.2 → now; re-cut before upload if anything lands after this.
+
+```
+• New: export your places, not just your track. Every format now writes the
+  places you actually visited — with visit counts, times and addresses — and
+  you can give any of them your own name.
+• Fixed local times in CSV exports. Points recorded abroad were stamped with
+  your home time zone, so a trip could be off by hours.
+• Exports can go straight to another app — mail, chat, a map — instead of
+  being saved as a file first.
+• Older Takeout exports now keep the real place names and addresses they
+  contain. Everything still runs entirely on your device: no uploads, no
+  accounts, no ads, no tracking.
+```
+
+Not in the bullets, deliberately: the container-place default, the Maps link
+fix and the export-step wording. They matter to someone using the app, not to
+someone deciding whether to update.
+
+## v1.6.3 (versionCode 13) — correctness
+
+- **Local time in CSV was the exporting phone's, not the point's.** Every path
+  point carried the home UTC offset, so a week in Tokyo exported with Stockholm
+  timestamps — hours wrong for every trip abroad, and silently so, since the
+  UTC column was right. Points now carry the offset that was in effect where
+  they were recorded.
+- **Place names and addresses from the older Takeout layout** are parsed
+  instead of dropped.
+- **Send to app.** Export no longer has to become a file first: the result can
+  go straight to mail, a chat or a map through the share sheet. This was the
+  third candidate on the 1.6.1 feedback ballot.
+- `TimelineParserTimezoneTest` (144 lines) pins the offset behaviour.
+
+## v1.7.0 (versionCode 14) — Places
+
+The app could only ever export *the line between* the places someone went. A
+Timeline file also records the places themselves — where, how long, how often —
+and none of it could leave the app.
+
+- **A Track / Places switch in step 3**, and step 4 writes whichever is
+  selected. `ExportContent` became a sealed type so an exporter takes "what to
+  write" rather than `List<PathPoint>`; one new format is still one new file.
+- **All four formats write places**: GPX waypoints, KML `Point` placemarks,
+  GeoJSON `Point` features, and a places-shaped CSV.
+- **Places are listed by visit count**, with duration, last visit, address and
+  a link that opens the place in Google Maps.
+- **Local names.** Tap a place to name it; the name is yours, stored on device,
+  and written into the export. Google's `INFERRED_HOME` / `INFERRED_WORK` show
+  as *Home* / *Work* in the user's language, with the raw `semanticType` kept
+  in the file as the machine-readable column.
+- **Containers off by default.** Google also records the mall or airport a
+  place sits inside, which duplicates a stay the user already has; the toggle
+  is in step 3.
+- **Two UTC offsets per place**, one for the first visit and one for the last:
+  an aggregate spans up to a year and can straddle a DST change, and picking a
+  winner would reintroduce the bug 1.6.3 just fixed.
+- 26 new strings across all 18 locales. `PlaceEntryTest` and `PlacesExportTest`
+  (~410 lines) cover aggregation and all four writers.
+
+## Since v1.7.0 — follow-ups
+
+- **The Google Maps link was undocumented and broken.** It used
+  `maps/place/?q=place_id:…`, which Maps treats as literal search text: the app
+  opened with `place_id:ChIJ97_m…` typed into the search box and no result.
+  Now the documented Maps URLs form, coordinates plus `query_place_id`, so a
+  stale ID degrades to a pin at the right spot instead of an empty search.
+  Coordinates are formatted through `Locale.ROOT` with fixed decimals —
+  `Double.toString` emits `1.0E-5` near the equator, which is a dead link.
+- **Step 4 now says what it will export.** Flipping the Track / Places switch
+  in step 3 changed nothing visible in step 4 — four identically-labelled
+  format buttons either way — so the choice only surfaced afterwards, in the
+  filename. Step 4's *heading* now reads "Export track" / "Export places", and
+  a plaque above the format buttons carries the matching icon, the kind and
+  the count ("Track — 12,481 points"). The switch is still the only control:
+  the plaque is read-only, so the two cards cannot disagree about which one is
+  live. The plaque is neutral `surfaceVariant` with a primary-tinted icon and
+  not `secondaryContainer`, because `FilledTonalButton` — the GPX / KML row
+  directly below — is `secondaryContainer`, and a tonal plaque there reads as
+  one more control. Three new strings across 18 locales; the now-unused
+  `step_export` was removed from all of them.
+
+## Pre-release checklist for this span
+
+Places (1.7.0):
+
+- [ ] A real takeout: the places list is plausible, ordered by visit count
+- [ ] Each of GPX / KML / GeoJSON / CSV, opened in a reader that understands it
+- [ ] Name a place → the name survives rotation, app restart, and appears in
+      the export
+- [ ] Containers on/off visibly changes the list
+- [ ] A file with no places at all, and a date range that matches none
+- [ ] The Maps link opens the right place, and a place with no `placeId` opens
+      a pin rather than an empty search
+
+Timezones (1.6.3):
+
+- [ ] A trip abroad: the CSV local-time column matches the local clock there,
+      not the phone's
+- [ ] An export spanning a DST change
+- [ ] An older `Records.json` layout keeps its place names
+
+Export step wording:
+
+- [ ] Flip Track / Places and scroll to step 4: heading and plaque both follow
+- [ ] The plaque does not look tappable next to the format buttons, in light
+      and in dark theme
+- [ ] German (long strings) and Arabic (RTL) do not clip the plaque
+
+Always:
+
+- [ ] `./gradlew :app:test`
+- [ ] `./gradlew bundleRelease` — R8 and `lintVital` green
+- [ ] Bump `versionCode` and `versionName`, cut the changelog above into all 18
+      `changelogs/<versionCode>.txt`, and move this section into *Released*
+
+---
+
+# Released
+
+## v1.6.2 (versionCode 12) — published 27 August 2026
+
+The crash hotfix that is currently live on Play, and the baseline every note in
+*Unreleased* is measured against.
+
+- Every `LocalDate.ofInstant` call is API 34, and threw `NoSuchMethodError` on
+  Android 10–13 — killing the quick day chips, the date picker and the export
+  filename on the majority of installs. Core library desugaring plus a lint
+  gate now stop that class of bug at build time.
+- Hardened the MapLibre teardown that was aborting in `~MapRenderer`.
+
+Store text: `fastlane/metadata/android/<locale>/changelogs/12.txt`.
+
+## v1.6.1 (versionCode 11) — movement filtering + wording
 
 v1.6.0 was built and signed but never uploaded, so this file covers everything
 since **v1.5.1 (versionCode 9)** — the movement filtering that made up 1.6.0,
@@ -9,7 +180,7 @@ asked was *when* — pick a date range, get every point Google ever recorded in
 it. This release adds *what*: which kinds of movement to keep, and whether to
 keep the points recorded while you were not moving at all.
 
-## Highlights
+### Highlights
 A year of real Timeline data is mostly standing still. **71% of its points were
 recorded during a visit** rather than a trip, and **29.6% repeat the previous
 coordinate verbatim** — the phone reporting the same spot again while the owner
@@ -21,7 +192,7 @@ feedback round kept asking: *how far did I actually travel, and by what?* The
 breakdown and the filter are the same rows — read the kilometres, tick the
 group, the export follows.
 
-## Added
+### Added
 - **Movement breakdown in step 2.** One collapsed line under the date chips,
   e.g. *"All movement · 313 places"*. Someone who only ever picked a date range
   sees the step they already know plus a single extra line.
@@ -41,7 +212,7 @@ group, the export follows.
   model now carries kind, time span, activity type, Google's `distanceMeters`,
   confidence and the matched place.
 
-## Changed
+### Changed
 - Nothing changes for an existing user until they touch something: both
   switches default to off and no group is preselected, so the same file and
   date range exports byte-identically to v1.5.1.
@@ -57,7 +228,7 @@ group, the export follows.
 - 15 new strings, translated across all 17 non-default locales; names and
   format placeholders verified against the default file.
 
-## Wording (the 1.6.1 part)
+### Wording (the 1.6.1 part)
 Text only — no filter, exporter or parser behaviour differs from the 1.6.0
 build.
 
@@ -88,7 +259,7 @@ build.
 - Five string keys touched in each of the **18** locale files: one renamed step
   title, one reworded option, three added, one deleted.
 
-## Under the hood
+### Under the hood
 - `PathPoint` instances are shared between the flat point list and the new
   segment list, so keeping segments costs one reference per point rather than a
   second copy of the track.
@@ -107,7 +278,7 @@ build.
   was written, and the tests pin the figures: per-type distance from Google's
   `distanceMeters` totals 14 501.4 km.
 
-## Fixed (test suite, not the app)
+### Fixed (test suite, not the app)
 - `GeoJsonExporterTest` had **never compiled**: it parses the exporter's output
   with `kotlinx.serialization.json`, which was not a dependency in any scope
   (the app reads JSON with Jackson). Added as `testImplementation` only — it
@@ -121,7 +292,7 @@ build.
 
 With both fixed, `./gradlew :app:test` is green: **89 tests, 0 failures**.
 
-## No changes to
+### No changes to
 - Billing, the paid-export flow, or anything on the purchase path.
 - The exporters themselves — GPX / KML / GeoJSON / CSV write the same bytes for
   the same points.
@@ -130,7 +301,7 @@ With both fixed, `./gradlew :app:test` is green: **89 tests, 0 failures**.
   mail client, where the user can edit or abandon it.
 - `minSdk` (29) and `targetSdk` (36).
 
-## Expectations
+### Expectations
 `bundleRelease` is green with R8 and `lintVital` passing, and the unit suite is
 green. The 1.6.0 build was also **run on a device**, where the new step behaved
 as intended in ordinary use — the one thing the 1.6.0 notes could not claim.
@@ -138,7 +309,7 @@ That was a walkthrough, not the list below: the edge cases (empty selection,
 older files with no activity segments, RTL, 100 MB+ inputs) have still not been
 exercised, and the 1.6.1 wording has been built but not seen running.
 
-## Pre-release checklist
+### Pre-release checklist
 - [x] `./gradlew bundleRelease` (R8 + lintVital pass; AAB signed)
 - [x] `./gradlew :app:test` — 89 tests, 0 failures
 - [x] Load a **real phone takeout** and confirm the breakdown appears, with

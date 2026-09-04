@@ -9,7 +9,6 @@
     <string name="step_choose_file">Datei wählen</string>
     <string name="step_filter">Daten filtern</string>
     <string name="step_preview">Vorschau</string>
-    <string name="step_export">Export</string>
 
     <string name="loaded_badge">Geladen</string>
     <string name="metric_points">Punkte</string>
@@ -192,4 +191,9 @@
     <string name="export_success_places">%1$s Orte in %2$s gespeichert</string>
     <string name="export_shared_places">%1$s Orte als %2$s vorbereitet</string>
     <string name="export_error_no_places">Keine Orte im aktuellen Zeitraum.</string>
+
+    <!-- Export step: what the Track / Places switch will actually write -->
+    <string name="step_export_track">Route exportieren</string>
+    <string name="step_export_places">Orte exportieren</string>
+    <string name="export_writes_label">Geschrieben wird</string>
 </resources>
