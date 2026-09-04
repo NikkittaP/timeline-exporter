@@ -46,7 +46,8 @@
     <string name="filter_movement_all">Wszystkie sposoby przemieszczania</string>
     <string name="filter_movement_none">Nic nie wybrano</string>
     <string name="filter_moving_only_short">tylko w ruchu</string>
-    <string name="filter_places_count">Miejsca: %1$s</string>
+    <string name="points_count">Punkty: %1$s</string>
+    <string name="places_count">Miejsca: %1$s</string>
     <string name="filter_trip_count">Podróże: %1$s</string>
     <string name="filter_moving_only">Tylko w ruchu</string>
     <string name="filter_moving_only_hint">Pomiń punkty zapisane podczas postoju</string>
@@ -191,5 +192,4 @@
     <string name="export_success_places">Zapisano miejsca (%1$s) do %2$s</string>
     <string name="export_shared_places">Przygotowano miejsca (%1$s) jako %2$s</string>
     <string name="export_error_no_places">Brak miejsc w bieżącym zakresie dat.</string>
-    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

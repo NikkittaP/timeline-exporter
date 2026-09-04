@@ -539,6 +539,7 @@ fun MainScreen(
                     ExportStep(
                         canSave = !exportContent.isEmpty,
                         contentKind = contentKind,
+                        itemCount = exportContent.size,
                         exportState = exportState,
                         shareInstead = shareInstead,
                         onShareInsteadChange = { shareInstead = it },
@@ -924,7 +925,7 @@ private fun MovementSection(
 
         if (places > 0) {
             Text(
-                text = stringResource(R.string.filter_places_count, formatGrouped(places)),
+                text = stringResource(R.string.places_count, formatGrouped(places)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp),
@@ -1052,7 +1053,7 @@ private fun movementSummaryLabel(
         }
     )
     if (movingOnly) parts += stringResource(R.string.filter_moving_only_short)
-    if (places > 0) parts += stringResource(R.string.filter_places_count, formatGrouped(places))
+    if (places > 0) parts += stringResource(R.string.places_count, formatGrouped(places))
     return parts.joinToString(" · ")
 }
 
@@ -1125,6 +1126,7 @@ private fun ContentSwitch(
 private fun ExportStep(
     canSave: Boolean,
     contentKind: ContentKind,
+    itemCount: Int,
     exportState: ExportState,
     shareInstead: Boolean,
     onShareInsteadChange: (Boolean) -> Unit,
@@ -1132,6 +1134,21 @@ private fun ExportStep(
     onFeedbackClick: () -> Unit = {},
 ) {
     val enabled = canSave && exportState !is ExportState.Working
+
+    // What is about to be written. Without this the step is four format
+    // buttons that look identical whichever side of the Track / Places switch
+    // the user is on, so flipping it appears to do nothing at all — the choice
+    // is made two cards up and only shows in the filename afterwards.
+    Text(
+        text = stringResource(
+            when (contentKind) {
+                ContentKind.TRACK -> R.string.points_count
+                ContentKind.PLACES -> R.string.places_count
+            },
+            formatGrouped(itemCount),
+        ),
+        style = MaterialTheme.typography.bodyMedium,
+    )
 
     // Destination first, format second — one row of format buttons either way.
     // The alternative, a second row of "share as GPX / KML / …" buttons, would

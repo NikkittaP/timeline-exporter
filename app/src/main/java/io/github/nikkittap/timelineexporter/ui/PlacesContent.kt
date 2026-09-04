@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.nikkittap.timelineexporter.R
 import io.github.nikkittap.timelineexporter.export.ExportPlace
+import io.github.nikkittap.timelineexporter.export.googleMapsUrl
 import io.github.nikkittap.timelineexporter.parser.PlaceEntry
 import java.util.Locale
 
@@ -355,13 +356,14 @@ fun PlaceLabelDialog(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
-                if (entry.placeId != null) {
-                    TextButton(
-                        onClick = { openInMaps(context, entry) },
-                        modifier = Modifier.align(Alignment.Start),
-                    ) {
-                        Text(stringResource(R.string.place_dialog_maps))
-                    }
+                // Offered for every place, not only the ones Google gave an
+                // ID: the link carries the coordinates too, so a place with no
+                // ID still opens as a pin in the right spot.
+                TextButton(
+                    onClick = { openInMaps(context, entry) },
+                    modifier = Modifier.align(Alignment.Start),
+                ) {
+                    Text(stringResource(R.string.place_dialog_maps))
                 }
             }
         },
@@ -388,12 +390,15 @@ fun PlaceLabelDialog(
 /**
  * Hand the place to whatever maps app the user has.
  *
- * `?q=place_id:` rather than a coordinate URL: a place ID resolves to the
- * business or building Google matched, so the user sees a name, while a
- * coordinate drops a pin in the middle of a street and identifies nothing.
+ * The place ID resolves to the business or building Google matched, so the
+ * user sees a name rather than a pin in the middle of a street — which is the
+ * whole point of the button, since the place they are being asked to name is
+ * usually one they cannot recognise from its coordinates. The coordinates ride
+ * along in the same link as the fallback Maps uses when the ID resolves to
+ * nothing; see [googleMapsUrl].
  */
 private fun openInMaps(context: android.content.Context, entry: PlaceEntry) {
-    val url = "https://www.google.com/maps/place/?q=place_id:${entry.placeId}"
+    val url = googleMapsUrl(entry.latitude, entry.longitude, entry.placeId)
     try {
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     } catch (_: ActivityNotFoundException) {

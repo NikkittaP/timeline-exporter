@@ -46,7 +46,8 @@
     <string name="filter_movement_all">كل وسائل التنقل</string>
     <string name="filter_movement_none">لم يتم تحديد شيء</string>
     <string name="filter_moving_only_short">أثناء الحركة فقط</string>
-    <string name="filter_places_count">%1$s أماكن</string>
+    <string name="points_count">%1$s نقطة</string>
+    <string name="places_count">%1$s أماكن</string>
     <string name="filter_trip_count">%1$s رحلات</string>
     <string name="filter_moving_only">أثناء الحركة فقط</string>
     <string name="filter_moving_only_hint">استبعاد النقاط المسجَّلة أثناء التوقف</string>
@@ -191,5 +192,4 @@
     <string name="export_success_places">تم حفظ %1$s مكانًا في %2$s</string>
     <string name="export_shared_places">تم تحضير %1$s مكانًا بصيغة %2$s</string>
     <string name="export_error_no_places">لا توجد أماكن في النطاق الزمني الحالي.</string>
-    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

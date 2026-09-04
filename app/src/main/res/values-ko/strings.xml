@@ -46,7 +46,8 @@
     <string name="filter_movement_all">모든 이동 수단</string>
     <string name="filter_movement_none">선택 없음</string>
     <string name="filter_moving_only_short">이동 중만</string>
-    <string name="filter_places_count">장소 %1$s곳</string>
+    <string name="points_count">포인트 %1$s개</string>
+    <string name="places_count">장소 %1$s곳</string>
     <string name="filter_trip_count">이동 %1$s회</string>
     <string name="filter_moving_only">이동 중만</string>
     <string name="filter_moving_only_hint">머무는 동안 기록된 지점 제외</string>
@@ -191,5 +192,4 @@
     <string name="export_success_places">장소 %1$s개를 %2$s에 저장했습니다</string>
     <string name="export_shared_places">장소 %1$s개를 %2$s(으)로 준비했습니다</string>
     <string name="export_error_no_places">현재 기간에 장소가 없습니다.</string>
-    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

@@ -46,7 +46,8 @@
     <string name="filter_movement_all">Tüm hareket türleri</string>
     <string name="filter_movement_none">Hiçbiri seçilmedi</string>
     <string name="filter_moving_only_short">yalnızca hareket hâlinde</string>
-    <string name="filter_places_count">%1$s yer</string>
+    <string name="points_count">%1$s nokta</string>
+    <string name="places_count">%1$s yer</string>
     <string name="filter_trip_count">%1$s yolculuk</string>
     <string name="filter_moving_only">Yalnızca hareket hâlinde</string>
     <string name="filter_moving_only_hint">Durakta kaydedilen noktaları dışarıda bırak</string>
@@ -191,5 +192,4 @@
     <string name="export_success_places">%1$s yer %2$s dosyasına kaydedildi</string>
     <string name="export_shared_places">%1$s yer %2$s olarak hazırlandı</string>
     <string name="export_error_no_places">Geçerli tarih aralığında yer yok.</string>
-    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

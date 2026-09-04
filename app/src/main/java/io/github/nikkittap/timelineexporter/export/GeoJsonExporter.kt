@@ -83,7 +83,7 @@ object GeoJsonExporter : Exporter {
             sb.append("        \"category\": ").append(jsonOrNull(place.category)).append(",\n")
             sb.append("        \"address\": ").append(jsonOrNull(place.address)).append(",\n")
             sb.append("        \"place_id\": ").append(jsonOrNull(place.placeId)).append(",\n")
-            sb.append("        \"google_maps_url\": ").append(jsonOrNull(place.mapsUrl)).append('\n')
+            sb.append("        \"google_maps_url\": ").append(jsonString(place.mapsUrl)).append('\n')
             sb.append("      },\n")
             sb.append("      \"geometry\": {\n")
             sb.append("        \"type\": \"Point\",\n")

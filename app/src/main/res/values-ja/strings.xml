@@ -46,7 +46,8 @@
     <string name="filter_movement_all">すべての移動手段</string>
     <string name="filter_movement_none">選択なし</string>
     <string name="filter_moving_only_short">移動中のみ</string>
-    <string name="filter_places_count">%1$s か所</string>
+    <string name="points_count">%1$s ポイント</string>
+    <string name="places_count">%1$s か所</string>
     <string name="filter_trip_count">%1$s 件の移動</string>
     <string name="filter_moving_only">移動中のみ</string>
     <string name="filter_moving_only_hint">立ち寄り中に記録された地点を除外します</string>
@@ -191,5 +192,4 @@
     <string name="export_success_places">%1$s 件の場所を %2$s に保存しました</string>
     <string name="export_shared_places">%1$s 件の場所を %2$s として準備しました</string>
     <string name="export_error_no_places">現在の期間に場所はありません。</string>
-    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

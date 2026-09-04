@@ -53,7 +53,9 @@ class PlacesExportTest {
         assertEquals("Home", wpt.getElementsByTagName("name").item(0).textContent)
         assertEquals("INFERRED_HOME", wpt.getElementsByTagName("type").item(0).textContent)
         assertEquals(
-            "https://www.google.com/maps/place/?q=place_id:ChIJawW7u1uhU0YRxrEsIlFgf5Q",
+            "https://www.google.com/maps/search/?api=1" +
+                "&query=55.5946203%2C13.0065502" +
+                "&query_place_id=ChIJawW7u1uhU0YRxrEsIlFgf5Q",
             (wpt.getElementsByTagName("link").item(0) as Element).getAttribute("href"),
         )
     }
@@ -73,9 +75,27 @@ class PlacesExportTest {
     }
 
     @Test
-    fun `GPX omits the link when the export carried no place ID`() {
+    fun `GPX still links a place with no ID, by its coordinates alone`() {
+        // Maps uses the query when it cannot resolve the place ID, so dropping
+        // to coordinates costs the place's name and nothing else. The older
+        // behaviour — no link at all — left the one waypoint the user is least
+        // likely to recognise as the only one they could not look up.
         val gpx = GpxExporter.exportPlaces(listOf(place(placeId = null)), "Places")
-        assertEquals(0, parseXml(gpx).getElementsByTagName("link").length)
+        val link = parseXml(gpx).getElementsByTagName("link").item(0) as Element
+        assertEquals(
+            "https://www.google.com/maps/search/?api=1&query=55.5946203%2C13.0065502",
+            link.getAttribute("href"),
+        )
+    }
+
+    @Test
+    fun `a link never falls back to scientific notation near zero`() {
+        // Double.toString writes 1.0E-5, which is not a coordinate any map
+        // will parse — and the places it would break are on the equator and
+        // the prime meridian, not in some unreachable corner.
+        val url = googleMapsUrl(latitude = 0.00001, longitude = -0.000002, placeId = null)
+        assertFalse(url, url.contains("E-"))
+        assertTrue(url, url.contains("query=0.0000100%2C-0.0000020"))
     }
 
     @Test
@@ -142,10 +162,15 @@ class PlacesExportTest {
         )
         val props = Json.parseToJsonElement(json)
             .jsonObject["features"]!!.jsonArray[0].jsonObject["properties"]!!.jsonObject
-        for (key in listOf("place_id", "address", "category", "google_maps_url")) {
+        for (key in listOf("place_id", "address", "category")) {
             assertTrue("$key must be present", props.containsKey(key))
             assertNull("$key must be null, not absent", props[key]!!.jsonPrimitive.contentOrNull)
         }
+        // The one field that is never null: it needs no place ID.
+        assertEquals(
+            "https://www.google.com/maps/search/?api=1&query=55.5946203%2C13.0065502",
+            props["google_maps_url"]!!.jsonPrimitive.content,
+        )
     }
 
     @Test

@@ -46,7 +46,8 @@
     <string name="filter_movement_all">सभी तरह की आवाजाही</string>
     <string name="filter_movement_none">कुछ भी नहीं चुना गया</string>
     <string name="filter_moving_only_short">केवल चलते समय</string>
-    <string name="filter_places_count">%1$s जगहें</string>
+    <string name="points_count">%1$s पॉइंट</string>
+    <string name="places_count">%1$s जगहें</string>
     <string name="filter_trip_count">%1$s यात्राएँ</string>
     <string name="filter_moving_only">केवल चलते समय</string>
     <string name="filter_moving_only_hint">रुकने के दौरान दर्ज बिंदु छोड़ दें</string>
@@ -191,5 +192,4 @@
     <string name="export_success_places">%1$s जगहें %2$s में सहेजी गईं</string>
     <string name="export_shared_places">%1$s जगहें %2$s के रूप में तैयार की गईं</string>
     <string name="export_error_no_places">मौजूदा तारीख़ सीमा में कोई जगह नहीं है।</string>
-    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

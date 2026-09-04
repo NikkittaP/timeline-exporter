@@ -46,7 +46,8 @@
     <string name="filter_movement_all">Todos os deslocamentos</string>
     <string name="filter_movement_none">Nada selecionado</string>
     <string name="filter_moving_only_short">apenas em movimento</string>
-    <string name="filter_places_count">%1$s lugares</string>
+    <string name="points_count">%1$s pontos</string>
+    <string name="places_count">%1$s lugares</string>
     <string name="filter_trip_count">%1$s trajetos</string>
     <string name="filter_moving_only">Apenas em movimento</string>
     <string name="filter_moving_only_hint">Deixar de fora os pontos registrados durante uma parada</string>
@@ -191,5 +192,4 @@
     <string name="export_success_places">%1$s lugares salvos em %2$s</string>
     <string name="export_shared_places">%1$s lugares preparados como %2$s</string>
     <string name="export_error_no_places">Nenhum lugar no período atual.</string>
-    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

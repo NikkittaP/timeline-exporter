@@ -77,11 +77,9 @@ object GpxExporter : Exporter {
                 .append("</time>\n")
             sb.append("    <name>").append(escapeXml(place.name)).append("</name>\n")
             sb.append("    <desc>").append(escapeXml(describe(place))).append("</desc>\n")
-            place.mapsUrl?.let {
-                sb.append("    <link href=\"").append(escapeXml(it)).append("\">\n")
-                sb.append("      <text>Google Maps</text>\n")
-                sb.append("    </link>\n")
-            }
+            sb.append("    <link href=\"").append(escapeXml(place.mapsUrl)).append("\">\n")
+            sb.append("      <text>Google Maps</text>\n")
+            sb.append("    </link>\n")
             place.category?.takeIf { it.isNotEmpty() }?.let {
                 sb.append("    <type>").append(escapeXml(it)).append("</type>\n")
             }

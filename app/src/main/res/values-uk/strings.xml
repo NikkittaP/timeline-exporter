@@ -46,7 +46,8 @@
     <string name="filter_movement_all">Усі види пересування</string>
     <string name="filter_movement_none">Нічого не вибрано</string>
     <string name="filter_moving_only_short">лише в русі</string>
-    <string name="filter_places_count">%1$s місць</string>
+    <string name="points_count">%1$s точок</string>
+    <string name="places_count">%1$s місць</string>
     <string name="filter_trip_count">%1$s поїздок</string>
     <string name="filter_moving_only">Лише в русі</string>
     <string name="filter_moving_only_hint">Не додавати точки, записані під час зупинок</string>
@@ -191,5 +192,4 @@
     <string name="export_success_places">Збережено місць: %1$s — у %2$s</string>
     <string name="export_shared_places">Підготовлено місць: %1$s у форматі %2$s</string>
     <string name="export_error_no_places">У поточному діапазоні дат немає місць.</string>
-    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>

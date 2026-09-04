@@ -2,6 +2,7 @@ package io.github.nikkittap.timelineexporter.export
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import java.time.Instant
+import java.util.Locale
 
 /**
  * Which of the two things in a Timeline export the user is currently looking
@@ -91,15 +92,41 @@ data class ExportPlace(
     val totalSeconds: Long,
 ) {
     /**
-     * A link that opens this place in Google Maps, or null when the export
-     * carried no place ID.
+     * A link that opens this place in Google Maps.
      *
-     * Written into the exported file only. The app itself never fetches it —
-     * see the same URL used by the list row's tap target, which fires an
-     * ACTION_VIEW intent and nothing else. No network request is ever made by
-     * this app on a place's behalf.
+     * Written into the exported file, and handed to an ACTION_VIEW intent when
+     * the user taps the button in the naming dialog. The app itself never
+     * fetches it: no network request is ever made by this app on a place's
+     * behalf, so a places export is still built entirely from the file the
+     * user picked.
      */
-    val mapsUrl: String?
-        get() = placeId?.takeIf { it.isNotEmpty() }
-            ?.let { "https://www.google.com/maps/place/?q=place_id:$it" }
+    val mapsUrl: String get() = googleMapsUrl(latitude, longitude, placeId)
+}
+
+/**
+ * A link that opens this place in Google Maps.
+ *
+ * The documented Maps URLs form, not the `maps/place/?q=place_id:…` one this
+ * first shipped with. That older spelling is undocumented and Maps treats it
+ * as literal search text: it opened the app with `place_id:ChIJ97_m…` typed
+ * into the search box and no result, which is exactly the wrong outcome for a
+ * button whose whole job is telling the user which place this is.
+ *
+ * `query` carries the coordinates and is required on every search request;
+ * `query_place_id` names the place. Google uses the query "only if Google Maps
+ * cannot find the place ID", which makes the pair strictly better than either
+ * alone — a stale or unresolvable ID degrades to a pin at the right spot
+ * instead of an empty search. That is also why this returns a link for a place
+ * with no ID at all, where the previous version returned null.
+ *
+ * Coordinates are formatted through [java.util.Locale.ROOT] with a fixed
+ * number of decimals rather than interpolated: `Double.toString` switches to
+ * scientific notation for small magnitudes, and "1.0E-5" in a URL is a broken
+ * link for anyone near the equator or the prime meridian.
+ */
+fun googleMapsUrl(latitude: Double, longitude: Double, placeId: String?): String {
+    val query = String.format(Locale.ROOT, "%.7f%%2C%.7f", latitude, longitude)
+    val id = placeId?.takeIf { it.isNotEmpty() }
+    val suffix = if (id == null) "" else "&query_place_id=$id"
+    return "https://www.google.com/maps/search/?api=1&query=$query$suffix"
 }

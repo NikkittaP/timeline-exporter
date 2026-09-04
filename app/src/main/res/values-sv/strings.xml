@@ -46,7 +46,8 @@
     <string name="filter_movement_all">Alla färdsätt</string>
     <string name="filter_movement_none">Inget valt</string>
     <string name="filter_moving_only_short">bara i rörelse</string>
-    <string name="filter_places_count">%1$s platser</string>
+    <string name="points_count">%1$s punkter</string>
+    <string name="places_count">%1$s platser</string>
     <string name="filter_trip_count">%1$s resor</string>
     <string name="filter_moving_only">Bara i rörelse</string>
     <string name="filter_moving_only_hint">Utelämna punkter som spelats in vid stillastående</string>
@@ -191,5 +192,4 @@
     <string name="export_success_places">Sparade %1$s platser till %2$s</string>
     <string name="export_shared_places">Förberedde %1$s platser som %2$s</string>
     <string name="export_error_no_places">Inga platser i det aktuella datumintervallet.</string>
-    <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
 </resources>
