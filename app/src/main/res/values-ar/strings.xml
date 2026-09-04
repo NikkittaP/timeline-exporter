@@ -200,4 +200,16 @@
     <string name="map_recenter">عرض المسار بالكامل</string>
     <string name="map_scale_m">%1$s م</string>
     <string name="map_scale_km">%1$s كم</string>
+
+    <string name="filter_time_any">وقت اليوم</string>
+    <string name="time_dialog_title">وقت اليوم</string>
+    <string name="time_dialog_from">من</string>
+    <string name="time_dialog_to">إلى</string>
+    <string name="time_dialog_local_hint">الأوقات بالتوقيت المحلي للمكان الذي سُجّلت فيه كل نقطة، لا بتوقيت هاتفك.</string>
+    <string name="time_dialog_places_hint">يبقى المكان إذا تداخلت إحدى الزيارات إليه مع النطاق.</string>
+    <string name="time_preset_any">أي وقت</string>
+    <string name="time_preset_morning">الصباح</string>
+    <string name="time_preset_day">النهار</string>
+    <string name="time_preset_evening">المساء</string>
+    <string name="time_preset_night">الليل</string>
 </resources>

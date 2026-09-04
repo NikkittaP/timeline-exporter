@@ -200,4 +200,16 @@
     <string name="map_recenter">पूरा ट्रैक दिखाएँ</string>
     <string name="map_scale_m">%1$s मी</string>
     <string name="map_scale_km">%1$s किमी</string>
+
+    <string name="filter_time_any">दिन का समय</string>
+    <string name="time_dialog_title">दिन का समय</string>
+    <string name="time_dialog_from">से</string>
+    <string name="time_dialog_to">तक</string>
+    <string name="time_dialog_local_hint">समय वहाँ का स्थानीय है जहाँ बिंदु रिकॉर्ड हुआ, आपके फ़ोन का नहीं।</string>
+    <string name="time_dialog_places_hint">कोई स्थान तब रहता है जब उसकी कोई विज़िट इस अवधि से मेल खाती है।</string>
+    <string name="time_preset_any">कोई भी समय</string>
+    <string name="time_preset_morning">सुबह</string>
+    <string name="time_preset_day">दिन</string>
+    <string name="time_preset_evening">शाम</string>
+    <string name="time_preset_night">रात</string>
 </resources>

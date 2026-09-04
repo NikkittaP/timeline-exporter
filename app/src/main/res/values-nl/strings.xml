@@ -200,4 +200,16 @@
     <string name="map_recenter">Hele track tonen</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <string name="filter_time_any">Tijdstip</string>
+    <string name="time_dialog_title">Tijdstip</string>
+    <string name="time_dialog_from">Van</string>
+    <string name="time_dialog_to">Tot</string>
+    <string name="time_dialog_local_hint">De tijden zijn de lokale klok waar elk punt is vastgelegd, niet die van je telefoon.</string>
+    <string name="time_dialog_places_hint">Een plaats blijft behouden als een bezoek eraan binnen het venster valt.</string>
+    <string name="time_preset_any">Elk tijdstip</string>
+    <string name="time_preset_morning">Ochtend</string>
+    <string name="time_preset_day">Overdag</string>
+    <string name="time_preset_evening">Avond</string>
+    <string name="time_preset_night">Nacht</string>
 </resources>

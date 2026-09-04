@@ -1,6 +1,7 @@
 package io.github.nikkittap.timelineexporter.parser
 
 import java.time.Instant
+import java.time.ZoneId
 import kotlin.math.roundToLong
 
 /**
@@ -92,17 +93,37 @@ private val SEMANTIC_PRIORITY = listOf(
 fun ParsedTimeline.placeEntries(
     range: ClosedRange<Instant>? = null,
     includeContainers: Boolean = false,
+    timeOfDay: TimeOfDayWindow? = null,
+    fallbackZone: ZoneId = ZoneId.systemDefault(),
 ): List<PlaceEntry> {
+    val window = timeOfDay?.takeIf { !it.isWholeDay }
     val grouped = LinkedHashMap<String, MutableList<Segment>>()
     for (seg in segments) {
         if (seg.kind != SegmentKind.VISIT) continue
         val place = seg.place ?: continue
         if (range != null && seg.start !in range) continue
+        if (window != null && !seg.touches(window, fallbackZone)) continue
         if (!includeContainers && (place.hierarchyLevel ?: 0) > 0) continue
         grouped.getOrPut(placeKey(place)) { mutableListOf() }.add(seg)
     }
     return grouped.map { (key, visits) -> fold(key, visits) }
         .sortedWith(compareByDescending<PlaceEntry> { it.visits }.thenByDescending { it.totalSeconds })
+}
+
+/**
+ * Whether any part of this visit falls inside [window], on the clock that was
+ * in effect where the visit happened.
+ *
+ * Overlap rather than containment, because a visit is a span and not an
+ * instant: someone at their desk from 09:00 to 18:00 was there at lunchtime,
+ * and a 12:00–13:00 window should find them. Testing only the visit's start —
+ * which is how the date range treats a segment — would answer "where did I
+ * arrive at lunchtime", which is a different and much rarer question.
+ */
+private fun Segment.touches(window: TimeOfDayWindow, fallbackZone: ZoneId): Boolean {
+    val startMinute = localMinuteOfDay(start, tzOffsetMinutes, fallbackZone)
+    val spanMinutes = (end.epochSecond - start.epochSecond) / 60
+    return window.overlaps(startMinute, spanMinutes)
 }
 
 /**

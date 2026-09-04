@@ -200,4 +200,16 @@
     <string name="map_recenter">Показать весь маршрут</string>
     <string name="map_scale_m">%1$s м</string>
     <string name="map_scale_km">%1$s км</string>
+
+    <string name="filter_time_any">Время суток</string>
+    <string name="time_dialog_title">Время суток</string>
+    <string name="time_dialog_from">С</string>
+    <string name="time_dialog_to">До</string>
+    <string name="time_dialog_local_hint">Время — местное там, где записана точка, а не на вашем телефоне.</string>
+    <string name="time_dialog_places_hint">Место остаётся, если визит в него попадает в этот промежуток.</string>
+    <string name="time_preset_any">Любое время</string>
+    <string name="time_preset_morning">Утро</string>
+    <string name="time_preset_day">День</string>
+    <string name="time_preset_evening">Вечер</string>
+    <string name="time_preset_night">Ночь</string>
 </resources>

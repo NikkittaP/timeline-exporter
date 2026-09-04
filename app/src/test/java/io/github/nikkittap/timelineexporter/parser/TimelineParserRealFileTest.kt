@@ -1,11 +1,14 @@
 package io.github.nikkittap.timelineexporter.parser
 
+import io.github.nikkittap.timelineexporter.filter.TimelineFilter
+import io.github.nikkittap.timelineexporter.filter.applyFilter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.ZoneId
 import kotlin.system.measureTimeMillis
 
 /**
@@ -49,6 +52,44 @@ class TimelineParserRealFileTest {
         // Soft assertion — just makes sure SOMETHING was parsed. If your file
         // somehow contains zero path segments, this'll flag it.
         assert(result.totalSegments > 0) { "Expected at least one segment in real file" }
+    }
+
+    /**
+     * The time-of-day window against a year of real data.
+     *
+     * Deliberately a partition rather than a magic number: a window and its
+     * complement have to add up to every point, exactly once each. That is the
+     * property half-open bounds and the midnight wrap exist to guarantee, and
+     * unlike a hard-coded count it cannot be satisfied by a filter that drops
+     * points on the floor.
+     *
+     * The counts are printed because they are the interesting part. Measured
+     * before the feature was written, 14.6% of this file's points fall between
+     * midnight and 06:00 — a phone at home reporting the same spot all night —
+     * so the two numbers should be roughly one in seven against six in seven.
+     */
+    @Test
+    fun `a time-of-day window and its complement cover the real file exactly once`() {
+        assumeTrue(
+            "Skipped: $realFile not present (this test is developer-local only).",
+            Files.exists(realFile),
+        )
+        val result = parseTimeline(Files.readString(realFile))
+        // The zone only stands in for points the file states no offset for;
+        // in this export every point has one, so it should not matter — which
+        // is itself worth not leaving to the machine the test runs on.
+        val zone = ZoneId.of("Europe/Stockholm")
+
+        val night = TimeOfDayWindow(0, 6 * 60)
+        val rest = TimeOfDayWindow(6 * 60, 0)
+        val inNight = applyFilter(result.pathPoints, TimelineFilter(timeOfDay = night), result.segments, zone)
+        val inRest = applyFilter(result.pathPoints, TimelineFilter(timeOfDay = rest), result.segments, zone)
+
+        println("00:00-06:00: ${inNight.size}, 06:00-24:00: ${inRest.size}, total ${result.pathPoints.size}")
+
+        assertEquals(result.pathPoints.size, inNight.size + inRest.size)
+        assertTrue(inNight.isNotEmpty())
+        assertTrue(inRest.isNotEmpty())
     }
 
     /**

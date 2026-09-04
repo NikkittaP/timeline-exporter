@@ -261,4 +261,19 @@
     <string name="map_recenter">Show the whole track</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <!-- Time-of-day window: which hours of the chosen days to keep -->
+    <string name="filter_time_any">Time of day</string>
+    <string name="time_dialog_title">Time of day</string>
+    <string name="time_dialog_from">From</string>
+    <string name="time_dialog_to">To</string>
+    <string name="time_dialog_local_hint">Times are the local clock where each point was recorded, not your phone\'s.</string>
+    <string name="time_dialog_places_hint">A place is kept when a visit to it overlaps the window.</string>
+    <string name="time_preset_any">Any time</string>
+    <string name="time_preset_morning">Morning</string>
+    <string name="time_preset_day">Daytime</string>
+    <string name="time_preset_evening">Evening</string>
+    <string name="time_preset_night">Night</string>
+    <string name="filter_time_range" translatable="false">%1$s – %2$s</string>
+    <string name="track_name_time_window" translatable="false">%1$s, %2$s–%3$s</string>
 </resources>

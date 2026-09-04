@@ -9,10 +9,12 @@ import io.github.nikkittap.timelineexporter.export.ContentKind
 import io.github.nikkittap.timelineexporter.export.ExportContent
 import io.github.nikkittap.timelineexporter.export.Exporter
 import io.github.nikkittap.timelineexporter.filter.TimelineFilter
+import io.github.nikkittap.timelineexporter.parser.MINUTES_PER_DAY
 import io.github.nikkittap.timelineexporter.parser.MovementGroup
 import io.github.nikkittap.timelineexporter.parser.NotTimelineFileException
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.ParserStage
+import io.github.nikkittap.timelineexporter.parser.TimeOfDayWindow
 import io.github.nikkittap.timelineexporter.parser.parseTimeline
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -267,6 +269,18 @@ class TimelineViewModel : ViewModel() {
         _exportState.value = ExportState.Idle
     }
 
+    /**
+     * Narrow to a window of the local clock, or clear it.
+     *
+     * A window covering the whole day is stored as no window at all: it keeps
+     * everything, and leaving it set would light up a filter chip that is not
+     * filtering.
+     */
+    fun setTimeOfDay(window: TimeOfDayWindow?) {
+        _filter.value = _filter.value.copy(timeOfDay = window?.takeIf { !it.isWholeDay })
+        _exportState.value = ExportState.Idle
+    }
+
     // ----- content selection -----
 
     fun setContentKind(kind: ContentKind) {
@@ -454,9 +468,25 @@ fun suggestFilename(
         ContentKind.PLACES -> "Timeline_places"
     }
     val range = filter.dateRange
-        ?: return "$stem.${exporter.fileExtension}"
-    val z = ZoneId.systemDefault()
-    val from = range.start.atZone(z).toLocalDate()
-    val to = range.endInclusive.atZone(z).toLocalDate()
-    return "${stem}_${from}_to_${to}.${exporter.fileExtension}"
+    val dates = if (range == null) {
+        ""
+    } else {
+        val z = ZoneId.systemDefault()
+        val from = range.start.atZone(z).toLocalDate()
+        val to = range.endInclusive.atZone(z).toLocalDate()
+        "_${from}_to_$to"
+    }
+    // The time-of-day window is in the name for the same reason the content
+    // kind is: someone exporting their mornings and then their evenings out of
+    // the same date range would otherwise get one filename twice, and the
+    // second file would silently replace the first.
+    val window = filter.timeOfDay?.takeIf { !it.isWholeDay }
+    val hours = if (window == null) "" else "_${clock(window.startMinute)}-${clock(window.endMinute)}"
+    return "$stem$dates$hours.${exporter.fileExtension}"
+}
+
+/** A time of day as `0730`, for filenames: fixed width, ASCII, no locale. */
+private fun clock(minuteOfDay: Int): String {
+    val minute = Math.floorMod(minuteOfDay, MINUTES_PER_DAY)
+    return "%02d%02d".format(minute / 60, minute % 60)
 }

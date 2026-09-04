@@ -200,4 +200,16 @@
     <string name="map_recenter">Mostrar todo el recorrido</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <string name="filter_time_any">Hora del día</string>
+    <string name="time_dialog_title">Hora del día</string>
+    <string name="time_dialog_from">Desde</string>
+    <string name="time_dialog_to">Hasta</string>
+    <string name="time_dialog_local_hint">Las horas son la hora local del lugar donde se registró cada punto, no la de tu teléfono.</string>
+    <string name="time_dialog_places_hint">Un lugar se conserva si alguna visita coincide con el intervalo.</string>
+    <string name="time_preset_any">Cualquier hora</string>
+    <string name="time_preset_morning">Mañana</string>
+    <string name="time_preset_day">Día</string>
+    <string name="time_preset_evening">Tarde</string>
+    <string name="time_preset_night">Noche</string>
 </resources>

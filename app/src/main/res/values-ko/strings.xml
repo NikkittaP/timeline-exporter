@@ -200,4 +200,16 @@
     <string name="map_recenter">전체 경로 보기</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <string name="filter_time_any">시간대</string>
+    <string name="time_dialog_title">시간대</string>
+    <string name="time_dialog_from">시작</string>
+    <string name="time_dialog_to">종료</string>
+    <string name="time_dialog_local_hint">시각은 각 지점이 기록된 현지 시간이며, 휴대전화의 시간이 아닙니다.</string>
+    <string name="time_dialog_places_hint">해당 장소 방문이 시간대와 겹치면 그 장소는 유지됩니다.</string>
+    <string name="time_preset_any">모든 시간</string>
+    <string name="time_preset_morning">아침</string>
+    <string name="time_preset_day">낮</string>
+    <string name="time_preset_evening">저녁</string>
+    <string name="time_preset_night">밤</string>
 </resources>

@@ -239,6 +239,7 @@ fun MainScreen(
     val placeLabels = rememberPlaceLabels()
 
     var dateDialogOpen by remember { mutableStateOf(false) }
+    var timeDialogOpen by remember { mutableStateOf(false) }
     var mapInteracting by remember { mutableStateOf(false) }
     // What the format buttons in step 4 do: write a file the user picks a home
     // for, or hand it straight to another app. Survives rotation so a chosen
@@ -284,9 +285,10 @@ fun MainScreen(
             loadedResult?.let { applyFilter(it.pathPoints, filter, it.segments) } ?: emptyList()
         }
     }
-    val places by remember(loadedResult, filter.dateRange, includeContainers) {
+    val places by remember(loadedResult, filter.dateRange, filter.timeOfDay, includeContainers) {
         derivedStateOf {
-            loadedResult?.placeEntries(filter.dateRange, includeContainers) ?: emptyList()
+            loadedResult?.placeEntries(filter.dateRange, includeContainers, filter.timeOfDay)
+                ?: emptyList()
         }
     }
     val exportContent: ExportContent = when (contentKind) {
@@ -481,6 +483,7 @@ fun MainScreen(
                         onApply = { viewModel.setDateRange(it) },
                         onClear = { viewModel.clearDateRange() },
                         onCustom = { dateDialogOpen = true },
+                        onTimeOfDay = { timeDialogOpen = true },
                         parsed = loaded,
                         filter = filter,
                         includeContainers = includeContainers,
@@ -595,6 +598,17 @@ fun MainScreen(
                 placeBeingNamed = null
             },
             onDismiss = { placeBeingNamed = null },
+        )
+    }
+
+    if (timeDialogOpen) {
+        TimeOfDayDialog(
+            initial = filter.timeOfDay,
+            onConfirm = {
+                viewModel.setTimeOfDay(it)
+                timeDialogOpen = false
+            },
+            onDismiss = { timeDialogOpen = false },
         )
     }
 
@@ -784,6 +798,7 @@ private fun FilterContent(
     onApply: (ClosedRange<Instant>) -> Unit,
     onClear: () -> Unit,
     onCustom: () -> Unit,
+    onTimeOfDay: () -> Unit,
     parsed: ParsedTimeline,
     filter: TimelineFilter,
     includeContainers: Boolean,
@@ -838,6 +853,15 @@ private fun FilterContent(
             onClick = onCustom,
             label = { Text(stringResource(R.string.filter_preset_custom)) },
         )
+        // The time-of-day window sits in the same row as the dates because it
+        // is the same question narrowed once more — which hours of the days
+        // already chosen — and because a chip that states its own answer
+        // ("07:00 – 19:00") needs no label above it and no row of its own.
+        FilterChip(
+            selected = filter.timeOfDay != null,
+            onClick = onTimeOfDay,
+            label = { Text(timeOfDayChipLabel(filter.timeOfDay)) },
+        )
     }
 
     Text(
@@ -882,8 +906,8 @@ private fun MovementSection(
     onMovingOnly: (Boolean) -> Unit,
     onDropRepeated: (Boolean) -> Unit,
 ) {
-    val breakdown = remember(parsed, filter.dateRange) {
-        parsed.movementBreakdown(filter.dateRange)
+    val breakdown = remember(parsed, filter.dateRange, filter.timeOfDay) {
+        parsed.movementBreakdown(filter.dateRange, filter.timeOfDay)
     }
     if (breakdown.isEmpty()) return
 
@@ -891,8 +915,8 @@ private fun MovementSection(
     val selected = filter.movements ?: available
     // Counted on the same terms the Places list uses, so the "236 places" in
     // this summary and the length of that list can never disagree.
-    val places = remember(parsed, filter.dateRange, includeContainers) {
-        parsed.placeCount(filter.dateRange, includeContainers)
+    val places = remember(parsed, filter.dateRange, filter.timeOfDay, includeContainers) {
+        parsed.placeCount(filter.dateRange, includeContainers, filter.timeOfDay)
     }
     val labels = movementLabels()
 
@@ -1553,12 +1577,26 @@ private fun buildContentName(filter: TimelineFilter, kind: ContentKind): String 
             formatLocalDate(range.endInclusive),
         )
     }
+    // The window is appended to the range rather than given its own slot in
+    // the name template, so the 18 translations of that template did not have
+    // to change and a name without a window reads exactly as it did before.
+    val window = filter.timeOfDay?.takeIf { !it.isWholeDay }
+    val described = if (window == null) {
+        rangePart
+    } else {
+        stringResource(
+            R.string.track_name_time_window,
+            rangePart,
+            formatMinuteOfDay(window.startMinute),
+            formatMinuteOfDay(window.endMinute),
+        )
+    }
     return stringResource(
         when (kind) {
             ContentKind.TRACK -> R.string.track_name
             ContentKind.PLACES -> R.string.track_name_places
         },
-        rangePart,
+        described,
     )
 }
 

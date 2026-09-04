@@ -1,6 +1,7 @@
 package io.github.nikkittap.timelineexporter.parser
 
 import java.time.Instant
+import java.time.ZoneId
 
 // ---------- Normalized model (what the rest of the app consumes) ----------
 //
@@ -263,14 +264,32 @@ data class ParsedTimeline(
      * Per-movement totals for the breakdown shown next to the filter, longest
      * distance first, groups with nothing in them omitted.
      *
+     * [timeOfDay] keeps a trip whose span *touches* the window, on the clock
+     * where it happened — the same test visits get, because a trip is a span
+     * too. The distance stays the whole trip's: Google states one figure per
+     * activity and there is no honest way to apportion it across a window, so
+     * a morning filter reports the trips that started in the traffic, not the
+     * kilometres driven before nine.
+     *
      * [range] narrows the summary to activities that start inside it, so the
      * numbers track whatever date range the user has chosen rather than always
      * describing the whole file.
      */
-    fun movementBreakdown(range: ClosedRange<Instant>? = null): List<MovementStats> =
+    fun movementBreakdown(
+        range: ClosedRange<Instant>? = null,
+        timeOfDay: TimeOfDayWindow? = null,
+        fallbackZone: ZoneId = ZoneId.systemDefault(),
+    ): List<MovementStats> =
         segments.asSequence()
             .filter { it.kind == SegmentKind.ACTIVITY }
             .filter { range == null || it.start in range }
+            .filter { seg ->
+                val window = timeOfDay?.takeIf { w -> !w.isWholeDay } ?: return@filter true
+                window.overlaps(
+                    localMinuteOfDay(seg.start, seg.tzOffsetMinutes, fallbackZone),
+                    (seg.end.epochSecond - seg.start.epochSecond) / 60,
+                )
+            }
             .groupBy { it.movement ?: MovementGroup.OTHER }
             .map { (group, group_) ->
                 MovementStats(
@@ -292,9 +311,18 @@ data class ParsedTimeline(
     fun placeCount(
         range: ClosedRange<Instant>? = null,
         includeContainers: Boolean = false,
+        timeOfDay: TimeOfDayWindow? = null,
+        fallbackZone: ZoneId = ZoneId.systemDefault(),
     ): Int = segments.asSequence()
         .filter { it.kind == SegmentKind.VISIT }
         .filter { range == null || it.start in range }
+        .filter { seg ->
+            val window = timeOfDay?.takeIf { w -> !w.isWholeDay } ?: return@filter true
+            window.overlaps(
+                localMinuteOfDay(seg.start, seg.tzOffsetMinutes, fallbackZone),
+                (seg.end.epochSecond - seg.start.epochSecond) / 60,
+            )
+        }
         .mapNotNull { it.place }
         .filter { includeContainers || (it.hierarchyLevel ?: 0) == 0 }
         .mapNotNull { it.placeId }

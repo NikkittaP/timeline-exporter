@@ -176,6 +176,45 @@ and none of it could leave the app.
   direction to show, and a country-wide view has no room to show one. 2000
   samples is about three weeks at the reference export's 86 points per day.
 
+- **Filter by time of day, not just by date.** Step 2 could answer *which
+  days*; it could not answer *which hours of them*. One more chip in the same
+  row now opens a window — 07:00 to 19:00, or 22:00 to 06:00 — that applies to
+  every day in the range.
+
+  - **On the data's clock, not the phone's.** A point is tested against the
+    time that was on the wall where it was recorded, using the offset the
+    parser back-fills. This is the 1.6.3 fix paying for itself one layer up:
+    someone asking for their mornings while travelling gets the mornings they
+    lived, not 06:00–12:00 Stockholm time in Tashkent. Formats that state no
+    offset fall back to the phone's zone, applied at the point's own date so a
+    year-long export is not an hour out for half of it.
+  - **Windows wrap through midnight.** 22:00–06:00 is not an interval on the
+    number line, and it is the one people ask for by name. That is why the
+    window is a type with three predicates rather than two integers compared
+    inline, and why the dialog has two ends rather than one range slider — a
+    slider cannot express a window whose start is after its end.
+  - **Places are kept on overlap, not on start.** A visit is a span: someone at
+    their desk 09:00–18:00 was there at lunchtime, and a 12:00–13:00 window has
+    to find them. The date range tests a visit's start, which is right for
+    "which days"; testing the start here would answer "where did I arrive at
+    lunchtime", a different and much rarer question. The movement breakdown
+    follows the same rule, with the caveat that the kilometres stay the whole
+    trip's — Google states one figure per activity and there is no honest way
+    to apportion it across a window.
+  - **The window is in the filename and in the track name**, for the same
+    reason the content kind is: exporting your mornings and then your evenings
+    out of one date range would otherwise write the same filename twice, and
+    the second file would silently replace the first.
+  - It is not a restatement of *only when moving*: 14.6% of the reference
+    export's points fall between midnight and 06:00, but of the points recorded
+    while actually moving, 48% land in 10:00–16:00 against 4.6% overnight. The
+    two cut along different lines.
+  - 11 new strings across all 18 locales. `TimeOfDayWindowTest` and
+    `TimeOfDayFilterTest` (~290 lines) cover the wrap, the overlap and whose
+    clock is read; the real-file test adds a partition check — a window and its
+    complement must cover every point exactly once, which a magic number cannot
+    prove and a filter dropping points on the floor cannot fake.
+
 
 ## Pre-release checklist for this span
 
@@ -211,6 +250,18 @@ Map preview:
       when the track is framed by hand
 - [ ] A day's track shows chevrons pointing the way it was walked; a year of
       history shows none, at any zoom
+
+Time of day:
+
+- [ ] A window over a trip abroad keeps the local mornings, not the mornings on
+      the phone's clock
+- [ ] 22:00–06:00 keeps both ends of the night
+- [ ] Setting From and To to the same time clears the filter and the chip
+- [ ] The places list narrows with the window, and the count in step 2 matches
+      the length of the list
+- [ ] Two exports from one date range, mornings and evenings, do not overwrite
+      each other
+- [ ] German (long strings) and Arabic (RTL) in the dialog
 
 Export step wording:
 

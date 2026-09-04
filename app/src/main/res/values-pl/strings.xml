@@ -200,4 +200,16 @@
     <string name="map_recenter">Pokaż całą trasę</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <string name="filter_time_any">Pora dnia</string>
+    <string name="time_dialog_title">Pora dnia</string>
+    <string name="time_dialog_from">Od</string>
+    <string name="time_dialog_to">Do</string>
+    <string name="time_dialog_local_hint">Godziny są lokalne dla miejsca zapisu punktu, a nie dla Twojego telefonu.</string>
+    <string name="time_dialog_places_hint">Miejsce zostaje, jeśli któraś wizyta pokrywa się z zakresem.</string>
+    <string name="time_preset_any">Dowolna pora</string>
+    <string name="time_preset_morning">Rano</string>
+    <string name="time_preset_day">Dzień</string>
+    <string name="time_preset_evening">Wieczór</string>
+    <string name="time_preset_night">Noc</string>
 </resources>

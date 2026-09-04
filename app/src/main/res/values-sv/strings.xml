@@ -200,4 +200,16 @@
     <string name="map_recenter">Visa hela spåret</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <string name="filter_time_any">Tid på dygnet</string>
+    <string name="time_dialog_title">Tid på dygnet</string>
+    <string name="time_dialog_from">Från</string>
+    <string name="time_dialog_to">Till</string>
+    <string name="time_dialog_local_hint">Tiderna är lokal tid där varje punkt registrerades, inte telefonens.</string>
+    <string name="time_dialog_places_hint">En plats behålls om ett besök där överlappar tidsfönstret.</string>
+    <string name="time_preset_any">När som helst</string>
+    <string name="time_preset_morning">Morgon</string>
+    <string name="time_preset_day">Dagtid</string>
+    <string name="time_preset_evening">Kväll</string>
+    <string name="time_preset_night">Natt</string>
 </resources>

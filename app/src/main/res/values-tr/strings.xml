@@ -200,4 +200,16 @@
     <string name="map_recenter">Tüm rotayı göster</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <string name="filter_time_any">Günün saati</string>
+    <string name="time_dialog_title">Günün saati</string>
+    <string name="time_dialog_from">Başlangıç</string>
+    <string name="time_dialog_to">Bitiş</string>
+    <string name="time_dialog_local_hint">Saatler, her noktanın kaydedildiği yerin yerel saatidir; telefonunuzun değil.</string>
+    <string name="time_dialog_places_hint">Bir yere yapılan ziyaret aralıkla kesişiyorsa o yer korunur.</string>
+    <string name="time_preset_any">Her saat</string>
+    <string name="time_preset_morning">Sabah</string>
+    <string name="time_preset_day">Gündüz</string>
+    <string name="time_preset_evening">Akşam</string>
+    <string name="time_preset_night">Gece</string>
 </resources>

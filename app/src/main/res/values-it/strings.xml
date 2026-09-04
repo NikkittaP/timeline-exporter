@@ -200,4 +200,16 @@
     <string name="map_recenter">Mostra tutto il percorso</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <string name="filter_time_any">Ora del giorno</string>
+    <string name="time_dialog_title">Ora del giorno</string>
+    <string name="time_dialog_from">Da</string>
+    <string name="time_dialog_to">A</string>
+    <string name="time_dialog_local_hint">Gli orari sono l\'ora locale del luogo in cui è stato registrato ogni punto, non quella del telefono.</string>
+    <string name="time_dialog_places_hint">Un luogo viene mantenuto se una visita rientra nell\'intervallo.</string>
+    <string name="time_preset_any">Qualsiasi ora</string>
+    <string name="time_preset_morning">Mattina</string>
+    <string name="time_preset_day">Giorno</string>
+    <string name="time_preset_evening">Sera</string>
+    <string name="time_preset_night">Notte</string>
 </resources>

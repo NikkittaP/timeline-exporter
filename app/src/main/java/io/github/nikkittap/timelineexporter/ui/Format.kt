@@ -1,6 +1,8 @@
 package io.github.nikkittap.timelineexporter.ui
 
+import io.github.nikkittap.timelineexporter.parser.MINUTES_PER_DAY
 import java.time.Instant
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -35,4 +37,20 @@ fun formatLocalDate(instant: Instant): String {
         .ofLocalizedDate(FormatStyle.MEDIUM)
         .withLocale(Locale.getDefault())
     return instant.atZone(ZoneId.systemDefault()).format(formatter)
+}
+
+/**
+ * A time of day given as minutes past local midnight, on whatever clock the
+ * reader's locale uses — 24-hour in most of the world, AM/PM in some of it.
+ *
+ * This one is deliberately localised where the ISO timestamps elsewhere in the
+ * app are not: it is read by a person choosing a window, never written into a
+ * file.
+ */
+fun formatMinuteOfDay(minuteOfDay: Int): String {
+    val minute = Math.floorMod(minuteOfDay, MINUTES_PER_DAY)
+    val formatter = DateTimeFormatter
+        .ofLocalizedTime(FormatStyle.SHORT)
+        .withLocale(Locale.getDefault())
+    return LocalTime.of(minute / 60, minute % 60).format(formatter)
 }

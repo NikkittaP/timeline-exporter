@@ -200,4 +200,16 @@
     <string name="map_recenter">軌跡全体を表示</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <string name="filter_time_any">時間帯</string>
+    <string name="time_dialog_title">時間帯</string>
+    <string name="time_dialog_from">開始</string>
+    <string name="time_dialog_to">終了</string>
+    <string name="time_dialog_local_hint">時刻は各地点が記録された現地時間です。端末の時刻ではありません。</string>
+    <string name="time_dialog_places_hint">その場所への滞在が時間帯に重なっていれば、その場所は残ります。</string>
+    <string name="time_preset_any">すべての時間</string>
+    <string name="time_preset_morning">朝</string>
+    <string name="time_preset_day">日中</string>
+    <string name="time_preset_evening">夕方</string>
+    <string name="time_preset_night">夜</string>
 </resources>

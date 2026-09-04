@@ -200,4 +200,16 @@
     <string name="map_recenter">显示完整轨迹</string>
     <string name="map_scale_m">%1$s 米</string>
     <string name="map_scale_km">%1$s 公里</string>
+
+    <string name="filter_time_any">时段</string>
+    <string name="time_dialog_title">时段</string>
+    <string name="time_dialog_from">从</string>
+    <string name="time_dialog_to">到</string>
+    <string name="time_dialog_local_hint">时间为每个点记录地的当地时间，而非手机时间。</string>
+    <string name="time_dialog_places_hint">只要某次到访与该时段有重叠，该地点就会保留。</string>
+    <string name="time_preset_any">任意时间</string>
+    <string name="time_preset_morning">早晨</string>
+    <string name="time_preset_day">白天</string>
+    <string name="time_preset_evening">傍晚</string>
+    <string name="time_preset_night">夜间</string>
 </resources>

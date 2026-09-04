@@ -200,4 +200,16 @@
     <string name="map_recenter">Gesamten Track anzeigen</string>
     <string name="map_scale_m">%1$s m</string>
     <string name="map_scale_km">%1$s km</string>
+
+    <string name="filter_time_any">Tageszeit</string>
+    <string name="time_dialog_title">Tageszeit</string>
+    <string name="time_dialog_from">Von</string>
+    <string name="time_dialog_to">Bis</string>
+    <string name="time_dialog_local_hint">Die Zeiten sind die Ortszeit dort, wo der Punkt aufgezeichnet wurde – nicht die Ihres Telefons.</string>
+    <string name="time_dialog_places_hint">Ein Ort bleibt erhalten, wenn ein Besuch dort in das Zeitfenster fällt.</string>
+    <string name="time_preset_any">Jederzeit</string>
+    <string name="time_preset_morning">Morgen</string>
+    <string name="time_preset_day">Tagsüber</string>
+    <string name="time_preset_evening">Abend</string>
+    <string name="time_preset_night">Nacht</string>
 </resources>
