@@ -145,6 +145,37 @@ and none of it could leave the app.
     dots stay on top of everything — they are the one thing the user hunts for
     by eye — and each gained a soft halo so it reads against a busy track.
 
+- **Three things the basemap swap left owing.** Replacing Liberty with our own
+  style took its attribution with it, and a near-monochrome ground turns out to
+  need two pieces of chrome the busy one did not.
+
+  - **Attribution.** The style now states it on the source, in both themes. The
+    tiles are OpenStreetMap data under ODbL: crediting it is a licence term,
+    not a courtesy, and Liberty had been carrying it for us.
+  - **A scale bar**, top-left. Few labels and no colour coding means no cue for
+    how big anything is — the same knot of track could be a campus or a city.
+    The bar is a round 1, 2 or 5 times a power of ten drawn at whatever width
+    that comes to, rather than a fixed width labelled "137 m". The scale is
+    *measured*, by projecting two screen points back out of the view, not
+    derived from the zoom level: that relationship depends on screen density
+    and on renderer convention, and two projected points cannot be wrong about
+    it. The fullscreen map's close button moves to the top-right to make room.
+  - **A way back to the track.** Panning away left no route back. A small
+    button appears once the camera is two fifths of a screen, or half a zoom
+    level, from where the track would be fitted — and only then, so an
+    untouched map has none. It compares against where the camera *would* sit
+    if the track were fitted now, not where it was left, so zooming back out by
+    hand dismisses it rather than leaving a button offering to undo something
+    already undone.
+- **Direction chevrons, in route mode only.** The track had a start dot and an
+  end dot and nothing in between saying which way it ran. Chevrons now repeat
+  along the line — placed and rotated by MapLibre, which is correct because the
+  runs are built in time order — under two conditions: at most 2000 samples,
+  and zoom 13 or above. Both are the cases where the question exists at all. A
+  year of history is a street walked both ways two hundred times, which has no
+  direction to show, and a country-wide view has no room to show one. 2000
+  samples is about three weeks at the reference export's 86 points per day.
+
 
 ## Pre-release checklist for this span
 
@@ -172,9 +203,14 @@ Map preview:
 - [ ] Light and dark, and a theme flip mid-session — the style follows and the
       camera stays where the user left it
 - [ ] Zoom from continent to street: the track never disappears at either end
-- [ ] The attribution button still credits OpenStreetMap now that the style is
-      ours rather than Liberty's
+- [ ] The attribution button credits OpenStreetMap, once, in both themes
 - [ ] Airplane mode: no basemap tiles, but the track still draws
+- [ ] The scale bar reads plausibly against a known distance, and updates on
+      zoom; it does not collide with the fullscreen close button
+- [ ] Pan away and back: the return button appears, works, and goes away again
+      when the track is framed by hand
+- [ ] A day's track shows chevrons pointing the way it was walked; a year of
+      history shows none, at any zoom
 
 Export step wording:
 

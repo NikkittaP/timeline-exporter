@@ -1,6 +1,10 @@
 package io.github.nikkittap.timelineexporter.ui
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PointF
 import android.util.Log
 import android.view.MotionEvent
@@ -39,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -63,6 +68,11 @@ import org.maplibre.android.style.layers.PropertyFactory.circleOpacity
 import org.maplibre.android.style.layers.PropertyFactory.circleRadius
 import org.maplibre.android.style.layers.PropertyFactory.circleStrokeColor
 import org.maplibre.android.style.layers.PropertyFactory.circleStrokeWidth
+import org.maplibre.android.style.layers.PropertyFactory.iconAllowOverlap
+import org.maplibre.android.style.layers.PropertyFactory.iconIgnorePlacement
+import org.maplibre.android.style.layers.PropertyFactory.iconImage
+import org.maplibre.android.style.layers.PropertyFactory.iconOpacity
+import org.maplibre.android.style.layers.PropertyFactory.iconRotationAlignment
 import org.maplibre.android.style.layers.PropertyFactory.lineBlur
 import org.maplibre.android.style.layers.PropertyFactory.lineCap
 import org.maplibre.android.style.layers.PropertyFactory.lineColor
@@ -70,6 +80,8 @@ import org.maplibre.android.style.layers.PropertyFactory.lineDasharray
 import org.maplibre.android.style.layers.PropertyFactory.lineJoin
 import org.maplibre.android.style.layers.PropertyFactory.lineOpacity
 import org.maplibre.android.style.layers.PropertyFactory.lineWidth
+import org.maplibre.android.style.layers.PropertyFactory.symbolPlacement
+import org.maplibre.android.style.layers.PropertyFactory.symbolSpacing
 import org.maplibre.android.style.layers.SymbolLayer
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
@@ -94,6 +106,7 @@ private const val SOURCE_START = "start-source"
 private const val SOURCE_END = "end-source"
 private const val LAYER_TRACK_GLOW = "track-glow"
 private const val LAYER_TRACK = "track-line"
+private const val LAYER_TRACK_ARROWS = "track-arrows"
 private const val LAYER_GAPS = "gaps-line"
 private const val LAYER_START_HALO = "start-halo"
 private const val LAYER_START = "start-circle"
@@ -102,10 +115,13 @@ private const val LAYER_END = "end-circle"
 
 /** Bottom-to-top; also the order [clearTrackOverlays] tears them down in reverse. */
 private val OWNED_LAYERS = listOf(
-    LAYER_TRACK_GLOW, LAYER_GAPS, LAYER_TRACK,
+    LAYER_TRACK_GLOW, LAYER_GAPS, LAYER_TRACK, LAYER_TRACK_ARROWS,
     LAYER_START_HALO, LAYER_START, LAYER_END_HALO, LAYER_END,
 )
 private val OWNED_SOURCES = listOf(SOURCE_TRACK, SOURCE_GAPS, SOURCE_START, SOURCE_END)
+
+/** Sprite id for the direction chevron repeated along the track. */
+private const val IMAGE_TRACK_ARROW = "track-arrow"
 
 /**
  * Consecutive GPS samples farther apart than this are treated as a "gap"
@@ -132,6 +148,21 @@ private const val FIT_PADDING_PX = 80
  */
 private const val ADRIFT_SCREEN_FRACTION = 0.4
 private const val ADRIFT_ZOOM_LEVELS = 0.45
+
+/**
+ * Above this many samples the track stops being a route and becomes a heat
+ * map, and direction chevrons on it are noise: a street walked both ways two
+ * hundred times has no direction to show.
+ *
+ * The reference export averages 86 path points per day, so this is about
+ * three weeks of one person's movement — comfortably past a day out or a
+ * holiday, which are the cases where "which way did I go" is a real question,
+ * and well short of the year of history the accumulation rendering is for.
+ */
+private const val ROUTE_MODE_MAX_POINTS = 2_000
+
+/** Screen pixels between one chevron and the next along the track. */
+private const val ARROW_SPACING_PX = 96f
 
 /**
  * Colors and basemap for one system theme. The two basemaps are our own
@@ -216,6 +247,9 @@ fun TrackMap(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val darkTheme = isSystemInDarkTheme()
     val palette = if (darkTheme) DarkPalette else LightPalette
+    // Sprites are added to the style in device pixels; MapLibre has no way to
+    // be told a bitmap was authored in dp.
+    val density = context.resources.displayMetrics.density
 
     // Keep latest callback reference so the View's touch listener (created
     // once in `remember`) always calls the most recent caller's lambda.
@@ -381,7 +415,7 @@ fun TrackMap(
         // Last-resort net: a style can go invalid between the check above and
         // the native call. Losing the overlay beats aborting the process.
         val fitCamera = lastFittedPoints !== points
-        runCatching { renderTrack(map, style, points, palette, dataBounds, fitCamera) }
+        runCatching { renderTrack(map, style, points, palette, dataBounds, density, fitCamera) }
             .onFailure { Log.w(TAG, "Track render failed", it) }
             .onSuccess { if (fitCamera) lastFittedPoints = points }
 
@@ -451,6 +485,7 @@ private fun renderTrack(
     points: List<PathPoint>,
     palette: MapPalette,
     bounds: LatLngBounds?,
+    density: Float,
     fitCamera: Boolean,
 ) {
     // Always tear down previous overlays first; addSource/addLayer throw on
@@ -548,6 +583,36 @@ private fun renderTrack(
                 lineJoin(Property.LINE_JOIN_ROUND),
             )
         )
+
+        // 3a. Which way. The runs are built in time order, so MapLibre's own
+        //     line placement points these the way the user walked.
+        //
+        //     Off entirely above ROUTE_MODE_MAX_POINTS, and faded out below
+        //     zoom 13: those are the two conditions under which an arrow says
+        //     nothing. A year of history has no direction to show, and a
+        //     country-wide view has no room to show one.
+        if (points.size <= ROUTE_MODE_MAX_POINTS) {
+            style.addImage(IMAGE_TRACK_ARROW, chevronBitmap(palette.trackCore, density))
+            addBelowLabels(
+                SymbolLayer(LAYER_TRACK_ARROWS, SOURCE_TRACK).withProperties(
+                    symbolPlacement(Property.SYMBOL_PLACEMENT_LINE),
+                    symbolSpacing(ARROW_SPACING_PX),
+                    iconImage(IMAGE_TRACK_ARROW),
+                    iconRotationAlignment(Property.ICON_ROTATION_ALIGNMENT_MAP),
+                    // Let MapLibre drop chevrons that would collide rather
+                    // than stacking them where the track doubles back.
+                    iconAllowOverlap(false),
+                    iconIgnorePlacement(false),
+                    iconOpacity(
+                        Expression.interpolate(
+                            Expression.linear(), Expression.zoom(),
+                            Expression.stop(12.5, 0f),
+                            Expression.stop(13.5, 0.85f),
+                        )
+                    ),
+                )
+            )
+        }
     }
 
     // 4. Endpoints, on top of everything including labels — they are the one
@@ -621,6 +686,38 @@ private fun trackBounds(points: List<PathPoint>): LatLngBounds? {
 private fun clearTrackOverlays(style: Style) {
     OWNED_LAYERS.forEach { id -> style.getLayer(id)?.let { style.removeLayer(it) } }
     OWNED_SOURCES.forEach { id -> style.getSource(id)?.let { style.removeSource(it) } }
+    runCatching { style.removeImage(IMAGE_TRACK_ARROW) }
+}
+
+/**
+ * The chevron repeated along the track, drawn rather than shipped as a
+ * resource: it has to be the palette's track colour, and a drawable would
+ * mean carrying two of them plus the tinting to pick between them.
+ *
+ * Pointing right (+x), which is the direction MapLibre treats as "along the
+ * line" before it rotates the sprite to match.
+ */
+private fun chevronBitmap(colorHex: String, density: Float): Bitmap {
+    val size = (13f * density).toInt().coerceAtLeast(9)
+    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    val stroke = size * 0.16f
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = colorHex.toColorInt()
+        style = Paint.Style.STROKE
+        strokeWidth = stroke
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
+    }
+    // Inset by the stroke so the round caps are not clipped by the edges.
+    val inset = stroke
+    val path = Path().apply {
+        moveTo(inset + size * 0.12f, inset)
+        lineTo(size - inset, size / 2f)
+        lineTo(inset + size * 0.12f, size - inset)
+    }
+    canvas.drawPath(path, paint)
+    return bitmap
 }
 
 /**
