@@ -125,6 +125,11 @@
 
     <string name="app_version">版本 %1$s</string>
 
+    <string name="update_available_message">有新版本可用。</string>
+    <string name="update_available_action">更新</string>
+    <string name="update_downloaded_message">更新已下載完成，重新啟動即可完成安裝。</string>
+    <string name="update_downloaded_action">重新啟動</string>
+
     <string name="language_title">語言</string>
     <string name="language_system">跟隨系統</string>
 

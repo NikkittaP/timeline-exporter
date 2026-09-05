@@ -125,6 +125,11 @@
 
     <string name="app_version">バージョン %1$s</string>
 
+    <string name="update_available_message">新しいバージョンがあります。</string>
+    <string name="update_available_action">更新</string>
+    <string name="update_downloaded_message">更新をダウンロードしました。再起動してインストールを完了してください。</string>
+    <string name="update_downloaded_action">再起動</string>
+
     <string name="language_title">言語</string>
     <string name="language_system">システムの言語</string>
 

@@ -125,6 +125,11 @@
 
     <string name="app_version">Версія %1$s</string>
 
+    <string name="update_available_message">Доступна нова версія.</string>
+    <string name="update_available_action">Оновити</string>
+    <string name="update_downloaded_message">Оновлення завантажено. Перезапустіть застосунок, щоб завершити встановлення.</string>
+    <string name="update_downloaded_action">Перезапустити</string>
+
     <string name="language_title">Мова</string>
     <string name="language_system">Системна мова</string>
 

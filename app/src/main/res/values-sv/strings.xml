@@ -125,6 +125,11 @@
 
     <string name="app_version">Version %1$s</string>
 
+    <string name="update_available_message">En ny version är tillgänglig.</string>
+    <string name="update_available_action">Uppdatera</string>
+    <string name="update_downloaded_message">Uppdateringen har laddats ner. Starta om för att slutföra installationen.</string>
+    <string name="update_downloaded_action">Starta om</string>
+
     <string name="language_title">Språk</string>
     <string name="language_system">Systemspråk</string>
 

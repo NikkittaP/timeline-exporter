@@ -14,6 +14,7 @@ splashscreen = "1.0.1"
 billing = "9.1.0"
 kotlinxSerialization = "1.9.0"
 desugarJdkLibs = "2.1.5"
+playAppUpdate = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,6 +39,7 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 android-billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+google-play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -125,6 +125,11 @@
 
     <string name="app_version">Версия %1$s</string>
 
+    <string name="update_available_message">Доступна новая версия.</string>
+    <string name="update_available_action">Обновить</string>
+    <string name="update_downloaded_message">Обновление загружено. Перезапустите приложение, чтобы завершить установку.</string>
+    <string name="update_downloaded_action">Перезапустить</string>
+
     <string name="language_title">Язык</string>
     <string name="language_system">Системный язык</string>
 

@@ -207,8 +207,24 @@ android {
         //
         //       22 strings across all 18 locales: 4 added, 1 shortened,
         //       2 removed. No parser, exporter or map changes; no new tests.
+        //
+        //       Then, still under 15 because it is still unspent: an optional
+        //       update check. Play's in-app-update API (flexible flow) asks on
+        //       every launch and resume whether a newer build exists, and — if
+        //       one does — a dismissible Snackbar offers to fetch it in the
+        //       background; a second Snackbar offers to restart once it has
+        //       landed. Neither is forced, and declining either costs nothing.
+        //       Unlike the ballot re-cut, this does change what the app does,
+        //       so it earns its own versionName: 1.7.1, still on versionCode
+        //       15 — whoever builds this next sets the real code before
+        //       uploading. AppUpdateViewModel wraps AppUpdateManager; the
+        //       Activity Result launcher it needs to start the flow lives in
+        //       TimelineExporterApp, alongside the Snackbar host, the same
+        //       place every other launcher in this app already lives. Four new
+        //       strings across all 18 locales; no parser, exporter or map
+        //       changes.
         versionCode = 15
-        versionName = "1.7.0"
+        versionName = "1.7.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -296,6 +312,7 @@ dependencies {
     implementation(libs.maplibre.android.sdk)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.android.billing.ktx)
+    implementation(libs.google.play.app.update.ktx)
     testImplementation(libs.junit)
     // Test-only: an independent JSON parser to validate GeoJsonExporter output.
     // The app itself writes GeoJSON by hand and reads Timeline.json with Jackson.

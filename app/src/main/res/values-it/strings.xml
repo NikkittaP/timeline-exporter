@@ -125,6 +125,11 @@
 
     <string name="app_version">Versione %1$s</string>
 
+    <string name="update_available_message">È disponibile una nuova versione.</string>
+    <string name="update_available_action">Aggiorna</string>
+    <string name="update_downloaded_message">Aggiornamento scaricato. Riavvia per completare l\'installazione.</string>
+    <string name="update_downloaded_action">Riavvia</string>
+
     <string name="language_title">Lingua</string>
     <string name="language_system">Lingua del sistema</string>
 

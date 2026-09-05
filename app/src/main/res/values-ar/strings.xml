@@ -125,6 +125,11 @@
 
     <string name="app_version">الإصدار %1$s</string>
 
+    <string name="update_available_message">يتوفر إصدار جديد من التطبيق.</string>
+    <string name="update_available_action">تحديث</string>
+    <string name="update_downloaded_message">تم تنزيل التحديث. أعد التشغيل لإكمال التثبيت.</string>
+    <string name="update_downloaded_action">إعادة التشغيل</string>
+
     <string name="language_title">اللغة</string>
     <string name="language_system">لغة النظام</string>
 

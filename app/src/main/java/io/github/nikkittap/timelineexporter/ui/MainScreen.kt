@@ -1,8 +1,11 @@
 package io.github.nikkittap.timelineexporter.ui
 
+import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,12 +50,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -75,6 +83,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.nikkittap.timelineexporter.BuildConfig
@@ -117,7 +128,70 @@ fun TimelineExporterApp() {
     val viewModel: TimelineViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // Optional "a new version is available" / "restart to install it" prompt,
+    // via Play's flexible in-app update flow. Never blocks anything below it.
+    val appUpdateViewModel: AppUpdateViewModel = viewModel()
+    val appUpdateState by appUpdateViewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val updateLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+    ) { result ->
+        if (result.resultCode != Activity.RESULT_OK) {
+            // User backed out or the flow failed; nothing to recover here —
+            // the Snackbar reappears next launch/resume if the update is
+            // still available.
+            Log.w("TimelineExporterApp", "In-app update flow returned ${result.resultCode}")
+        }
+    }
+
+    // A flexible update keeps downloading while the app is backgrounded, so
+    // re-check on every resume — otherwise a download that finished while the
+    // user was away never surfaces the "restart" prompt.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) appUpdateViewModel.checkForUpdate()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    val updateAvailableMessage = stringResource(R.string.update_available_message)
+    val updateAvailableAction = stringResource(R.string.update_available_action)
+    val updateDownloadedMessage = stringResource(R.string.update_downloaded_message)
+    val updateDownloadedAction = stringResource(R.string.update_downloaded_action)
+
+    LaunchedEffect(appUpdateState) {
+        when (appUpdateState) {
+            AppUpdateState.Available -> {
+                val result = snackbarHostState.showSnackbar(
+                    message = updateAvailableMessage,
+                    actionLabel = updateAvailableAction,
+                    duration = SnackbarDuration.Long,
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    appUpdateViewModel.startUpdate(updateLauncher)
+                } else {
+                    appUpdateViewModel.dismissAvailable()
+                }
+            }
+            AppUpdateState.Downloaded -> {
+                val result = snackbarHostState.showSnackbar(
+                    message = updateDownloadedMessage,
+                    actionLabel = updateDownloadedAction,
+                    duration = SnackbarDuration.Indefinite,
+                )
+                if (result == SnackbarResult.ActionPerformed) {
+                    appUpdateViewModel.completeUpdate()
+                }
+            }
+            AppUpdateState.None -> Unit
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 navigationIcon = {

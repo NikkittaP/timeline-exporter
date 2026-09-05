@@ -32,7 +32,7 @@ cover *all of it*, not just the newest version bump.
 | --- | --- | --- | --- |
 | 1.6.3 | 13 | Correct timezones, place names, share sheet | built, never uploaded |
 | 1.7.0 | 14 | Places, a map of our own, filtering by time of day | uploaded to a testing track |
-| 1.7.0 | 15 | The feedback ballot, re-cut | to upload |
+| 1.7.1 | 15 | The feedback ballot, re-cut; an optional update check | to upload |
 
 Everything after the commit that named 1.7.0 — the Maps link fix, the step-4
 plaque, the basemap rewrite, the time-of-day window, places on the map — sits
@@ -41,11 +41,13 @@ uploaded. `app/build.gradle.kts` carries the full entry; the sections below are
 grouped the way the work happened, not the way the codes ran.
 
 **Then 14 was uploaded to a testing track, which spends it** — Play will not
-take that code twice — so the ballot re-cut is 15. The versionName does not
-move: 15 changes nothing about what the app does with a Timeline file, the
-whole 1.6.2 → now span is still one release called 1.7.0, and codes 1 and 2
-shared 1.0.0 for the same reason. The production upload of this span is 15, and
-its changelog files are named for that code.
+take that code twice — so the ballot re-cut is 15. The ballot alone would not
+have moved versionName either: it changes nothing about what the app does
+with a Timeline file, the same reason codes 1 and 2 shared 1.0.0. The update
+check that followed, still under the same unspent code, does change what the
+app does, so it moves versionName to 1.7.1. The whole 1.6.2 → now span is
+still the one release the store changelog describes; the production upload of
+this span is 15, and its changelog files are named for that code.
 
 ## Store changelog — draft for the next upload
 
@@ -56,10 +58,10 @@ all 18 locales to `fastlane/metadata/android/<locale>/changelogs/15.txt` and to
 language; the longest translation here is 479.
 
 The text is unchanged from the 14 cut — copied across, and `14.txt` kept beside
-it as the record of what the testing-track build carried. The ballot re-cut in
-15 is deliberately not a bullet: it changes the feedback dialog, which is not
-something anyone decides to update for, and the four bullets are already full
-of the things that are.
+it as the record of what the testing-track build carried. Neither the ballot
+re-cut nor the update check gets a bullet: one changes the feedback dialog,
+the other only ever appears to someone who has *already* updated, and the
+four bullets are already full of the things a user decides to update for.
 
 ```
 • Export your places, not just your track: where you were, how often and for
@@ -342,6 +344,39 @@ now character-for-character the `values/strings.xml` label, from 15 on.
 Twenty-two strings across all 18 locales: four added, one shortened, two
 removed.
 
+## v1.7.1 (still versionCode 15) — an optional update check
+
+Nothing before this told a user a newer build existed short of noticing it on
+the Play listing. `AppUpdateViewModel` wraps Play Core's *flexible* in-app
+update flow: on launch and on every resume it asks Play whether a newer build
+exists, and if one does, a dismissible Snackbar offers to fetch it in the
+background — the app stays usable while it downloads. A second Snackbar, once
+the download lands, offers to restart into it. Either can be waved off with no
+consequence; dismissing the first stops it asking again until the app is
+fully restarted, which is what "not obligatory" meant here.
+
+- `AppUpdateManager` is created once per `AppUpdateViewModel`, an
+  `AndroidViewModel` so it survives rotation the same way `TipJarViewModel`
+  does. The Activity Result launcher the flow itself needs — Play's update
+  screen returns through `startIntentSenderForResult` — lives in
+  `TimelineExporterApp`, the same place the file-picker and every exporter's
+  launcher already live, since only a composable in the Activity's own tree
+  can register one.
+- An `InstallStateUpdatedListener` catches the download finishing while the
+  app is backgrounded; the resume check alone would miss that, since nothing
+  re-runs it until the user comes back.
+- The dependency is `app-update-ktx` rather than the plain `app-update`
+  artifact for the Kotlin-friendlier surface (it still wraps the same
+  Java Task/listener API used here, not the Flow-based one — that one models
+  more states than a single dismissible Snackbar needs).
+- Four new strings across all 18 locales: the two Snackbar messages and their
+  two action labels. No parser, exporter or map changes.
+
+Only testable end to end from a build actually installed *through* Play — a
+`connectedAndroidTest` or `adb install` sees no update, since the flow talks
+to the Play Store app on device, not this codebase. Internal-track testing is
+the only way to see the Snackbar fire for real.
+
 ## Store art for this upload
 
 Eight screenshots instead of six, and the emulator's own chrome is no longer in
@@ -455,6 +490,17 @@ Feedback ballot:
 - [ ] Tick one of the new four, send by mail: the draft carries the same English
       sentence the ballot shows
 
+Update check (needs an internal-track install, not `adb install`):
+
+- [ ] Install an older internal-track build, then publish this one: the
+      "update available" Snackbar appears within a resume or two
+- [ ] Tapping "Update" starts a background download and the app stays usable
+- [ ] Backgrounding the app mid-download and returning still shows the
+      "restart" Snackbar once it finishes
+- [ ] Dismissing the "update available" Snackbar does not reopen it before the
+      app is fully restarted
+- [ ] A build already on the latest version shows neither Snackbar
+
 Export step wording:
 
 - [ ] Flip Track / Places and scroll to step 4: heading and plaque both follow
@@ -464,11 +510,15 @@ Export step wording:
 
 Always:
 
-- [ ] `./gradlew :app:test`
-- [ ] `./gradlew bundleRelease` — R8 and `lintVital` green
+- [x] `./gradlew :app:test` — 143 tests, 0 failures (2026-09-05, after fixing a
+      missing `placeEntries` import in `TimeOfDayFilterTest.kt` left over from
+      the commit that added it — the suite would not compile until then)
+- [x] `./gradlew bundleRelease` — R8 and `lintVital` green (2026-09-05)
 - [x] Bump `versionCode` to 15 (`versionName` stays 1.7.0), copy the changelog
       into all 18 `changelogs/15.txt`, and bump `version_code:` in the Fastfile
       — done 2026-09-05; re-cut the text if anything lands after this
+- [x] Bump `versionName` to 1.7.1 for the update check (`versionCode` stays 15
+      — set the real code just before the upload build) — done 2026-09-05
 - [ ] Move this section into *Released* once 15 is up
 
 ---

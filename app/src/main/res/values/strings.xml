@@ -168,6 +168,12 @@
     <!-- App version footer. %1$s = versionName (e.g. "1.1.0"). -->
     <string name="app_version">Version %1$s</string>
 
+    <!-- Optional update prompt (Play In-App Updates, flexible flow). Never forced. -->
+    <string name="update_available_message">A new version is available.</string>
+    <string name="update_available_action">Update</string>
+    <string name="update_downloaded_message">Update downloaded — restart to finish installing it.</string>
+    <string name="update_downloaded_action">Restart</string>
+
     <!-- Language picker -->
     <string name="language_title">Language</string>
     <string name="language_system">System default</string>

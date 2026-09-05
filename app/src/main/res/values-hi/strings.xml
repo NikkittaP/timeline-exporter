@@ -125,6 +125,11 @@
 
     <string name="app_version">संस्करण %1$s</string>
 
+    <string name="update_available_message">एक नया वर्शन उपलब्ध है।</string>
+    <string name="update_available_action">अपडेट करें</string>
+    <string name="update_downloaded_message">अपडेट डाउनलोड हो गया है। इंस्टॉल पूरा करने के लिए रीस्टार्ट करें।</string>
+    <string name="update_downloaded_action">रीस्टार्ट करें</string>
+
     <string name="language_title">भाषा</string>
     <string name="language_system">सिस्टम की भाषा</string>
 

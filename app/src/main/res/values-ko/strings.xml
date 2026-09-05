@@ -125,6 +125,11 @@
 
     <string name="app_version">버전 %1$s</string>
 
+    <string name="update_available_message">새 버전을 사용할 수 있습니다.</string>
+    <string name="update_available_action">업데이트</string>
+    <string name="update_downloaded_message">업데이트가 다운로드되었습니다. 설치를 마치려면 다시 시작하세요.</string>
+    <string name="update_downloaded_action">다시 시작</string>
+
     <string name="language_title">언어</string>
     <string name="language_system">시스템 언어</string>
 

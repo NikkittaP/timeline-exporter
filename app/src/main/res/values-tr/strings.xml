@@ -125,6 +125,11 @@
 
     <string name="app_version">Sürüm %1$s</string>
 
+    <string name="update_available_message">Yeni bir sürüm mevcut.</string>
+    <string name="update_available_action">Güncelle</string>
+    <string name="update_downloaded_message">Güncelleme indirildi. Kurulumu tamamlamak için yeniden başlatın.</string>
+    <string name="update_downloaded_action">Yeniden başlat</string>
+
     <string name="language_title">Dil</string>
     <string name="language_system">Sistem dili</string>
 

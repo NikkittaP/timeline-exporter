@@ -125,6 +125,11 @@
 
     <string name="app_version">Versie %1$s</string>
 
+    <string name="update_available_message">Er is een nieuwe versie beschikbaar.</string>
+    <string name="update_available_action">Bijwerken</string>
+    <string name="update_downloaded_message">Update gedownload. Start opnieuw om de installatie te voltooien.</string>
+    <string name="update_downloaded_action">Herstarten</string>
+
     <string name="language_title">Taal</string>
     <string name="language_system">Systeemtaal</string>
 
