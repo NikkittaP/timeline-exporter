@@ -3,6 +3,7 @@ package io.github.nikkittap.timelineexporter.filter
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import io.github.nikkittap.timelineexporter.parser.TimeOfDayWindow
 import io.github.nikkittap.timelineexporter.parser.parseTimeline
+import io.github.nikkittap.timelineexporter.parser.placeEntries
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
