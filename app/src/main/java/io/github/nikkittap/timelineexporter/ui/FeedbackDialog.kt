@@ -62,46 +62,58 @@ data class FeedbackContext(
  * [labelRes] is what the user sees, translated with the app locale.
  * [outgoing] is what gets written into the issue / email — deliberately a
  * hard-coded English string, so a request filed by a Japanese or Turkish user
- * still arrives in a form the maintainer can read and de-duplicate.
+ * still arrives in a form the maintainer can read and de-duplicate. It is kept
+ * character-for-character identical to the `values/strings.xml` label, so an
+ * incoming mail can be matched to a row of FEEDBACK.md by string equality;
+ * before 1.8.0 three of them paraphrased the label and had to be matched by
+ * hand.
  */
 private class FeedbackOption(val labelRes: Int, val outgoing: String)
 
 private val FEEDBACK_OPTIONS = listOf(
     FeedbackOption(
-        R.string.feedback_option_area,
-        "Keep only points inside an area on the map",
+        R.string.feedback_option_trip_list,
+        "A list of trips with start, end, time and distance",
     ),
     FeedbackOption(
         R.string.feedback_option_file_per_trip,
-        "One file per trip instead of a single large file",
+        "A separate file per trip instead of one large file",
+    ),
+    FeedbackOption(
+        R.string.feedback_option_track_per_trip,
+        "Each trip as a separate track inside one file",
+    ),
+    FeedbackOption(
+        R.string.feedback_option_stats,
+        "Monthly and yearly totals",
+    ),
+    FeedbackOption(
+        R.string.feedback_option_place_names,
+        "Real names for places that show only coordinates",
+    ),
+    FeedbackOption(
+        R.string.feedback_option_area,
+        "Keep only points inside an area on the map",
     ),
     FeedbackOption(
         R.string.feedback_option_elevation_speed,
         "Elevation and speed in GPX",
     ),
     FeedbackOption(
-        R.string.feedback_option_places,
-        "Export visited places, not only the track",
-    ),
-    FeedbackOption(
-        R.string.feedback_option_share,
-        "Send the export straight to another app instead of saving a file",
-    ),
-    FeedbackOption(
-        R.string.feedback_option_trip_list,
-        "A list of trips with start, end, time and distance",
-    ),
-    FeedbackOption(
-        R.string.feedback_option_stats,
-        "Monthly and yearly totals, most-visited places",
-    ),
-    FeedbackOption(
         R.string.feedback_option_merge,
-        "Merge several Timeline files",
+        "Merging several Timeline files",
     ),
     FeedbackOption(
         R.string.feedback_option_photo_geotag,
-        "Geotag photos by timestamp",
+        "Geotagging photos by time",
+    ),
+    FeedbackOption(
+        R.string.feedback_option_remember_settings,
+        "Remember my filters and format for the next export",
+    ),
+    FeedbackOption(
+        R.string.feedback_option_owner,
+        "Show which account the export came from",
     ),
 )
 

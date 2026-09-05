@@ -1,7 +1,12 @@
 package io.github.nikkittap.timelineexporter
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
+import android.os.LocaleList
+import android.os.SystemClock
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -12,19 +17,28 @@ import androidx.core.content.FileProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.xmlpull.v1.XmlPullParser
 import tools.fastlane.screengrab.Screengrab
 import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy
 import tools.fastlane.screengrab.locale.LocaleTestRule
 import java.io.File
+import java.util.Locale
 
 /**
  * Drives the app through its main states and captures a screenshot of each, in
  * whatever locale Fastlane screengrab is currently running.
+ *
+ * The language comes from the app's own language setting, not the device's: see
+ * applyAppLanguage(). screengrab switches the device locale between passes, but
+ * on Android 13+ this app's per-app locale override wins over it, so without
+ * that step every locale is captured in whatever language the app was last left
+ * in.
  *
  * Captured (file name -> store screenshot):
  *   02_overview      main page with data loaded
@@ -65,7 +79,89 @@ class ScreenshotTest {
     // context = the instrumentation APK (where androidTest/assets live).
     private val testCtx get() = InstrumentationRegistry.getInstrumentation().context
 
-    private fun str(id: Int): String = appCtx.getString(id)
+    /**
+     * The app language for this pass: the screengrab locale matched against the
+     * languages the app actually ships (`@xml/locales_config`) by RFC 4647
+     * lookup — "en-US" -> "en", "hi-IN" -> "hi", "zh-CN" -> "zh-CN",
+     * "pt-BR" -> "pt-BR". Empty means "follow the system", which is what a run
+     * outside screengrab (Android Studio, `connectedAndroidTest`) gets.
+     */
+    private val appLanguageTag: String by lazy {
+        val requested = InstrumentationRegistry.getArguments()
+            .getString(TEST_LOCALE_ARG)
+            ?.replace('_', '-')
+            ?.takeIf { it.isNotBlank() }
+            ?: return@lazy ""
+        Locale.lookupTag(Locale.LanguageRange.parse(requested), shippedLanguageTags()).orEmpty()
+    }
+
+    /**
+     * A context pinned to [appLanguageTag], used for every label the test looks
+     * up. Reading them from [appCtx] would be a race: the system delivers the
+     * new per-app configuration to the process a moment after it stores the
+     * choice, so the first lookups could still come back in the previous
+     * language and match no node on screen.
+     */
+    private val localizedCtx: Context by lazy {
+        if (appLanguageTag.isEmpty()) return@lazy appCtx
+        val config = Configuration(appCtx.resources.configuration)
+        config.setLocales(LocaleList(Locale.forLanguageTag(appLanguageTag)))
+        appCtx.createConfigurationContext(config)
+    }
+
+    private fun str(id: Int): String = localizedCtx.getString(id)
+
+    /**
+     * Put the app into this pass's language through the app's own language
+     * setting, not the device's.
+     *
+     * screengrab switches the *device* locale between passes ([LocaleTestRule]
+     * below), but this app carries an in-app language override, and on Android
+     * 13+ a per-app locale wins over the system one. So the device switch never
+     * reached the UI and every locale came out in whatever the app was last
+     * left in — English. Setting the same override the in-app language picker
+     * sets makes the two agree; on API 29-32, where the override lives in
+     * SharedPreferences, it is applied by MainActivity.attachBaseContext.
+     */
+    @Before
+    fun applyAppLanguage() {
+        if (LocaleManager.getPersistedTag(appCtx) == appLanguageTag) return
+        LocaleManager.setLanguage(appCtx, appLanguageTag)
+        if (appLanguageTag.isEmpty()) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        // setApplicationLocales stores the choice synchronously, but the
+        // configuration it produces reaches this process asynchronously. Wait
+        // for it before an activity is launched, or the system recreates that
+        // activity underneath the test a moment after it starts.
+        val language = Locale.forLanguageTag(appLanguageTag).language
+        val deadline = SystemClock.uptimeMillis() + LOCALE_APPLY_TIMEOUT_MS
+        while (appCtx.resources.configuration.locales.get(0)?.language != language &&
+            SystemClock.uptimeMillis() < deadline
+        ) {
+            Thread.sleep(100)
+        }
+        Thread.sleep(LOCALE_SETTLE_MS)
+    }
+
+    /** The tags in `@xml/locales_config` — the same list the picker offers. */
+    private fun shippedLanguageTags(): List<String> {
+        val tags = mutableListOf<String>()
+        val parser = appCtx.resources.getXml(R.xml.locales_config)
+        try {
+            var event = parser.eventType
+            while (event != XmlPullParser.END_DOCUMENT) {
+                if (event == XmlPullParser.START_TAG && parser.name == "locale") {
+                    parser.getAttributeValue(ANDROID_RES_NS, "name")
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let { tags += it }
+                }
+                event = parser.next()
+            }
+        } finally {
+            parser.close()
+        }
+        return tags
+    }
 
     companion object {
         const val DEMO_ASSET = "timeline_demo.json"
@@ -78,7 +174,21 @@ class ScreenshotTest {
         // wait. Raise if maps still look half-loaded.
         const val MAP_TILE_WAIT_MS = 6_000L
 
-        // Switches the device locale for each run of the suite.
+        // The locale of the current pass, as screengrab passes it to the
+        // runner: `-e testLocale en_US`.
+        const val TEST_LOCALE_ARG = "testLocale"
+        const val ANDROID_RES_NS = "http://schemas.android.com/apk/res/android"
+
+        // How long we wait for the per-app locale set on Android 13+ to reach
+        // this process as a configuration change, and how long we then let it
+        // settle. An empty language ("follow the system") is applied by
+        // applyAppLanguage() without waiting at all.
+        const val LOCALE_APPLY_TIMEOUT_MS = 5_000L
+        const val LOCALE_SETTLE_MS = 400L
+
+        // Switches the device locale for each run of the suite. The app's own
+        // language is set per test in applyAppLanguage() — on Android 13+ this
+        // rule alone does not change what the app renders.
         @get:ClassRule
         @JvmStatic
         val localeTestRule = LocaleTestRule()

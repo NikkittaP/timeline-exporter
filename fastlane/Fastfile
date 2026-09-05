@@ -5,6 +5,7 @@ default_platform(:android)
 #
 # Typical flow (see SCREENSHOTS_SETUP.md and tools/store_shots/README.md):
 #   1. boot a PHONE emulator,  then:  bundle exec fastlane screens_phone
+#      (add locales:ru-RU,ar to any screens_* lane for a quick two-language pass)
 #   2. boot a 7" TABLET emul., then:  bundle exec fastlane screens_tablet7
 #   3. boot a 10" TABLET emul, then:  bundle exec fastlane screens_tablet10
 #   4. review fastlane/metadata/android/<locale>/images/...
@@ -17,6 +18,16 @@ default_platform(:android)
 # ---------------------------------------------------------------------------
 
 SHOTS = "../tools/store_shots"
+
+# Options for one capture pass. `locales:ru-RU,ar` on any screens_* lane runs
+# just those two languages instead of all 18 — a full pass is 25-40 minutes, a
+# long way to go to check one change. Left out, the Screengrabfile's list is
+# used, so the key is omitted rather than passed as nil.
+def capture_options(device_type, options)
+  args = { device_type: device_type }
+  args[:locales] = options[:locales].split(",") if options[:locales]
+  args
+end
 
 platform :android do
 
@@ -50,45 +61,45 @@ platform :android do
   end
 
   desc "Capture screenshots on a PHONE emulator/device (run one first)"
-  lane :screens_phone do
+  lane :screens_phone do |options|
     build_for_screengrab
     begin
-      capture_android_screenshots(device_type: "phone")
+      capture_android_screenshots(capture_options("phone", options))
     ensure
       # a run that dies part-way (adb hiccup, Ctrl-C) still leaves captures in
       # metadata/ — move them to raw before the error propagates, or the next
       # run's clear_previous_screenshots deletes them.
       ingest_raw(slot: "phone")
     end
-    decorate_screens(slot: "phone")
+    decorate_screens(slot: "phone", locales: options[:locales])
   end
 
   desc "Capture screenshots on a 7-inch TABLET emulator/device"
-  lane :screens_tablet7 do
+  lane :screens_tablet7 do |options|
     build_for_screengrab
     begin
-      capture_android_screenshots(device_type: "sevenInch")
+      capture_android_screenshots(capture_options("sevenInch", options))
     ensure
       # a run that dies part-way (adb hiccup, Ctrl-C) still leaves captures in
       # metadata/ — move them to raw before the error propagates, or the next
       # run's clear_previous_screenshots deletes them.
       ingest_raw(slot: "sevenInch")
     end
-    decorate_screens(slot: "sevenInch")
+    decorate_screens(slot: "sevenInch", locales: options[:locales])
   end
 
   desc "Capture screenshots on a 10-inch TABLET emulator/device"
-  lane :screens_tablet10 do
+  lane :screens_tablet10 do |options|
     build_for_screengrab
     begin
-      capture_android_screenshots(device_type: "tenInch")
+      capture_android_screenshots(capture_options("tenInch", options))
     ensure
       # a run that dies part-way (adb hiccup, Ctrl-C) still leaves captures in
       # metadata/ — move them to raw before the error propagates, or the next
       # run's clear_previous_screenshots deletes them.
       ingest_raw(slot: "tenInch")
     end
-    decorate_screens(slot: "tenInch")
+    decorate_screens(slot: "tenInch", locales: options[:locales])
   end
 
   desc "DEPRECATED — the old Pillow caption band on 01_hero. Superseded by " \
@@ -106,7 +117,7 @@ platform :android do
   lane :upload_screens do
     upload_to_play_store(
       track: "internal",
-      version_code: 14,
+      version_code: 15,
       skip_upload_apk: true,
       skip_upload_aab: true,
       skip_upload_metadata: true,     # don't overwrite your hand-edited listing
@@ -121,7 +132,7 @@ platform :android do
   lane :upload_screens_dryrun do
     upload_to_play_store(
       track: "internal",
-      version_code: 14,
+      version_code: 15,
       skip_upload_apk: true,
       skip_upload_aab: true,
       skip_upload_metadata: true,

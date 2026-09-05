@@ -5,8 +5,15 @@ tablet + 10" tablet, renders the framed store art from them, and uploads it to
 Play — without you tapping anything.
 
 It works by letting an instrumented UI test (`ScreenshotTest.kt`) drive the app
-while **screengrab** changes the device language for each run and grabs a PNG of
-each screen. **supply** (`upload_to_play_store`) then pushes the PNGs to Play.
+while **screengrab** runs it once per language and grabs a PNG of each screen.
+**supply** (`upload_to_play_store`) then pushes the PNGs to Play.
+
+The language of a pass is set **inside the app**, not on the device: the test's
+`applyAppLanguage()` writes the same in-app language override the language
+picker writes (`LocaleManager`). screengrab does switch the device locale, but
+on Android 13+ a per-app locale wins over the system one, so the device switch
+alone leaves the UI in whatever the app was last left in — see
+[Troubleshooting](#every-language-came-out-in-english).
 
 The raw shots the test captures (per language):
 
@@ -219,6 +226,13 @@ bundle exec fastlane screens_tablet7
 bundle exec fastlane screens_tablet10
 ```
 
+To check a change without sitting through all 18 languages, name the ones you
+want — the lane then captures, ingests and re-renders only those:
+
+```bash
+bundle exec fastlane screens_phone locales:ru-RU,ar
+```
+
 Each lane rebuilds the debug + test APKs, then loops through all 18 locales.
 Expect ~1–2 min per locale, so a full phone run is ~25–40 min. The lane then
 moves the raw PNGs aside and renders the store art on top of them:
@@ -386,6 +400,39 @@ adb pull /data/data/io.github.nikkittap.timelineexporter/app_screengrab/en-US/im
 
 If `adb root` answers "adbd cannot run as root in production builds", the AVD
 uses a **Google Play** system image; recreate it with **Google APIs**.
+
+### Every language came out in English
+
+The device locale is not what this app renders in. It carries an in-app language
+setting (Settings → Language, `LocaleManager`), and from Android 13 on that is a
+**per-app locale** held by the system — it overrides the system language, which
+is the whole point of the feature. screengrab's `LocaleTestRule` switches the
+*device* locale between passes, and the app went on ignoring it. With
+`reinstall_app(false)` the app's data survives the whole run, so whatever
+language it was last left in (English) was what all 18 passes captured.
+
+The fix is in `ScreenshotTest.kt`: `applyAppLanguage()` runs before each test and
+sets the app's own override to the language of the pass. The pass's locale
+arrives as the `testLocale` instrumentation argument — the value straight out of
+`Screengrabfile` — and is matched against the languages the app actually ships
+(`@xml/locales_config`) by RFC 4647 lookup, so `en-US` → `en`, `hi-IN` → `hi`,
+while `pt-BR`, `zh-CN` and `zh-TW` keep their region.
+
+Two details worth knowing if you touch it:
+
+- The labels the test clicks are read from a context pinned to that language,
+  not from the app context. On Android 13+ `setApplicationLocales` stores the
+  choice synchronously but the new configuration reaches the process a moment
+  later, so lookups off the app context can still come back in the old language
+  and match nothing on screen.
+- The app is left in the last language of the run — nothing resets it, on
+  purpose: changing a per-app locale with no activity on screen can have the
+  system stop the app process, which during instrumentation is also the test
+  process. Set the language by hand in the app if it bothers you.
+
+Running the test outside screengrab (Android Studio, `connectedAndroidTest`)
+passes no `testLocale`, so the app is set to "follow the system" and behaves as
+before.
 
 ### `uninitialized constant TTY::Screen::Fiddle` — fastlane dies mid-run
 

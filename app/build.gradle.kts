@@ -91,11 +91,13 @@ android {
         //                                         Also hardens the MapLibre
         //                                         teardown that was aborting
         //                                         in ~MapRenderer
-        // ---- everything above is LIVE ON PLAY; 1.6.2 is what users have ----
-        // Below this line: built, tagged here, never uploaded. The next store
-        // changelog must therefore cover the whole span 1.6.2 -> the uploaded
-        // code, not just the last versionName bump. See RELEASE_NOTES.md,
-        // which accumulates those entries under "Unreleased".
+        // ---- everything above is LIVE IN PRODUCTION; 1.6.2 is what users have ----
+        // Below this line: not in production. 13 was never uploaded at all; 14
+        // went to a testing track only, which is why 15 exists rather than the
+        // ballot work landing on 14 like the five commits before it. The next
+        // production changelog must therefore cover the whole span
+        // 1.6.2 -> the uploaded code, not just the last versionName bump. See
+        // RELEASE_NOTES.md, which accumulates those entries under "Unreleased".
         //   versionCode=13, versionName="1.6.3" -> correctness: path points
         //                                         carried the exporting
         //                                         phone's home UTC offset
@@ -170,7 +172,42 @@ android {
         //       40 new strings across all 18 locales; the now-unused
         //       step_export was removed from each. New tests: PlaceEntryTest,
         //       PlacesExportTest, TimeOfDayWindowTest, TimeOfDayFilterTest.
-        versionCode = 14
+        //
+        //       Uploaded to a testing track, so 14 is spent: Play will not
+        //       accept it twice, and the production upload of this span is 15.
+        //   versionCode=15, versionName="1.7.0" -> the feedback ballot, re-cut.
+        //       Same versionName on purpose: nothing here changes what the app
+        //       does with a Timeline file, and the whole 1.6.2 -> now span is
+        //       still the one release the store changelog describes. Codes 1
+        //       and 2 shared 1.0.0 for the same reason.
+        //
+        //       The dialog was still offering two things the span had already
+        //       built: feedback_option_places (7 votes, the most-requested
+        //       item in the log, shipped in 14) and feedback_option_share
+        //       (1 vote, shipped in 13). Both removed. feedback_option_stats
+        //       loses its second half - the places list is ordered by visit
+        //       count, so "most-visited places" is done and the line now asks
+        //       only for "Monthly and yearly totals".
+        //
+        //       Four added, ordered by theme rather than by vote count so the
+        //       ballot does not become its own ranking: track_per_trip (native
+        //       GPX, no ZIP - splits file_per_trip into its cheap half before
+        //       1.8.0 commits), place_names (measures the online-resolution
+        //       question that has been declined twice from the same reference
+        //       export), remember_settings (nobody asked; SharedPreferences
+        //       holds only the locale and place labels today), owner (FB-014's
+        //       three words of Spanish, put to a vote instead of guessed at).
+        //       Eleven options now; the dialog already scrolls.
+        //
+        //       Also fixed: FeedbackDialog.kt carried its own hard-coded
+        //       English per option and three of them paraphrased the label the
+        //       ballot shows, so an incoming report could not be matched to a
+        //       row of FEEDBACK.md by string equality. The outgoing text is now
+        //       character-for-character the values/strings.xml label.
+        //
+        //       22 strings across all 18 locales: 4 added, 1 shortened,
+        //       2 removed. No parser, exporter or map changes; no new tests.
+        versionCode = 15
         versionName = "1.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

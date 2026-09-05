@@ -24,14 +24,15 @@ Where things go at release time:
 
 # Unreleased — everything since v1.6.2
 
-**Published on Play: v1.6.2 (versionCode 12), 27 August 2026.** Everything in
-this section is built and unreleased. The next upload's changelog must cover
-*all of it*, not just the newest version bump.
+**In production on Play: v1.6.2 (versionCode 12), 27 August 2026.** Nothing in
+this section has reached a production user. The next production changelog must
+cover *all of it*, not just the newest version bump.
 
 | Internal version | Code | Theme | Status |
 | --- | --- | --- | --- |
-| 1.6.3 | 13 | Correct timezones, place names, share sheet | built, not uploaded |
-| 1.7.0 | 14 | Places, a map of our own, filtering by time of day | to upload |
+| 1.6.3 | 13 | Correct timezones, place names, share sheet | built, never uploaded |
+| 1.7.0 | 14 | Places, a map of our own, filtering by time of day | uploaded to a testing track |
+| 1.7.0 | 15 | The feedback ballot, re-cut | to upload |
 
 Everything after the commit that named 1.7.0 — the Maps link fix, the step-4
 plaque, the basemap rewrite, the time-of-day window, places on the map — sits
@@ -39,13 +40,26 @@ under **the same versionCode 14**, because nothing in between was ever
 uploaded. `app/build.gradle.kts` carries the full entry; the sections below are
 grouped the way the work happened, not the way the codes ran.
 
+**Then 14 was uploaded to a testing track, which spends it** — Play will not
+take that code twice — so the ballot re-cut is 15. The versionName does not
+move: 15 changes nothing about what the app does with a Timeline file, the
+whole 1.6.2 → now span is still one release called 1.7.0, and codes 1 and 2
+shared 1.0.0 for the same reason. The production upload of this span is 15, and
+its changelog files are named for that code.
+
 ## Store changelog — draft for the next upload
 
 Four bullets, because that is what fits above the fold. Written from the whole
-span 1.6.2 → now; re-cut before upload if anything lands after this. **Cut for
-versionCode 14 and written out to `fastlane/metadata/android/<locale>/changelogs/14.txt`
-in all 18 locales, and to `F:\Timeline\Whats_New_v1.7.0_tagged.txt`.** Play
-allows 500 characters per language; the longest translation here is 479.
+span 1.6.2 → now; re-cut before upload if anything lands after this. **Cut in
+all 18 locales to `fastlane/metadata/android/<locale>/changelogs/15.txt` and to
+`F:\Timeline\Whats_New_v1.7.0_tagged.txt`.** Play allows 500 characters per
+language; the longest translation here is 479.
+
+The text is unchanged from the 14 cut — copied across, and `14.txt` kept beside
+it as the record of what the testing-track build carried. The ballot re-cut in
+15 is deliberately not a bullet: it changes the feedback dialog, which is not
+something anyone decides to update for, and the four bullets are already full
+of the things that are.
 
 ```
 • Export your places, not just your track: where you were, how often and for
@@ -290,6 +304,44 @@ Written after the commit tagged 1.7.0, shipped in the same build.
     `place_unnamed_hint` was rewritten in place across all 18 locales.
 
 
+## v1.7.0 (versionCode 15) — the feedback ballot, re-cut
+
+The dialog is the app's only source of signal, and it had been asking for two
+things it can now do. `feedback_option_places` (7 votes, the most-requested item
+in the log) and `feedback_option_share` (1) are gone; `feedback_option_stats`
+loses its second half — the places list is ordered by visit count, so what is
+still missing is "Monthly and yearly totals", and that is all the line asks for
+now. FB-012's time-of-day request shipped without ever reaching the ballot.
+
+Four lines take their place, in a deliberate order rather than by vote count:
+
+- **Each trip as a separate track inside one file.** `file_per_trip` has been
+  collecting two different wishes. This one is native GPX (`<trk>` repeats) and
+  needs no ZIP; if the votes prefer it, 1.8.0 costs a fraction of what the
+  file-per-trip route does.
+- **Real names for places that show only coordinates.** Online name resolution
+  has been proposed and declined twice on the same argument — the top eight
+  places are 55% of visits and two of them name themselves. This puts the
+  question to the people holding the 262 coordinate rows instead of settling it
+  from the reference export a third time.
+- **Remember my filters and format for the next export.** Nobody asked;
+  `SharedPreferences` holds only the locale and place labels, so every export
+  re-picks the range, the movement groups and the format. Cheap enough that one
+  vote would justify it.
+- **Show which account the export came from.** FB-014, three words of Spanish
+  with no verb. A ballot line is the cheapest way to find out whether that
+  reading was right; if it stays at zero it gets dropped rather than guessed at
+  again.
+
+Eleven options is two more than 1.6.1 shipped, and the dialog scrolls. Also
+fixed here: `FeedbackDialog.kt` held its own hard-coded English per option, and
+three of them paraphrased the label the ballot displays — so a report could not
+be matched to a row of `FEEDBACK.md` by string equality. The outgoing text is
+now character-for-character the `values/strings.xml` label, from 15 on.
+
+Twenty-two strings across all 18 locales: four added, one shortened, two
+removed.
+
 ## Store art for this upload
 
 Eight screenshots instead of six, and the emulator's own chrome is no longer in
@@ -396,6 +448,13 @@ Time of day:
       each other
 - [ ] German (long strings) and Arabic (RTL) in the dialog
 
+Feedback ballot:
+
+- [ ] Eleven options, no duplicates, and the dialog scrolls to the send buttons
+- [ ] German (long strings) and Arabic (RTL) do not clip a label
+- [ ] Tick one of the new four, send by mail: the draft carries the same English
+      sentence the ballot shows
+
 Export step wording:
 
 - [ ] Flip Track / Places and scroll to step 4: heading and plaque both follow
@@ -407,8 +466,10 @@ Always:
 
 - [ ] `./gradlew :app:test`
 - [ ] `./gradlew bundleRelease` — R8 and `lintVital` green
-- [ ] Bump `versionCode` and `versionName`, cut the changelog above into all 18
-      `changelogs/<versionCode>.txt`, and move this section into *Released*
+- [x] Bump `versionCode` to 15 (`versionName` stays 1.7.0), copy the changelog
+      into all 18 `changelogs/15.txt`, and bump `version_code:` in the Fastfile
+      — done 2026-09-05; re-cut the text if anything lands after this
+- [ ] Move this section into *Released* once 15 is up
 
 ---
 
