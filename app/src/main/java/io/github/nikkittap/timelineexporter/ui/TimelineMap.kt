@@ -172,6 +172,16 @@ private const val PROPERTY_VISITS = "visits"
 private const val PROPERTY_KEY = "key"
 
 /**
+ * Feature properties carrying the two colours a track line is drawn in, and
+ * the day it belongs to. Every track feature carries all three in both modes:
+ * see the note in [prepareTrack] for why the monochrome track is data-driven
+ * too rather than painted with a constant.
+ */
+private const val PROPERTY_CORE_COLOR = "coreColor"
+private const val PROPERTY_GLOW_COLOR = "glowColor"
+private const val PROPERTY_DAY_DATE = "dayDate"
+
+/**
  * How far from a dot a tap still counts as hitting it, in dp.
  *
  * The dots are 3.5-13 px of radius; a fingertip is about 9 mm. Querying the
@@ -529,7 +539,7 @@ fun TimelineMap(
                 // Parse per feature: one unreadable dayDate should cost that
                 // one line, not the whole legend.
                 .mapNotNull { feature ->
-                    feature.getStringProperty("dayDate")
+                    feature.getStringProperty(PROPERTY_DAY_DATE)
                         ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
                 }
                 .distinct().sorted()
@@ -680,7 +690,7 @@ fun TimelineMap(
         // workers. The previous overlay stays on screen throughout, which
         // also spares the user a flash of bare basemap mid-toggle.
         val overlay = withContext(Dispatchers.Default) {
-            prepareOverlay(subject, colorByDay, fallbackZone)
+            prepareOverlay(subject, palette, colorByDay, fallbackZone)
         }
 
         // Then back to the main thread, and named rather than assumed. Where
@@ -956,10 +966,11 @@ private sealed interface MapOverlay {
 /** Everything [renderSubject] will need, computed without touching the map. */
 private fun prepareOverlay(
     subject: MapSubject,
+    palette: MapPalette,
     colorByDay: Boolean,
     fallbackZone: ZoneId,
 ): MapOverlay = when (subject) {
-    is MapSubject.Track -> prepareTrack(subject.points, colorByDay, fallbackZone)
+    is MapSubject.Track -> prepareTrack(subject.points, palette, colorByDay, fallbackZone)
     is MapSubject.Places ->
         if (subject.entries.isEmpty()) MapOverlay.Empty
         else MapOverlay.Places(placesGeoJson(subject.entries))
@@ -1015,6 +1026,7 @@ private fun renderSubject(
  */
 private fun prepareTrack(
     points: List<PathPoint>,
+    palette: MapPalette,
     colorByDay: Boolean,
     fallbackZone: ZoneId,
 ): MapOverlay {
@@ -1042,19 +1054,33 @@ private fun prepareTrack(
     }
     runs += current
 
+    // Both colours travel on the features, in both modes, and both line
+    // layers read them through the same expression. That is not decoration:
+    // swapping the mode replaces the source and the layers under the same
+    // ids, and for one frame MapLibre pairs one side's paint with the other
+    // side's data. When only the coloured mode was data-driven, that frame
+    // asked features with no dayColor for their dayColor, `to-color` failed,
+    // and the whole track flashed the spec default - black - before settling.
+    // Give every feature the colour it should be drawn in and the mismatched
+    // frame simply draws the right colour.
     val drawableRuns = runs.filter { it.size >= 2 }
     val features = when {
         drawableRuns.isEmpty() -> null
         colorByDay -> drawableRuns.flatMap { splitTrackDays(it, fallbackZone) }.map { run ->
+            val color = trackDayColor(run.date)
             Feature.fromGeometry(LineString.fromLngLats(run.points.map { it.toPoint() })).apply {
-                addStringProperty("dayColor", trackDayColor(run.date))
-                addStringProperty("dayDate", run.date.toString())
+                addStringProperty(PROPERTY_CORE_COLOR, color)
+                addStringProperty(PROPERTY_GLOW_COLOR, color)
+                addStringProperty(PROPERTY_DAY_DATE, run.date.toString())
             }
         }
         else -> listOf(
             Feature.fromGeometry(
                 MultiLineString.fromLngLats(drawableRuns.map { run -> run.map { it.toPoint() } })
-            )
+            ).apply {
+                addStringProperty(PROPERTY_CORE_COLOR, palette.trackCore)
+                addStringProperty(PROPERTY_GLOW_COLOR, palette.trackGlow)
+            }
         )
     }
 
@@ -1098,7 +1124,7 @@ private fun renderTrack(
         //    traces overlap the alpha stacks up and the corridor blooms.
         addBelowLabels(
             LineLayer(LAYER_TRACK_GLOW, SOURCE_TRACK).withProperties(
-                if (colorByDay) lineColor(Expression.toColor(Expression.get("dayColor"))) else lineColor(palette.trackGlow),
+                lineColor(Expression.toColor(Expression.get(PROPERTY_GLOW_COLOR))),
                 lineWidth(zoomScaledWidth(weights.glowWidth)),
                 lineOpacity(weights.glowOpacity),
                 lineBlur(weights.glowBlur),
@@ -1140,7 +1166,7 @@ private fun renderTrack(
     if (overlay.lines != null) {
         addBelowLabels(
             LineLayer(LAYER_TRACK, SOURCE_TRACK).withProperties(
-                if (colorByDay) lineColor(Expression.toColor(Expression.get("dayColor"))) else lineColor(palette.trackCore),
+                lineColor(Expression.toColor(Expression.get(PROPERTY_CORE_COLOR))),
                 lineWidth(zoomScaledWidth(coreWidth)),
                 lineOpacity(zoomScaledOpacity(coreOpacity)),
                 lineCap(Property.LINE_CAP_ROUND),

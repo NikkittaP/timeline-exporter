@@ -53,6 +53,10 @@ Where things go at release time:
   roughly 150 ms of work moved off the main thread, leaving a few milliseconds
   of MapLibre calls on it. The previous overlay stays on screen while the new
   one is prepared.
+- Turning the colour off no longer flashes the whole track black for a frame
+  before it settles. Both line colours travel on the features in both modes, so
+  the frame where MapLibre pairs one side's paint with the other side's data
+  draws a real colour instead of falling back to the spec default.
 - The render's debug log no longer stringifies the whole subject: a data class
   wrapped around every sample in the file turned a year of history into tens of
   megabytes of string on the main thread, on every render, listener or not.
