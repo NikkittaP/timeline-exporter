@@ -47,6 +47,15 @@ Where things go at release time:
 - The legend is rebuilt at most four times a second while the map is moving and
   once exactly when the camera settles, rather than once per rendered frame.
   Local days are derived by integer arithmetic, not a ZonedDateTime per sample.
+- Building the overlay — splitting runs, cutting days, making the geometry —
+  now happens off the main thread, so flipping the switch or loading a file no
+  longer freezes the UI for the length of it. On a 200k-sample track that is
+  roughly 150 ms of work moved off the main thread, leaving a few milliseconds
+  of MapLibre calls on it. The previous overlay stays on screen while the new
+  one is prepared.
+- The render's debug log no longer stringifies the whole subject: a data class
+  wrapped around every sample in the file turned a year of history into tens of
+  megabytes of string on the main thread, on every render, listener or not.
 - This is a map display option; export content is unchanged. Version remains
   1.7.1 / code 15 for local development; no Play upload is planned yet.
 - Covers the in-app map interpretation of FB-017. Colored exported files are

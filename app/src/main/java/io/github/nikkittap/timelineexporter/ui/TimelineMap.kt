@@ -136,6 +136,8 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private const val TAG = "TimelineMap"
 
@@ -366,6 +368,13 @@ sealed interface MapSubject {
         get() = when (this) {
             is Track -> points.isEmpty()
             is Places -> entries.isEmpty()
+        }
+
+    /** What to write in a log line, in place of every sample in the file. */
+    val summary: String
+        get() = when (this) {
+            is Track -> "Track(${points.size} points)"
+            is Places -> "Places(${entries.size} entries)"
         }
 }
 
@@ -654,22 +663,64 @@ fun TimelineMap(
             Log.d(TAG, "Style not fully loaded — skipping render")
             return@LaunchedEffect
         }
-        Log.d(TAG, "Rendering $subject")
-        // Last-resort net: a style can go invalid between the check above and
-        // the native call. Losing the overlay beats aborting the process.
-        val fitCamera = lastFitted != subject
-        runCatching { renderSubject(map, style, subject, palette, dataBounds, density, fitCamera, colorByDay, fallbackZone) }
-            .onFailure { Log.w(TAG, "Map render failed", it) }
-            .onSuccess { if (fitCamera) lastFitted = subject }
+        // What it is and how big, never the subject itself: MapSubject.Track
+        // is a data class wrapped around every sample in the file, and its
+        // generated toString turns a year of history into tens of megabytes
+        // of string on the main thread - built whether or not anything is
+        // listening, since a Kotlin template is evaluated before the call.
+        Log.d(TAG, "Rendering ${subject.summary}")
 
-        // Seed the chrome. A map that is never touched never goes idle, so
-        // waiting for the listener alone would mean no scale bar at all on a
-        // track the user only looks at. The camera fit above is animated, so
-        // this reading can be one frame stale; the first idle corrects it.
-        withFrameNanos { }
-        if (!destroyed.get()) {
-            readout = runCatching { readCamera(map, mapView, dataBounds) }.getOrNull()
-            refreshVisibleDates()
+        // Turning a year of samples into GeoJSON - splitting runs at the
+        // geographic gaps, cutting those into days, building the geometry -
+        // is arithmetic over our own data and touches nothing on the map. It
+        // is also the expensive half of a render, long enough to be felt as a
+        // stall when the colour switch is flipped, so it happens off the main
+        // thread. Handing the finished collection to MapLibre costs nothing
+        // by comparison: the source keeps the object and tiles it on its own
+        // workers. The previous overlay stays on screen throughout, which
+        // also spares the user a flash of bare basemap mid-toggle.
+        val overlay = withContext(Dispatchers.Default) {
+            prepareOverlay(subject, colorByDay, fallbackZone)
+        }
+
+        // Then back to the main thread, and named rather than assumed. Where
+        // a coroutine resumes after `withContext` is decided by the
+        // interceptor the host installed on this effect: in the app that is
+        // AndroidUiDispatcher and the resumption lands on the main thread,
+        // but under Compose's own test harness the interceptor is not a
+        // dispatcher at all and the coroutine simply carries on down the
+        // worker it was already on. MapLibre rejects every call from there,
+        // and `runCatching` below would swallow the refusal into a map with
+        // no overlay on it.
+        withContext(Dispatchers.Main.immediate) {
+            // The world may have moved while we were off the main thread. A
+            // style swap restarts this effect, but the coroutine only learns
+            // that here.
+            if (destroyed.get() || loadedStyle !== style || !style.isFullyLoaded) {
+                Log.d(TAG, "Style changed while preparing — dropping this render")
+                return@withContext
+            }
+
+            // Last-resort net: a style can go invalid between the check above
+            // and the native call. Losing the overlay beats aborting the
+            // process.
+            val fitCamera = lastFitted != subject
+            runCatching {
+                renderSubject(map, style, subject, overlay, palette, dataBounds, density, fitCamera, colorByDay)
+            }
+                .onFailure { Log.w(TAG, "Map render failed", it) }
+                .onSuccess { if (fitCamera) lastFitted = subject }
+
+            // Seed the chrome. A map that is never touched never goes idle,
+            // so waiting for the listener alone would mean no scale bar at
+            // all on a track the user only looks at. The camera fit above is
+            // animated, so this reading can be one frame stale; the first
+            // idle corrects it.
+            withFrameNanos { }
+            if (!destroyed.get()) {
+                readout = runCatching { readCamera(map, mapView, dataBounds) }.getOrNull()
+                refreshVisibleDates()
+            }
         }
     }
 
@@ -876,27 +927,67 @@ private fun Context.readAsset(name: String): String =
     assets.open(name).use { it.readBytes().decodeToString() }
 
 /**
- * Replace whatever this file owns on [style] with a drawing of [subject], and
- * frame it if [fitCamera] says this is new data rather than a re-render.
+ * The half of an overlay that is arithmetic over the export's own data:
+ * splitting a track into continuous runs, cutting those into days, and
+ * turning hundreds of thousands of samples into GeoJSON geometry.
+ *
+ * Separated from the drawing so it can be computed off the main thread. None
+ * of it calls into MapLibre; the geometry objects are inert until a source on
+ * the main thread is handed them.
+ */
+private sealed interface MapOverlay {
+    /** Nothing to draw: an empty subject, or a track with no samples. */
+    data object Empty : MapOverlay
+
+    data class Track(
+        /** Null when no run survived the gap split with two points to join. */
+        val lines: FeatureCollection?,
+        /** Null when nothing in the track is far enough apart to be a gap. */
+        val gaps: Feature?,
+        val start: Feature,
+        val end: Feature,
+        /** What the weights and the arrow cutoff are chosen from. */
+        val pointCount: Int,
+    ) : MapOverlay
+
+    data class Places(val geoJson: String) : MapOverlay
+}
+
+/** Everything [renderSubject] will need, computed without touching the map. */
+private fun prepareOverlay(
+    subject: MapSubject,
+    colorByDay: Boolean,
+    fallbackZone: ZoneId,
+): MapOverlay = when (subject) {
+    is MapSubject.Track -> prepareTrack(subject.points, colorByDay, fallbackZone)
+    is MapSubject.Places ->
+        if (subject.entries.isEmpty()) MapOverlay.Empty
+        else MapOverlay.Places(placesGeoJson(subject.entries))
+}
+
+/**
+ * Replace whatever this file owns on [style] with [overlay], and frame it if
+ * [fitCamera] says this is new data rather than a re-render.
  */
 private fun renderSubject(
     map: MapLibreMap,
     style: Style,
     subject: MapSubject,
+    overlay: MapOverlay,
     palette: MapPalette,
     bounds: LatLngBounds?,
     density: Float,
     fitCamera: Boolean,
     colorByDay: Boolean,
-    fallbackZone: ZoneId,
 ) {
     // Always tear down previous overlays first; addSource/addLayer throw on
     // collisions, and we rebuild wholesale on every change.
     clearOverlays(style)
 
-    when (subject) {
-        is MapSubject.Track -> renderTrack(style, subject.points, palette, density, colorByDay, fallbackZone)
-        is MapSubject.Places -> renderPlaces(style, subject.entries, palette)
+    when (overlay) {
+        is MapOverlay.Track -> renderTrack(style, overlay, palette, density, colorByDay)
+        is MapOverlay.Places -> renderPlaces(style, overlay.geoJson, palette)
+        MapOverlay.Empty -> Unit
     }
 
     if (!fitCamera || subject.isEmpty) return
@@ -914,16 +1005,20 @@ private fun renderSubject(
     }
 }
 
-/** The travelled line, its gaps, its direction and its two endpoints. */
-private fun renderTrack(
-    style: Style,
+/**
+ * The travelled line, its gaps and its two endpoints, as GeoJSON.
+ *
+ * Every sample in the export passes through here, so this is the one place
+ * where the cost is proportional to the size of the file rather than to the
+ * size of the screen - and the reason the whole thing runs off the main
+ * thread. Nothing below touches [Style].
+ */
+private fun prepareTrack(
     points: List<PathPoint>,
-    palette: MapPalette,
-    density: Float,
     colorByDay: Boolean,
     fallbackZone: ZoneId,
-) {
-    if (points.isEmpty()) return
+): MapOverlay {
+    if (points.isEmpty()) return MapOverlay.Empty
 
     // Split the ordered points into continuous runs, breaking wherever two
     // consecutive samples are too far apart to be a real travelled segment
@@ -947,6 +1042,39 @@ private fun renderTrack(
     }
     runs += current
 
+    val drawableRuns = runs.filter { it.size >= 2 }
+    val features = when {
+        drawableRuns.isEmpty() -> null
+        colorByDay -> drawableRuns.flatMap { splitTrackDays(it, fallbackZone) }.map { run ->
+            Feature.fromGeometry(LineString.fromLngLats(run.points.map { it.toPoint() })).apply {
+                addStringProperty("dayColor", trackDayColor(run.date))
+                addStringProperty("dayDate", run.date.toString())
+            }
+        }
+        else -> listOf(
+            Feature.fromGeometry(
+                MultiLineString.fromLngLats(drawableRuns.map { run -> run.map { it.toPoint() } })
+            )
+        )
+    }
+
+    return MapOverlay.Track(
+        lines = features?.let(FeatureCollection::fromFeatures),
+        gaps = if (gaps.isEmpty()) null else Feature.fromGeometry(MultiLineString.fromLngLats(gaps)),
+        start = Feature.fromGeometry(points.first().toPoint()),
+        end = Feature.fromGeometry(points.last().toPoint()),
+        pointCount = points.size,
+    )
+}
+
+/** Attach the prepared track to the style: one source, four layers of paint. */
+private fun renderTrack(
+    style: Style,
+    overlay: MapOverlay.Track,
+    palette: MapPalette,
+    density: Float,
+    colorByDay: Boolean,
+) {
     // Everything we draw goes underneath the basemap's own labels, so place
     // names stay readable through a dense track. Layers inserted below the
     // same reference stack in insertion order, so this call sequence is also
@@ -957,23 +1085,14 @@ private fun renderTrack(
         else style.addLayer(layer)
     }
 
-    val weights = heatWeightsFor(points.size)
-    val drawableRuns = runs.filter { it.size >= 2 }
+    val weights = heatWeightsFor(overlay.pointCount)
 
-    if (drawableRuns.isNotEmpty()) {
-        val features = if (colorByDay) {
-            drawableRuns.flatMap { splitTrackDays(it, fallbackZone) }.map { run ->
-                Feature.fromGeometry(LineString.fromLngLats(run.points.map { it.toPoint() })).apply {
-                    addStringProperty("dayColor", trackDayColor(run.date))
-                    addStringProperty("dayDate", run.date.toString())
-                }
-            }
-        } else {
-            listOf(Feature.fromGeometry(MultiLineString.fromLngLats(drawableRuns.map { run -> run.map { it.toPoint() } })))
-        }
-        style.addSource(
-            GeoJsonSource(SOURCE_TRACK).apply { setGeoJson(FeatureCollection.fromFeatures(features)) }
-        )
+    if (overlay.lines != null) {
+        // Attached first and filled second, through the one setter whose
+        // behaviour is documented; the source keeps the collection and tiles
+        // it on its own workers, so this call returns immediately even for a
+        // year of history.
+        style.addSource(GeoJsonSource(SOURCE_TRACK).apply { setGeoJson(overlay.lines) })
 
         // 1. Glow. Wide, blurred and almost invisible on its own; where many
         //    traces overlap the alpha stacks up and the corridor blooms.
@@ -991,13 +1110,8 @@ private fun renderTrack(
 
     // 2. Gap connectors: faint dashes across discontinuities, under the
     //    solid track so the two meet cleanly at shared endpoints.
-    if (gaps.isNotEmpty()) {
-        style.addSource(
-            GeoJsonSource(
-                SOURCE_GAPS,
-                Feature.fromGeometry(MultiLineString.fromLngLats(gaps)),
-            )
-        )
+    if (overlay.gaps != null) {
+        style.addSource(GeoJsonSource(SOURCE_GAPS, overlay.gaps))
         addBelowLabels(
             LineLayer(LAYER_GAPS, SOURCE_GAPS).withProperties(
                 lineColor(palette.gap),
@@ -1023,7 +1137,7 @@ private fun renderTrack(
     val coreOpacity =
         if (colorByDay) minOf(weights.coreOpacity * COLOR_OPACITY_LIFT, COLOR_OPACITY_MAX)
         else weights.coreOpacity
-    if (drawableRuns.isNotEmpty()) {
+    if (overlay.lines != null) {
         addBelowLabels(
             LineLayer(LAYER_TRACK, SOURCE_TRACK).withProperties(
                 if (colorByDay) lineColor(Expression.toColor(Expression.get("dayColor"))) else lineColor(palette.trackCore),
@@ -1041,7 +1155,7 @@ private fun renderTrack(
         //     zoom 13: those are the two conditions under which an arrow says
         //     nothing. A year of history has no direction to show, and a
         //     country-wide view has no room to show one.
-        if (points.size <= ROUTE_MODE_MAX_POINTS) {
+        if (overlay.pointCount <= ROUTE_MODE_MAX_POINTS) {
             style.addImage(IMAGE_TRACK_ARROW, chevronBitmap(if (colorByDay) "#FFFFFF" else palette.trackCore, density))
             addBelowLabels(
                 SymbolLayer(LAYER_TRACK_ARROWS, SOURCE_TRACK).withProperties(
@@ -1067,16 +1181,10 @@ private fun renderTrack(
 
     // 4. Endpoints, on top of everything including labels — they are the one
     //    thing the user looks for by eye.
-    val first = points.first()
-    val last = points.last()
-    style.addSource(
-        GeoJsonSource(SOURCE_START, Feature.fromGeometry(first.toPoint())),
-    )
+    style.addSource(GeoJsonSource(SOURCE_START, overlay.start))
     style.addLayer(endpointHalo(LAYER_START_HALO, SOURCE_START, palette.startFill))
     style.addLayer(endpointDot(LAYER_START, SOURCE_START, palette.startFill, palette.markerStroke))
-    style.addSource(
-        GeoJsonSource(SOURCE_END, Feature.fromGeometry(last.toPoint())),
-    )
+    style.addSource(GeoJsonSource(SOURCE_END, overlay.end))
     style.addLayer(endpointHalo(LAYER_END_HALO, SOURCE_END, palette.endFill))
     style.addLayer(endpointDot(LAYER_END, SOURCE_END, palette.endFill, palette.markerStroke))
 }
@@ -1094,18 +1202,14 @@ private fun renderTrack(
  * The list under the map already names every row, and 262 place names would
  * bury the map they are drawn on.
  */
-private fun renderPlaces(style: Style, entries: List<PlaceEntry>, palette: MapPalette) {
-    if (entries.isEmpty()) return
-
-    // Built as GeoJSON text rather than through Feature and a properties
-    // object: the values come from our own model, the app already writes
-    // GeoJSON by hand elsewhere, and this needs no gson types on the classpath.
+private fun renderPlaces(style: Style, geoJson: String, palette: MapPalette) {
+    // The text itself is built in [prepareOverlay], off the main thread.
     // Attached first and filled second, so the data goes through the one
     // setter whose behaviour is documented rather than through a constructor
     // overload that has come and gone between MapLibre versions.
     val source = GeoJsonSource(SOURCE_PLACES)
     style.addSource(source)
-    source.setGeoJson(placesGeoJson(entries))
+    source.setGeoJson(geoJson)
 
     // The halo is what keeps a cluster of overlapping dots readable: the
     // fills blend into one blob, the strokes do not.

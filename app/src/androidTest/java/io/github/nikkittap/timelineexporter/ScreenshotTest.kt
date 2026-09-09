@@ -8,8 +8,10 @@ import android.os.Build
 import android.os.LocaleList
 import android.os.SystemClock
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -284,10 +286,12 @@ class ScreenshotTest {
         // 03 — open the full-screen map. This is also the base image that
         // add_hero_caption.py turns into the captioned 01_hero.
         composeRule.onNodeWithText(str(R.string.preview_expand)).performScrollTo().performClick()
-        waitForText(R.string.preview_close, timeoutMs = 10_000)
+        // The fullscreen close action is an icon button now, so it is a
+        // content description rather than a label on screen.
+        waitForDescription(R.string.preview_close, timeoutMs = 10_000)
         settle(MAP_TILE_WAIT_MS)
         Screengrab.screenshot("03_map_fullscreen")
-        composeRule.onNodeWithText(str(R.string.preview_close)).performClick()
+        composeRule.onNodeWithContentDescription(str(R.string.preview_close)).performClick()
         composeRule.waitForIdle()
 
         // 04 — open the custom date-range (calendar) dialog.
@@ -311,6 +315,13 @@ class ScreenshotTest {
             "${appCtx.packageName}.screenshot.fileprovider",
             out,
         )
+    }
+
+    private fun waitForDescription(stringId: Int, timeoutMs: Long = 8_000) {
+        val description = str(stringId)
+        composeRule.waitUntil(timeoutMillis = timeoutMs) {
+            composeRule.onAllNodesWithContentDescription(description).fetchSemanticsNodes().isNotEmpty()
+        }
     }
 
     private fun waitForText(stringId: Int, timeoutMs: Long = 8_000) {
