@@ -219,4 +219,6 @@
     <string name="time_preset_day">Gündüz</string>
     <string name="time_preset_evening">Akşam</string>
     <string name="time_preset_night">Gece</string>
+    <string name="map_color_by_day">Güne göre renk</string>
+    <string name="map_day_legend">Tarihler · görmek için kaydırın</string>
 </resources>

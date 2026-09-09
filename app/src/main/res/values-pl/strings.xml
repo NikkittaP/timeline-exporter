@@ -219,4 +219,6 @@
     <string name="time_preset_day">Dzień</string>
     <string name="time_preset_evening">Wieczór</string>
     <string name="time_preset_night">Noc</string>
+    <string name="map_color_by_day">Kolor według dnia</string>
+    <string name="map_day_legend">Daty · przesuń, aby zobaczyć więcej</string>
 </resources>

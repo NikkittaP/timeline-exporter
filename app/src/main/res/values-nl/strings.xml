@@ -219,4 +219,6 @@
     <string name="time_preset_day">Overdag</string>
     <string name="time_preset_evening">Avond</string>
     <string name="time_preset_night">Nacht</string>
+    <string name="map_color_by_day">Kleur per dag</string>
+    <string name="map_day_legend">Datums · veeg voor meer</string>
 </resources>

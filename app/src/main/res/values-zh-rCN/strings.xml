@@ -219,4 +219,6 @@
     <string name="time_preset_day">白天</string>
     <string name="time_preset_evening">傍晚</string>
     <string name="time_preset_night">夜间</string>
+    <string name="map_color_by_day">按日期着色</string>
+    <string name="map_day_legend">日期 · 左右滑动查看更多</string>
 </resources>

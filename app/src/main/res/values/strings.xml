@@ -284,4 +284,6 @@
     <string name="time_preset_night">Night</string>
     <string name="filter_time_range" translatable="false">%1$s – %2$s</string>
     <string name="track_name_time_window" translatable="false">%1$s, %2$s–%3$s</string>
+    <string name="map_color_by_day">Color by day</string>
+    <string name="map_day_legend">Dates · swipe to explore</string>
 </resources>

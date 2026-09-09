@@ -219,4 +219,6 @@
     <string name="time_preset_day">Tagsüber</string>
     <string name="time_preset_evening">Abend</string>
     <string name="time_preset_night">Nacht</string>
+    <string name="map_color_by_day">Farbe nach Tag</string>
+    <string name="map_day_legend">Datum · zum Blättern wischen</string>
 </resources>

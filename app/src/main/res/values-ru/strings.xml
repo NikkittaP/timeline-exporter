@@ -219,4 +219,6 @@
     <string name="time_preset_day">День</string>
     <string name="time_preset_evening">Вечер</string>
     <string name="time_preset_night">Ночь</string>
+    <string name="map_color_by_day">Цвет по дням</string>
+    <string name="map_day_legend">Даты · листайте по горизонтали</string>
 </resources>

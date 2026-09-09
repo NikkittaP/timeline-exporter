@@ -7,41 +7,58 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
+import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.toColorInt
@@ -98,8 +115,14 @@ import org.maplibre.android.style.layers.PropertyFactory.textSize
 import org.maplibre.android.style.layers.SymbolLayer
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
+import org.maplibre.geojson.FeatureCollection
+import org.maplibre.geojson.LineString
 import org.maplibre.geojson.MultiLineString
 import org.maplibre.geojson.Point
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -227,6 +250,26 @@ private const val ROUTE_MODE_MAX_POINTS = 2_000
 private const val ARROW_SPACING_PX = 96f
 
 /**
+ * Shortest gap between two mid-gesture rebuilds of the day legend. Four a
+ * second is far more often than a reader can follow a changing list, and far
+ * less often than the sixty frames a fling renders.
+ */
+private const val LEGEND_REFRESH_INTERVAL_MS = 250L
+
+/** How many dates the legend's spoken description names before it trails off. */
+private const val LEGEND_SPOKEN_DATES = 8
+
+/**
+ * How much heavier the core line is drawn when it carries a colour per day.
+ * Accumulation in one colour reads as brightness; accumulation across seven
+ * reads as mud, so the trace has to hold its own hue rather than stack - but
+ * only by a factor, so the density tuning underneath still applies.
+ */
+private const val COLOR_WIDTH_LIFT = 1.35f
+private const val COLOR_OPACITY_LIFT = 2.2f
+private const val COLOR_OPACITY_MAX = 0.85f
+
+/**
  * Colors and basemap for one system theme. The two basemaps are our own
  * minimal styles in `assets/`, drawn from OpenFreeMap's OpenMapTiles vector
  * source: a near-monochrome ground whose only job is to stay out of the
@@ -348,6 +391,7 @@ private fun MapSubject.firstCoordinate(): LatLng? = when (this) {
 fun TimelineMap(
     subject: MapSubject,
     modifier: Modifier = Modifier,
+    onClose: (() -> Unit)? = null,
     /**
      * The place the screen currently has selected, if any. Drawn as a ring
      * around its dot, and the camera is eased to it when the selection came
@@ -374,6 +418,20 @@ fun TimelineMap(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val darkTheme = isSystemInDarkTheme()
     val palette = if (darkTheme) DarkPalette else LightPalette
+    var colorByDay by rememberSaveable { mutableStateOf(false) }
+    val fallbackZone = remember { ZoneId.systemDefault() }
+    var visibleDates by remember { mutableStateOf<List<LocalDate>>(emptyList()) }
+    // How tall the controls panel turned out to be, so the legend can ask what
+    // is visible *under* it rather than what is merely inside the MapView.
+    var panelHeightPx by remember { mutableIntStateOf(0) }
+    val locale = LocalConfiguration.current.locales[0]
+    // Building a localized formatter reads locale data; this composable
+    // recomposes on every camera idle, so do it once per locale instead.
+    val dateFormatter = remember(locale) {
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
+    }
+    val colorByDayLabel = stringResource(R.string.map_color_by_day)
+    val dayLegendLabel = stringResource(R.string.map_day_legend)
     // Sprites are added to the style in device pixels; MapLibre has no way to
     // be told a bitmap was authored in dp.
     val density = context.resources.displayMetrics.density
@@ -439,6 +497,58 @@ fun TimelineMap(
     // touching a dot they can already see must not also move the camera out
     // from under their finger; one made in the list must.
     val selfSelected = remember { AtomicReference<String?>(null) }
+
+    // Query the rendered lines, not just samples inside a geographic box:
+    // a line can cross the viewport while both its endpoints are outside it.
+    //
+    // The rectangle stops short of the controls panel, which is painted over
+    // the map: a day whose only line runs behind the panel is not a day the
+    // user can see, and listing it makes the legend disagree with the screen.
+    val refreshVisibleDates by rememberUpdatedState {
+        val map = loadedMap
+        val style = loadedStyle
+        visibleDates = if (!destroyed.get() && colorByDay && subject is MapSubject.Track &&
+            map != null && style?.isFullyLoaded == true && style.getLayer(LAYER_TRACK) != null
+        ) {
+            val top = panelHeightPx.toFloat().coerceAtMost(mapView.height * 0.5f)
+            runCatching {
+                map.queryRenderedFeatures(
+                    RectF(0f, top, mapView.width.toFloat(), mapView.height.toFloat()),
+                    LAYER_TRACK,
+                )
+            }.getOrDefault(emptyList())
+                // Parse per feature: one unreadable dayDate should cost that
+                // one line, not the whole legend.
+                .mapNotNull { feature ->
+                    feature.getStringProperty("dayDate")
+                        ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+                }
+                .distinct().sorted()
+        } else emptyList()
+    }
+
+    // Source updates are asynchronous, and a partial frame already contains
+    // our local lines even when network basemap tiles are still loading - so
+    // the legend cannot wait for the camera to settle before it first appears.
+    //
+    // But this fires once per rendered frame, and the query behind it walks
+    // the tile index and rebuilds every matching line as Java geometry. At 60
+    // frames a second through a fling, on a year of history, that is the most
+    // expensive thing on the main thread. Throttle it: the camera-idle
+    // listener below still gives the exact answer the moment the map settles,
+    // so all this has to do is keep the legend roughly honest while it moves.
+    DisposableEffect(mapView) {
+        var lastRefreshUptimeMs = 0L
+        val listener = MapView.OnDidFinishRenderingFrameListener { _, _, _ ->
+            val now = SystemClock.uptimeMillis()
+            if (!destroyed.get() && now - lastRefreshUptimeMs >= LEGEND_REFRESH_INTERVAL_MS) {
+                lastRefreshUptimeMs = now
+                refreshVisibleDates()
+            }
+        }
+        mapView.addOnDidFinishRenderingFrameListener(listener)
+        onDispose { mapView.removeOnDidFinishRenderingFrameListener(listener) }
+    }
 
     // Forward Compose lifecycle events to MapView. Without this, MapLibre
     // would never know it should pause GL rendering when the screen is hidden.
@@ -525,6 +635,7 @@ fun TimelineMap(
         val listener = MapLibreMap.OnCameraIdleListener {
             if (!destroyed.get()) {
                 readout = runCatching { readCamera(map, mapView, dataBounds) }.getOrNull()
+                refreshVisibleDates()
             }
         }
         map.addOnCameraIdleListener(listener)
@@ -532,7 +643,7 @@ fun TimelineMap(
     }
 
     // Re-render whenever the subject changes OR the style becomes available.
-    LaunchedEffect(subject, loadedStyle) {
+    LaunchedEffect(subject, loadedStyle, colorByDay, fallbackZone) {
         if (destroyed.get()) return@LaunchedEffect
         val map = loadedMap ?: return@LaunchedEffect
         val style = loadedStyle ?: return@LaunchedEffect
@@ -547,7 +658,7 @@ fun TimelineMap(
         // Last-resort net: a style can go invalid between the check above and
         // the native call. Losing the overlay beats aborting the process.
         val fitCamera = lastFitted != subject
-        runCatching { renderSubject(map, style, subject, palette, dataBounds, density, fitCamera) }
+        runCatching { renderSubject(map, style, subject, palette, dataBounds, density, fitCamera, colorByDay, fallbackZone) }
             .onFailure { Log.w(TAG, "Map render failed", it) }
             .onSuccess { if (fitCamera) lastFitted = subject }
 
@@ -558,6 +669,7 @@ fun TimelineMap(
         withFrameNanos { }
         if (!destroyed.get()) {
             readout = runCatching { readCamera(map, mapView, dataBounds) }.getOrNull()
+            refreshVisibleDates()
         }
     }
 
@@ -643,14 +755,91 @@ fun TimelineMap(
     Box(modifier = modifier) {
         AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
 
+        // Offer the switch only where flipping it would change something.
+        // "Two or more samples" is not that test: a pair of samples further
+        // apart than GAP_DISTANCE_METERS - a flight with location off in
+        // between - draws only the dashed connector and no track layer at
+        // all, so the switch would toggle nothing and the legend would never
+        // arrive. Ask instead whether any consecutive pair is close enough to
+        // become a line; the answer is normally the first pair tested.
+        val hasTrack = remember(subject) {
+            subject is MapSubject.Track && subject.points.asSequence().zipWithNext()
+                .any { (a, b) -> haversineMeters(a, b) <= GAP_DISTANCE_METERS }
+        }
+        if (hasTrack || onClose != null) {
+            Surface(
+                modifier = Modifier.align(Alignment.TopCenter).padding(12.dp).fillMaxWidth()
+                    .onSizeChanged { panelHeightPx = it.height },
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
+                shadowElevation = 3.dp,
+            ) {
+                Column {
+                    Row(
+                        Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        if (hasTrack) {
+                            Text(
+                                colorByDayLabel,
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Switch(
+                                checked = colorByDay,
+                                onCheckedChange = { colorByDay = it },
+                                modifier = Modifier.semantics { contentDescription = colorByDayLabel },
+                            )
+                        } else {
+                            // Places have nothing to colour. Leave the row
+                            // empty rather than borrowing a wizard step title
+                            // as a caption for a map control.
+                            Spacer(Modifier.weight(1f))
+                        }
+                        if (onClose != null) {
+                            Spacer(Modifier.width(8.dp))
+                            IconButton(onClick = onClose) {
+                                Icon(painterResource(R.drawable.ic_map_close), stringResource(R.string.preview_close), Modifier.size(20.dp))
+                            }
+                        }
+                    }
+                    if (hasTrack && colorByDay && visibleDates.isNotEmpty()) {
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                        LazyRow(
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxWidth().semantics {
+                                contentDescription = dayLegendLabel
+                                // Capped, because a city zoom over a year can
+                                // put hundreds of days on screen and a screen
+                                // reader would announce every one of them in a
+                                // single utterance the listener cannot skip.
+                                // Each swatch carries its own date as well.
+                                stateDescription = visibleDates.joinToString(
+                                    limit = LEGEND_SPOKEN_DATES,
+                                    truncated = "…",
+                                ) { it.format(dateFormatter) }
+                            },
+                        ) {
+                            items(visibleDates, key = { it.toEpochDay() }) { date ->
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Box(Modifier.size(8.dp).background(Color(trackDayColor(date).toColorInt()), RoundedCornerShape(4.dp)))
+                                    Spacer(Modifier.width(6.dp))
+                                    Text(date.format(dateFormatter), style = MaterialTheme.typography.labelMedium)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         val scale = readout
         if (scale != null) {
             ScaleBar(
                 metersPerPixel = scale.metersPerPixel,
-                // Top-start because MapLibre puts its own logo and the
-                // attribution button bottom-left, where a scale bar would
-                // normally live.
-                modifier = Modifier.align(Alignment.TopStart).padding(8.dp),
+                // Above attribution, leaving the top edge to the unified controls.
+                modifier = Modifier.align(Alignment.BottomStart).padding(start = 12.dp, bottom = 40.dp),
             )
         }
 
@@ -698,13 +887,15 @@ private fun renderSubject(
     bounds: LatLngBounds?,
     density: Float,
     fitCamera: Boolean,
+    colorByDay: Boolean,
+    fallbackZone: ZoneId,
 ) {
     // Always tear down previous overlays first; addSource/addLayer throw on
     // collisions, and we rebuild wholesale on every change.
     clearOverlays(style)
 
     when (subject) {
-        is MapSubject.Track -> renderTrack(style, subject.points, palette, density)
+        is MapSubject.Track -> renderTrack(style, subject.points, palette, density, colorByDay, fallbackZone)
         is MapSubject.Places -> renderPlaces(style, subject.entries, palette)
     }
 
@@ -729,6 +920,8 @@ private fun renderTrack(
     points: List<PathPoint>,
     palette: MapPalette,
     density: Float,
+    colorByDay: Boolean,
+    fallbackZone: ZoneId,
 ) {
     if (points.isEmpty()) return
 
@@ -736,9 +929,9 @@ private fun renderTrack(
     // consecutive samples are too far apart to be a real travelled segment
     // (a flight, or a stretch with location services off). Each break is also
     // recorded as a "gap" connector so we can hint at it with a faint dash.
-    val runs = mutableListOf<MutableList<Point>>()
+    val runs = mutableListOf<MutableList<PathPoint>>()
     val gaps = mutableListOf<List<Point>>()
-    var current = mutableListOf(points.first().toPoint())
+    var current = mutableListOf(points.first())
     for (i in 1 until points.size) {
         val prev = points[i - 1]
         val cur = points[i]
@@ -747,9 +940,9 @@ private fun renderTrack(
             // endpoints, then start a fresh run at the far side.
             runs += current
             gaps += listOf(prev.toPoint(), cur.toPoint())
-            current = mutableListOf(cur.toPoint())
+            current = mutableListOf(cur)
         } else {
-            current += cur.toPoint()
+            current += cur
         }
     }
     runs += current
@@ -768,18 +961,25 @@ private fun renderTrack(
     val drawableRuns = runs.filter { it.size >= 2 }
 
     if (drawableRuns.isNotEmpty()) {
+        val features = if (colorByDay) {
+            drawableRuns.flatMap { splitTrackDays(it, fallbackZone) }.map { run ->
+                Feature.fromGeometry(LineString.fromLngLats(run.points.map { it.toPoint() })).apply {
+                    addStringProperty("dayColor", trackDayColor(run.date))
+                    addStringProperty("dayDate", run.date.toString())
+                }
+            }
+        } else {
+            listOf(Feature.fromGeometry(MultiLineString.fromLngLats(drawableRuns.map { run -> run.map { it.toPoint() } })))
+        }
         style.addSource(
-            GeoJsonSource(
-                SOURCE_TRACK,
-                Feature.fromGeometry(MultiLineString.fromLngLats(drawableRuns)),
-            )
+            GeoJsonSource(SOURCE_TRACK).apply { setGeoJson(FeatureCollection.fromFeatures(features)) }
         )
 
         // 1. Glow. Wide, blurred and almost invisible on its own; where many
         //    traces overlap the alpha stacks up and the corridor blooms.
         addBelowLabels(
             LineLayer(LAYER_TRACK_GLOW, SOURCE_TRACK).withProperties(
-                lineColor(palette.trackGlow),
+                if (colorByDay) lineColor(Expression.toColor(Expression.get("dayColor"))) else lineColor(palette.trackGlow),
                 lineWidth(zoomScaledWidth(weights.glowWidth)),
                 lineOpacity(weights.glowOpacity),
                 lineBlur(weights.glowBlur),
@@ -811,12 +1011,24 @@ private fun renderTrack(
 
     // 3. The track itself: a hairline drawn at low alpha, so repeated passes
     //    over the same street accumulate into a bright, solid corridor.
+    //
+    //    Colour by day lifts both weights, because seven hues at heat-map
+    //    alpha are seven greys - but it lifts them *proportionally* rather
+    //    than replacing them with constants. The whole point of the
+    //    [heatWeightsFor] table is that a year of history and a single walk
+    //    cannot be drawn at the same weight, and that stays true in colour:
+    //    pinning every track to a fat, near-opaque line turns a year of city
+    //    driving into one solid slab in which no day is visible at all.
+    val coreWidth = if (colorByDay) weights.coreWidth * COLOR_WIDTH_LIFT else weights.coreWidth
+    val coreOpacity =
+        if (colorByDay) minOf(weights.coreOpacity * COLOR_OPACITY_LIFT, COLOR_OPACITY_MAX)
+        else weights.coreOpacity
     if (drawableRuns.isNotEmpty()) {
         addBelowLabels(
             LineLayer(LAYER_TRACK, SOURCE_TRACK).withProperties(
-                lineColor(palette.trackCore),
-                lineWidth(zoomScaledWidth(weights.coreWidth)),
-                lineOpacity(zoomScaledOpacity(weights.coreOpacity)),
+                if (colorByDay) lineColor(Expression.toColor(Expression.get("dayColor"))) else lineColor(palette.trackCore),
+                lineWidth(zoomScaledWidth(coreWidth)),
+                lineOpacity(zoomScaledOpacity(coreOpacity)),
                 lineCap(Property.LINE_CAP_ROUND),
                 lineJoin(Property.LINE_JOIN_ROUND),
             )
@@ -830,7 +1042,7 @@ private fun renderTrack(
         //     nothing. A year of history has no direction to show, and a
         //     country-wide view has no room to show one.
         if (points.size <= ROUTE_MODE_MAX_POINTS) {
-            style.addImage(IMAGE_TRACK_ARROW, chevronBitmap(palette.trackCore, density))
+            style.addImage(IMAGE_TRACK_ARROW, chevronBitmap(if (colorByDay) "#FFFFFF" else palette.trackCore, density))
             addBelowLabels(
                 SymbolLayer(LAYER_TRACK_ARROWS, SOURCE_TRACK).withProperties(
                     symbolPlacement(Property.SYMBOL_PLACEMENT_LINE),

@@ -219,4 +219,6 @@
     <string name="time_preset_day">दिन</string>
     <string name="time_preset_evening">शाम</string>
     <string name="time_preset_night">रात</string>
+    <string name="map_color_by_day">दिन के अनुसार रंग</string>
+    <string name="map_day_legend">तारीखें · देखने के लिए स्वाइप करें</string>
 </resources>

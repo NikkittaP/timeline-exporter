@@ -219,4 +219,6 @@
     <string name="time_preset_day">النهار</string>
     <string name="time_preset_evening">المساء</string>
     <string name="time_preset_night">الليل</string>
+    <string name="map_color_by_day">لون حسب اليوم</string>
+    <string name="map_day_legend">التواريخ · اسحب لعرض المزيد</string>
 </resources>

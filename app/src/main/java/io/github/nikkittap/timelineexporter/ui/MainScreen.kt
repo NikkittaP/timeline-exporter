@@ -422,11 +422,13 @@ fun MainScreen(
     val currentSelectedPlace by rememberUpdatedState(selectedPlace)
     val currentSelectedName by rememberUpdatedState(selectedPlaceName)
     val currentPlacePicked by rememberUpdatedState(onPlacePicked)
+    val currentMapFullscreen by rememberUpdatedState(mapFullscreen)
 
     val movableMap = remember {
         movableContentOf<MapSubject, Modifier> { subject, m ->
             TimelineMap(
                 subject = subject,
+                onClose = if (currentMapFullscreen) ({ mapFullscreen = false }) else null,
                 selectedPlace = currentSelectedPlace,
                 selectedPlaceName = currentSelectedName,
                 onPlaceSelected = currentPlacePicked,
@@ -718,7 +720,6 @@ fun MainScreen(
             BackHandler { mapFullscreen = false }
             ExpandedMap(
                 subject = mapSubject,
-                onClose = { mapFullscreen = false },
                 mapContent = movableMap,
             )
         }
@@ -1665,9 +1666,8 @@ private fun LoadingDisplay(phase: LoadingPhase) {
 }
 
 @Composable
-private fun ExpandedMap(
+internal fun ExpandedMap(
     subject: MapSubject,
-    onClose: () -> Unit,
     mapContent: @Composable (MapSubject, Modifier) -> Unit,
 ) {
     Surface(
@@ -1685,18 +1685,6 @@ private fun ExpandedMap(
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
             ) {
                 mapContent(subject, Modifier.fillMaxSize())
-            }
-            // Top-*end*: the map's own top-left corner now carries the scale
-            // bar, and a button parked on top of it would hide the one piece
-            // of chrome that says how big what you are looking at is.
-            FilledTonalButton(
-                onClick = onClose,
-                shape = ButtonShape,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp),
-            ) {
-                Text(stringResource(R.string.preview_close))
             }
         }
     }

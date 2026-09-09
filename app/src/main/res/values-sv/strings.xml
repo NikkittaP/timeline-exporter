@@ -219,4 +219,6 @@
     <string name="time_preset_day">Dagtid</string>
     <string name="time_preset_evening">Kväll</string>
     <string name="time_preset_night">Natt</string>
+    <string name="map_color_by_day">Färg per dag</string>
+    <string name="map_day_legend">Datum · svep för att se fler</string>
 </resources>

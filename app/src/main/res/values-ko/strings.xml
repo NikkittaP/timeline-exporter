@@ -219,4 +219,6 @@
     <string name="time_preset_day">낮</string>
     <string name="time_preset_evening">저녁</string>
     <string name="time_preset_night">밤</string>
+    <string name="map_color_by_day">날짜별 색상</string>
+    <string name="map_day_legend">날짜 · 옆으로 밀어 보기</string>
 </resources>

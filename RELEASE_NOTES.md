@@ -24,6 +24,34 @@ Where things go at release time:
 
 # Unreleased — everything since v1.6.2
 
+## Color route by day (local development, 2026-09-09)
+
+- Added an optional **Color by day** map toggle for tracks, with a horizontally
+  scrollable, localized date legend. Available in the preview and fullscreen map.
+- Map controls now share one compact panel: color switch and fullscreen close
+  action on one row, with the date legend underneath. The scale sits above attribution.
+- The legend follows the rendered routes in the current viewport after pan/zoom,
+  including lines crossing the screen with both endpoint samples offscreen.
+  It hides when no colored route is visible; dashed gaps do not add legend dates.
+- Colors follow each sample's historical local date (device timezone is the
+  fallback when the source has no offset). Seven colorblind-safe hues turn over
+  weekly and shade lighter, then darker, each week, so a color does not come
+  round again for 21 days and no legend shorter than three weeks shows the same
+  swatch twice. The color stays stable when filtering, and switching colors
+  preserves the camera.
+- Line weight and opacity in color mode are lifted from the density-tuned
+  values rather than replaced by constants, so a year of history stays legible
+  instead of flattening into one slab.
+- Existing geographic gaps remain dashed. An edge crossing midnight uses its
+  starting sample's day, retaining the connection without inventing a GPS fix.
+- The legend is rebuilt at most four times a second while the map is moving and
+  once exactly when the camera settles, rather than once per rendered frame.
+  Local days are derived by integer arithmetic, not a ZonedDateTime per sample.
+- This is a map display option; export content is unchanged. Version remains
+  1.7.1 / code 15 for local development; no Play upload is planned yet.
+- Covers the in-app map interpretation of FB-017. Colored exported files are
+  outside this change.
+
 **In production on Play: v1.6.2 (versionCode 12), 27 August 2026.** Nothing in
 this section has reached a production user. The next production changelog must
 cover *all of it*, not just the newest version bump.
