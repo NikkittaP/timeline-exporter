@@ -298,7 +298,6 @@
         <item quantity="one">%1$d day</item>
         <item quantity="other">%1$d days</item>
     </plurals>
-    <string name="map_day_legend_summary" translatable="false">%1$s · %2$s</string>
 
     <!-- The same count, said of the map's current viewport rather than of the
          whole track: the compact row describes what the camera can actually

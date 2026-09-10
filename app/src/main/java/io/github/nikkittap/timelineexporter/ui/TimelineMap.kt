@@ -10,6 +10,7 @@ import android.graphics.RectF
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -67,6 +68,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.toColorInt
@@ -1062,7 +1064,15 @@ fun TimelineMap(
                 // the surface still carries the text, the map only shows
                 // through it.
                 color = MaterialTheme.colorScheme.surface.copy(alpha = LEGEND_CARD_ALPHA),
-                shadowElevation = 3.dp,
+                // A hairline instead of a shadow. Android draws an elevation
+                // shadow as a blurred silhouette *behind* the view, which an
+                // opaque view then hides; at 0.82 this one did not, and the
+                // inward half of that blur read as a grey frame about the
+                // width of the card's own inset - with the card's middle
+                // sitting inside it like a second, lighter panel. The border
+                // separates the card from the map without anything to show
+                // through.
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             ) {
                 Column {
                     Row(
@@ -1108,26 +1118,42 @@ fun TimelineMap(
                                 }
                             }
                             Spacer(Modifier.width(4.dp))
-                            Text(
-                                if (daySummary != null && dayRange != null) {
-                                    stringResource(
-                                        R.string.map_day_legend_summary,
-                                        pluralStringResource(
-                                            if (wholeTrackInView) R.plurals.map_day_count
-                                            else R.plurals.map_day_count_in_view,
-                                            daySummary.dayCount,
-                                            daySummary.dayCount,
-                                        ),
-                                        dayRange,
-                                    )
-                                } else {
-                                    // No swatches and no span, because there is
-                                    // no day on screen to draw either from.
-                                    pluralStringResource(R.plurals.map_day_count_in_view, 0, 0)
-                                },
-                                style = MaterialTheme.typography.labelMedium,
-                                modifier = Modifier.weight(1f),
-                            )
+                            // Count over span, two lines, always. One line
+                            // holding both is a line whose length is the sum
+                            // of a translated plural and a localized date
+                            // range: it fits in English over one year and
+                            // wraps in German, in Russian, or as soon as the
+                            // range crosses into a second year - so the card
+                            // changed height as the user panned, which is the
+                            // one thing a panel pinned over a map must not do.
+                            // Split deliberately, each half capped at its own
+                            // line, the height is the same in all 17 locales
+                            // and for every date.
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    pluralStringResource(
+                                        if (daySummary != null && wholeTrackInView) R.plurals.map_day_count
+                                        else R.plurals.map_day_count_in_view,
+                                        daySummary?.dayCount ?: 0,
+                                        daySummary?.dayCount ?: 0,
+                                    ),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                // Empty when the camera is looking at nowhere
+                                // in particular, and deliberately still drawn:
+                                // an empty line keeps the card the height it
+                                // had a moment ago, when there was a span to
+                                // put here.
+                                Text(
+                                    dayRange.orEmpty(),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
                             Text(
                                 "›",
                                 style = MaterialTheme.typography.titleMedium,

@@ -200,6 +200,24 @@ Follow-up to the day count above, from the same session.
   old size the card was most of the tile and the map was the strip underneath
   it; this is the old 280 dp of map with room for the card above it.
 
+## v1.8.0 (still versionCode 15) — the card, tidied
+
+Two things the translucency and the new height turned up.
+
+- **The grey frame inside the card is gone.** Android draws an elevation
+  shadow as a blurred silhouette behind the view, and an opaque view hides it;
+  at 0.82 this one did not. The inward half of that blur read as a grey frame
+  about the width of the card's own inset, with the card's middle sitting
+  inside it like a second, lighter panel. The card now separates itself from
+  the map with a hairline border, which has nothing to show through.
+- **The day summary is two lines, always.** One line holding both the count
+  and the span is a line as long as a translated plural plus a localized date
+  range: it fits in English over one year, and wraps in German, in Russian, or
+  as soon as the range crosses into a second year — so the card changed height
+  as the user panned. Count on the first line, span on the second, each capped
+  at its own line. Same height in all 17 locales, for every date, and when the
+  camera is off the track and there is no span to show.
+
 ## Store changelog — draft for the next upload
 
 Four bullets, because that is what fits above the fold. Written from the whole
