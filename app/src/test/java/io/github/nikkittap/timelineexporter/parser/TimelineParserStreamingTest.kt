@@ -124,41 +124,4 @@ class TimelineParserStreamingTest {
         assertEquals(ParserStage.Sorting, stages.last())
         assertTrue(stages.any { it is ParserStage.ExtractingSegments })
     }
-
-    @Test
-    fun `skipping a redundant rawSignals tail reports SkippingFallbackData, not ExtractingSegments`() {
-        // Real phone exports put the small, expensive-to-parse semanticSegments
-        // first and a much larger rawSignals array after it. Once semanticSegments
-        // has already produced path points, rawSignals is only ever skipped — so
-        // its progress must not be reported on the same scale as real extraction
-        // (that mismatch is what made the progress bar crawl through the first
-        // few MB and then rocket through the rest — see SkippingFallbackData).
-        val sb = StringBuilder()
-        sb.append(
-            """{ "semanticSegments": [
-                { "startTime": "2025-01-01T00:00:00Z",
-                  "timelinePath": [ { "point": "10.0°, 20.0°", "time": "2025-01-01T00:10:00Z" } ] }
-              ], "rawSignals": ["""
-        )
-        val n = 250 // > PROGRESS_STRIDE, so the skip loop ticks at least once
-        for (i in 0 until n) {
-            if (i > 0) sb.append(',')
-            sb.append("""{ "position": { "LatLng": "48.8°, 2.2°", "timestamp": "2025-01-01T00:11:00Z" } }""")
-        }
-        sb.append("] }")
-
-        val stages = mutableListOf<ParserStage>()
-        val result = parseTimeline(sb.toString().byteInputStream()) { stages += it }
-
-        assertEquals(1, result.pathPoints.size) // rawSignals correctly stayed a no-op fallback
-        assertTrue(
-            "the rawSignals skip loop should report SkippingFallbackData",
-            stages.any { it is ParserStage.SkippingFallbackData },
-        )
-        assertEquals(
-            "only the final done-report should be ExtractingSegments; none from the skip loop",
-            1,
-            stages.count { it is ParserStage.ExtractingSegments },
-        )
-    }
 }

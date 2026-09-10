@@ -1638,11 +1638,6 @@ private fun LoadingDisplay(phase: LoadingPhase) {
             )
             progress = if (phase.total > 0) phase.done.toFloat() / phase.total else null
         }
-        LoadingPhase.FinishingUp -> {
-            label = stringResource(R.string.loading_finishing)
-            detail = null
-            progress = null
-        }
         LoadingPhase.SortingPoints -> {
             label = stringResource(R.string.loading_sorting)
             detail = null

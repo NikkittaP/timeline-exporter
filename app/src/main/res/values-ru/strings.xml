@@ -32,7 +32,6 @@
     <string name="loading_extracting">Извлечение точек GPS</string>
     <string name="loading_extracting_detail">%1$s / %2$s сегментов</string>
     <string name="loading_sorting">Сортировка точек по времени</string>
-    <string name="loading_finishing">Завершение…</string>
 
     <string name="filter_title">Фильтр</string>
     <string name="filter_date_range_all">Период: все даты</string>

@@ -45,7 +45,6 @@
     <string name="loading_extracting">Extracting GPS points</string>
     <string name="loading_extracting_detail">%1$s / %2$s segments</string>
     <string name="loading_sorting">Sorting points by time</string>
-    <string name="loading_finishing">Finishing up…</string>
 
     <!-- Parse result display (compact two-line summary).
          %1$s = formatted point count, %2$s = formatted segment count. -->
