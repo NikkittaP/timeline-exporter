@@ -83,6 +83,78 @@ fun parseTimeline(jsonText: String, onProgress: (ParserStage) -> Unit = {}): Par
 fun parseTimeline(input: InputStream, onProgress: (ParserStage) -> Unit = {}): ParsedTimeline =
     jsonFactory.createParser(input).use { streamTimeline(it, onProgress) }
 
+// ---------- Progress pre-scan ----------
+//
+// A real phone export puts its small, expensive-to-parse content
+// (semanticSegments) first and a much larger, nearly-free-to-skip
+// rawSignals fallback array last — see the "rawSignals" branch of
+// streamTimeline. That means a byte read in the first few percent of the
+// file costs far more (parses fields, allocates PathPoints and Segments)
+// than a byte read in the rest of it (JsonParser#skipChildren(), no
+// allocation), so a plain bytesRead/totalBytes progress fraction crawls
+// through the expensive part and then finishes the rest in under a second
+// — accurate about bytes, misleading about time. These two functions let a
+// caller find that split point *before* the real parse starts, from one
+// cheap sequential scan with no JSON tokenizing, so the progress bar can
+// weight the two halves differently instead of reporting them on the same
+// scale. See TimelineViewModel.weightedProgress for how the offset is used.
+
+/**
+ * Byte offset of the first real semantic-content key (`semanticSegments`,
+ * `timelineObjects` or `locations`) and of `rawSignals`, found by scanning
+ * [input] once for the literal (quoted) key names as ASCII bytes — no JSON
+ * parsing, so it costs one sequential read rather than a second full parse.
+ *
+ * [rawSignalsOffset] is only meaningful as a progress-weighting split point
+ * when [firstContentKeyOffset] comes first: that is the shape every real
+ * export takes (rawSignals trailing, and therefore skipped once the content
+ * key already produced points), and it's the only shape this is safe to
+ * assume for. A file where rawSignals appears first — or has no content key
+ * at all — falls back to plain byte-fraction progress; see
+ * TimelineViewModel.weightedProgress.
+ */
+internal class KeyOffsets(val firstContentKeyOffset: Long?, val rawSignalsOffset: Long?)
+
+private val CONTENT_KEY_NEEDLES = listOf("\"semanticSegments\"", "\"timelineObjects\"", "\"locations\"")
+    .map { it.toByteArray(Charsets.US_ASCII) }
+private val RAW_SIGNALS_NEEDLE = "\"rawSignals\"".toByteArray(Charsets.US_ASCII)
+
+internal fun findKeyOffsets(input: InputStream): KeyOffsets {
+    val needles = CONTENT_KEY_NEEDLES + RAW_SIGNALS_NEEDLE
+    val found = arrayOfNulls<Long>(needles.size)
+    val buffer = ByteArray(64 * 1024)
+    var carry = ByteArray(0)
+    var carryStart = 0L
+    val maxNeedleLen = needles.maxOf { it.size }
+
+    while (found.any { it == null }) {
+        val n = input.read(buffer)
+        if (n < 0) break
+        val chunk = if (carry.isEmpty()) buffer.copyOf(n) else carry + buffer.copyOf(n)
+        for (i in needles.indices) {
+            if (found[i] != null) continue
+            val idx = indexOfBytes(chunk, needles[i])
+            if (idx >= 0) found[i] = carryStart + idx
+        }
+        val keep = (maxNeedleLen - 1).coerceAtMost(chunk.size)
+        carryStart += chunk.size - keep
+        carry = chunk.copyOfRange(chunk.size - keep, chunk.size)
+    }
+
+    val contentOffset = found.take(CONTENT_KEY_NEEDLES.size).filterNotNull().minOrNull()
+    return KeyOffsets(contentOffset, found.last())
+}
+
+private fun indexOfBytes(haystack: ByteArray, needle: ByteArray): Int {
+    outer@ for (i in 0..haystack.size - needle.size) {
+        for (j in needle.indices) {
+            if (haystack[i + j] != needle[j]) continue@outer
+        }
+        return i
+    }
+    return -1
+}
+
 // ---------- Streaming core ----------
 
 private class SegmentCounters {

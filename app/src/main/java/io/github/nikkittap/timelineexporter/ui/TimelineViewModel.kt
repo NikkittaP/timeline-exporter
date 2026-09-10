@@ -15,6 +15,7 @@ import io.github.nikkittap.timelineexporter.parser.NotTimelineFileException
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.ParserStage
 import io.github.nikkittap.timelineexporter.parser.TimeOfDayWindow
+import io.github.nikkittap.timelineexporter.parser.findKeyOffsets
 import io.github.nikkittap.timelineexporter.parser.parseTimeline
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +40,16 @@ import java.time.ZoneId
 /** Discrete stages of the file→parsed pipeline. */
 sealed interface LoadingPhase {
     data object OpeningFile : LoadingPhase
-    data class ReadingFile(val bytesRead: Long, val totalBytes: Long?) : LoadingPhase
+
+    /**
+     * [bytesRead]/[totalBytes] are the real counts, for the "X / Y MB" text.
+     * [fraction] is what the bar should actually show and is deliberately a
+     * separate number: see [weightedProgress] for why a straight
+     * bytesRead/totalBytes ratio makes the bar crawl through the first few
+     * real percent of a phone export and then finish the rest in under a
+     * second.
+     */
+    data class ReadingFile(val bytesRead: Long, val totalBytes: Long?, val fraction: Float?) : LoadingPhase
     data object DecodingJson : LoadingPhase
     data class ExtractingPoints(val done: Int, val total: Int) : LoadingPhase
     data object SortingPoints : LoadingPhase
@@ -177,6 +187,25 @@ class TimelineViewModel : ViewModel() {
             val newState = withContext(Dispatchers.IO) {
                 try {
                     val totalBytes = queryFileSize(uri, contentResolver)
+                    // One cheap sequential scan, no JSON parsing, to find where
+                    // the (usually huge, usually near-free-to-skip) rawSignals
+                    // fallback array starts — see weightedProgress for why the
+                    // real parse below needs this before it can show a progress
+                    // bar that doesn't crawl then jump. Best-effort: any failure
+                    // here just means a plain byte-fraction bar, same as before.
+                    val splitByte = totalBytes?.let {
+                        try {
+                            contentResolver.openInputStream(uri)?.use { scan ->
+                                findKeyOffsets(scan).let { offsets ->
+                                    val content = offsets.firstContentKeyOffset
+                                    val raw = offsets.rawSignalsOffset
+                                    if (content != null && raw != null && content < raw) raw else null
+                                }
+                            }
+                        } catch (_: IOException) {
+                            null
+                        }
+                    }
                     val input = contentResolver.openInputStream(uri)
                         ?: throw IOException("Could not open file: $uri")
                     // Stream straight from the file: never materialize the whole
@@ -186,10 +215,14 @@ class TimelineViewModel : ViewModel() {
                         parseTimeline(stream) { stage ->
                             _uiState.value = TimelineUiState.Loading(
                                 when (stage) {
-                                    ParserStage.DecodingJson ->
-                                        LoadingPhase.ReadingFile(stream.bytesRead, totalBytes)
-                                    is ParserStage.ExtractingSegments ->
-                                        LoadingPhase.ReadingFile(stream.bytesRead, totalBytes)
+                                    ParserStage.DecodingJson, is ParserStage.ExtractingSegments ->
+                                        LoadingPhase.ReadingFile(
+                                            bytesRead = stream.bytesRead,
+                                            totalBytes = totalBytes,
+                                            fraction = totalBytes?.let {
+                                                weightedProgress(stream.bytesRead, it, splitByte)
+                                            },
+                                        )
                                     ParserStage.Sorting -> LoadingPhase.SortingPoints
                                 }
                             )
@@ -405,6 +438,44 @@ class TimelineViewModel : ViewModel() {
 }
 
 // ---------- private helpers ----------
+
+/**
+ * Fraction of the reading phase to show as "done", instead of the plain
+ * bytesRead/totalBytes ratio.
+ *
+ * A real phone export is two very different phases squeezed into one byte
+ * range: the small semanticSegments section is fully parsed (timestamps,
+ * coordinates, Segment/PathPoint allocation — expensive per byte), and the
+ * much larger rawSignals tail after it is only ever skipped once
+ * semanticSegments already produced points (JsonParser#skipChildren(), no
+ * allocation — nearly free per byte). Measured against the app's own
+ * reference export, rawSignals starts 8% of the way into a 62 MB file and
+ * both the file size and that 8% are typical, not an outlier. A straight
+ * byte ratio therefore spends the whole bar crawling through that first 8%
+ * and finishes the remaining 92% in about a second — accurate about bytes,
+ * useless as an estimate of time remaining.
+ *
+ * [splitByte] is the pre-scanned offset of that split (null if the file
+ * doesn't have this two-speed shape at all, or the scan couldn't confirm
+ * it). Bytes up to it are mapped into the first [READING_PHASE_SPLIT_SHARE]
+ * of the bar, the rest into what remains — so the bar spends most of its
+ * range on the phase that takes most of the time, and finishes the cheap
+ * tail over a correspondingly small slice of it instead of a instant jump.
+ */
+private const val READING_PHASE_SPLIT_SHARE = 0.9f
+
+internal fun weightedProgress(bytesRead: Long, totalBytes: Long, splitByte: Long?): Float {
+    if (totalBytes <= 0) return 0f
+    if (splitByte == null || splitByte <= 0 || splitByte >= totalBytes) {
+        return (bytesRead.toFloat() / totalBytes).coerceIn(0f, 1f)
+    }
+    return if (bytesRead <= splitByte) {
+        (bytesRead.toFloat() / splitByte) * READING_PHASE_SPLIT_SHARE
+    } else {
+        val tail = (bytesRead - splitByte).toFloat() / (totalBytes - splitByte)
+        READING_PHASE_SPLIT_SHARE + tail * (1f - READING_PHASE_SPLIT_SHARE)
+    }.coerceIn(0f, 1f)
+}
 
 private fun queryFileSize(uri: Uri, resolver: ContentResolver): Long? = try {
     resolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)?.use { cursor ->

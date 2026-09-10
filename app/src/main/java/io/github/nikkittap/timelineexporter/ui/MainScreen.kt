@@ -1620,9 +1620,7 @@ private fun LoadingDisplay(phase: LoadingPhase) {
             } else {
                 stringResource(R.string.loading_reading_detail_unknown, formatMb(phase.bytesRead))
             }
-            progress = phase.totalBytes
-                ?.takeIf { it > 0 }
-                ?.let { phase.bytesRead.toFloat() / it }
+            progress = phase.fraction
         }
         LoadingPhase.DecodingJson -> {
             label = stringResource(R.string.loading_decoding)

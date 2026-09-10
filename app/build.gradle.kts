@@ -223,8 +223,53 @@ android {
         //       place every other launcher in this app already lives. Four new
         //       strings across all 18 locales; no parser, exporter or map
         //       changes.
+        //   versionCode=15, versionName="1.7.2" -> fix the load-progress bar
+        //       crawling through the first few percent of a real phone
+        //       export, then finishing the rest in under a second.
+        //
+        //       Root-caused against Timeline.json (62 MB, one of the dev
+        //       fixtures under F:/Timeline): rawSignals - the raw-ping
+        //       fallback array every phone export carries after
+        //       semanticSegments - starts at byte 5,164,108 of 62,884,513
+        //       (8%), matching the report almost exactly. Once
+        //       semanticSegments already produced path points, every one of
+        //       the remaining ~57 MB of rawSignals entries costs a
+        //       p.skipChildren() and nothing else - no field reads, no
+        //       allocation - while the 8% before it is genuinely expensive:
+        //       timestamps, coordinates, Segment/PathPoint objects. A plain
+        //       bytesRead/totalBytes ratio is accurate about bytes and
+        //       wrong about time, which is exactly the crawl-then-jump the
+        //       report described.
+        //
+        //       First attempt (reverted) tried to paper over the jump with
+        //       an indeterminate "Finishing up" spinner for the skip phase.
+        //       Correctly labelled but not what was asked for - the bar
+        //       still didn't fill evenly, just stopped admitting a number
+        //       near the end. This version fixes the number itself:
+        //       TimelineParser.findKeyOffsets does one cheap sequential
+        //       byte scan (no JSON parsing) before the real parse to find
+        //       where semanticSegments/timelineObjects/locations and
+        //       rawSignals each start. TimelineViewModel.weightedProgress
+        //       then maps bytes before that split into the first 90% of the
+        //       bar and bytes after it into the last 10%, so the bar spends
+        //       most of its range on the phase that takes most of the time.
+        //       The split is only trusted when the content key comes before
+        //       rawSignals - the shape every real export takes - so a file
+        //       without that shape (or without rawSignals at all) falls
+        //       back to the plain byte ratio, unchanged from before.
+        //
+        //       New tests: TimelineParserKeyOffsetsTest (the byte scan,
+        //       including a needle split across its 64 KB read boundary),
+        //       TimelineViewModelProgressTest (the weighting function), and
+        //       a regression test pinning the real Timeline.json's split at
+        //       byte 5,164,108 so this can't silently regress. Full unit
+        //       suite (159 tests) green.
+        //
+        //       Still on versionCode 15 - unspent, not yet uploaded. No new
+        //       strings this time - the previous attempt's "Finishing up"
+        //       string is gone with it.
         versionCode = 15
-        versionName = "1.7.1"
+        versionName = "1.7.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

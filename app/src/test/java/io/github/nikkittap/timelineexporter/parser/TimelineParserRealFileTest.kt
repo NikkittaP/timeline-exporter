@@ -55,6 +55,34 @@ class TimelineParserRealFileTest {
     }
 
     /**
+     * Pins the load-progress fix (weightedProgress in TimelineViewModel)
+     * against the file that originally reported the bug: the bar crawled
+     * through the first 5-6 MB of a 62 MB export, then jumped to done.
+     * findKeyOffsets should find semanticSegments right at the start and
+     * rawSignals right around where the crawl-then-jump was observed.
+     */
+    @Test
+    fun `findKeyOffsets locates the split point that caused the progress bar bug`() {
+        assumeTrue(
+            "Skipped: $realFile not present (this test is developer-local only).",
+            Files.exists(realFile),
+        )
+        val offsets = Files.newInputStream(realFile).use { findKeyOffsets(it) }
+
+        println("firstContentKeyOffset=${offsets.firstContentKeyOffset}, rawSignalsOffset=${offsets.rawSignalsOffset}")
+        assertTrue(offsets.firstContentKeyOffset != null)
+        assertTrue(offsets.rawSignalsOffset != null)
+        assertTrue(
+            "expected the content key before rawSignals",
+            offsets.firstContentKeyOffset!! < offsets.rawSignalsOffset!!,
+        )
+        val fileSize = Files.size(realFile)
+        val splitFraction = offsets.rawSignalsOffset!!.toDouble() / fileSize
+        // Reported as "slow for the first 5-6 MB of 62 MB" - roughly 8-10%.
+        assertTrue("split at $splitFraction of the file", splitFraction in 0.03..0.20)
+    }
+
+    /**
      * The time-of-day window against a year of real data.
      *
      * Deliberately a partition rather than a magic number: a window and its
