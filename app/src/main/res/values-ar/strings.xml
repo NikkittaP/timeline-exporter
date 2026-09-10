@@ -69,7 +69,6 @@
 
     <string name="preview_title">معاينة</string>
     <string name="preview_no_points">لا توجد نقاط تطابق التصفية الحالية — لا شيء للعرض.</string>
-    <string name="preview_expand">تكبير</string>
     <string name="preview_close">إغلاق</string>
 
     <string name="export_title">تصدير</string>
@@ -220,5 +219,17 @@
     <string name="time_preset_evening">المساء</string>
     <string name="time_preset_night">الليل</string>
     <string name="map_color_by_day">لون حسب اليوم</string>
-    <string name="map_day_legend">التواريخ · اسحب لعرض المزيد</string>
+
+    <string name="map_expand">تكبير الخريطة</string>
+    <string name="map_exit_fullscreen">الخروج من وضع ملء الشاشة</string>
+
+    <string name="map_show_all_days">عرض كل الأيام</string>
+    <plurals name="map_day_count">
+        <item quantity="zero">%1$d يوم</item>
+        <item quantity="one">يوم واحد</item>
+        <item quantity="two">يومان</item>
+        <item quantity="few">%1$d أيام</item>
+        <item quantity="many">%1$d يومًا</item>
+        <item quantity="other">%1$d يوم</item>
+    </plurals>
 </resources>

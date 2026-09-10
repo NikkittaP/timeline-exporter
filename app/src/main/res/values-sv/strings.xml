@@ -69,7 +69,6 @@
 
     <string name="preview_title">Förhandsvisning</string>
     <string name="preview_no_points">Inga punkter matchar det aktuella filtret — inget att visa.</string>
-    <string name="preview_expand">Förstora</string>
     <string name="preview_close">Stäng</string>
 
     <string name="export_title">Exportera</string>
@@ -220,5 +219,13 @@
     <string name="time_preset_evening">Kväll</string>
     <string name="time_preset_night">Natt</string>
     <string name="map_color_by_day">Färg per dag</string>
-    <string name="map_day_legend">Datum · svep för att se fler</string>
+
+    <string name="map_expand">Förstora kartan</string>
+    <string name="map_exit_fullscreen">Avsluta helskärm</string>
+
+    <string name="map_show_all_days">Visa alla dagar</string>
+    <plurals name="map_day_count">
+        <item quantity="one">%1$d dag</item>
+        <item quantity="other">%1$d dagar</item>
+    </plurals>
 </resources>

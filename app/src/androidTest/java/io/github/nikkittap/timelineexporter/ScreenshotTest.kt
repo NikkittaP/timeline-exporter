@@ -284,14 +284,14 @@ class ScreenshotTest {
         settle(MAP_TILE_WAIT_MS)
 
         // 03 — open the full-screen map. This is also the base image that
-        // add_hero_caption.py turns into the captioned 01_hero.
-        composeRule.onNodeWithText(str(R.string.preview_expand)).performScrollTo().performClick()
-        // The fullscreen close action is an icon button now, so it is a
-        // content description rather than a label on screen.
-        waitForDescription(R.string.preview_close, timeoutMs = 10_000)
+        // add_hero_caption.py turns into the captioned 01_hero. The fullscreen
+        // control is an icon button on the map itself now, so both entering
+        // and leaving are found by content description rather than a label.
+        composeRule.onNodeWithContentDescription(str(R.string.map_expand)).performScrollTo().performClick()
+        waitForDescription(R.string.map_exit_fullscreen, timeoutMs = 10_000)
         settle(MAP_TILE_WAIT_MS)
         Screengrab.screenshot("03_map_fullscreen")
-        composeRule.onNodeWithContentDescription(str(R.string.preview_close)).performClick()
+        composeRule.onNodeWithContentDescription(str(R.string.map_exit_fullscreen)).performClick()
         composeRule.waitForIdle()
 
         // 04 — open the custom date-range (calendar) dialog.

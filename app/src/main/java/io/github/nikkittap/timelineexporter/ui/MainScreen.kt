@@ -428,7 +428,8 @@ fun MainScreen(
         movableContentOf<MapSubject, Modifier> { subject, m ->
             TimelineMap(
                 subject = subject,
-                onClose = if (currentMapFullscreen) ({ mapFullscreen = false }) else null,
+                fullscreen = currentMapFullscreen,
+                onToggleFullscreen = { mapFullscreen = !currentMapFullscreen },
                 selectedPlace = currentSelectedPlace,
                 selectedPlaceName = currentSelectedName,
                 onPlaceSelected = currentPlacePicked,
@@ -630,19 +631,6 @@ fun MainScreen(
                 StepCard(
                     step = 3,
                     title = stringResource(R.string.step_preview),
-                    // Only the map has anything to expand into; the places
-                    // list offers "show all" under itself, where the row count
-                    // that motivates it is visible.
-                    trailing = {
-                        // Both kinds have a map to expand now; the places list
-                        // keeps its own "show all" underneath, where the row
-                        // count that motivates it is visible.
-                        if (!mapSubject.isEmpty) {
-                            TextButton(onClick = { mapFullscreen = true }) {
-                                Text(stringResource(R.string.preview_expand))
-                            }
-                        }
-                    },
                 ) {
                     ContentSwitch(
                         selected = contentKind,

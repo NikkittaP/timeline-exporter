@@ -2,7 +2,10 @@ package io.github.nikkittap.timelineexporter.ui
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 internal val TRACK_DAY_COLORS = listOf(
     "#0072B2", "#D55E00", "#009E73", "#CC79A7", "#7560CF", "#B58A00", "#009FB5",
@@ -71,6 +74,94 @@ internal fun PathPoint.trackDate(fallbackZone: ZoneId): LocalDate =
 private const val SECONDS_PER_DAY = 86_400L
 
 internal data class TrackDayRun(val date: LocalDate, val points: List<PathPoint>)
+
+/** How many swatches the compact "Color by day" summary hints with. */
+private const val LEGEND_HINT_DOTS = 5
+
+/**
+ * What the compact `Color by day` row shows in place of every date: how many
+ * distinct days are coloured, the span they cover, and a small, evenly spread
+ * sample of their colours — not the full set, which is the whole reason this
+ * exists instead of the row it replaced.
+ */
+internal data class DayLegendSummary(
+    val dayCount: Int,
+    val firstDate: LocalDate,
+    val lastDate: LocalDate,
+    val hintDates: List<LocalDate>,
+)
+
+/**
+ * Reduce a scan of a track's local days to a [DayLegendSummary], or null for
+ * no days at all. [dates] need not be sorted or de-duplicated — both happen
+ * here, so a caller can hand over the raw per-sample scan.
+ */
+internal fun dayLegendSummary(dates: List<LocalDate>): DayLegendSummary? {
+    val sorted = dates.distinct().sorted()
+    if (sorted.isEmpty()) return null
+    val hints = if (sorted.size <= LEGEND_HINT_DOTS) sorted else List(LEGEND_HINT_DOTS) { i ->
+        sorted[i * (sorted.size - 1) / (LEGEND_HINT_DOTS - 1)]
+    }
+    return DayLegendSummary(sorted.size, sorted.first(), sorted.last(), hints)
+}
+
+/**
+ * The summary's date span as one localized line: a single day reads as just
+ * that day, a range inside one year drops the repeated year to its end, and a
+ * range crossing years drops the day-of-month a reader cannot compare across
+ * years anyway.
+ */
+internal fun formatDayRange(summary: DayLegendSummary, locale: Locale): String {
+    val first = summary.firstDate
+    val last = summary.lastDate
+    return when {
+        first == last -> first.format(DateTimeFormatter.ofPattern("MMM d, yyyy", locale))
+        first.year == last.year -> {
+            val day = DateTimeFormatter.ofPattern("MMM d", locale)
+            val year = DateTimeFormatter.ofPattern("yyyy", locale)
+            "${first.format(day)} – ${last.format(day)}, ${first.format(year)}"
+        }
+        else -> {
+            val monthYear = DateTimeFormatter.ofPattern("MMM yyyy", locale)
+            "${first.format(monthYear)} – ${last.format(monthYear)}"
+        }
+    }
+}
+
+/** One row of the full day list the "Show all days" sheet lays out. */
+internal sealed interface DayListEntry {
+    data class YearHeader(val year: Int) : DayListEntry
+    data class MonthHeader(val month: YearMonth) : DayListEntry
+    data class Day(val date: LocalDate) : DayListEntry
+}
+
+/**
+ * The full set of days, most recent first, grouped Year -> Month the way the
+ * "Show all days" sheet lays them out. [dates] need not be sorted or
+ * de-duplicated. A flat list of rows rather than a nested structure, because
+ * that is what a single [androidx.compose.foundation.lazy.LazyColumn] needs
+ * to stay lazy over a set that can run into the thousands.
+ */
+internal fun dayListEntries(dates: List<LocalDate>): List<DayListEntry> {
+    val descending = dates.distinct().sortedDescending()
+    val entries = ArrayList<DayListEntry>(descending.size + descending.size / 20 + 2)
+    var lastYear: Int? = null
+    var lastMonth: YearMonth? = null
+    for (date in descending) {
+        if (date.year != lastYear) {
+            entries += DayListEntry.YearHeader(date.year)
+            lastYear = date.year
+            lastMonth = null
+        }
+        val month = YearMonth.from(date)
+        if (month != lastMonth) {
+            entries += DayListEntry.MonthHeader(month)
+            lastMonth = month
+        }
+        entries += DayListEntry.Day(date)
+    }
+    return entries
+}
 
 /**
  * Split one continuous run, after geographic gaps have already been removed.

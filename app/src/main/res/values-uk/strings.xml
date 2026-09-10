@@ -69,7 +69,6 @@
 
     <string name="preview_title">Перегляд</string>
     <string name="preview_no_points">Немає точок за поточним фільтром — нічого показати.</string>
-    <string name="preview_expand">Розгорнути</string>
     <string name="preview_close">Закрити</string>
 
     <string name="export_title">Експорт</string>
@@ -220,5 +219,15 @@
     <string name="time_preset_evening">Вечір</string>
     <string name="time_preset_night">Ніч</string>
     <string name="map_color_by_day">Колір за днями</string>
-    <string name="map_day_legend">Дати · гортайте горизонтально</string>
+
+    <string name="map_expand">Розгорнути карту</string>
+    <string name="map_exit_fullscreen">Згорнути карту</string>
+
+    <string name="map_show_all_days">Показати всі дні</string>
+    <plurals name="map_day_count">
+        <item quantity="one">%1$d день</item>
+        <item quantity="few">%1$d дні</item>
+        <item quantity="many">%1$d днів</item>
+        <item quantity="other">%1$d дня</item>
+    </plurals>
 </resources>

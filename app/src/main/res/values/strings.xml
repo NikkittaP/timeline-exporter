@@ -96,7 +96,6 @@
     <!-- Preview section -->
     <string name="preview_title">Preview</string>
     <string name="preview_no_points">No points match the current filter — nothing to preview.</string>
-    <string name="preview_expand">Expand</string>
     <string name="preview_close">Close</string>
 
     <!-- Export section -->
@@ -285,5 +284,19 @@
     <string name="filter_time_range" translatable="false">%1$s – %2$s</string>
     <string name="track_name_time_window" translatable="false">%1$s, %2$s–%3$s</string>
     <string name="map_color_by_day">Color by day</string>
-    <string name="map_day_legend">Dates · swipe to explore</string>
+
+    <!-- Map full screen control, placed as a map control above "Show the whole
+         track" rather than as a text button on the Preview card, so it is
+         obviously a property of the map rather than of the whole step. -->
+    <string name="map_expand">Expand map</string>
+    <string name="map_exit_fullscreen">Exit full screen</string>
+
+    <!-- The compact "Color by day" summary row, tappable to open the full,
+         scrollable list of every coloured day. -->
+    <string name="map_show_all_days">Show all days</string>
+    <plurals name="map_day_count">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <string name="map_day_legend_summary" translatable="false">%1$s · %2$s</string>
 </resources>

@@ -268,8 +268,37 @@ android {
         //       Still on versionCode 15 - unspent, not yet uploaded. No new
         //       strings this time - the previous attempt's "Finishing up"
         //       string is gone with it.
+        //   versionCode=15, versionName="1.8.0" -> fullscreen map rework: the
+        //       "Expand" text button is gone from the Preview header, replaced
+        //       by a fullscreen/fullscreen_exit control stacked on the map
+        //       itself, directly above "Fit to data" - fixing the confusion
+        //       where the panel's `X` looked like it only closed the "Color by
+        //       day" card when it actually closed the whole fullscreen view.
+        //       The `X` is gone; the same control now opens and closes
+        //       fullscreen from one spot, and Android Back/swipe-back close it
+        //       too (BackHandler already did this - only the entry point was
+        //       new). "Color by day"'s legend no longer lists every date in a
+        //       horizontal strip that broke down past a couple of weeks: it
+        //       shows a compact "N days · range" summary (a few sample
+        //       swatches, a day count, a date span), and tapping it opens a
+        //       Modal Bottom Sheet with the full set in a LazyColumn grouped
+        //       Year -> Month, most recent first. That list is now computed
+        //       from the whole track's distinct local days off the main
+        //       thread, not queried from whatever the camera happens to frame
+        //       each render frame - simpler, and no longer viewport-dependent,
+        //       which also deleted the per-rendered-frame throttled query this
+        //       screen used to run. New pure functions in TrackDays.kt
+        //       (dayLegendSummary, formatDayRange, dayListEntries) carry unit
+        //       tests. enableOnBackInvokedCallback turned on in the manifest
+        //       for the predictive-back animation.
+        //
+        //       New strings: map_expand, map_exit_fullscreen,
+        //       map_show_all_days, the map_day_count plurals - added to all 17
+        //       locales. preview_expand and map_day_legend removed everywhere
+        //       they're no longer read. Still on versionCode 15 - unspent, not
+        //       yet uploaded.
         versionCode = 15
-        versionName = "1.7.2"
+        versionName = "1.8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

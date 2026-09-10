@@ -3,12 +3,15 @@ package io.github.nikkittap.timelineexporter.ui
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.util.Locale
 
 class TrackDaysTest {
     private fun point(time: String, offset: Int? = 0) =
@@ -65,6 +68,67 @@ class TrackDaysTest {
         val cycle = (0L until 21L).map { monday.plusDays(it) }
         assertEquals(21, cycle.map(::trackDayColor).distinct().size)
         assertEquals(cycle.map(::trackDayColor), cycle.map { trackDayColor(it.plusDays(21)) })
+    }
+
+    @Test fun `day legend summary is null for no days and de-duplicates otherwise`() {
+        assertNull(dayLegendSummary(emptyList()))
+        val summary = dayLegendSummary(
+            listOf(LocalDate.parse("2026-01-05"), LocalDate.parse("2026-01-03"), LocalDate.parse("2026-01-05"))
+        )
+        assertEquals(2, summary!!.dayCount)
+        assertEquals(LocalDate.parse("2026-01-03"), summary.firstDate)
+        assertEquals(LocalDate.parse("2026-01-05"), summary.lastDate)
+    }
+
+    @Test fun `day legend summary hints stay bounded and span the full range`() {
+        val dates = (0L until 400L).map { LocalDate.parse("2025-01-01").plusDays(it) }
+        val summary = dayLegendSummary(dates)!!
+        assertEquals(400, summary.dayCount)
+        assertTrue(summary.hintDates.size <= 5)
+        assertEquals(dates.first(), summary.hintDates.first())
+        assertEquals(dates.last(), summary.hintDates.last())
+        assertEquals(summary.hintDates, summary.hintDates.sorted())
+
+        val fewDates = listOf(LocalDate.parse("2026-06-10"), LocalDate.parse("2026-06-11"), LocalDate.parse("2026-06-12"))
+        assertEquals(fewDates, dayLegendSummary(fewDates)!!.hintDates)
+    }
+
+    @Test fun `day range formatting collapses a single day and a shared year`() {
+        val oneDay = dayLegendSummary(listOf(LocalDate.parse("2026-06-10")))!!
+        assertEquals("Jun 10, 2026", formatDayRange(oneDay, Locale.US))
+
+        val sameYear = dayLegendSummary(listOf(LocalDate.parse("2026-06-10"), LocalDate.parse("2026-06-12")))!!
+        assertEquals("Jun 10 – Jun 12, 2026", formatDayRange(sameYear, Locale.US))
+
+        val crossYear = dayLegendSummary(listOf(LocalDate.parse("2025-01-15"), LocalDate.parse("2026-09-10")))!!
+        assertEquals("Jan 2025 – Sep 2026", formatDayRange(crossYear, Locale.US))
+    }
+
+    @Test fun `day list entries are grouped year, then month, most recent first`() {
+        val dates = listOf(
+            LocalDate.parse("2025-12-28"),
+            LocalDate.parse("2026-08-29"),
+            LocalDate.parse("2026-08-31"),
+            LocalDate.parse("2026-09-08"),
+            LocalDate.parse("2026-09-09"),
+            LocalDate.parse("2026-09-09"), // duplicate sample day
+        )
+        val entries = dayListEntries(dates)
+        assertEquals(
+            listOf(
+                DayListEntry.YearHeader(2026),
+                DayListEntry.MonthHeader(YearMonth.of(2026, 9)),
+                DayListEntry.Day(LocalDate.parse("2026-09-09")),
+                DayListEntry.Day(LocalDate.parse("2026-09-08")),
+                DayListEntry.MonthHeader(YearMonth.of(2026, 8)),
+                DayListEntry.Day(LocalDate.parse("2026-08-31")),
+                DayListEntry.Day(LocalDate.parse("2026-08-29")),
+                DayListEntry.YearHeader(2025),
+                DayListEntry.MonthHeader(YearMonth.of(2025, 12)),
+                DayListEntry.Day(LocalDate.parse("2025-12-28")),
+            ),
+            entries,
+        )
     }
 
     @Test fun `local day matches java time for fixed offsets and for a DST zone`() {

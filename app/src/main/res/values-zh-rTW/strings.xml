@@ -69,7 +69,6 @@
 
     <string name="preview_title">預覽</string>
     <string name="preview_no_points">沒有符合目前篩選條件的點 — 無可預覽內容。</string>
-    <string name="preview_expand">放大</string>
     <string name="preview_close">關閉</string>
 
     <string name="export_title">匯出</string>
@@ -220,5 +219,12 @@
     <string name="time_preset_evening">傍晚</string>
     <string name="time_preset_night">夜間</string>
     <string name="map_color_by_day">按日期著色</string>
-    <string name="map_day_legend">日期 · 左右滑動查看更多</string>
+
+    <string name="map_expand">放大地圖</string>
+    <string name="map_exit_fullscreen">結束全螢幕</string>
+
+    <string name="map_show_all_days">顯示所有日期</string>
+    <plurals name="map_day_count">
+        <item quantity="other">%1$d 天</item>
+    </plurals>
 </resources>

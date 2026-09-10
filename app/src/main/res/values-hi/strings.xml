@@ -69,7 +69,6 @@
 
     <string name="preview_title">पूर्वावलोकन</string>
     <string name="preview_no_points">मौजूदा फ़िल्टर से कोई पॉइंट मेल नहीं खाता — दिखाने के लिए कुछ नहीं।</string>
-    <string name="preview_expand">बड़ा करें</string>
     <string name="preview_close">बंद करें</string>
 
     <string name="export_title">एक्सपोर्ट</string>
@@ -220,5 +219,13 @@
     <string name="time_preset_evening">शाम</string>
     <string name="time_preset_night">रात</string>
     <string name="map_color_by_day">दिन के अनुसार रंग</string>
-    <string name="map_day_legend">तारीखें · देखने के लिए स्वाइप करें</string>
+
+    <string name="map_expand">मैप बड़ा करें</string>
+    <string name="map_exit_fullscreen">फ़ुल स्क्रीन से बाहर निकलें</string>
+
+    <string name="map_show_all_days">सभी दिन दिखाएँ</string>
+    <plurals name="map_day_count">
+        <item quantity="one">%1$d दिन</item>
+        <item quantity="other">%1$d दिन</item>
+    </plurals>
 </resources>

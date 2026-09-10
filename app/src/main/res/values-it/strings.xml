@@ -69,7 +69,6 @@
 
     <string name="preview_title">Anteprima</string>
     <string name="preview_no_points">Nessun punto corrisponde al filtro attuale — niente da mostrare.</string>
-    <string name="preview_expand">Ingrandisci</string>
     <string name="preview_close">Chiudi</string>
 
     <string name="export_title">Esporta</string>
@@ -220,5 +219,13 @@
     <string name="time_preset_evening">Sera</string>
     <string name="time_preset_night">Notte</string>
     <string name="map_color_by_day">Colore per giorno</string>
-    <string name="map_day_legend">Date · scorri per esplorare</string>
+
+    <string name="map_expand">Ingrandisci mappa</string>
+    <string name="map_exit_fullscreen">Esci da schermo intero</string>
+
+    <string name="map_show_all_days">Mostra tutti i giorni</string>
+    <plurals name="map_day_count">
+        <item quantity="one">%1$d giorno</item>
+        <item quantity="other">%1$d giorni</item>
+    </plurals>
 </resources>

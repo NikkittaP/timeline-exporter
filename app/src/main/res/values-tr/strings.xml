@@ -69,7 +69,6 @@
 
     <string name="preview_title">Önizleme</string>
     <string name="preview_no_points">Geçerli filtreyle eşleşen nokta yok — gösterilecek bir şey yok.</string>
-    <string name="preview_expand">Büyüt</string>
     <string name="preview_close">Kapat</string>
 
     <string name="export_title">Dışa aktar</string>
@@ -220,5 +219,13 @@
     <string name="time_preset_evening">Akşam</string>
     <string name="time_preset_night">Gece</string>
     <string name="map_color_by_day">Güne göre renk</string>
-    <string name="map_day_legend">Tarihler · görmek için kaydırın</string>
+
+    <string name="map_expand">Haritayı büyüt</string>
+    <string name="map_exit_fullscreen">Tam ekrandan çık</string>
+
+    <string name="map_show_all_days">Tüm günleri göster</string>
+    <plurals name="map_day_count">
+        <item quantity="one">%1$d gün</item>
+        <item quantity="other">%1$d gün</item>
+    </plurals>
 </resources>

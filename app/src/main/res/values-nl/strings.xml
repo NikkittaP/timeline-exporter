@@ -69,7 +69,6 @@
 
     <string name="preview_title">Voorbeeld</string>
     <string name="preview_no_points">Geen punten voor het huidige filter — niets te tonen.</string>
-    <string name="preview_expand">Vergroten</string>
     <string name="preview_close">Sluiten</string>
 
     <string name="export_title">Exporteren</string>
@@ -220,5 +219,13 @@
     <string name="time_preset_evening">Avond</string>
     <string name="time_preset_night">Nacht</string>
     <string name="map_color_by_day">Kleur per dag</string>
-    <string name="map_day_legend">Datums · veeg voor meer</string>
+
+    <string name="map_expand">Kaart vergroten</string>
+    <string name="map_exit_fullscreen">Volledig scherm sluiten</string>
+
+    <string name="map_show_all_days">Alle dagen tonen</string>
+    <plurals name="map_day_count">
+        <item quantity="one">%1$d dag</item>
+        <item quantity="other">%1$d dagen</item>
+    </plurals>
 </resources>

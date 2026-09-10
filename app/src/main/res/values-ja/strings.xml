@@ -69,7 +69,6 @@
 
     <string name="preview_title">プレビュー</string>
     <string name="preview_no_points">現在の絞り込みに一致するポイントがありません — 表示するものがありません。</string>
-    <string name="preview_expand">拡大</string>
     <string name="preview_close">閉じる</string>
 
     <string name="export_title">エクスポート</string>
@@ -220,5 +219,12 @@
     <string name="time_preset_evening">夕方</string>
     <string name="time_preset_night">夜</string>
     <string name="map_color_by_day">日ごとに色分け</string>
-    <string name="map_day_legend">日付 · スワイプして表示</string>
+
+    <string name="map_expand">地図を拡大</string>
+    <string name="map_exit_fullscreen">全画面表示を終了</string>
+
+    <string name="map_show_all_days">すべての日を表示</string>
+    <plurals name="map_day_count">
+        <item quantity="other">%1$d日</item>
+    </plurals>
 </resources>
