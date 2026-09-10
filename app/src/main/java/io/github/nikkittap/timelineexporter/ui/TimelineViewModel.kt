@@ -42,6 +42,14 @@ sealed interface LoadingPhase {
     data class ReadingFile(val bytesRead: Long, val totalBytes: Long?) : LoadingPhase
     data object DecodingJson : LoadingPhase
     data class ExtractingPoints(val done: Int, val total: Int) : LoadingPhase
+    /**
+     * Fast-forwarding through leftover data that turned out to be unneeded.
+     * Deliberately carries no byte or item count — see
+     * [io.github.nikkittap.timelineexporter.parser.ParserStage.SkippingFallbackData]
+     * for why putting a number on this phase is what caused the progress bar
+     * to look broken in the first place.
+     */
+    data object FinishingUp : LoadingPhase
     data object SortingPoints : LoadingPhase
 }
 
@@ -190,6 +198,7 @@ class TimelineViewModel : ViewModel() {
                                         LoadingPhase.ReadingFile(stream.bytesRead, totalBytes)
                                     is ParserStage.ExtractingSegments ->
                                         LoadingPhase.ReadingFile(stream.bytesRead, totalBytes)
+                                    ParserStage.SkippingFallbackData -> LoadingPhase.FinishingUp
                                     ParserStage.Sorting -> LoadingPhase.SortingPoints
                                 }
                             )

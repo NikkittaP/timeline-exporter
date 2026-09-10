@@ -223,8 +223,38 @@ android {
         //       place every other launcher in this app already lives. Four new
         //       strings across all 18 locales; no parser, exporter or map
         //       changes.
+        //   versionCode=15, versionName="1.7.2" -> fix the load-progress bar
+        //       looking broken on real phone exports: it crawled through the
+        //       first few percent, then rocketed to 100% in under a second.
+        //       Root-caused against Timeline.json (62 MB, one of the dev
+        //       fixtures under F:/Timeline): the rawSignals key that trails
+        //       semanticSegments in every real export starts at byte
+        //       5,164,108 of 62,884,513 - 8% in - and once semanticSegments
+        //       has already produced path points, every one of the
+        //       remaining ~57 MB of rawSignals entries is a
+        //       p.skipChildren() with no object allocation, not a real
+        //       parse. Reporting that skip on the same byte scale as the
+        //       expensive stage before it is exactly the crawl-then-rocket
+        //       the report described - the byte count was accurate; the
+        //       assumption that a byte costs the same everywhere wasn't.
+        //
+        //       ParserStage gains a SkippingFallbackData case, raised
+        //       instead of ExtractingSegments from the rawSignals loop
+        //       whenever it is only skipping (points already came from
+        //       semanticSegments). LoadingPhase.FinishingUp mirrors it on
+        //       the UI side and renders as the existing indeterminate
+        //       spinner (null progress), the same way SortingPoints already
+        //       does - no new progress math, just admitting this phase's
+        //       duration doesn't track its size. New test: skipping a
+        //       redundant rawSignals tail reports SkippingFallbackData, not
+        //       ExtractingSegments.
+        //
+        //       Still on versionCode 15 - unspent, not yet uploaded. One new
+        //       string, loading_finishing, added to values/ and values-ru/
+        //       only; the other 16 locales fall back to the English default
+        //       until translated.
         versionCode = 15
-        versionName = "1.7.1"
+        versionName = "1.7.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

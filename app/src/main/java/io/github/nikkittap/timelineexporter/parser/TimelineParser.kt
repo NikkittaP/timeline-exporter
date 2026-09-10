@@ -27,6 +27,20 @@ sealed interface ParserStage {
     /** Walking the decoded segments. [done] of [total] processed so far. */
     data class ExtractingSegments(val done: Int, val total: Int) : ParserStage
 
+    /**
+     * Fast-forwarding through a `rawSignals` array that turned out to be
+     * unneeded — path points already came from `semanticSegments` — so each
+     * entry is only skipped, never parsed. This is what a bug report called
+     * "the progress bar crawls for the first few MB, then flies through the
+     * rest": `rawSignals` is routinely the bulk of a phone export's bytes but
+     * costs almost nothing to get through once it's known to be redundant, so
+     * reporting it byte-for-byte alongside the expensive stage above makes an
+     * accurate byte count look like a stall followed by a jump. Carrying no
+     * counts is deliberate — the UI should show this as "almost done", not
+     * try to put a number on a phase whose duration doesn't track its size.
+     */
+    data object SkippingFallbackData : ParserStage
+
     /** Final sort of path points by time. Usually fast. */
     data object Sorting : ParserStage
 }
@@ -157,16 +171,22 @@ private fun streamTimeline(p: JsonParser, onProgress: (ParserStage) -> Unit): Pa
                         sawRawSignals = true
                         // Only ever used as a fallback when nothing else yielded
                         // points. If we already have path points (the normal case)
-                        // we skip each entry instead of parsing it — but still walk
-                        // the array element-by-element so byte progress keeps
-                        // advancing through this (often large) trailing section.
+                        // each entry is skipped, not parsed — cheap enough that it
+                        // shouldn't be reported on the same byte-progress scale as
+                        // the real extraction above (see SkippingFallbackData).
                         if (p.currentToken() == JsonToken.START_ARRAY) {
                             val collect = points.isEmpty()
                             var i = 0
                             while (p.nextToken() != JsonToken.END_ARRAY) {
-                                if (collect) extractRawSignal(p, fallbackSignalPoints) else p.skipChildren()
-                                i++
-                                if (i % PROGRESS_STRIDE == 0) onProgress(ParserStage.ExtractingSegments(total, total))
+                                if (collect) {
+                                    extractRawSignal(p, fallbackSignalPoints)
+                                    i++
+                                    if (i % PROGRESS_STRIDE == 0) onProgress(ParserStage.ExtractingSegments(total, total))
+                                } else {
+                                    p.skipChildren()
+                                    i++
+                                    if (i % PROGRESS_STRIDE == 0) onProgress(ParserStage.SkippingFallbackData)
+                                }
                             }
                         } else p.skipChildren()
                     }
