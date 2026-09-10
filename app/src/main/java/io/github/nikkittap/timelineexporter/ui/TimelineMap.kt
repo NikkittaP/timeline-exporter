@@ -544,9 +544,9 @@ fun TimelineMap(
     // thread the moment the map stops moving; turned into days off it.
     var viewWindow by remember { mutableStateOf<TrackWindow?>(null) }
 
-    // How tall the `Color by day` card turned out to be, in pixels. Both the
-    // day scan and the camera fit treat the strip it covers as not visible,
-    // because it is painted over the map rather than beside it.
+    // How tall the `Color by day` card turned out to be, in pixels. What the
+    // camera fit keeps clear, so a route is never framed underneath it. The
+    // day scan does not use it: see [readWindow].
     var legendHeightPx by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(subject, colorByDay, fallbackZone) {
@@ -683,13 +683,14 @@ fun TimelineMap(
         viewWindow = if (destroyed.get() || map == null) {
             null
         } else {
-            runCatching { readWindow(map, mapView, legendHeightPx) }.getOrNull()
+            runCatching { readWindow(map, mapView) }.getOrNull()
         }
     }
 
-    // The card's height is part of the window, so the legend appearing (or a
-    // locale wrapping its text onto a second line) has to re-measure.
-    LaunchedEffect(legendHeightPx, loadedMap) { refreshWindow() }
+    // A map that arrives already framed - a file loaded into a screen the user
+    // is not touching - gets its first window here; after that the idles below
+    // own it.
+    LaunchedEffect(loadedMap) { refreshWindow() }
 
     // Forward Compose lifecycle events to MapView. Without this, MapLibre
     // would never know it should pause GL rendering when the screen is hidden.
@@ -1048,13 +1049,19 @@ fun TimelineMap(
             Surface(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    // Measured outside its own padding, because what the map
-                    // loses to this card is the whole strip it sits in.
+                    // Measured outside its own padding, because the strip the
+                    // camera fit has to keep clear is the whole one it sits in.
                     .onSizeChanged { legendHeightPx = it.height }
                     .padding(12.dp)
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
+                // Translucent enough that a route crossing behind it stays
+                // visible, which is what lets the day count describe the whole
+                // view and still agree with what is on screen. Not so
+                // translucent that a label has to compete with the basemap:
+                // the surface still carries the text, the map only shows
+                // through it.
+                color = MaterialTheme.colorScheme.surface.copy(alpha = LEGEND_CARD_ALPHA),
                 shadowElevation = 3.dp,
             ) {
                 Column {
@@ -2236,11 +2243,16 @@ private fun readCamera(
  * The patch of world the camera is looking at, or null before the view has
  * been laid out or while a tilted camera has a corner on the horizon.
  *
- * [topPx] is how much of the top the `Color by day` card covers, and it comes
- * off the window: a day whose only line runs behind the card is not a day the
- * user can see, and listing it makes the legend disagree with the screen.
- * Never more than half the view, though — a card taller than that would leave
- * a window so short that "in view" would stop meaning anything.
+ * The whole view, chrome included. The `Color by day` card used to come off
+ * the top of it, on the reasoning that a day whose only line runs behind the
+ * card is not a day the user can see - but the card is translucent and inset,
+ * with map above it and map down both its sides, so a route it happens to
+ * cross is plainly still on screen. Docking a strip of the count for it meant
+ * the legend disagreed with what the user could see, which is the same
+ * complaint the query this replaced produced by a different route. Chrome
+ * painted over the map does not move the edge of the view. Framing the camera
+ * still keeps clear of the card - see [MapInsets] - because that decides where
+ * the track is *put*, which is a different question.
  *
  * The edge is walked as a loop of samples rather than jumped corner to corner,
  * because [longitudeArc] can only add up steps that are each well inside half
@@ -2252,17 +2264,16 @@ private fun readCamera(
  * way keeps the count from dropping days that are plainly on screen, which is
  * the failure worth avoiding.
  */
-private fun readWindow(map: MapLibreMap, view: View, topPx: Int): TrackWindow? {
+private fun readWindow(map: MapLibreMap, view: View): TrackWindow? {
     val width = view.width.toFloat()
     val height = view.height.toFloat()
     if (width <= 0f || height <= 0f) return null
-    val top = topPx.toFloat().coerceIn(0f, height * 0.5f)
     val projection = map.projection
 
     // Along the top edge, then back along the bottom, so that every pair of
     // neighbours in this list is a pair of neighbours on the ground too.
     val steps = 0..WINDOW_EDGE_STEPS
-    val edge = steps.map { PointF(width * it / WINDOW_EDGE_STEPS, top) } +
+    val edge = steps.map { PointF(width * it / WINDOW_EDGE_STEPS, 0f) } +
         steps.map { PointF(width * (WINDOW_EDGE_STEPS - it) / WINDOW_EDGE_STEPS, height) }
     val seen = edge.map { projection.fromScreenLocation(it) }
     if (seen.any { !it.latitude.isFinite() || !it.longitude.isFinite() }) return null
@@ -2278,6 +2289,9 @@ private fun readWindow(map: MapLibreMap, view: View, topPx: Int): TrackWindow? {
 
 /** How many pieces each of the two horizontal edges is walked in. */
 private const val WINDOW_EDGE_STEPS = 4
+
+/** How solid the `Color by day` card sits over the map. */
+private const val LEGEND_CARD_ALPHA = 0.82f
 
 /**
  * Whether the camera has wandered far enough from the fitted view to be worth

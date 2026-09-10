@@ -1248,6 +1248,18 @@ private fun PreviewContent(
 }
 
 /**
+ * How tall the inline map is.
+ *
+ * It was 280 dp, and the `Color by day` card is about half of that once its
+ * legend row appears, so most of the tile was a control panel with a strip of
+ * map under it. This is that 280 dp of map plus room for the card on top of
+ * it, which is what makes the preview a preview rather than a hint of one.
+ * Full screen remains the way to look at a route properly; this is the size
+ * at which it is worth glancing at.
+ */
+private val MAP_TILE_HEIGHT = 420.dp
+
+/**
  * The bordered tile the map lives in.
  *
  * [inlineMapActive] is false while the fullscreen map is up: the map itself is
@@ -1264,7 +1276,7 @@ private fun MapTile(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(280.dp)
+            .height(MAP_TILE_HEIGHT)
             .clip(shape)
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
     ) {

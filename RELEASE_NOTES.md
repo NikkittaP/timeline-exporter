@@ -180,6 +180,26 @@ year's travel, and both traced to the same call.
   is why the new scan clips edges against the window rather than testing where
   their endpoints fall.
 
+## v1.8.0 (still versionCode 15) — the card stops eating the map
+
+Follow-up to the day count above, from the same session.
+
+- **The `Color by day` card no longer costs you days.** Its height came off
+  the top of the counted window, so a route it happened to cross stopped being
+  "in view" - while map showed above it and down both its sides, and the whole
+  route was plainly on screen. The count describes the camera again; chrome
+  painted over the map does not move the edge of the view. On the reported
+  export that is the difference between 365 days and 377.
+- **The card is translucent**, so a route crossing behind it stays visible
+  rather than being taken on trust. Not so translucent that its two labels
+  have to compete with the basemap.
+- **Framing still keeps clear of it.** "Show the whole track" and focusing one
+  day both still leave the card's strip empty, because where the track is
+  *put* is a different question from what is on screen.
+- **The inline preview map is half again as tall**, 280 dp to 420 dp. At the
+  old size the card was most of the tile and the map was the strip underneath
+  it; this is the old 280 dp of map with room for the card above it.
+
 ## Store changelog — draft for the next upload
 
 Four bullets, because that is what fits above the fold. Written from the whole
