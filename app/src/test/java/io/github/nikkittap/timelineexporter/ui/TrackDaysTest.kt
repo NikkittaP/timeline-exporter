@@ -197,4 +197,115 @@ class TrackDaysTest {
             )
         }
     }
+    // ---------- Which days are in view ----------
+
+    private fun at(time: String, lat: Double, lon: Double) =
+        PathPoint(Instant.parse(time), lat, lon, 0)
+
+    /** Every day, everywhere: the window a camera showing the whole earth has. */
+    private val world = TrackWindow(minLat = -90.0, maxLat = 90.0, westLon = -180.0, lonSpan = 360.0)
+
+    /** Three days in three places, each with a short line of its own. */
+    private val threeDays = listOf(
+        at("2026-09-09T08:00:00Z", 55.00, 13.00), at("2026-09-09T08:20:00Z", 55.02, 13.02),
+        at("2026-09-10T08:00:00Z", 57.00, 15.00), at("2026-09-10T08:20:00Z", 57.02, 15.02),
+        at("2026-09-11T08:00:00Z", 59.00, 17.00), at("2026-09-11T08:20:00Z", 59.02, 17.02),
+    )
+
+    @Test fun `a day whose line crosses the view counts, with both its samples off screen`() {
+        val crossing = listOf(
+            at("2026-09-09T08:00:00Z", 55.01, 12.95),
+            at("2026-09-09T08:20:00Z", 55.01, 13.10),
+        )
+        val window = TrackWindow(minLat = 55.0, maxLat = 55.02, westLon = 13.0, lonSpan = 0.02)
+        assertEquals(
+            listOf(LocalDate.parse("2026-09-09")),
+            drawnTrackDays(crossing, ZoneOffset.UTC, window),
+        )
+    }
+
+    @Test fun `a view holding the whole track holds every day the track draws`() {
+        val everything = drawnTrackDays(threeDays, ZoneOffset.UTC)
+        assertEquals(
+            listOf("2026-09-09", "2026-09-10", "2026-09-11"),
+            everything.map { it.toString() },
+        )
+        assertEquals(everything, drawnTrackDays(threeDays, ZoneOffset.UTC, world))
+        val wide = TrackWindow(minLat = 54.0, maxLat = 60.0, westLon = 12.0, lonSpan = 6.0)
+        assertEquals(everything, drawnTrackDays(threeDays, ZoneOffset.UTC, wide))
+    }
+
+    @Test fun `narrowing the view can only drop days`() {
+        val wide = TrackWindow(minLat = 54.0, maxLat = 60.0, westLon = 12.0, lonSpan = 6.0)
+        val narrow = TrackWindow(minLat = 56.5, maxLat = 57.5, westLon = 14.5, lonSpan = 1.0)
+        val inWide = drawnTrackDays(threeDays, ZoneOffset.UTC, wide)
+        val inNarrow = drawnTrackDays(threeDays, ZoneOffset.UTC, narrow)
+        assertEquals(listOf(LocalDate.parse("2026-09-10")), inNarrow)
+        assertTrue(inWide.containsAll(inNarrow))
+    }
+
+    @Test fun `a view straddling the antimeridian is one arc, not the rest of the world`() {
+        val across = listOf(
+            at("2026-09-09T08:00:00Z", 60.0, 179.6),
+            at("2026-09-09T08:20:00Z", 60.0, -179.6),
+        )
+        val elsewhere = listOf(
+            at("2026-09-10T08:00:00Z", 60.0, 0.00),
+            at("2026-09-10T08:20:00Z", 60.0, 0.05),
+        )
+        val window = TrackWindow(minLat = 59.0, maxLat = 61.0, westLon = 179.0, lonSpan = 2.0)
+        assertEquals(
+            listOf(LocalDate.parse("2026-09-09")),
+            drawnTrackDays(across + elsewhere, ZoneOffset.UTC, window),
+        )
+    }
+
+    @Test fun `a flight is a dashed connector rather than a line, and brings no day with it`() {
+        val flight = listOf(
+            at("2026-09-09T08:00:00Z", 55.6, 12.6),
+            at("2026-09-09T14:00:00Z", 41.3, 69.2),
+        )
+        assertTrue(drawnTrackDays(flight, ZoneOffset.UTC).isEmpty())
+        assertTrue(drawnTrackDays(flight, ZoneOffset.UTC, world).isEmpty())
+    }
+
+    @Test fun `a day left with one lone sample draws nothing and counts as nothing`() {
+        val lone = listOf(at("2026-09-09T08:00:00Z", 55.0, 13.0))
+        assertTrue(drawnTrackDays(lone, ZoneOffset.UTC, world).isEmpty())
+    }
+
+    @Test fun `the days in view are the days the track is split into`() {
+        val points = listOf(
+            at("2026-09-08T23:50:00Z", 55.00, 13.00),
+            at("2026-09-09T00:10:00Z", 55.01, 13.01),
+            at("2026-09-09T23:55:00Z", 55.02, 13.02),
+            at("2026-09-10T00:05:00Z", 55.03, 13.03),
+        )
+        assertEquals(
+            splitTrackDays(points, ZoneOffset.UTC).map { it.date },
+            drawnTrackDays(points, ZoneOffset.UTC, world),
+        )
+    }
+    /** Walk a view's top edge west to east and back along its bottom. */
+    private fun ring(west: Double, span: Double, steps: Int = 4): List<Double> {
+        val top = (0..steps).map { west + span * it / steps }
+        return (top + top.reversed()).map { wrapLongitude(it) }
+    }
+
+    @Test fun `a view wider than half the world is measured the way it is drawn`() {
+        val arc = longitudeArc(ring(west = -53.6, span = 183.4))
+        assertEquals(-53.6, arc.west, 1e-9)
+        assertEquals(183.4, arc.span, 1e-9)
+    }
+
+    @Test fun `a view straddling the antimeridian is one arc rather than two`() {
+        val arc = longitudeArc(ring(west = 170.0, span = 20.0))
+        assertEquals(170.0, arc.west, 1e-9)
+        assertEquals(20.0, arc.span, 1e-9)
+    }
+
+    @Test fun `a view of one meridian has no width, and one of the world has all of it`() {
+        assertEquals(0.0, longitudeArc(listOf(12.6, 12.6, 12.6)).span, 1e-9)
+        assertEquals(360.0, longitudeArc(ring(west = -180.0, span = 400.0, steps = 8)).span, 1e-9)
+    }
 }

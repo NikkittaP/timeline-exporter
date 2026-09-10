@@ -137,6 +137,49 @@ a scrollable, Year → Month grouped sheet. What follows is the second half.
   control stack and the attribution, so the two cannot disagree about where
   the usable edges of the view are.
 
+## v1.8.0 (still versionCode 15) — the day count, and the crash behind it
+
+Two reports against the build above, both from a 61 MB phone export of a
+year's travel, and both traced to the same call.
+
+- **The day count no longer changes with the zoom.** Framed on the whole trip
+  the legend said "48 days in view"; zoomed into one corner of that same trip
+  it said 211. A window that shows less cannot contain more, so the number was
+  never really about the window. It was read out of the rendered map, and the
+  track reaches MapLibre as GeoJSON that is tiled and simplified per zoom
+  level: a day spent inside one city is simplified out of the tiles as soon as
+  the camera pulls back, still on screen as one thread in a knot of lines but
+  gone from anything the renderer can be asked about. The count is now read
+  off the samples, so it is a function of the camera and the file alone. The
+  same export that reported 48 reports 365, and 377 — all of them — once the
+  card is not covering the northern end of the track.
+- **Full screen no longer takes the app down with it.** With `Color by day`
+  on, expanding or collapsing the map killed the process every time, in
+  `Renderer::queryRenderedFeatures` on MapLibre's render thread. Re-parenting
+  the map between the Preview tile and the full-screen surface destroys and
+  rebuilds its GL surface, and the legend's viewport query — fired by the
+  camera- and map-idle listeners — landed in the middle of that. There is no
+  query left to land there: what the idle listeners read now is four
+  projections of the view's own edge, which touches nothing the renderer owns.
+- **A view wider than half the world is measured the way it is drawn.** At the
+  zoom that frames a year of travel a phone shows well over 180° of longitude,
+  and asking for the short way round between the two ends of a view that wide
+  names the way round the viewer is *not* looking — the window comes back
+  inside out and everything on screen reads as off it. The view's edge is
+  walked in quarters and the steps added up, which also folds a view
+  straddling the antimeridian into one arc rather than two halves of the world.
+- **"All days" lists the days the track draws a line for.** It used to list
+  every date with a sample in it, including days left with nothing to draw, so
+  the two counts were never quite comparable and the row could not tell when
+  the whole track was in view. Both ends are one scan now, under one set of
+  rules: a pair of samples further apart than the gap distance is a flight,
+  drawn dashed and not as track, and an edge belongs to its starting sample's
+  local day.
+- A day whose line crosses the screen with both of its samples off it still
+  counts — that was the one thing the rendered-feature query got right, and it
+  is why the new scan clips edges against the window rather than testing where
+  their endpoints fall.
+
 ## Store changelog — draft for the next upload
 
 Four bullets, because that is what fits above the fold. Written from the whole

@@ -272,7 +272,7 @@ private const val IMAGE_TRACK_ARROW = "track-arrow"
  * 80 km is comfortably above normal Timeline sampling density yet low enough
  * to catch short-haul flights.
  */
-private const val GAP_DISTANCE_METERS = 80_000.0
+internal const val GAP_DISTANCE_METERS = 80_000.0
 
 private const val EARTH_RADIUS_METERS = 6_371_000.0
 
@@ -519,15 +519,19 @@ fun TimelineMap(
     // be told a bitmap was authored in dp.
     val density = context.resources.displayMetrics.density
 
-    // Every local day the track covers, whether or not the camera is pointed
-    // at it: the sheet's "All days" list and the fallback below both describe
-    // the whole subject, so — unlike the viewport query — this does not wait
-    // on the style or an idle. Flipping the switch is the only thing that
-    // should make it appear, and a year of samples is cheap arithmetic next
-    // to the GeoJSON build the render effect already does off-thread.
+    // Every local day the track draws a line for, whether or not the camera is
+    // pointed at it: the sheet's "All days" list and the fallback below both
+    // describe the whole subject, so this waits on neither the style nor an
+    // idle. Flipping the switch is the only thing that should make it appear,
+    // and one pass over the samples is cheap arithmetic next to the GeoJSON
+    // build the render effect already does off-thread.
     var trackDays by remember { mutableStateOf<List<LocalDate>>(emptyList()) }
 
-    // The days with track geometry the camera can actually see.
+    // The days with a line inside the current view. The same scan under the
+    // same rules, one window narrower, which is what makes the two counts
+    // comparable — and so what lets the row below say "all of them" when they
+    // agree, instead of comparing a count of drawn days against a count of
+    // dates in the file and never quite matching.
     //
     // Null and empty are different answers, and the difference is the whole
     // honesty of the row below: null is "the map has not told us yet", where
@@ -536,21 +540,35 @@ fun TimelineMap(
     // over a screen with no track on it would be a lie.
     var visibleDays by remember { mutableStateOf<List<LocalDate>?>(null) }
 
+    // What the camera last settled on, in plain degrees. Read on the main
+    // thread the moment the map stops moving; turned into days off it.
+    var viewWindow by remember { mutableStateOf<TrackWindow?>(null) }
+
     // How tall the `Color by day` card turned out to be, in pixels. Both the
-    // viewport query and the camera fit treat the strip it covers as not
-    // visible, because it is painted over the map rather than beside it.
+    // day scan and the camera fit treat the strip it covers as not visible,
+    // because it is painted over the map rather than beside it.
     var legendHeightPx by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(subject, colorByDay, fallbackZone) {
-        // A new file, a new filter or a flipped switch invalidates the last
-        // viewport answer; the idle listeners below produce the next one.
+        // A new file, a new filter or a flipped switch invalidates what we
+        // last knew about the view; the idle listeners below say it again.
+        viewWindow = null
         visibleDays = null
-        trackDays = if (colorByDay && subject is MapSubject.Track && subject.points.isNotEmpty()) {
-            withContext(Dispatchers.Default) {
-                subject.points.asSequence().map { it.trackDate(fallbackZone) }.distinct().sorted().toList()
-            }
+        val points = (subject as? MapSubject.Track)?.points
+        trackDays = if (colorByDay && points != null) {
+            withContext(Dispatchers.Default) { drawnTrackDays(points, fallbackZone) }
         } else {
             emptyList()
+        }
+    }
+
+    LaunchedEffect(subject, colorByDay, fallbackZone, viewWindow) {
+        val window = viewWindow
+        val points = (subject as? MapSubject.Track)?.points
+        visibleDays = if (colorByDay && points != null && window != null) {
+            withContext(Dispatchers.Default) { drawnTrackDays(points, fallbackZone, window) }
+        } else {
+            null
         }
     }
 
@@ -649,50 +667,29 @@ fun TimelineMap(
         bottom = FIT_PADDING_PX + (MAP_BOTTOM_CHROME.value * density).toInt(),
     )
 
-    // The days with track geometry drawn in the current viewport.
+    // Where the camera is pointed, measured off the map itself.
     //
-    // Rendered features rather than samples inside a geographic box: a line
-    // can cross the whole screen with both of its endpoints off it, and a box
-    // test would drop exactly the day the user has zoomed in on. The rectangle
-    // also stops below the `Color by day` card - a day whose only line runs
-    // behind the card is not a day the user can see, and listing it makes the
-    // legend disagree with the screen.
-    //
-    // This is the query the last refactor deleted, and what was wrong with it
-    // was never the query: it was being driven from a per-rendered-frame
-    // listener, so a fling over a year of history walked the tile index and
-    // rebuilt matching lines as Java geometry sixty times a second. It now
-    // runs when the map has settled - see the two idle listeners below - which
-    // is once per gesture rather than once per frame.
-    val refreshVisibleDays by rememberUpdatedState {
+    // Four projections and no query. What stood here was
+    // `queryRenderedFeatures` over the viewport, and it was wrong twice over.
+    // It could only see geometry that had survived being tiled at the current
+    // zoom, so a day spent inside one city vanished from the answer as soon as
+    // the camera pulled back - the legend counted fewer days the more of the
+    // track was on screen. And it ran on MapLibre's render thread, which is
+    // where it took the process down with it whenever the GL surface was being
+    // rebuilt underneath it: exactly what re-parenting this map into and out
+    // of full screen does. Both are gone with the call.
+    val refreshWindow by rememberUpdatedState {
         val map = loadedMap
-        val style = loadedStyle
-        visibleDays = if (!destroyed.get() && colorByDay && subject is MapSubject.Track &&
-            map != null && style?.isFullyLoaded == true && style.getLayer(LAYER_TRACK) != null &&
-            mapView.width > 0 && mapView.height > 0
-        ) {
-            // Never more than half the view: a card taller than that would
-            // leave a query rectangle so short the answer stops meaning
-            // anything, and an empty answer reads as "the whole track".
-            val top = legendHeightPx.toFloat().coerceAtMost(mapView.height * 0.5f)
-            runCatching {
-                map.queryRenderedFeatures(
-                    RectF(0f, top, mapView.width.toFloat(), mapView.height.toFloat()),
-                    LAYER_TRACK,
-                )
-            }.getOrDefault(emptyList())
-                // Parsed per feature: one unreadable dayDate should cost that
-                // one line, not the whole legend.
-                .mapNotNull { it.trackDayDate() }
-                .distinct().sorted()
-        } else {
+        viewWindow = if (destroyed.get() || map == null) {
             null
+        } else {
+            runCatching { readWindow(map, mapView, legendHeightPx) }.getOrNull()
         }
     }
 
-    // The card's height is part of the query rectangle, so the legend appearing
-    // (or a locale wrapping its text onto a second line) has to re-ask.
-    LaunchedEffect(legendHeightPx, colorByDay) { refreshVisibleDays() }
+    // The card's height is part of the window, so the legend appearing (or a
+    // locale wrapping its text onto a second line) has to re-measure.
+    LaunchedEffect(legendHeightPx, loadedMap) { refreshWindow() }
 
     // Forward Compose lifecycle events to MapView. Without this, MapLibre
     // would never know it should pause GL rendering when the screen is hidden.
@@ -780,17 +777,17 @@ fun TimelineMap(
         val cameraIdle = MapLibreMap.OnCameraIdleListener {
             if (!destroyed.get()) {
                 readout = runCatching { readCamera(map, mapView, dataBounds, insets) }.getOrNull()
-                refreshVisibleDays()
+                refreshWindow()
             }
         }
         // Two idles, because they answer different questions. Camera-idle
         // fires when the gesture has settled, which is what makes a pan feel
-        // answered. Map-idle fires when the last tile of that view has
-        // actually been drawn, which is the only thing that fills the legend
-        // in on a map nobody has touched: the track source is tiled
-        // asynchronously, well after the render effect has returned.
+        // answered. Map-idle fires when the view has actually been drawn,
+        // which is what fills the legend in on a map nobody has touched -
+        // where the only camera move was the fit this file performed itself,
+        // and there may never be a gesture to settle.
         val mapIdle = MapView.OnDidBecomeIdleListener {
-            if (!destroyed.get()) refreshVisibleDays()
+            if (!destroyed.get()) refreshWindow()
         }
         map.addOnCameraIdleListener(cameraIdle)
         mapView.addOnDidBecomeIdleListener(mapIdle)
@@ -871,11 +868,12 @@ fun TimelineMap(
             withFrameNanos { }
             if (!destroyed.get()) {
                 readout = runCatching { readCamera(map, mapView, dataBounds, insets) }.getOrNull()
-                // Usually still empty here — the source has been handed the
-                // collection but not yet tiled — which is exactly the case the
-                // legend answers by describing the whole track. Map-idle
-                // corrects it a moment later.
-                refreshVisibleDays()
+                // One frame in, so this can name the view the camera fit is
+                // still flying towards rather than the one it lands on. That
+                // is what the idles above are for; until one of them arrives
+                // the legend describes the whole track, which is the honest
+                // answer for a camera that has not settled yet.
+                refreshWindow()
             }
         }
     }
@@ -2181,7 +2179,7 @@ private fun PathPoint.toPoint(): Point = Point.fromLngLat(longitude, latitude)
  * decide whether two consecutive samples are far enough apart to count as a
  * gap, so the small-angle accuracy of haversine is more than sufficient.
  */
-private fun haversineMeters(a: PathPoint, b: PathPoint): Double =
+internal fun haversineMeters(a: PathPoint, b: PathPoint): Double =
     haversineMeters(a.latitude, a.longitude, b.latitude, b.longitude)
 
 private fun haversineMeters(lat1Deg: Double, lon1Deg: Double, lat2Deg: Double, lon2Deg: Double): Double {
@@ -2233,6 +2231,53 @@ private fun readCamera(
 
     return MapReadout(metersPerPixel, isAdrift(map, bounds, insets, metersPerPixel, width))
 }
+
+/**
+ * The patch of world the camera is looking at, or null before the view has
+ * been laid out or while a tilted camera has a corner on the horizon.
+ *
+ * [topPx] is how much of the top the `Color by day` card covers, and it comes
+ * off the window: a day whose only line runs behind the card is not a day the
+ * user can see, and listing it makes the legend disagree with the screen.
+ * Never more than half the view, though — a card taller than that would leave
+ * a window so short that "in view" would stop meaning anything.
+ *
+ * The edge is walked as a loop of samples rather than jumped corner to corner,
+ * because [longitudeArc] can only add up steps that are each well inside half
+ * a turn, and a view this app is built for is routinely wider than that. A
+ * quarter of an edge per step leaves room to spare.
+ *
+ * A rotated map gives the box its quad fits in rather than the quad, which can
+ * call a day in view a moment before it slides in from a corner; erring that
+ * way keeps the count from dropping days that are plainly on screen, which is
+ * the failure worth avoiding.
+ */
+private fun readWindow(map: MapLibreMap, view: View, topPx: Int): TrackWindow? {
+    val width = view.width.toFloat()
+    val height = view.height.toFloat()
+    if (width <= 0f || height <= 0f) return null
+    val top = topPx.toFloat().coerceIn(0f, height * 0.5f)
+    val projection = map.projection
+
+    // Along the top edge, then back along the bottom, so that every pair of
+    // neighbours in this list is a pair of neighbours on the ground too.
+    val steps = 0..WINDOW_EDGE_STEPS
+    val edge = steps.map { PointF(width * it / WINDOW_EDGE_STEPS, top) } +
+        steps.map { PointF(width * (WINDOW_EDGE_STEPS - it) / WINDOW_EDGE_STEPS, height) }
+    val seen = edge.map { projection.fromScreenLocation(it) }
+    if (seen.any { !it.latitude.isFinite() || !it.longitude.isFinite() }) return null
+
+    val arc = longitudeArc(seen.map { it.longitude })
+    return TrackWindow(
+        minLat = seen.minOf { it.latitude },
+        maxLat = seen.maxOf { it.latitude },
+        westLon = arc.west,
+        lonSpan = arc.span,
+    )
+}
+
+/** How many pieces each of the two horizontal edges is walked in. */
+private const val WINDOW_EDGE_STEPS = 4
 
 /**
  * Whether the camera has wandered far enough from the fitted view to be worth
