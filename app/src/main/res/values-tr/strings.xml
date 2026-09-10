@@ -228,4 +228,11 @@
         <item quantity="one">%1$d gün</item>
         <item quantity="other">%1$d gün</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="one">%1$d gün görünür</item>
+        <item quantity="other">%1$d gün görünür</item>
+    </plurals>
+    <string name="map_days_tab_in_view">Görünür (%1$d)</string>
+    <string name="map_days_tab_all">Tüm günler (%1$d)</string>
+    <string name="map_selected_day">Seçili gün: %1$s. Temizlemek için dokunun.</string>
 </resources>

@@ -232,4 +232,15 @@
         <item quantity="many">%1$d يومًا</item>
         <item quantity="other">%1$d يوم</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="zero">%1$d يوم في العرض</item>
+        <item quantity="one">يوم واحد في العرض</item>
+        <item quantity="two">يومان في العرض</item>
+        <item quantity="few">%1$d أيام في العرض</item>
+        <item quantity="many">%1$d يومًا في العرض</item>
+        <item quantity="other">%1$d يوم في العرض</item>
+    </plurals>
+    <string name="map_days_tab_in_view">في العرض (%1$d)</string>
+    <string name="map_days_tab_all">كل الأيام (%1$d)</string>
+    <string name="map_selected_day">اليوم المحدد: %1$s. اضغط للمسح.</string>
 </resources>

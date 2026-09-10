@@ -2,6 +2,7 @@ package io.github.nikkittap.timelineexporter.ui
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -129,6 +130,54 @@ class TrackDaysTest {
             ),
             entries,
         )
+    }
+
+    @Test fun `day entry index finds a date past the headers, and misses honestly`() {
+        val entries = dayListEntries(
+            listOf(
+                LocalDate.parse("2025-12-28"),
+                LocalDate.parse("2026-08-31"),
+                LocalDate.parse("2026-09-09"),
+            )
+        )
+        // Year header, month header, then the day itself.
+        assertEquals(2, dayEntryIndex(entries, LocalDate.parse("2026-09-09")))
+        assertEquals(entries.size - 1, dayEntryIndex(entries, LocalDate.parse("2025-12-28")))
+        // A day selected on the map while the sheet lists only what is in view
+        // is simply not in this list; nothing to scroll to.
+        assertEquals(-1, dayEntryIndex(entries, LocalDate.parse("2026-01-01")))
+        assertEquals(-1, dayEntryIndex(entries, null))
+    }
+
+    @Test fun `a day box covers every stretch of that day and nothing from its neighbours`() {
+        fun at(time: String, lat: Double, lon: Double) = PathPoint(Instant.parse(time), lat, lon, 0)
+        val points = listOf(
+            at("2026-09-08T22:00:00Z", 10.0, 10.0),
+            // Morning in one city, evening in another: one day, two stretches,
+            // and the box has to hold both.
+            at("2026-09-09T08:00:00Z", 59.3, 18.0),
+            at("2026-09-09T09:00:00Z", 59.4, 18.2),
+            at("2026-09-09T20:00:00Z", 55.6, 12.6),
+            at("2026-09-10T08:00:00Z", 80.0, 80.0),
+        )
+        val box = dayBox(points, LocalDate.parse("2026-09-09"), ZoneOffset.UTC)!!
+        assertEquals(3, box.pointCount)
+        assertEquals(55.6, box.minLat, 1e-9)
+        assertEquals(59.4, box.maxLat, 1e-9)
+        assertEquals(12.6, box.minLon, 1e-9)
+        assertEquals(18.2, box.maxLon, 1e-9)
+        assertFalse(box.isDegenerate)
+
+        assertNull(dayBox(points, LocalDate.parse("2026-09-11"), ZoneOffset.UTC))
+    }
+
+    @Test fun `a day spent in one spot has no box to fit`() {
+        fun at(time: String) = PathPoint(Instant.parse(time), 59.3, 18.0, 0)
+        val indoors = listOf(at("2026-09-09T08:00:00Z"), at("2026-09-09T18:00:00Z"))
+        assertTrue(dayBox(indoors, LocalDate.parse("2026-09-09"), ZoneOffset.UTC)!!.isDegenerate)
+
+        val single = listOf(PathPoint(Instant.parse("2026-09-09T08:00:00Z"), 59.3, 18.0, 0))
+        assertTrue(dayBox(single, LocalDate.parse("2026-09-09"), ZoneOffset.UTC)!!.isDegenerate)
     }
 
     @Test fun `local day matches java time for fixed offsets and for a DST zone`() {

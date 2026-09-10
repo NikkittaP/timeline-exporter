@@ -230,4 +230,13 @@
         <item quantity="many">%1$d дней</item>
         <item quantity="other">%1$d дня</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="one">%1$d день на экране</item>
+        <item quantity="few">%1$d дня на экране</item>
+        <item quantity="many">%1$d дней на экране</item>
+        <item quantity="other">%1$d дня на экране</item>
+    </plurals>
+    <string name="map_days_tab_in_view">На экране (%1$d)</string>
+    <string name="map_days_tab_all">Все дни (%1$d)</string>
+    <string name="map_selected_day">Выбранный день: %1$s. Нажмите, чтобы снять.</string>
 </resources>

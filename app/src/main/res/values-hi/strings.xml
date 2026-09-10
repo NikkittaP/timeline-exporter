@@ -228,4 +228,11 @@
         <item quantity="one">%1$d दिन</item>
         <item quantity="other">%1$d दिन</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="one">%1$d दिन दिख रहा है</item>
+        <item quantity="other">%1$d दिन दिख रहे हैं</item>
+    </plurals>
+    <string name="map_days_tab_in_view">दिख रहे (%1$d)</string>
+    <string name="map_days_tab_all">सभी दिन (%1$d)</string>
+    <string name="map_selected_day">चुना गया दिन: %1$s. हटाने के लिए टैप करें.</string>
 </resources>

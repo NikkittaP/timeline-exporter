@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Enter full screen. Material Symbols "open_in_full" — one diagonal band with
+  an arrowhead at each end, pushing out to opposite corners.
+
+  Deliberately not the "fullscreen" glyph this replaced: that one is four
+  corner brackets, which at 20dp is the same picture as the corner brackets on
+  the button directly below it. Expansion arrows and a route line share no
+  strokes, so the two controls can be told apart without reading them.
+
+  Inlined as a vector rather than pulling in material-icons-extended for three
+  icons. Filled black on purpose; Compose recolours it via Icon(tint = ...).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M21,11V3h-8l3.29,3.29 -10,10L3,13v8h8l-3.29,-3.29 10,-10z" />
+</vector>

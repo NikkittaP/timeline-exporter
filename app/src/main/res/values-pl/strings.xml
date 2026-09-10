@@ -230,4 +230,13 @@
         <item quantity="many">%1$d dni</item>
         <item quantity="other">%1$d dnia</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="one">%1$d dzień widoczny</item>
+        <item quantity="few">%1$d dni widocznych</item>
+        <item quantity="many">%1$d dni widocznych</item>
+        <item quantity="other">%1$d dnia widocznych</item>
+    </plurals>
+    <string name="map_days_tab_in_view">Widoczne (%1$d)</string>
+    <string name="map_days_tab_all">Wszystkie dni (%1$d)</string>
+    <string name="map_selected_day">Wybrany dzień: %1$s. Dotknij, aby wyczyścić.</string>
 </resources>

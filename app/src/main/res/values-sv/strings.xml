@@ -228,4 +228,11 @@
         <item quantity="one">%1$d dag</item>
         <item quantity="other">%1$d dagar</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="one">%1$d dag synlig</item>
+        <item quantity="other">%1$d dagar synliga</item>
+    </plurals>
+    <string name="map_days_tab_in_view">Synliga (%1$d)</string>
+    <string name="map_days_tab_all">Alla dagar (%1$d)</string>
+    <string name="map_selected_day">Vald dag: %1$s. Tryck för att rensa.</string>
 </resources>

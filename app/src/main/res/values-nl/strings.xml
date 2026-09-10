@@ -228,4 +228,11 @@
         <item quantity="one">%1$d dag</item>
         <item quantity="other">%1$d dagen</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="one">%1$d dag zichtbaar</item>
+        <item quantity="other">%1$d dagen zichtbaar</item>
+    </plurals>
+    <string name="map_days_tab_in_view">Zichtbaar (%1$d)</string>
+    <string name="map_days_tab_all">Alle dagen (%1$d)</string>
+    <string name="map_selected_day">Geselecteerde dag: %1$s. Tik om te wissen.</string>
 </resources>

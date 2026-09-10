@@ -164,6 +164,75 @@ internal fun dayListEntries(dates: List<LocalDate>): List<DayListEntry> {
 }
 
 /**
+ * The box every sample of one calendar day fits in, and how many there were.
+ *
+ * Plain numbers rather than a MapLibre box, so that the part of "take me to
+ * that day" which is arithmetic over the export stays arithmetic over the
+ * export - testable without a map, and computable off the main thread without
+ * touching anything the renderer owns.
+ */
+internal data class DayBox(
+    val minLat: Double,
+    val minLon: Double,
+    val maxLat: Double,
+    val maxLon: Double,
+    val pointCount: Int,
+) {
+    /**
+     * True for a day with no area to frame: one sample, or several from the
+     * same spot. A day spent indoors is ordinary, and it needs a zoom rather
+     * than a box.
+     */
+    val isDegenerate: Boolean
+        get() = pointCount < 2 || (minLat == maxLat && minLon == maxLon)
+}
+
+/**
+ * The extent of everything recorded on one calendar day, or null if nothing
+ * was. Days made of several disconnected stretches are included whole - a
+ * morning in one city and an evening in another give one box covering both,
+ * which is what "show me that day" has to mean.
+ */
+internal fun dayBox(points: List<PathPoint>, date: LocalDate, zone: ZoneId): DayBox? {
+    val epochDay = date.toEpochDay()
+    var minLat = 0.0
+    var maxLat = 0.0
+    var minLon = 0.0
+    var maxLon = 0.0
+    var count = 0
+    for (point in points) {
+        if (point.trackEpochDay(zone) != epochDay) continue
+        if (count == 0) {
+            minLat = point.latitude
+            maxLat = point.latitude
+            minLon = point.longitude
+            maxLon = point.longitude
+        } else {
+            if (point.latitude < minLat) minLat = point.latitude
+            if (point.latitude > maxLat) maxLat = point.latitude
+            if (point.longitude < minLon) minLon = point.longitude
+            if (point.longitude > maxLon) maxLon = point.longitude
+        }
+        count++
+    }
+    return if (count == 0) null else DayBox(minLat, minLon, maxLat, maxLon, count)
+}
+
+/**
+ * Where [date] sits in a list built by [dayListEntries], or -1 if it is not in
+ * it — which is the ordinary case for a day selected on the map while the
+ * sheet is showing only what is in view.
+ *
+ * A scan rather than a binary search: the rows are dates interleaved with year
+ * and month headers, so the list is only sorted if you skip the headers, and a
+ * few thousand comparisons once per sheet is not worth the special case.
+ */
+internal fun dayEntryIndex(entries: List<DayListEntry>, date: LocalDate?): Int {
+    if (date == null) return -1
+    return entries.indexOfFirst { it is DayListEntry.Day && it.date == date }
+}
+
+/**
  * Split one continuous run, after geographic gaps have already been removed.
  * Each edge belongs to its starting sample's local day. Share the boundary
  * sample so midnight never deletes an edge; do not invent a midnight GPS fix.

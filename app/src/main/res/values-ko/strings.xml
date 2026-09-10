@@ -227,4 +227,10 @@
     <plurals name="map_day_count">
         <item quantity="other">%1$d일</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="other">표시 중 %1$d일</item>
+    </plurals>
+    <string name="map_days_tab_in_view">표시 중 (%1$d)</string>
+    <string name="map_days_tab_all">전체 (%1$d)</string>
+    <string name="map_selected_day">선택한 날짜: %1$s. 탭하면 해제됩니다.</string>
 </resources>

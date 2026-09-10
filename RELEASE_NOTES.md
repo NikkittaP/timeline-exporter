@@ -90,6 +90,53 @@ app does, so it moves versionName to 1.7.1. The whole 1.6.2 → now span is
 still the one release the store changelog describes; the production upload of
 this span is 15, and its changelog files are named for that code.
 
+## v1.8.0 (still versionCode 15) — the day legend, and the map that answers back
+
+The first half of this landed with the fullscreen rework: the `Expand` text
+button left the Preview header for a control on the map itself, and the
+`Color by day` legend stopped being a horizontal strip of one swatch per date
+— unusable past a couple of weeks — in favour of a compact summary that opens
+a scrollable, Year → Month grouped sheet. What follows is the second half.
+
+- **The two map controls no longer look alike.** Both were four corner
+  brackets at 20 dp, one meaning "full screen" and the other "frame the
+  track". Full screen is now diagonal expand/collapse arrows
+  (`open_in_full` / `close_fullscreen`); "Show the whole track" is a route
+  glyph — a line between two endpoints, which is what that button frames.
+- **The compact legend follows the camera again.** Framed on the whole trip
+  it counts every day; zoomed into a corner of it, it says how many days are
+  in view and over what span. Panned off the track entirely it says
+  "0 days in view" rather than claiming the days it can no longer show.
+- **Without the cost that behaviour used to carry.** The old version ran a
+  full-viewport rendered-feature query from a per-frame listener, so a fling
+  over a year of history was dozens of spatial queries a second on the main
+  thread. It now runs when the map settles — camera-idle for the gesture,
+  map-idle for the tiles behind it — which is once per pan, not once per
+  frame.
+- **The sheet has two lists**, `In view` and `All days`, each labelled with
+  its count, so the complete set is always one tap away no matter where the
+  camera is pointed.
+- **Tapping a date takes you there.** The day is selected, the sheet closes,
+  and the camera eases to everything recorded on that date — all of it, for a
+  day made of several disconnected stretches — with a zoom ceiling so an
+  afternoon on one street is not framed at the scale of the street.
+- **Tapping a track says which day it is.** The nearest day's line within a
+  forgiving hit box is selected, and a small chip near the bottom of the map
+  names the date in that day's own colour. No modal sheet covers the map to
+  tell you about the thing you just touched; tapping the chip, or bare
+  basemap, clears the selection.
+- **The selected day's line is drawn heavier and more opaque** than the same
+  line unselected — never recoloured, because the colour is how the legend,
+  the sheet row and the chip all name that day.
+- One selected day is shared by the map layers, the tap result, the legend,
+  the sheet and the camera. Opening the sheet after tapping a track scrolls
+  to that date and marks the row; changing the filters clears a selection the
+  track no longer contains.
+- Framing the camera — "Show the whole track" and focusing one day — goes
+  through one padded path that keeps the route clear of the legend card, the
+  control stack and the attribution, so the two cannot disagree about where
+  the usable edges of the view are.
+
 ## Store changelog — draft for the next upload
 
 Four bullets, because that is what fits above the fold. Written from the whole

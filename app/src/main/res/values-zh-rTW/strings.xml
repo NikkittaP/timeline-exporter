@@ -227,4 +227,10 @@
     <plurals name="map_day_count">
         <item quantity="other">%1$d 天</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="other">檢視範圍內 %1$d 天</item>
+    </plurals>
+    <string name="map_days_tab_in_view">檢視內 (%1$d)</string>
+    <string name="map_days_tab_all">全部 (%1$d)</string>
+    <string name="map_selected_day">已選日期：%1$s。輕觸即可取消。</string>
 </resources>

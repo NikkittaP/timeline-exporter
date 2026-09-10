@@ -299,4 +299,21 @@
         <item quantity="other">%1$d days</item>
     </plurals>
     <string name="map_day_legend_summary" translatable="false">%1$s · %2$s</string>
+
+    <!-- The same count, said of the map's current viewport rather than of the
+         whole track: the compact row describes what the camera can actually
+         see, so panning away from a week of history has to say so. -->
+    <plurals name="map_day_count_in_view">
+        <item quantity="one">%1$d day in view</item>
+        <item quantity="other">%1$d days in view</item>
+    </plurals>
+
+    <!-- The day sheet's two lists: what is on screen now, and everything the
+         filters left in the track. The counts are the point of the labels —
+         they are what tells the reader the two lists differ at all. -->
+    <string name="map_days_tab_in_view">In view (%1$d)</string>
+    <string name="map_days_tab_all">All days (%1$d)</string>
+
+    <!-- The chip that names the day whose track was tapped, and clears it. -->
+    <string name="map_selected_day">Selected day: %1$s. Tap to clear.</string>
 </resources>

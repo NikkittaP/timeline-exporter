@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -34,6 +35,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -43,6 +47,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -52,6 +57,7 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -59,6 +65,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -71,6 +78,7 @@ import io.github.nikkittap.timelineexporter.parser.PathPoint
 import io.github.nikkittap.timelineexporter.parser.PlaceEntry
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraPosition
+import org.maplibre.android.camera.CameraUpdate
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.geometry.LatLngBounds
@@ -123,6 +131,7 @@ import org.maplibre.geojson.Point
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.time.format.TextStyle
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
@@ -150,6 +159,7 @@ private const val SOURCE_PLACES = "places-source"
 private const val LAYER_TRACK_GLOW = "track-glow"
 private const val LAYER_TRACK = "track-line"
 private const val LAYER_TRACK_ARROWS = "track-arrows"
+private const val LAYER_TRACK_SELECTED = "track-selected"
 private const val LAYER_GAPS = "gaps-line"
 private const val LAYER_START_HALO = "start-halo"
 private const val LAYER_START = "start-circle"
@@ -205,7 +215,7 @@ private const val FONT_LABEL = "Noto Sans Regular"
 
 /** Bottom-to-top; also the order [clearOverlays] tears them down in reverse. */
 private val OWNED_LAYERS = listOf(
-    LAYER_TRACK_GLOW, LAYER_GAPS, LAYER_TRACK, LAYER_TRACK_ARROWS,
+    LAYER_TRACK_GLOW, LAYER_GAPS, LAYER_TRACK, LAYER_TRACK_ARROWS, LAYER_TRACK_SELECTED,
     LAYER_START_HALO, LAYER_START, LAYER_END_HALO, LAYER_END,
     LAYER_PLACES_HALO, LAYER_PLACES,
     LAYER_PLACE_SELECTED_RING, LAYER_PLACE_SELECTED_LABEL,
@@ -217,6 +227,37 @@ private val OWNED_SOURCES = listOf(
 
 /** The selection overlay alone, rebuilt on its own without a full re-render. */
 private val SELECTION_LAYERS = listOf(LAYER_PLACE_SELECTED_RING, LAYER_PLACE_SELECTED_LABEL)
+
+/**
+ * How much heavier and how much more opaque the selected day's line is drawn
+ * than the same line unselected.
+ *
+ * A lift rather than a colour, because the colour is the day's identity: the
+ * legend, the sheet row and the callout all name this day by that swatch, and
+ * repainting the one line the user just picked would break the only mapping
+ * the feature has. Weight is the free channel.
+ */
+private const val SELECTED_WIDTH_LIFT = 2.1f
+private const val SELECTED_OPACITY = 0.95f
+
+/**
+ * Where the camera stops when it is framing one day.
+ *
+ * [DAY_FOCUS_ZOOM_MAX] is the ceiling for a day with a real box to fit: an
+ * afternoon spent on one street would otherwise be framed at the scale of the
+ * street, which tells the reader nothing about where it is.
+ * [DAY_FOCUS_ZOOM_POINT] is for a day with no box at all - one sample, or
+ * several from the same spot.
+ */
+private const val DAY_FOCUS_ZOOM_MAX = 16.0
+private const val DAY_FOCUS_ZOOM_POINT = 15.0
+private const val DAY_FOCUS_CAMERA_MS = 700
+
+/**
+ * Room to keep clear at the bottom of any fitted view for the map's own
+ * chrome: the control stack, the scale bar, and MapLibre's attribution.
+ */
+private val MAP_BOTTOM_CHROME = 56.dp
 
 /** Sprite id for the direction chevron repeated along the track. */
 private const val IMAGE_TRACK_ARROW = "track-arrow"
@@ -237,6 +278,17 @@ private const val EARTH_RADIUS_METERS = 6_371_000.0
 
 /** Gap, in pixels, between the fitted track and the edges of the view. */
 private const val FIT_PADDING_PX = 80
+
+/**
+ * Room to leave around a fitted view, in screen pixels.
+ *
+ * The top is the one that moves: the `Color by day` card is painted over the
+ * map and grows a row when the legend appears, and a route framed underneath
+ * it is a route the user cannot see. One of these is shared by both things
+ * that frame the camera - "Show the whole track" and focusing a selected day -
+ * so the two cannot drift into two slightly different ideas of the edges.
+ */
+private data class MapInsets(val top: Int, val bottom: Int, val side: Int = FIT_PADDING_PX)
 
 /**
  * How far the camera may leave the fitted view before the "back to the track"
@@ -441,18 +493,58 @@ fun TimelineMap(
     val locale = LocalConfiguration.current.locales[0]
     val colorByDayLabel = stringResource(R.string.map_color_by_day)
     val showAllDaysLabel = stringResource(R.string.map_show_all_days)
+    // Built once per locale rather than once per recomposition: the callout
+    // below is recomposed on every selection change, and building a localized
+    // formatter reads locale data.
+    val calloutFormatter = remember(locale) {
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
+    }
+
+    // One selected day, and only one. The map's own layers, the map's tap
+    // handling, the compact legend, the sheet's list and the camera all read
+    // this - the alternative is four ideas of "the current date" that agree
+    // until they don't. Held as an epoch day because that is a day's identity
+    // in TrackDays.kt already, and because it is something rememberSaveable
+    // can put in a Bundle across a rotation.
+    var selectedEpochDay by rememberSaveable { mutableStateOf<Long?>(null) }
+    val selectedDay = remember(selectedEpochDay) { selectedEpochDay?.let(LocalDate::ofEpochDay) }
+
+    // The day the camera has been asked to frame, which is deliberately not
+    // the same thing as the selected day. Picking a date out of the list means
+    // "take me there"; touching a line already on screen does not, and moving
+    // the camera out from under that finger would throw away the view the user
+    // picked it from - the same distinction `selfSelected` draws for places.
+    var focusDay by remember { mutableStateOf<LocalDate?>(null) }
     // Sprites are added to the style in device pixels; MapLibre has no way to
     // be told a bitmap was authored in dp.
     val density = context.resources.displayMetrics.density
 
-    // Every local day the track covers, not just what the camera currently
-    // frames: the summary row and the "Show all days" sheet both describe the
-    // whole subject, so — unlike the render effect below — this does not wait
-    // on the style or a camera-idle. Flipping the switch is the only thing
-    // that should make it appear, and a year of samples is cheap arithmetic
-    // next to the GeoJSON build the render effect already does off-thread.
+    // Every local day the track covers, whether or not the camera is pointed
+    // at it: the sheet's "All days" list and the fallback below both describe
+    // the whole subject, so — unlike the viewport query — this does not wait
+    // on the style or an idle. Flipping the switch is the only thing that
+    // should make it appear, and a year of samples is cheap arithmetic next
+    // to the GeoJSON build the render effect already does off-thread.
     var trackDays by remember { mutableStateOf<List<LocalDate>>(emptyList()) }
+
+    // The days with track geometry the camera can actually see.
+    //
+    // Null and empty are different answers, and the difference is the whole
+    // honesty of the row below: null is "the map has not told us yet", where
+    // describing the whole track is the only thing we can say, and empty is
+    // "the camera is looking at nowhere in particular", where saying six days
+    // over a screen with no track on it would be a lie.
+    var visibleDays by remember { mutableStateOf<List<LocalDate>?>(null) }
+
+    // How tall the `Color by day` card turned out to be, in pixels. Both the
+    // viewport query and the camera fit treat the strip it covers as not
+    // visible, because it is painted over the map rather than beside it.
+    var legendHeightPx by remember { mutableIntStateOf(0) }
+
     LaunchedEffect(subject, colorByDay, fallbackZone) {
+        // A new file, a new filter or a flipped switch invalidates the last
+        // viewport answer; the idle listeners below produce the next one.
+        visibleDays = null
         trackDays = if (colorByDay && subject is MapSubject.Track && subject.points.isNotEmpty()) {
             withContext(Dispatchers.Default) {
                 subject.points.asSequence().map { it.trackDate(fallbackZone) }.distinct().sorted().toList()
@@ -461,7 +553,24 @@ fun TimelineMap(
             emptyList()
         }
     }
-    val daySummary = remember(trackDays) { dayLegendSummary(trackDays) }
+
+    // The compact row describes the viewport, and falls back to the whole
+    // track only where there is no viewport answer yet.
+    val viewportDays = visibleDays ?: trackDays
+    val daySummary = remember(viewportDays) { dayLegendSummary(viewportDays) }
+    val dayRange = remember(daySummary, locale) { daySummary?.let { formatDayRange(it, locale) } }
+    // With everything on screen "18 days in view" is a distinction without a
+    // difference, so the row keeps the shorter wording it had before.
+    val wholeTrackInView = visibleDays.let { it == null || it.size >= trackDays.size }
+
+    // A selected day that the filters have just removed is a selection of
+    // nothing: the highlight would have no line to draw and the callout would
+    // name a date the track no longer covers. Switching `Color by day` off
+    // empties `trackDays` too, which is what clears the selection with it.
+    LaunchedEffect(trackDays) {
+        val day = selectedEpochDay ?: return@LaunchedEffect
+        if (trackDays.binarySearch(LocalDate.ofEpochDay(day)) < 0) selectedEpochDay = null
+    }
 
     // Keep latest callback reference so the View's touch listener (created
     // once in `remember`) always calls the most recent caller's lambda.
@@ -501,6 +610,13 @@ fun TimelineMap(
     // the render) from yanking a camera the user has since panned.
     var lastFitted by remember { mutableStateOf<MapSubject?>(null) }
 
+    // Bumped after every successful render. A render clears every layer this
+    // file owns, the selected day's highlight included, so the highlight
+    // effect keys on this to put its layer back — otherwise the day the user
+    // picked would quietly go back to being drawn like every other day the
+    // first time the theme flipped or the filter moved.
+    var renderVersion by remember { mutableIntStateOf(0) }
+
     // The box the whole subject fits in. Null when there is nothing to frame —
     // no data, or all of it in one spot — which is also the case where "back
     // to the data" has nowhere to go.
@@ -524,6 +640,59 @@ fun TimelineMap(
     // touching a dot they can already see must not also move the camera out
     // from under their finger; one made in the list must.
     val selfSelected = remember { AtomicReference<String?>(null) }
+
+    // What every camera fit on this map leaves clear. Recomputed rather than
+    // remembered because the top of it is the legend card, which grows a row
+    // the moment `Color by day` is switched on.
+    val insets = MapInsets(
+        top = FIT_PADDING_PX + legendHeightPx,
+        bottom = FIT_PADDING_PX + (MAP_BOTTOM_CHROME.value * density).toInt(),
+    )
+
+    // The days with track geometry drawn in the current viewport.
+    //
+    // Rendered features rather than samples inside a geographic box: a line
+    // can cross the whole screen with both of its endpoints off it, and a box
+    // test would drop exactly the day the user has zoomed in on. The rectangle
+    // also stops below the `Color by day` card - a day whose only line runs
+    // behind the card is not a day the user can see, and listing it makes the
+    // legend disagree with the screen.
+    //
+    // This is the query the last refactor deleted, and what was wrong with it
+    // was never the query: it was being driven from a per-rendered-frame
+    // listener, so a fling over a year of history walked the tile index and
+    // rebuilt matching lines as Java geometry sixty times a second. It now
+    // runs when the map has settled - see the two idle listeners below - which
+    // is once per gesture rather than once per frame.
+    val refreshVisibleDays by rememberUpdatedState {
+        val map = loadedMap
+        val style = loadedStyle
+        visibleDays = if (!destroyed.get() && colorByDay && subject is MapSubject.Track &&
+            map != null && style?.isFullyLoaded == true && style.getLayer(LAYER_TRACK) != null &&
+            mapView.width > 0 && mapView.height > 0
+        ) {
+            // Never more than half the view: a card taller than that would
+            // leave a query rectangle so short the answer stops meaning
+            // anything, and an empty answer reads as "the whole track".
+            val top = legendHeightPx.toFloat().coerceAtMost(mapView.height * 0.5f)
+            runCatching {
+                map.queryRenderedFeatures(
+                    RectF(0f, top, mapView.width.toFloat(), mapView.height.toFloat()),
+                    LAYER_TRACK,
+                )
+            }.getOrDefault(emptyList())
+                // Parsed per feature: one unreadable dayDate should cost that
+                // one line, not the whole legend.
+                .mapNotNull { it.trackDayDate() }
+                .distinct().sorted()
+        } else {
+            null
+        }
+    }
+
+    // The card's height is part of the query rectangle, so the legend appearing
+    // (or a locale wrapping its text onto a second line) has to re-ask.
+    LaunchedEffect(legendHeightPx, colorByDay) { refreshVisibleDays() }
 
     // Forward Compose lifecycle events to MapView. Without this, MapLibre
     // would never know it should pause GL rendering when the screen is hidden.
@@ -603,17 +772,32 @@ fun TimelineMap(
         }
     }
 
-    // Scale bar and "back to the track" both describe the camera, so both are
-    // recomputed when it stops moving — once per gesture, not per frame.
-    DisposableEffect(loadedMap, dataBounds) {
+    // Scale bar, "back to the track" and the day legend all describe the
+    // camera, so all three are recomputed when it stops moving — once per
+    // gesture, not per frame.
+    DisposableEffect(loadedMap, mapView, dataBounds, insets) {
         val map = loadedMap ?: return@DisposableEffect onDispose { }
-        val listener = MapLibreMap.OnCameraIdleListener {
+        val cameraIdle = MapLibreMap.OnCameraIdleListener {
             if (!destroyed.get()) {
-                readout = runCatching { readCamera(map, mapView, dataBounds) }.getOrNull()
+                readout = runCatching { readCamera(map, mapView, dataBounds, insets) }.getOrNull()
+                refreshVisibleDays()
             }
         }
-        map.addOnCameraIdleListener(listener)
-        onDispose { runCatching { map.removeOnCameraIdleListener(listener) } }
+        // Two idles, because they answer different questions. Camera-idle
+        // fires when the gesture has settled, which is what makes a pan feel
+        // answered. Map-idle fires when the last tile of that view has
+        // actually been drawn, which is the only thing that fills the legend
+        // in on a map nobody has touched: the track source is tiled
+        // asynchronously, well after the render effect has returned.
+        val mapIdle = MapView.OnDidBecomeIdleListener {
+            if (!destroyed.get()) refreshVisibleDays()
+        }
+        map.addOnCameraIdleListener(cameraIdle)
+        mapView.addOnDidBecomeIdleListener(mapIdle)
+        onDispose {
+            runCatching { map.removeOnCameraIdleListener(cameraIdle) }
+            runCatching { mapView.removeOnDidBecomeIdleListener(mapIdle) }
+        }
     }
 
     // Re-render whenever the subject changes OR the style becomes available.
@@ -671,10 +855,13 @@ fun TimelineMap(
             // process.
             val fitCamera = lastFitted != subject
             runCatching {
-                renderSubject(map, style, subject, overlay, palette, dataBounds, density, fitCamera, colorByDay)
+                renderSubject(map, style, subject, overlay, palette, dataBounds, insets, density, fitCamera, colorByDay)
             }
                 .onFailure { Log.w(TAG, "Map render failed", it) }
-                .onSuccess { if (fitCamera) lastFitted = subject }
+                .onSuccess {
+                    if (fitCamera) lastFitted = subject
+                    renderVersion++
+                }
 
             // Seed the chrome. A map that is never touched never goes idle,
             // so waiting for the listener alone would mean no scale bar at
@@ -683,7 +870,12 @@ fun TimelineMap(
             // idle corrects it.
             withFrameNanos { }
             if (!destroyed.get()) {
-                readout = runCatching { readCamera(map, mapView, dataBounds) }.getOrNull()
+                readout = runCatching { readCamera(map, mapView, dataBounds, insets) }.getOrNull()
+                // Usually still empty here — the source has been handed the
+                // collection but not yet tiled — which is exactly the case the
+                // legend answers by describing the whole track. Map-idle
+                // corrects it a moment later.
+                refreshVisibleDays()
             }
         }
     }
@@ -696,36 +888,106 @@ fun TimelineMap(
     }
     val latestPlaceSelected by rememberUpdatedState(onPlaceSelected)
 
-    DisposableEffect(loadedMap, placesByKey) {
+    // A tap answers "which day is this line" only while the track is coloured
+    // by day, because that is the only time a line has a day to answer with.
+    val trackTapsOn = colorByDay && subject is MapSubject.Track
+
+    DisposableEffect(loadedMap, placesByKey, trackTapsOn) {
         val map = loadedMap
-        if (map == null || placesByKey.isEmpty()) return@DisposableEffect onDispose { }
+        if (map == null || (placesByKey.isEmpty() && !trackTapsOn)) {
+            return@DisposableEffect onDispose { }
+        }
         val slop = TAP_SLOP_DP * density
         val listener = MapLibreMap.OnMapClickListener { latLng ->
-            val hit = if (destroyed.get()) null else runCatching {
-                val tap = map.projection.toScreenLocation(latLng)
-                val box = RectF(tap.x - slop, tap.y - slop, tap.x + slop, tap.y + slop)
-                map.queryRenderedFeatures(box, LAYER_PLACES)
-                    .mapNotNull { f -> f.getStringProperty(PROPERTY_KEY)?.let(placesByKey::get) }
-                    // Nearest centre wins. Where a one-visit dot sits inside a
-                    // 335-visit one, the small dot is the one the user aimed
-                    // at — it is the one they cannot identify from the list.
-                    .minByOrNull { entry ->
-                        val at = map.projection.toScreenLocation(
-                            LatLng(entry.latitude, entry.longitude)
-                        )
-                        hypot((at.x - tap.x).toDouble(), (at.y - tap.y).toDouble())
-                    }
-            }.getOrNull()
-            if (!destroyed.get()) {
-                selfSelected.set(hit?.key)
-                latestPlaceSelected(hit)
+            if (destroyed.get()) return@OnMapClickListener false
+            val tap = runCatching { map.projection.toScreenLocation(latLng) }.getOrNull()
+                ?: return@OnMapClickListener false
+            // The same forgiving box in both modes, and for the same reason:
+            // a 3.5 px dot and a 1 px line are both far smaller than the
+            // fingertip aiming at them.
+            val box = RectF(tap.x - slop, tap.y - slop, tap.x + slop, tap.y + slop)
+
+            if (placesByKey.isNotEmpty()) {
+                val hit = runCatching {
+                    map.queryRenderedFeatures(box, LAYER_PLACES)
+                        .mapNotNull { f -> f.getStringProperty(PROPERTY_KEY)?.let(placesByKey::get) }
+                        // Nearest centre wins. Where a one-visit dot sits inside a
+                        // 335-visit one, the small dot is the one the user aimed
+                        // at — it is the one they cannot identify from the list.
+                        .minByOrNull { entry ->
+                            val at = map.projection.toScreenLocation(
+                                LatLng(entry.latitude, entry.longitude)
+                            )
+                            hypot((at.x - tap.x).toDouble(), (at.y - tap.y).toDouble())
+                        }
+                }.getOrNull()
+                if (!destroyed.get()) {
+                    selfSelected.set(hit?.key)
+                    latestPlaceSelected(hit)
+                }
+                // Consume only a hit: a tap on empty map still clears the
+                // selection, but MapLibre keeps whatever else it does with it.
+                return@OnMapClickListener hit != null
             }
-            // Consume only a hit: a tap on empty map still clears the
-            // selection, but MapLibre keeps whatever else it does with it.
-            hit != null
+
+            val day = runCatching { nearestTrackDay(map, box, latLng) }.getOrNull()
+            if (!destroyed.get()) {
+                // A tap on bare basemap clears the selection, which is the
+                // only way back out of it that needs no chrome at all.
+                selectedEpochDay = day?.toEpochDay()
+            }
+            day != null
         }
         map.addOnMapClickListener(listener)
         onDispose { runCatching { map.removeOnMapClickListener(listener) } }
+    }
+
+    // Framing one day. Deliberately keyed on `focusDay` rather than on the
+    // selection, so this runs for a date picked out of the list and not for a
+    // line touched on the map, and clears its own request at the end so that
+    // a later re-render cannot fly the camera somewhere the user did not ask
+    // to go a second time.
+    LaunchedEffect(focusDay, subject, loadedMap, fallbackZone) {
+        val date = focusDay ?: return@LaunchedEffect
+        val map = loadedMap ?: return@LaunchedEffect
+        val track = subject as? MapSubject.Track
+        if (track == null) {
+            focusDay = null
+            return@LaunchedEffect
+        }
+        // One pass over the samples for four numbers, off the main thread for
+        // the same reason the overlay build is: a year of history is hundreds
+        // of thousands of them, and this runs while a sheet is closing.
+        val extent = withContext(Dispatchers.Default) {
+            dayExtent(track.points, date, fallbackZone)
+        }
+        if (!destroyed.get() && extent != null) {
+            runCatching {
+                val update = extent.bounds
+                    ?.let { boundsCameraUpdate(map, it, insets, DAY_FOCUS_ZOOM_MAX) }
+                    ?: CameraUpdateFactory.newLatLngZoom(extent.anchor, DAY_FOCUS_ZOOM_POINT)
+                map.animateCamera(update, DAY_FOCUS_CAMERA_MS)
+            }.onFailure { Log.w(TAG, "Day focus camera failed", it) }
+        }
+        focusDay = null
+    }
+
+    // The selected day's highlight, its own layer over the track's own source:
+    // no new geometry, just a filter on the day already carried by every
+    // feature. Declared after the render effect and keyed on `renderVersion`
+    // so a re-render, which drops every layer this file owns, is followed by
+    // this putting the highlight back.
+    LaunchedEffect(selectedDay, colorByDay, subject, loadedStyle, renderVersion) {
+        if (destroyed.get()) return@LaunchedEffect
+        val style = loadedStyle ?: return@LaunchedEffect
+        if (!style.isFullyLoaded) return@LaunchedEffect
+        runCatching { clearDayHighlight(style) }
+            .onFailure { Log.w(TAG, "Day highlight teardown failed", it) }
+        val date = selectedDay ?: return@LaunchedEffect
+        val track = subject as? MapSubject.Track ?: return@LaunchedEffect
+        if (!colorByDay) return@LaunchedEffect
+        runCatching { renderDayHighlight(style, date, track.points.size) }
+            .onFailure { Log.w(TAG, "Day highlight render failed", it) }
     }
 
     // The selection overlay is its own source and its own effect, deliberately
@@ -786,7 +1048,13 @@ fun TimelineMap(
         // of whether this card is even showing.
         if (hasTrack) {
             Surface(
-                modifier = Modifier.align(Alignment.TopCenter).padding(12.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    // Measured outside its own padding, because what the map
+                    // loses to this card is the whole strip it sits in.
+                    .onSizeChanged { legendHeightPx = it.height }
+                    .padding(12.dp)
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
                 shadowElevation = 3.dp,
@@ -807,13 +1075,16 @@ fun TimelineMap(
                             modifier = Modifier.semantics { contentDescription = colorByDayLabel },
                         )
                     }
-                    if (colorByDay && daySummary != null) {
+                    if (colorByDay && trackDays.isNotEmpty()) {
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         // A bounded summary rather than one swatch per day: the
                         // row this replaced put every date in a horizontal
                         // scroller, which was fine for a week and unusable for
                         // the years of history this app is built to handle.
-                        // Tapping it opens the full, scrollable list instead.
+                        // Tapping it opens the full, scrollable list instead —
+                        // which is why the row stays even when the camera is
+                        // looking at nothing, where it says so and remains the
+                        // way to the complete list.
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -823,7 +1094,7 @@ fun TimelineMap(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                daySummary.hintDates.forEach { date ->
+                                daySummary?.hintDates?.forEach { date ->
                                     Box(
                                         Modifier.size(8.dp)
                                             .background(Color(trackDayColor(date).toColorInt()), RoundedCornerShape(4.dp)),
@@ -833,11 +1104,22 @@ fun TimelineMap(
                             }
                             Spacer(Modifier.width(4.dp))
                             Text(
-                                stringResource(
-                                    R.string.map_day_legend_summary,
-                                    pluralStringResource(R.plurals.map_day_count, daySummary.dayCount, daySummary.dayCount),
-                                    formatDayRange(daySummary, locale),
-                                ),
+                                if (daySummary != null && dayRange != null) {
+                                    stringResource(
+                                        R.string.map_day_legend_summary,
+                                        pluralStringResource(
+                                            if (wholeTrackInView) R.plurals.map_day_count
+                                            else R.plurals.map_day_count_in_view,
+                                            daySummary.dayCount,
+                                            daySummary.dayCount,
+                                        ),
+                                        dayRange,
+                                    )
+                                } else {
+                                    // No swatches and no span, because there is
+                                    // no day on screen to draw either from.
+                                    pluralStringResource(R.plurals.map_day_count_in_view, 0, 0)
+                                },
                                 style = MaterialTheme.typography.labelMedium,
                                 modifier = Modifier.weight(1f),
                             )
@@ -848,6 +1130,42 @@ fun TimelineMap(
                             )
                         }
                     }
+                }
+            }
+        }
+
+        // The whole answer to "which day is this line": the date, in that
+        // day's own colour, near the map rather than over it. Deliberately not
+        // a bottom sheet — a modal that covered the map every time a track was
+        // touched would hide the thing the tap was asking about. Tapping it
+        // clears the selection.
+        val callout = selectedDay?.takeIf { colorByDay }
+        if (callout != null) {
+            val calloutText = remember(callout, locale) { callout.format(calloutFormatter) }
+            val calloutLabel = stringResource(R.string.map_selected_day, calloutText)
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    // Wide side margins rather than a measured position: this
+                    // has to miss the control stack in one corner and the
+                    // scale bar and attribution in the other.
+                    .padding(start = 72.dp, end = 72.dp, bottom = 14.dp)
+                    .clickable { selectedEpochDay = null }
+                    .semantics { contentDescription = calloutLabel },
+                shape = RoundedCornerShape(20.dp),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
+                shadowElevation = 3.dp,
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Box(
+                        Modifier.size(10.dp)
+                            .background(Color(trackDayColor(callout).toColorInt()), RoundedCornerShape(5.dp)),
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(calloutText, style = MaterialTheme.typography.labelLarge)
                 }
             }
         }
@@ -877,7 +1195,7 @@ fun TimelineMap(
                     contentColor = MaterialTheme.colorScheme.onSurface,
                 ) {
                     Icon(
-                        painter = painterResource(if (fullscreen) R.drawable.ic_fullscreen_exit else R.drawable.ic_fullscreen),
+                        painter = painterResource(if (fullscreen) R.drawable.ic_close_fullscreen else R.drawable.ic_open_in_full),
                         contentDescription = stringResource(if (fullscreen) R.string.map_exit_fullscreen else R.string.map_expand),
                         modifier = Modifier.size(20.dp),
                     )
@@ -889,11 +1207,13 @@ fun TimelineMap(
                         val map = loadedMap
                         val bounds = dataBounds
                         if (map != null && bounds != null && !destroyed.get()) {
+                            // Same padding path as focusing one day, so the
+                            // two never disagree about where the edges of a
+                            // usable view are. No zoom ceiling: framing all of
+                            // the data means whatever the data needs.
                             runCatching {
-                                map.animateCamera(
-                                    CameraUpdateFactory.newLatLngBounds(bounds, FIT_PADDING_PX)
-                                )
-                            }
+                                map.animateCamera(boundsCameraUpdate(map, bounds, insets, maxZoom = null))
+                            }.onFailure { Log.w(TAG, "Fit to data camera failed", it) }
                         }
                     },
                     // Deliberately not the primary container colour: this is a
@@ -902,7 +1222,7 @@ fun TimelineMap(
                     contentColor = MaterialTheme.colorScheme.onSurface,
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_fit_bounds),
+                        painter = painterResource(R.drawable.ic_route),
                         contentDescription = stringResource(R.string.map_recenter),
                         modifier = Modifier.size(20.dp),
                     )
@@ -911,36 +1231,71 @@ fun TimelineMap(
         }
     }
 
-    if (showDayList && daySummary != null) {
+    if (showDayList && trackDays.isNotEmpty()) {
         DayLegendSheet(
-            dates = trackDays,
+            allDates = trackDays,
+            visibleDates = visibleDays.orEmpty(),
+            selectedDate = selectedDay,
             title = colorByDayLabel,
             locale = locale,
+            onDayClick = { date ->
+                selectedEpochDay = date.toEpochDay()
+                focusDay = date
+                showDayList = false
+            },
             onDismiss = { showDayList = false },
         )
     }
 }
 
 /**
- * The full, scrollable list of every coloured day, grouped Year -> Month and
- * most recent first. Opened from the compact summary row above, which is the
- * only view of this list a horizontal strip could ever give — a year of
- * history is hundreds of entries, and this is where they actually live.
+ * The full day list, in two views of the same set: the days the map can
+ * currently show, and every day the filters left in the track.
+ *
+ * The tabs exist because the compact row above this sheet now describes the
+ * viewport. Without them, zooming into a corner of a year would put the whole
+ * year permanently out of reach; with them the row stays honest about what is
+ * on screen and the complete list is still one tap away. Both are grouped
+ * Year -> Month, most recent first, in a single LazyColumn: a year of history
+ * is hundreds of entries, which is what a horizontal strip could never show.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DayLegendSheet(
-    dates: List<LocalDate>,
+    allDates: List<LocalDate>,
+    /** Empty when the map has not answered yet, which disables the first tab. */
+    visibleDates: List<LocalDate>,
+    selectedDate: LocalDate?,
     title: String,
     locale: Locale,
+    onDayClick: (LocalDate) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    // Which tab the sheet opens on, decided once as it opens rather than kept
+    // in sync with the map behind it: "In view", because that is what the row
+    // the user just tapped was describing — unless the day they have selected
+    // is not in view, where opening on a list that cannot show their selection
+    // would be the one unhelpful choice.
+    val inViewIsUseful = visibleDates.isNotEmpty() && visibleDates.size < allDates.size
+    var inView by remember {
+        mutableStateOf(inViewIsUseful && (selectedDate == null || selectedDate in visibleDates))
+    }
+
     // Built only once the sheet is actually open, and only from the (already
     // distinct, already sorted) dates the caller scanned once off-thread —
     // grouping a few thousand of them into rows is arithmetic, not a query.
+    val dates = if (inView) visibleDates else allDates
     val entries = remember(dates) { dayListEntries(dates) }
     val dayFormatter = remember(locale) { DateTimeFormatter.ofPattern("MMM d", locale) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val listState = rememberLazyListState()
+
+    // A day selected by touching its line on the map is somewhere in the
+    // middle of a list the user has never scrolled. Put it on screen.
+    LaunchedEffect(entries, selectedDate) {
+        val index = dayEntryIndex(entries, selectedDate)
+        if (index >= 0) runCatching { listState.scrollToItem(index) }
+    }
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         Text(
@@ -948,7 +1303,32 @@ private fun DayLegendSheet(
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
         )
-        LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = DAY_SHEET_MAX_HEIGHT)) {
+        // The counts are the point of these labels: they are what tells the
+        // reader whether the two lists differ at all, which is the whole
+        // question when the map is zoomed somewhere in particular.
+        SingleChoiceSegmentedButtonRow(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 4.dp),
+        ) {
+            SegmentedButton(
+                selected = inView,
+                onClick = { inView = true },
+                enabled = visibleDates.isNotEmpty(),
+                shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
+            ) {
+                Text(stringResource(R.string.map_days_tab_in_view, visibleDates.size))
+            }
+            SegmentedButton(
+                selected = !inView,
+                onClick = { inView = false },
+                shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
+            ) {
+                Text(stringResource(R.string.map_days_tab_all, allDates.size))
+            }
+        }
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxWidth().heightIn(max = DAY_SHEET_MAX_HEIGHT),
+        ) {
             items(
                 entries,
                 key = { entry ->
@@ -971,16 +1351,30 @@ private fun DayLegendSheet(
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp),
                     )
-                    is DayListEntry.Day -> Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp),
-                    ) {
-                        Box(
-                            Modifier.size(10.dp)
-                                .background(Color(trackDayColor(entry.date).toColorInt()), RoundedCornerShape(5.dp)),
-                        )
-                        Spacer(Modifier.width(12.dp))
-                        Text(entry.date.format(dayFormatter), style = MaterialTheme.typography.bodyMedium)
+                    is DayListEntry.Day -> {
+                        val isSelected = entry.date == selectedDate
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    if (isSelected) MaterialTheme.colorScheme.secondaryContainer
+                                    else Color.Transparent
+                                )
+                                .clickable { onDayClick(entry.date) }
+                                // Clickable already says the row can be
+                                // activated; this is what says which one the
+                                // map is currently showing.
+                                .semantics { selected = isSelected }
+                                .padding(horizontal = 20.dp, vertical = 10.dp),
+                        ) {
+                            Box(
+                                Modifier.size(10.dp)
+                                    .background(Color(trackDayColor(entry.date).toColorInt()), RoundedCornerShape(5.dp)),
+                            )
+                            Spacer(Modifier.width(12.dp))
+                            Text(entry.date.format(dayFormatter), style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 }
             }
@@ -1042,6 +1436,7 @@ private fun renderSubject(
     overlay: MapOverlay,
     palette: MapPalette,
     bounds: LatLngBounds?,
+    insets: MapInsets,
     density: Float,
     fitCamera: Boolean,
     colorByDay: Boolean,
@@ -1067,7 +1462,7 @@ private fun renderSubject(
             .zoom(14.0)
             .build()
     } else {
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, FIT_PADDING_PX))
+        map.animateCamera(boundsCameraUpdate(map, bounds, insets, maxZoom = null))
     }
 }
 
@@ -1459,6 +1854,40 @@ private fun clearSelection(style: Style) {
 }
 
 /**
+ * Draw one day's track more heavily than the rest of it.
+ *
+ * No new source and no new geometry: the day is already a property on every
+ * track feature, so this is the same source read through a filter, drawn on
+ * top of the line it duplicates. [pointCount] is what keeps the emphasis
+ * proportional — the weight it lifts is the weight the track is drawn at,
+ * which for a year of history is a very different number than for one walk.
+ */
+private fun renderDayHighlight(style: Style, date: LocalDate, pointCount: Int) {
+    // Nothing to sit above, so nothing to draw: the render effect has not put
+    // the track back yet, and the version it bumps will bring us here again.
+    val below = when {
+        style.getLayer(LAYER_TRACK_ARROWS) != null -> LAYER_TRACK_ARROWS
+        style.getLayer(LAYER_TRACK) != null -> LAYER_TRACK
+        else -> return
+    }
+    val base = heatWeightsFor(pointCount).coreWidth * COLOR_WIDTH_LIFT
+    val layer = LineLayer(LAYER_TRACK_SELECTED, SOURCE_TRACK).withProperties(
+        lineColor(Expression.toColor(Expression.get(PROPERTY_CORE_COLOR))),
+        lineWidth(zoomScaledWidth(base * SELECTED_WIDTH_LIFT)),
+        lineOpacity(SELECTED_OPACITY),
+        lineCap(Property.LINE_CAP_ROUND),
+        lineJoin(Property.LINE_JOIN_ROUND),
+    )
+    layer.setFilter(Expression.eq(Expression.get(PROPERTY_DAY_DATE), date.toString()))
+    style.addLayerAbove(layer, below)
+}
+
+/** Drop the day highlight, leaving the track underneath it alone. */
+private fun clearDayHighlight(style: Style) {
+    style.getLayer(LAYER_TRACK_SELECTED)?.let { style.removeLayer(it) }
+}
+
+/**
  * The box the whole subject fits in, or null when there is nothing to frame.
  *
  * MapLibre's builder rejects fewer than two coordinates, and data that is all
@@ -1488,6 +1917,112 @@ private fun subjectBounds(subject: MapSubject): LatLngBounds? {
     if (count < 2) return null
     if (minLat == maxLat && minLon == maxLon) return null
     return runCatching { builder.build() }.getOrNull()
+}
+
+/**
+ * What one day's geometry gives the camera: a box to fit, or — for a day with
+ * one sample, or several from the same spot — nowhere to go but a point.
+ */
+private class DayExtent(val bounds: LatLngBounds?, val anchor: LatLng)
+
+/**
+ * [dayBox] turned into what MapLibre's camera takes.
+ *
+ * A scan of the samples rather than a query of the map, because the answer has
+ * to be the same whether or not that day is currently on screen — which is the
+ * entire point of tapping a date the camera is nowhere near.
+ */
+private fun dayExtent(points: List<PathPoint>, date: LocalDate, zone: ZoneId): DayExtent? {
+    val box = dayBox(points, date, zone) ?: return null
+    // In the degenerate case the two corners are the same coordinate, so this
+    // is the day's one position rather than a corner of anything.
+    val anchor = LatLng(box.minLat, box.minLon)
+    if (box.isDegenerate) return DayExtent(null, anchor)
+    val bounds = runCatching {
+        LatLngBounds.Builder()
+            .include(LatLng(box.maxLat, box.maxLon))
+            .include(anchor)
+            .build()
+    }.getOrNull()
+    return DayExtent(bounds, anchor)
+}
+
+/**
+ * One way to frame a box on this map, shared by "Show the whole track" and by
+ * focusing a selected day so the two cannot drift apart on where the usable
+ * edges of the view are.
+ *
+ * [maxZoom] is the difference between them. Fitting all of the data means
+ * whatever the data needs; fitting one day needs a ceiling, or an afternoon
+ * spent on one street is framed at the scale of that street and says nothing
+ * about where it is.
+ */
+private fun boundsCameraUpdate(
+    map: MapLibreMap,
+    bounds: LatLngBounds,
+    insets: MapInsets,
+    maxZoom: Double?,
+): CameraUpdate {
+    val padding = intArrayOf(insets.side, insets.top, insets.side, insets.bottom)
+    if (maxZoom != null) {
+        val fitted = map.getCameraForLatLngBounds(bounds, padding)
+        if (fitted != null && fitted.zoom > maxZoom) {
+            return CameraUpdateFactory.newCameraPosition(
+                CameraPosition.Builder(fitted).zoom(maxZoom).build()
+            )
+        }
+    }
+    return CameraUpdateFactory.newLatLngBounds(bounds, padding[0], padding[1], padding[2], padding[3])
+}
+
+/** The calendar day a rendered track feature belongs to, if it carries one. */
+private fun Feature.trackDayDate(): LocalDate? =
+    getStringProperty(PROPERTY_DAY_DATE)?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
+
+/**
+ * Which day's line the user was aiming at inside [box].
+ *
+ * Nearest wins rather than topmost. Where two days cross, whichever happens to
+ * have been drawn last is not the one the finger was following, and at the
+ * zoom levels where days overlap at all that is most taps.
+ *
+ * Distance is measured in degrees on our own copy of the coordinates rather
+ * than by projecting each vertex back to the screen: the features MapLibre
+ * hands back are clipped to the tiles under the box, so this is a short walk
+ * over plain numbers, where the projection would be a native call per vertex.
+ */
+private fun nearestTrackDay(map: MapLibreMap, box: RectF, tap: LatLng): LocalDate? {
+    // A degree of longitude is shorter than a degree of latitude everywhere
+    // but the equator; without this the comparison drifts east with latitude.
+    val lonScale = cos(Math.toRadians(tap.latitude))
+    var best: LocalDate? = null
+    var bestDistance = Double.MAX_VALUE
+    for (feature in map.queryRenderedFeatures(box, LAYER_TRACK)) {
+        val date = feature.trackDayDate() ?: continue
+        val distance = feature.nearestSquaredDegrees(tap, lonScale) ?: continue
+        if (distance < bestDistance) {
+            bestDistance = distance
+            best = date
+        }
+    }
+    return best
+}
+
+/** How close this feature's nearest vertex comes to [tap], squared. */
+private fun Feature.nearestSquaredDegrees(tap: LatLng, lonScale: Double): Double? {
+    val coordinates = when (val geometry = geometry()) {
+        is LineString -> geometry.coordinates()
+        is MultiLineString -> geometry.coordinates().flatten()
+        else -> null
+    } ?: return null
+    var best = Double.MAX_VALUE
+    for (point in coordinates) {
+        val dx = (point.longitude() - tap.longitude) * lonScale
+        val dy = point.latitude() - tap.latitude
+        val distance = dx * dx + dy * dy
+        if (distance < best) best = distance
+    }
+    return best.takeIf { it != Double.MAX_VALUE }
 }
 
 /**
@@ -1678,7 +2213,12 @@ private data class MapReadout(
  * back out of the view cannot be wrong about it. It also stays correct if the
  * camera is ever tilted, where a formula would not be.
  */
-private fun readCamera(map: MapLibreMap, view: View, bounds: LatLngBounds?): MapReadout? {
+private fun readCamera(
+    map: MapLibreMap,
+    view: View,
+    bounds: LatLngBounds?,
+    insets: MapInsets,
+): MapReadout? {
     val width = view.width
     val height = view.height
     if (width <= 0 || height <= 0) return null
@@ -1691,7 +2231,7 @@ private fun readCamera(map: MapLibreMap, view: View, bounds: LatLngBounds?): Map
     if (!spanMeters.isFinite() || spanMeters <= 0.0) return null
     val metersPerPixel = spanMeters / (width * 0.5)
 
-    return MapReadout(metersPerPixel, isAdrift(map, bounds, metersPerPixel, width))
+    return MapReadout(metersPerPixel, isAdrift(map, bounds, insets, metersPerPixel, width))
 }
 
 /**
@@ -1706,11 +2246,15 @@ private fun readCamera(map: MapLibreMap, view: View, bounds: LatLngBounds?): Map
 private fun isAdrift(
     map: MapLibreMap,
     bounds: LatLngBounds?,
+    insets: MapInsets,
     metersPerPixel: Double,
     widthPx: Int,
 ): Boolean {
     if (bounds == null) return false
-    val padding = intArrayOf(FIT_PADDING_PX, FIT_PADDING_PX, FIT_PADDING_PX, FIT_PADDING_PX)
+    // The same padding the button itself would use. Measured against anything
+    // else, the fit it performs lands somewhere this call still calls adrift,
+    // and the way back offers itself again the moment it has been taken.
+    val padding = intArrayOf(insets.side, insets.top, insets.side, insets.bottom)
     val fitted = map.getCameraForLatLngBounds(bounds, padding) ?: return false
     val home = fitted.target ?: return false
     val current = map.cameraPosition

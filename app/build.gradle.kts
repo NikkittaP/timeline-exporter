@@ -297,6 +297,31 @@ android {
         //       locales. preview_expand and map_day_legend removed everywhere
         //       they're no longer read. Still on versionCode 15 - unspent, not
         //       yet uploaded.
+        //
+        //       Then the follow-up pass on the same screen, still 1.8.0 and
+        //       still 15, because it finishes the feature rather than adding
+        //       another. The two map controls no longer read as the same icon:
+        //       fullscreen is open_in_full/close_fullscreen (diagonal arrows),
+        //       and "Show the whole track" is a hand-authored route glyph
+        //       instead of a second set of corner brackets. The compact legend
+        //       describes the viewport again - "2 days in view", "0 days in
+        //       view" when the camera is off the track - but driven from
+        //       camera-idle and MapView's did-become-idle rather than the
+        //       per-frame listener the last pass deleted, so a fling costs one
+        //       query instead of sixty a second. The sheet gained In view /
+        //       All days tabs so the complete list stays reachable. A day is
+        //       now selectable from either end: tapping a date focuses the
+        //       camera on everything recorded that day, tapping a line inside
+        //       an 18dp box names the nearest day in a chip at the bottom of
+        //       the map, and the selected day's line is drawn heavier over the
+        //       rest. One selectedEpochDay backs the layers, the tap result,
+        //       the legend, the sheet and the camera; filters that drop the
+        //       day clear it. Both camera fits share one padded path that
+        //       keeps the route clear of the legend card and the controls, and
+        //       the "adrift" test that offers the way back now measures
+        //       against that same padding. New in TrackDays.kt: dayBox and
+        //       dayEntryIndex, both unit tested. Four new strings plus the
+        //       map_day_count_in_view plurals across all 17 locales.
         versionCode = 15
         versionName = "1.8.0"
 

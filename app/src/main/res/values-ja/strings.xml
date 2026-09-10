@@ -227,4 +227,10 @@
     <plurals name="map_day_count">
         <item quantity="other">%1$d日</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="other">表示中 %1$d日</item>
+    </plurals>
+    <string name="map_days_tab_in_view">表示中 (%1$d)</string>
+    <string name="map_days_tab_all">すべて (%1$d)</string>
+    <string name="map_selected_day">選択中の日: %1$s。タップで解除します。</string>
 </resources>

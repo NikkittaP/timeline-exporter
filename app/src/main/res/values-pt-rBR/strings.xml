@@ -228,4 +228,11 @@
         <item quantity="one">%1$d dia</item>
         <item quantity="other">%1$d dias</item>
     </plurals>
+    <plurals name="map_day_count_in_view">
+        <item quantity="one">%1$d dia visível</item>
+        <item quantity="other">%1$d dias visíveis</item>
+    </plurals>
+    <string name="map_days_tab_in_view">Visíveis (%1$d)</string>
+    <string name="map_days_tab_all">Todos os dias (%1$d)</string>
+    <string name="map_selected_day">Dia selecionado: %1$s. Toque para limpar.</string>
 </resources>
