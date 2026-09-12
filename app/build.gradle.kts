@@ -322,7 +322,23 @@ android {
         //       against that same padding. New in TrackDays.kt: dayBox and
         //       dayEntryIndex, both unit tested. Four new strings plus the
         //       map_day_count_in_view plurals across all 17 locales.
-        versionCode = 15
+        //
+        //   versionCode=15, versionName="1.7.0" -> uploaded to the internal
+        //       testing track 2026-09-05. Every "still on versionCode 15,
+        //       unspent" note above was true when written; it stopped being
+        //       true here. Everything since is new relative to what testers
+        //       already have installed.
+        //   versionCode=16, versionName="1.8.0" -> the whole 1.7.0 -> now
+        //       span for internal testing: the feedback ballot re-cut, the
+        //       optional in-app update check, Color by day, the day
+        //       legend/sheet/camera rework that followed it, and the four
+        //       fixes traced to the same 61 MB export (the fullscreen
+        //       queryRenderedFeatures crash, the zoom-dependent day count,
+        //       the wide-viewport antimeridian math, and the load-progress
+        //       bar crawling then jumping). See RELEASE_NOTES.md for the
+        //       full breakdown; changelogs/16.txt in all 18 locales carries
+        //       the store text.
+        versionCode = 16
         versionName = "1.8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

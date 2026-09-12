@@ -24,6 +24,48 @@ Where things go at release time:
 
 # Unreleased — everything since v1.6.2
 
+**Status update, 2026-09-12:** versionCode 15 (versionName 1.7.0) shipped to
+the internal testing track on 2026-09-05, confirmed by the person doing the
+upload. The "to upload" row in the table below, and every "still on
+versionCode 15, unspent" note in this section, describe how things stood
+*before* that upload — they are left as written, per the no-rewriting rule
+above, but they no longer describe the current state. Everything from the
+ballot re-cut onward in this section is new relative to what a 1.7.0 tester
+already has.
+
+## Store changelog — draft for versionCode 16 (2026-09-12)
+
+Covers the whole 1.7.0 → now span: the feedback ballot re-cut, the optional
+update check, Color by day, the day legend/sheet/camera rework, and the four
+fixes traced to the 61 MB reference export (fullscreen crash, zoom-dependent
+day count, wide-viewport antimeridian math, load-progress bar). Cut to all 18
+`fastlane/metadata/android/<locale>/changelogs/16.txt` and to
+`F:\Timeline\Whats_New_v1.8.0_tagged.txt`. Longest translation is 498
+characters (de-DE); Play's limit is 500.
+
+```
+• Color your track by day, and browse every day in a scrollable, month-grouped list.
+• Tap a day — on the map or in the list — to see exactly where you were.
+• Fixed a crash entering fullscreen with Color by day on, and a "days in view" count that changed with zoom instead of the camera view.
+• The export progress bar now fills evenly, instead of crawling through the first few percent then jumping to done.
+```
+
+Not in the bullets, deliberately: the feedback-ballot re-cut (changes the
+dialog's option list, not what the app does with a file) and the update check
+(only ever seen by someone who has *already* updated) — same reasoning the
+14→15 draft used to drop those two.
+
+### Pre-release checklist for versionCode 16
+
+- [x] Bump `versionCode` to 16 (`versionName` stays 1.8.0) — 2026-09-12
+- [x] Write the store changelog into all 18 `changelogs/16.txt` and
+      `Whats_New_v1.8.0_tagged.txt` — 2026-09-12
+- [ ] `./gradlew :app:test`
+- [ ] `./gradlew bundleRelease` — R8 and `lintVital` green
+- [ ] Upload the AAB to the internal testing track as versionCode 16
+- [ ] Move this section into *Released* only once the span is promoted to
+      production — internal testing is not release
+
 ## Color route by day (local development, 2026-09-09)
 
 - Added an optional **Color by day** map toggle for tracks, with a horizontally
