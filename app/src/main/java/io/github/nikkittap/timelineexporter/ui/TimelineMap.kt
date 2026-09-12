@@ -1118,18 +1118,28 @@ fun TimelineMap(
                                 }
                             }
                             Spacer(Modifier.width(4.dp))
-                            // Count over span, two lines, always. One line
-                            // holding both is a line whose length is the sum
-                            // of a translated plural and a localized date
+                            // Count over span, two lines, always reserved. One
+                            // line holding both is a line whose length is the
+                            // sum of a translated plural and a localized date
                             // range: it fits in English over one year and
                             // wraps in German, in Russian, or as soon as the
                             // range crosses into a second year - so the card
                             // changed height as the user panned, which is the
                             // one thing a panel pinned over a map must not do.
-                            // Split deliberately, each half capped at its own
-                            // line, the height is the same in all 17 locales
-                            // and for every date.
-                            Column(Modifier.weight(1f)) {
+                            // The height is fixed explicitly rather than left
+                            // to a second, blank Text to hold open - an empty
+                            // string measures shorter than a real line, which
+                            // pinned the count to the top of the row instead
+                            // of centering it when the camera looks at
+                            // nowhere in particular (0 days in view).
+                            val twoLineHeight = with(LocalDensity.current) {
+                                MaterialTheme.typography.labelMedium.lineHeight.toDp() +
+                                    MaterialTheme.typography.labelSmall.lineHeight.toDp()
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f).height(twoLineHeight),
+                                verticalArrangement = Arrangement.Center,
+                            ) {
                                 Text(
                                     pluralStringResource(
                                         if (daySummary != null && wholeTrackInView) R.plurals.map_day_count
@@ -1141,18 +1151,15 @@ fun TimelineMap(
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
-                                // Empty when the camera is looking at nowhere
-                                // in particular, and deliberately still drawn:
-                                // an empty line keeps the card the height it
-                                // had a moment ago, when there was a span to
-                                // put here.
-                                Text(
-                                    dayRange.orEmpty(),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
+                                dayRange?.let {
+                                    Text(
+                                        it,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
                             }
                             Text(
                                 "›",
