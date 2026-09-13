@@ -10,7 +10,6 @@
     <string name="step_filter">篩選資料</string>
     <string name="step_preview">預覽</string>
 
-    <string name="loaded_badge">已載入</string>
     <string name="metric_points">點</string>
     <string name="metric_date_range">日期範圍</string>
 
@@ -19,7 +18,6 @@
     <string name="format_semantic">Semantic History</string>
     <string name="format_unknown">未知格式</string>
 
-    <string name="filter_preset_custom">自訂…</string>
 
     <string name="pick_file_button">選擇 Timeline.json</string>
     <string name="idle_hint">選擇要解析的 Google 地圖時間軸 JSON 檔案。</string>
@@ -34,15 +32,12 @@
     <string name="loading_sorting">正在依時間排序點</string>
 
     <string name="filter_title">篩選</string>
-    <string name="filter_date_range_all">日期範圍：所有日期</string>
-    <string name="filter_date_range_set">日期範圍：%1$s — %2$s</string>
     <string name="filter_filtered_count">篩選後：%2$s 個點中的 %1$s 個</string>
     <string name="filter_set_button">設定日期範圍</string>
     <string name="filter_change_button">變更日期範圍</string>
     <string name="filter_clear_button">清除</string>
 
     <!-- Movement breakdown -->
-    <string name="filter_movement_all">所有交通方式</string>
     <string name="filter_movement_none">未選擇任何方式</string>
     <string name="filter_moving_only_short">僅移動中</string>
     <string name="points_count">%1$s 個點</string>
@@ -62,10 +57,6 @@
     <string name="date_dialog_title">依日期篩選</string>
     <string name="date_dialog_cancel">取消</string>
     <string name="date_dialog_apply">套用</string>
-    <string name="date_preset_last_7">最近 7 天</string>
-    <string name="date_preset_last_30">最近 30 天</string>
-    <string name="date_preset_last_90">最近 90 天</string>
-    <string name="date_preset_all">所有資料</string>
 
     <string name="preview_title">預覽</string>
     <string name="preview_no_points">沒有符合目前篩選條件的點 — 無可預覽內容。</string>
@@ -233,4 +224,9 @@
     <string name="map_days_tab_in_view">檢視內 (%1$d)</string>
     <string name="map_days_tab_all">全部 (%1$d)</string>
     <string name="map_selected_day">已選日期：%1$s。輕觸即可取消。</string>
+    <string name="file_change_button">選擇其他檔案</string>
+    <string name="metric_days">天數</string>
+    <string name="metric_distance">距離</string>
+    <string name="filter_movement_title">交通方式</string>
+    <string name="date_preset_all_short">全部</string>
 </resources>

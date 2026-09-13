@@ -10,7 +10,6 @@
     <string name="step_filter">تصفية البيانات</string>
     <string name="step_preview">معاينة</string>
 
-    <string name="loaded_badge">تم التحميل</string>
     <string name="metric_points">النقاط</string>
     <string name="metric_date_range">النطاق الزمني</string>
 
@@ -19,7 +18,6 @@
     <string name="format_semantic">Semantic History</string>
     <string name="format_unknown">تنسيق غير معروف</string>
 
-    <string name="filter_preset_custom">مخصّص…</string>
 
     <string name="pick_file_button">اختيار Timeline.json</string>
     <string name="idle_hint">اختر ملف JSON الخاص بالمخطط الزمني في خرائط Google لتحليله.</string>
@@ -34,15 +32,12 @@
     <string name="loading_sorting">جارٍ ترتيب النقاط حسب الوقت</string>
 
     <string name="filter_title">تصفية</string>
-    <string name="filter_date_range_all">النطاق الزمني: كل التواريخ</string>
-    <string name="filter_date_range_set">النطاق الزمني: %1$s — %2$s</string>
     <string name="filter_filtered_count">بعد التصفية: %1$s من %2$s نقطة</string>
     <string name="filter_set_button">تحديد النطاق الزمني</string>
     <string name="filter_change_button">تغيير النطاق الزمني</string>
     <string name="filter_clear_button">مسح</string>
 
     <!-- Movement breakdown -->
-    <string name="filter_movement_all">كل وسائل التنقل</string>
     <string name="filter_movement_none">لم يتم تحديد شيء</string>
     <string name="filter_moving_only_short">أثناء الحركة فقط</string>
     <string name="points_count">%1$s نقطة</string>
@@ -62,10 +57,6 @@
     <string name="date_dialog_title">التصفية حسب التاريخ</string>
     <string name="date_dialog_cancel">إلغاء</string>
     <string name="date_dialog_apply">تطبيق</string>
-    <string name="date_preset_last_7">آخر 7 أيام</string>
-    <string name="date_preset_last_30">آخر 30 يومًا</string>
-    <string name="date_preset_last_90">آخر 90 يومًا</string>
-    <string name="date_preset_all">كل البيانات</string>
 
     <string name="preview_title">معاينة</string>
     <string name="preview_no_points">لا توجد نقاط تطابق التصفية الحالية — لا شيء للعرض.</string>
@@ -243,4 +234,9 @@
     <string name="map_days_tab_in_view">في العرض (%1$d)</string>
     <string name="map_days_tab_all">كل الأيام (%1$d)</string>
     <string name="map_selected_day">اليوم المحدد: %1$s. اضغط للمسح.</string>
+    <string name="file_change_button">اختيار ملف آخر</string>
+    <string name="metric_days">الأيام</string>
+    <string name="metric_distance">المسافة</string>
+    <string name="filter_movement_title">التنقل</string>
+    <string name="date_preset_all_short">الكل</string>
 </resources>

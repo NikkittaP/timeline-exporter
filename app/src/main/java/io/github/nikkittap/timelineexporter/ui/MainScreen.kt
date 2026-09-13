@@ -7,7 +7,16 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,12 +36,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -59,6 +72,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -66,6 +81,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -74,10 +90,12 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -108,6 +126,8 @@ import io.github.nikkittap.timelineexporter.parser.TimelineFormat
 import io.github.nikkittap.timelineexporter.parser.placeEntries
 import java.time.Instant
 import java.time.ZoneId
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Top-level Compose entry called from MainActivity. Hosts the Scaffold with
@@ -194,6 +214,12 @@ fun TimelineExporterApp() {
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
+                // The bar sits on the same ground as the step cards below it
+                // rather than on the card colour, so the cards read as the
+                // content and the bar as the frame around it.
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                ),
                 navigationIcon = {
                     Image(
                         painter = painterResource(R.drawable.app_logo),
@@ -221,24 +247,41 @@ fun TimelineExporterApp() {
                     val cdLanguage = stringResource(R.string.language_title)
                     val cdSupport = stringResource(R.string.action_support)
                     val cdMore = stringResource(R.string.action_more)
+                    // Vector icons rather than 🌐 / 💜 / ⋮: emoji draw in the
+                    // emoji font's own colours and the ⋮ glyph at text weight,
+                    // so the three never matched each other or the app. The
+                    // heart keeps the one accent in the bar — it is the donate
+                    // entry point — and the other two stay neutral.
                     IconButton(
                         onClick = { languageDialogOpen = true },
                         modifier = Modifier.semantics { contentDescription = cdLanguage },
                     ) {
-                        Text("🌐", style = MaterialTheme.typography.titleMedium)
+                        Icon(
+                            painter = painterResource(R.drawable.ic_language),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                     IconButton(
                         onClick = { tipJarDialogOpen = true },
                         modifier = Modifier.semantics { contentDescription = cdSupport },
                     ) {
-                        Text("💜", style = MaterialTheme.typography.titleMedium)
+                        Icon(
+                            painter = painterResource(R.drawable.ic_favorite),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
                     }
                     Box {
                         IconButton(
                             onClick = { overflowMenuOpen = true },
                             modifier = Modifier.semantics { contentDescription = cdMore },
                         ) {
-                            Text("⋮", style = MaterialTheme.typography.titleLarge)
+                            Icon(
+                                painter = painterResource(R.drawable.ic_more_vert),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
                         DropdownMenu(
                             expanded = overflowMenuOpen,
@@ -560,45 +603,55 @@ fun MainScreen(
         ) {
             // Step 1 — file picking + load/parse status.
             StepCard(step = 1, title = stringResource(R.string.step_choose_file)) {
-                Button(
-                    onClick = { pickFileLauncher.launch(arrayOf("*/*")) },
-                    shape = ButtonShape,
-                ) {
-                    Text(stringResource(R.string.pick_file_button))
-                }
+                val pickFile: () -> Unit = { pickFileLauncher.launch(arrayOf("*/*")) }
 
+                // The filled button is the thing to do only until a file is
+                // open. Once one is, it used to stay the loudest thing on the
+                // screen while the step was already done; now what loaded
+                // takes its place and swapping files becomes a quiet text
+                // action underneath (see LoadedSummary).
                 when (val state = uiState) {
-                    TimelineUiState.Idle -> Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(
-                            stringResource(R.string.idle_hint),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                        TextButton(
-                            onClick = onHelpClick,
-                            contentPadding = PaddingValues(0.dp),
-                        ) {
-                            Text(stringResource(R.string.idle_help_button))
+                    TimelineUiState.Idle -> {
+                        PickFileButton(onClick = pickFile)
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                stringResource(R.string.idle_hint),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            TextButton(
+                                onClick = onHelpClick,
+                                contentPadding = PaddingValues(0.dp),
+                            ) {
+                                Text(stringResource(R.string.idle_help_button))
+                            }
                         }
                     }
 
                     is TimelineUiState.Loading -> LoadingDisplay(state.phase)
 
-                    is TimelineUiState.Error -> Text(
-                        text = if (state.wrongFile) {
-                            stringResource(R.string.error_not_timeline)
-                        } else {
-                            stringResource(
-                                R.string.parse_error,
-                                state.exceptionClass,
-                                state.exceptionMessage
-                                    ?: stringResource(R.string.parse_error_no_message),
-                            )
-                        },
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+                    is TimelineUiState.Error -> {
+                        PickFileButton(onClick = pickFile)
+                        Text(
+                            text = if (state.wrongFile) {
+                                stringResource(R.string.error_not_timeline)
+                            } else {
+                                stringResource(
+                                    R.string.parse_error,
+                                    state.exceptionClass,
+                                    state.exceptionMessage
+                                        ?: stringResource(R.string.parse_error_no_message),
+                                )
+                            },
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
 
-                    is TimelineUiState.Loaded -> LoadedSummary(state.result)
+                    is TimelineUiState.Loaded -> LoadedSummary(
+                        result = state.result,
+                        fileName = state.fileName,
+                        onChangeFile = pickFile,
+                    )
                 }
             }
 
@@ -610,6 +663,7 @@ fun MainScreen(
                 StepCard(step = 2, title = stringResource(R.string.step_filter)) {
                     FilterContent(
                         currentRange = filter.dateRange,
+                        dataFirst = loaded.pathPoints.firstOrNull()?.timeUtc,
                         dataLast = dataLast,
                         totalCount = loaded.pathPoints.size,
                         filteredCount = filteredPoints.size,
@@ -756,6 +810,11 @@ fun MainScreen(
         DateRangeDialog(
             initialRange = filter.dateRange,
             dataRange = dataRange,
+            countPoints = { range ->
+                loadedResult?.let {
+                    applyFilter(it.pathPoints, filter.copy(dateRange = range), it.segments).size
+                } ?: 0
+            },
             onConfirm = { range ->
                 viewModel.setDateRange(range)
                 dateDialogOpen = false
@@ -767,7 +826,14 @@ fun MainScreen(
 
 // ---------- structural building blocks ----------
 
-/** An outlined card with a numbered badge + title header and arbitrary content. */
+/**
+ * One step of the flow: a numbered header and arbitrary content on a card.
+ *
+ * Filled, not outlined. With an outline on every card, on the map tile inside
+ * it, on the chips and under the dividers, no block stood out from any other;
+ * a card lifted off the tinted background by its own colour needs no line, and
+ * leaves a border free to mean something where one remains (the map's edge).
+ */
 @Composable
 private fun StepCard(
     step: Int,
@@ -776,14 +842,18 @@ private fun StepCard(
     trailing: @Composable (RowScope.() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    OutlinedCard(modifier = modifier.fillMaxWidth()) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 StepBadge(step)
                 Text(title, style = MaterialTheme.typography.titleMedium)
@@ -801,132 +871,205 @@ private fun StepCard(
 private fun StepBadge(number: Int) {
     Box(
         modifier = Modifier
-            .size(24.dp)
+            .size(28.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = number.toString(),
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
     }
 }
 
+/** The step 1 call to action while nothing is loaded yet (or loading failed). */
+@Composable
+private fun PickFileButton(onClick: () -> Unit) {
+    Button(onClick = onClick, shape = MaterialTheme.shapes.small) {
+        Text(stringResource(R.string.pick_file_button))
+    }
+}
+
 // ---------- step content ----------
 
-/** Loaded-state header: a format badge plus the points / date-range metrics. */
+/**
+ * Step 1 once a file is open: which file, what kind and what span, then the
+ * three numbers that describe it, then a quiet way to swap it.
+ *
+ * The file name leads because people keep several exports side by side
+ * (Timeline_1, Timeline_merged, …) and nothing on the screen used to say
+ * which one was open. The figures share one panel and one text style; the two
+ * tiles this replaces set one value as a headline and the other as a small
+ * title, were the heaviest thing on the screen, and carried a pink "Loaded"
+ * badge for a state the rest of the screen already made obvious.
+ */
 @Composable
-private fun LoadedSummary(result: ParsedTimeline) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Pill(
-                text = stringResource(R.string.loaded_badge),
-                container = MaterialTheme.colorScheme.tertiaryContainer,
-                content = MaterialTheme.colorScheme.onTertiaryContainer,
-            )
-            FormatBadge(result.format)
-        }
-
-        // Date range as two short lines so it never wraps awkwardly and both
-        // tiles can share one height.
-        val rangeValue = if (result.pathPoints.isNotEmpty()) {
-            "${formatLocalDate(result.pathPoints.first().timeUtc)}\n– ${
-                formatLocalDate(result.pathPoints.last().timeUtc)
-            }"
-        } else {
-            "—"
-        }
-        Row(
-            modifier = Modifier.height(IntrinsicSize.Min),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            MetricCard(
-                label = stringResource(R.string.metric_points),
-                value = formatGrouped(result.pathPoints.size),
-                valueStyle = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-            )
-            MetricCard(
-                label = stringResource(R.string.metric_date_range),
-                value = rangeValue,
-                valueStyle = MaterialTheme.typography.titleSmall,
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-            )
+private fun LoadedSummary(result: ParsedTimeline, fileName: String?, onChangeFile: () -> Unit) {
+    val formatName = formatLabel(result.format)
+    val context = LocalContext.current
+    val span = result.pathPoints.takeIf { it.isNotEmpty() }?.let {
+        formatLocalDayRange(context, it.first().timeUtc, it.last().timeUtc)
+    }
+    // Days and distance both walk the whole file, so they are worked out once
+    // per file and off the main thread; their cells appear when ready. Days are
+    // counted the way the map's day legend counts them, so "373" here and
+    // "373 days" on the map can never disagree.
+    val extras by produceState<Pair<Int, Double>?>(initialValue = null, result) {
+        value = withContext(Dispatchers.Default) {
+            drawnTrackDays(result.pathPoints, ZoneId.systemDefault()).size to
+                result.movementBreakdown().sumOf { it.distanceMeters }
         }
     }
-}
 
-@Composable
-private fun MetricCard(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier,
-    valueStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.titleMedium,
-) {
-    Surface(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = RoundedCornerShape(12.dp),
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .clip(MaterialTheme.shapes.small)
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            Icon(
+                painter = painterResource(R.drawable.ic_description),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
-            Text(text = value, style = valueStyle)
+        }
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                text = fileName ?: formatName,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            val details = listOfNotNull(formatName.takeIf { fileName != null }, span).joinToString(" · ")
+            if (details.isNotEmpty()) {
+                Text(
+                    text = details,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
-}
 
-@Composable
-private fun FormatBadge(format: TimelineFormat) {
-    val label = when (format) {
-        TimelineFormat.PHONE_TAKEOUT -> stringResource(R.string.format_phone)
-        TimelineFormat.PHONE_TAKEOUT_ARRAY -> stringResource(R.string.format_phone_ios)
-        TimelineFormat.SEMANTIC_LOCATION_HISTORY -> stringResource(R.string.format_semantic)
-        TimelineFormat.RECORDS -> stringResource(R.string.format_records)
-        TimelineFormat.UNKNOWN -> stringResource(R.string.format_unknown)
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(modifier = Modifier.height(IntrinsicSize.Min).padding(vertical = 12.dp)) {
+            // Weighted by how long each figure tends to be: "33,348" and
+            // "14,501 km" need the room, "373" does not.
+            StatCell(
+                value = formatGrouped(result.pathPoints.size),
+                label = stringResource(R.string.metric_points),
+                modifier = Modifier.weight(1f),
+            )
+            val (days, meters) = extras ?: (0 to 0.0)
+            if (days > 0) {
+                StatDivider()
+                StatCell(
+                    value = formatGrouped(days),
+                    label = stringResource(R.string.metric_days),
+                    modifier = Modifier.weight(0.8f),
+                )
+            }
+            if (meters > 0) {
+                StatDivider()
+                StatCell(
+                    value = formatKm(meters),
+                    label = stringResource(R.string.metric_distance),
+                    modifier = Modifier.weight(1.2f),
+                )
+            }
+        }
     }
-    Pill(
-        text = label,
-        container = MaterialTheme.colorScheme.secondaryContainer,
-        content = MaterialTheme.colorScheme.onSecondaryContainer,
-    )
+
+    // Pulled left by its own inner padding so the icon lines up with the file
+    // tile above instead of floating a step to the right of it.
+    TextButton(
+        onClick = onChangeFile,
+        shape = MaterialTheme.shapes.small,
+        contentPadding = ButtonDefaults.TextButtonWithIconContentPadding,
+        modifier = Modifier.offset(x = (-12).dp),
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_folder_open),
+            contentDescription = null,
+            modifier = Modifier.size(18.dp),
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(stringResource(R.string.file_change_button))
+    }
 }
 
 @Composable
-private fun Pill(
-    text: String,
-    container: androidx.compose.ui.graphics.Color,
-    content: androidx.compose.ui.graphics.Color,
-) {
-    Surface(color = container, shape = RoundedCornerShape(8.dp)) {
+private fun StatCell(value: String, label: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.padding(horizontal = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        // Shrinks rather than cuts: "14.501 km" does not fit a third of a
+        // 320 dp phone at full size, and a figure ending in "k…" is no figure.
+        val valueStyle = MaterialTheme.typography.titleMedium
+        BasicText(
+            text = value,
+            style = valueStyle.copy(
+                fontFeatureSettings = "tnum",
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(minFontSize = 11.sp, maxFontSize = valueStyle.fontSize),
+        )
         Text(
-            text = text,
-            style = MaterialTheme.typography.labelSmall,
-            color = content,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun StatDivider() {
+    VerticalDivider(
+        color = MaterialTheme.colorScheme.outlineVariant,
+        modifier = Modifier.padding(vertical = 2.dp),
+    )
+}
+
+@Composable
+private fun formatLabel(format: TimelineFormat): String = when (format) {
+    TimelineFormat.PHONE_TAKEOUT -> stringResource(R.string.format_phone)
+    TimelineFormat.PHONE_TAKEOUT_ARRAY -> stringResource(R.string.format_phone_ios)
+    TimelineFormat.SEMANTIC_LOCATION_HISTORY -> stringResource(R.string.format_semantic)
+    TimelineFormat.RECORDS -> stringResource(R.string.format_records)
+    TimelineFormat.UNKNOWN -> stringResource(R.string.format_unknown)
+}
+
+/**
+ * Step 2: which days, which hours, which kinds of movement, and how much of
+ * the file is left once all three have had their say.
+ *
+ * The date range is a field that shows its own value, with four equal presets
+ * under it. It used to be a sentence above six chips of different widths that
+ * wrapped three and three: "Custom…" never lit up even while a custom range
+ * was applied, and "Time of day" shared the row though it answers a different
+ * question. Now the field is the custom range (tap it for the calendar), the
+ * presets are one segmented row that cannot wrap, and time of day and movement
+ * are two rows of the same shape, each stating its answer under its name.
+ */
 @Composable
 private fun FilterContent(
     currentRange: ClosedRange<Instant>?,
+    dataFirst: Instant?,
     dataLast: Instant?,
     totalCount: Int,
     filteredCount: Int,
@@ -941,82 +1084,241 @@ private fun FilterContent(
     onMovingOnly: (Boolean) -> Unit,
     onDropRepeated: (Boolean) -> Unit,
 ) {
-    if (currentRange == null) {
-        Text(
-            stringResource(R.string.filter_date_range_all),
-            style = MaterialTheme.typography.bodyMedium,
+    val context = LocalContext.current
+    // With no range applied the field shows the file's own span rather than
+    // "all dates": the dates a user wants to see are the ones they would be
+    // narrowing from.
+    val shown = currentRange
+        ?: if (dataFirst != null && dataLast != null) dataFirst..dataLast else null
+    DateRangeField(
+        value = shown?.let { formatLocalDayRange(context, it.start, it.endInclusive) } ?: "—",
+        onClick = onCustom,
+    )
+
+    if (dataLast != null) {
+        // "Last N days" counts back from the end of the file, not from today:
+        // for a historical export that is what the words mean.
+        val presets: List<Pair<ClosedRange<Instant>?, String>> = listOf(
+            lastNDaysRange(dataLast, 7) to pluralStringResource(R.plurals.map_day_count, 7, 7),
+            lastNDaysRange(dataLast, 30) to pluralStringResource(R.plurals.map_day_count, 30, 30),
+            lastNDaysRange(dataLast, 90) to pluralStringResource(R.plurals.map_day_count, 90, 90),
+            null to stringResource(R.string.date_preset_all_short),
         )
-    } else {
-        Text(
-            stringResource(
-                R.string.filter_date_range_set,
-                formatLocalDate(currentRange.start),
-                formatLocalDate(currentRange.endInclusive),
-            ),
-            style = MaterialTheme.typography.bodyMedium,
+        ChoiceRow(
+            labels = presets.map { it.second },
+            // -1 while a range from the calendar is applied: none of the four
+            // is true then, and the field above already says what is.
+            selectedIndex = presets.indexOfFirst { it.first == currentRange },
+            onSelect = { index -> presets[index].first?.let(onApply) ?: onClear() },
         )
     }
 
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (dataLast != null) {
-            val last7 = lastNDaysRange(dataLast, 7)
-            val last30 = lastNDaysRange(dataLast, 30)
-            val last90 = lastNDaysRange(dataLast, 90)
-            FilterChip(
-                selected = currentRange == last7,
-                onClick = { onApply(last7) },
-                label = { Text(stringResource(R.string.date_preset_last_7)) },
+    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+    // No spacing of its own, so the two rows sit together as a list instead of
+    // taking the step's gaps between them.
+    Column {
+        SettingRow(
+            iconRes = R.drawable.ic_schedule,
+            title = stringResource(R.string.filter_time_any),
+            value = timeOfDayValueLabel(filter.timeOfDay),
+            onClick = onTimeOfDay,
+        ) {
+            RowChevron()
+        }
+        MovementSection(
+            parsed = parsed,
+            filter = filter,
+            includeContainers = includeContainers,
+            onToggleMovement = onToggleMovement,
+            onMovingOnly = onMovingOnly,
+            onDropRepeated = onDropRepeated,
+        )
+    }
+
+    FilterCount(filtered = filteredCount, total = totalCount)
+}
+
+/**
+ * The date range as a field: what is applied (or, with nothing applied, the
+ * span of the file), and the way into the calendar. It replaces both the
+ * "Date range: …" sentence and the "Custom…" chip, which described one state
+ * in two places and never agreed about it.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DateRangeField(value: String, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_calendar),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
             )
-            FilterChip(
-                selected = currentRange == last30,
-                onClick = { onApply(last30) },
-                label = { Text(stringResource(R.string.date_preset_last_30)) },
-            )
-            FilterChip(
-                selected = currentRange == last90,
-                onClick = { onApply(last90) },
-                label = { Text(stringResource(R.string.date_preset_last_90)) },
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.metric_date_range),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(text = value, style = MaterialTheme.typography.bodyLarge)
+            }
+            RowChevron()
+        }
+    }
+}
+
+/**
+ * The four date presets: a segmented row drawn to match Material's
+ * SegmentedButton (40 dp, outline, secondaryContainer when on, 12 dp corners
+ * like the Track / Places switch), but built by hand.
+ *
+ * Material's version could not hold these labels. It keeps 12 dp of padding
+ * either side of every label and reserves room for a tick, which on a 360 dp
+ * phone leaves about 50 dp of text per segment, and on a 320 dp phone 40:
+ * "90 days" fit in English and became "90 T…" in German, "30 д…" in Russian.
+ * Here each segment keeps 4 dp of padding, there is no tick (the filled segment
+ * already says which one is on), and a label that still does not fit steps its
+ * size down rather than being cut.
+ */
+@Composable
+private fun ChoiceRow(labels: List<String>, selectedIndex: Int, onSelect: (Int) -> Unit) {
+    val shape = MaterialTheme.shapes.small
+    val outline = MaterialTheme.colorScheme.outline
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp)
+            .clip(shape)
+            .border(1.dp, outline, shape)
+            .selectableGroup(),
+    ) {
+        labels.forEachIndexed { index, label ->
+            if (index > 0) VerticalDivider(color = outline)
+            val selected = index == selectedIndex
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
+                    .selectable(selected = selected, role = Role.RadioButton, onClick = { onSelect(index) })
+                    .padding(horizontal = 4.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                val style = MaterialTheme.typography.labelLarge
+                BasicText(
+                    text = label,
+                    style = style.copy(
+                        color = if (selected) {
+                            MaterialTheme.colorScheme.onSecondaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        },
+                        textAlign = TextAlign.Center,
+                    ),
+                    maxLines = 1,
+                    autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = style.fontSize),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * A row that states one filter and leads to where it is changed: an icon, what
+ * the filter is, what it is set to, and a trailing affordance.
+ *
+ * Padded 12 dp at the sides so its icon lines up with the calendar icon inside
+ * the date field above and with the tick boxes the movement row expands into.
+ */
+@Composable
+private fun SettingRow(
+    @DrawableRes iconRes: Int,
+    title: String,
+    value: String,
+    onClick: () -> Unit,
+    trailing: @Composable () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.small)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
         }
-        FilterChip(
-            selected = currentRange == null,
-            onClick = onClear,
-            label = { Text(stringResource(R.string.date_preset_all)) },
-        )
-        FilterChip(
-            selected = false,
-            onClick = onCustom,
-            label = { Text(stringResource(R.string.filter_preset_custom)) },
-        )
-        // The time-of-day window sits in the same row as the dates because it
-        // is the same question narrowed once more — which hours of the days
-        // already chosen — and because a chip that states its own answer
-        // ("07:00 – 19:00") needs no label above it and no row of its own.
-        FilterChip(
-            selected = filter.timeOfDay != null,
-            onClick = onTimeOfDay,
-            label = { Text(timeOfDayChipLabel(filter.timeOfDay)) },
-        )
+        trailing()
     }
+}
 
-    Text(
-        text = stringResource(
-            R.string.filter_filtered_count,
-            formatGrouped(filteredCount),
-            formatGrouped(totalCount),
-        ),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+@Composable
+private fun RowChevron() {
+    Icon(
+        painter = painterResource(R.drawable.ic_chevron_right),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
     )
+}
 
-    MovementSection(
-        parsed = parsed,
-        filter = filter,
-        includeContainers = includeContainers,
-        onToggleMovement = onToggleMovement,
-        onMovingOnly = onMovingOnly,
-        onDropRepeated = onDropRepeated,
-    )
+/**
+ * How much of the file survives the filters: the sentence it always was, plus
+ * a bar. "33,348 of 33,348" and "9,748 of 33,348" look alike at a glance; a
+ * full bar and a third of one do not.
+ */
+@Composable
+private fun FilterCount(filtered: Int, total: Int) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = stringResource(
+                R.string.filter_filtered_count,
+                formatGrouped(filtered),
+                formatGrouped(total),
+            ),
+            style = MaterialTheme.typography.bodySmall.copy(fontFeatureSettings = "tnum"),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        val fraction = if (total > 0) (filtered.toFloat() / total).coerceIn(0f, 1f) else 0f
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(fraction)
+                    .fillMaxHeight()
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary),
+            )
+        }
+    }
 }
 
 /**
@@ -1056,31 +1358,22 @@ private fun MovementSection(
     val labels = movementLabels()
 
     var expanded by rememberSaveable { mutableStateOf(false) }
+    val arrowTurn by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        label = "movementArrow",
+    )
 
-    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { expanded = !expanded }
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+    SettingRow(
+        iconRes = R.drawable.ic_content_track,
+        title = stringResource(R.string.filter_movement_title),
+        value = movementSummaryLabel(selected, available, filter.movingOnly, places, labels),
+        onClick = { expanded = !expanded },
     ) {
-        Text(
-            text = movementSummaryLabel(selected, available, filter.movingOnly, places, labels),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f, fill = false),
-        )
-        Text(
-            text = if (expanded) "▲" else "▼",
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 8.dp),
+        Icon(
+            painter = painterResource(R.drawable.ic_expand_more),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.rotate(arrowTurn),
         )
     }
 
@@ -1101,7 +1394,7 @@ private fun MovementSection(
                 text = stringResource(R.string.places_count, formatGrouped(places)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(start = 12.dp, top = 4.dp),
             )
         }
 
@@ -1169,8 +1462,12 @@ private fun ToggleRow(
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .clickable { onCheckedChange(!checked) }
-            .padding(vertical = 4.dp),
+            // The same 12 dp inset as the filter rows and tick boxes above, so
+            // the labels share their left edge; and a gap before the switch, so
+            // a long hint wraps instead of running into it.
+            .padding(horizontal = 12.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(label, style = MaterialTheme.typography.bodyMedium)
@@ -1220,7 +1517,8 @@ private fun movementSummaryLabel(
     val parts = mutableListOf(
         when {
             selected.isEmpty() -> stringResource(R.string.filter_movement_none)
-            selected == available -> stringResource(R.string.filter_movement_all)
+            // Just "All": the row's title already says "Movement".
+            selected == available -> stringResource(R.string.date_preset_all_short)
             else -> selected.sortedBy { it.ordinal }
                 .joinToString(", ") { labels[it] ?: it.name }
         }
@@ -1272,7 +1570,7 @@ private fun MapTile(
     inlineMapActive: Boolean,
     mapContent: @Composable (MapSubject, Modifier) -> Unit,
 ) {
-    val shape = RoundedCornerShape(8.dp)
+    val shape = MaterialTheme.shapes.medium
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -1311,7 +1609,11 @@ private fun ContentSwitch(
                 selected = kind == selected,
                 onClick = { onSelect(kind) },
                 enabled = enabled,
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = kinds.size),
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = kinds.size,
+                    baseShape = MaterialTheme.shapes.small,
+                ),
             ) {
                 Text(
                     when (kind) {
@@ -1335,7 +1637,7 @@ private fun ContentSwitch(
  * export, and a one-line caption above four buttons is exactly the kind of
  * text people skip. Flipping the switch therefore looked like it did nothing.
  *
- * Deliberately a neutral `surfaceVariant` panel with a tinted icon, and not a
+ * Deliberately a neutral `surfaceContainer` panel with a tinted icon, and not a
  * `secondaryContainer` one: `FilledTonalButton` — the GPX / KML / GeoJSON /
  * CSV row directly below — is `secondaryContainer` by default, so a tonal
  * plaque would be the same colour as the buttons it introduces and would read
@@ -1363,9 +1665,9 @@ private fun ExportSubjectPlaque(contentKind: ContentKind, itemCount: Int) {
         formatGrouped(itemCount),
     )
     Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
@@ -1430,7 +1732,7 @@ private fun ExportStep(
             selected = !shareInstead,
             onClick = { onShareInsteadChange(false) },
             enabled = enabled,
-            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
+            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2, baseShape = MaterialTheme.shapes.small),
         ) {
             Text(stringResource(R.string.export_action_save))
         }
@@ -1438,7 +1740,7 @@ private fun ExportStep(
             selected = shareInstead,
             onClick = { onShareInsteadChange(true) },
             enabled = enabled,
-            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
+            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2, baseShape = MaterialTheme.shapes.small),
         ) {
             Text(stringResource(R.string.export_action_share))
         }
@@ -1449,7 +1751,7 @@ private fun ExportStep(
             FilledTonalButton(
                 onClick = { onPickFormat(exporter) },
                 enabled = enabled,
-                shape = ButtonShape,
+                shape = MaterialTheme.shapes.small,
             ) {
                 Text(exporter.displayName)
             }
@@ -1550,7 +1852,7 @@ private fun FeedbackPrompt(onClick: () -> Unit) {
     Surface(
         color = MaterialTheme.colorScheme.tertiaryContainer,
         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         modifier = Modifier.fillMaxWidth(),
     ) {
         // The 12dp text inset is split between this Column and the button's own
@@ -1675,7 +1977,7 @@ internal fun ExpandedMap(
         // Keep the same rounded, bordered "Preview tile" framing as the inline
         // map, just enlarged with a margin around it — not edge-to-edge.
         Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            val shape = RoundedCornerShape(8.dp)
+            val shape = MaterialTheme.shapes.medium
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -1749,9 +2051,6 @@ private fun buildContentName(filter: TimelineFilter, kind: ContentKind): String 
 }
 
 // ---------- shared shapes / formatting helpers ----------
-
-/** Slightly-rounded rectangle for filled buttons, instead of Material's pill. */
-private val ButtonShape = RoundedCornerShape(8.dp)
 
 private fun formatGrouped(n: Int): String = "%,d".format(n)
 

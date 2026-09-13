@@ -16,7 +16,6 @@
     <string name="step_preview">Preview</string>
 
     <!-- Loaded summary -->
-    <string name="loaded_badge">Loaded</string>
     <string name="metric_points">Points</string>
     <string name="metric_date_range">Date range</string>
 
@@ -26,9 +25,6 @@
     <string name="format_semantic">Semantic History</string>
     <string name="format_records" translatable="false">Records.json</string>
     <string name="format_unknown">Unknown format</string>
-
-    <!-- Filter quick presets -->
-    <string name="filter_preset_custom">Custom…</string>
 
     <!-- Pick file / Idle state -->
     <string name="pick_file_button">Pick Timeline.json</string>
@@ -54,8 +50,6 @@
 
     <!-- Filter section -->
     <string name="filter_title">Filter</string>
-    <string name="filter_date_range_all">Date range: all dates</string>
-    <string name="filter_date_range_set">Date range: %1$s — %2$s</string>
     <string name="filter_filtered_count">After filter: %1$s of %2$s points</string>
     <string name="filter_set_button">Set date range</string>
     <string name="filter_change_button">Change date range</string>
@@ -64,7 +58,6 @@
     <!-- Movement breakdown: the collapsible section under the date chips.
          It is both the statistics view and the movement filter — the rows a
          user reads are the rows they tick. -->
-    <string name="filter_movement_all">All movement</string>
     <string name="filter_movement_none">No movement selected</string>
     <string name="filter_moving_only_short">moving only</string>
     <string name="points_count">%1$s points</string>
@@ -88,10 +81,6 @@
     <string name="date_dialog_title">Filter by date</string>
     <string name="date_dialog_cancel">Cancel</string>
     <string name="date_dialog_apply">Apply</string>
-    <string name="date_preset_last_7">Last 7 days</string>
-    <string name="date_preset_last_30">Last 30 days</string>
-    <string name="date_preset_last_90">Last 90 days</string>
-    <string name="date_preset_all">All data</string>
 
     <!-- Preview section -->
     <string name="preview_title">Preview</string>
@@ -315,4 +304,16 @@
 
     <!-- The chip that names the day whose track was tapped, and clears it. -->
     <string name="map_selected_day">Selected day: %1$s. Tap to clear.</string>
+
+    <!-- Step 1 once a file is loaded: the stats under the file name, and the
+         quiet way to swap it for another one. -->
+    <string name="file_change_button">Choose another file</string>
+    <string name="metric_days">Days</string>
+    <string name="metric_distance">Distance</string>
+
+    <!-- Step 2: the title of the movement row, and the shortest "everything"
+         that fits as the fourth of four equal date presets. -->
+    <string name="filter_movement_title">Movement</string>
+    <string name="date_preset_all_short">All</string>
+    <string name="date_range_value" translatable="false">%1$s – %2$s</string>
 </resources>

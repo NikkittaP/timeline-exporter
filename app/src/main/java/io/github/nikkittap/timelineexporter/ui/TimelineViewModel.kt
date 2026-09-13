@@ -58,7 +58,12 @@ sealed interface LoadingPhase {
 sealed interface TimelineUiState {
     data object Idle : TimelineUiState
     data class Loading(val phase: LoadingPhase) : TimelineUiState
-    data class Loaded(val result: ParsedTimeline) : TimelineUiState
+    /**
+     * [fileName] is what the file picker called the file, shown in step 1 so
+     * someone with several exports (Timeline_1, Timeline_merged…) can see
+     * which one is open. Null when the provider does not expose a name.
+     */
+    data class Loaded(val result: ParsedTimeline, val fileName: String? = null) : TimelineUiState
     /**
      * Parse failed. When [wrongFile] is true the user simply picked something
      * that isn't a Timeline export (or an unreadable/binary file); the UI shows
@@ -228,7 +233,7 @@ class TimelineViewModel : ViewModel() {
                             )
                         }
                     }
-                    TimelineUiState.Loaded(result)
+                    TimelineUiState.Loaded(result, fileName = queryDisplayName(uri, contentResolver))
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: NotTimelineFileException) {

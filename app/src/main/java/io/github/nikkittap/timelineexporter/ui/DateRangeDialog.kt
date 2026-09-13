@@ -1,38 +1,71 @@
 package io.github.nikkittap.timelineexporter.ui
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.AssistChip
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Button
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
 import io.github.nikkittap.timelineexporter.R
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 
 /**
- * Full-screen dialog wrapping Material 3's DateRangePicker.
+ * Full-screen dialog around Material 3's DateRangePicker, with the picker's
+ * own header replaced by one of ours.
+ *
+ * What the stock header did, and why it is gone:
+ *  - a grey title band in the picker's own container colour, the one block on
+ *    the screen that looked like nothing else in the app;
+ *  - a headline that set both ends with their years, which wrapped mid-date
+ *    ("Jun 29, / 2026") on an ordinary phone;
+ *  - a row of Last 7 / 30 / 90 / All chips repeating the presets step 2
+ *    already has, clipped at the right edge.
+ *
+ * What replaces it: a close icon, the title and Apply in one bar, then a panel
+ * with the selection as one localized range and what it holds — the number of
+ * days and of points. The point count runs the same filter step 2 runs with
+ * only the dates swapped (see [countPoints]), so it is the figure step 2 will
+ * show after Apply rather than a second, disagreeing one.
+ *
+ * Days outside the file cannot be picked: an export that ends on June 29 has
+ * nothing to say about June 30, and letting someone select it only produced an
+ * empty track.
  *
  * Conversion rules:
  *  - The picker stores each selected date as the millis at UTC midnight of
@@ -43,15 +76,17 @@ import java.time.ZoneOffset
  *
  * @param initialRange the currently-applied filter range, if any. If null,
  *   the picker pre-selects [dataRange] so the user can see what's available.
- * @param dataRange the full time span of the parsed data, if loaded. Used
- *   to populate the quick-preset chips and to pre-scroll the calendar to
- *   the relevant month.
+ * @param dataRange the full time span of the parsed data, if loaded. Bounds
+ *   what can be selected and pre-scrolls the calendar to the relevant month.
+ * @param countPoints how many points the current filters keep for a given
+ *   date range.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateRangeDialog(
     initialRange: ClosedRange<Instant>?,
     dataRange: ClosedRange<Instant>?,
+    countPoints: (ClosedRange<Instant>) -> Int,
     onConfirm: (ClosedRange<Instant>) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -61,114 +96,199 @@ fun DateRangeDialog(
     // range so they can see what's there and narrow from it.
     val seedRange = initialRange ?: dataRange
 
+    val dataDays = remember(dataRange, seedRange) {
+        dataRange?.let { data ->
+            val first = instantToPickerMillis(data.start, zoneId)
+            val last = instantToPickerMillis(data.endInclusive, zoneId)
+            // The year range has to cover the seeded selection too, or the
+            // picker rejects its own initial state: "last 30 days" of a file
+            // that starts on January 3 begins in the year before the file.
+            val seedFirst = seedRange?.start?.let { instantToPickerMillis(it, zoneId) } ?: first
+            val seedLast = seedRange?.endInclusive?.let { instantToPickerMillis(it, zoneId) } ?: last
+            DataDays(
+                firstMillis = first,
+                lastMillis = last,
+                years = pickerDate(minOf(first, seedFirst)).year..pickerDate(maxOf(last, seedLast)).year,
+            )
+        }
+    }
+
     val pickerState = rememberDateRangePickerState(
         initialSelectedStartDateMillis = seedRange?.start?.let { instantToPickerMillis(it, zoneId) },
         initialSelectedEndDateMillis = seedRange?.endInclusive?.let { instantToPickerMillis(it, zoneId) },
         // Opens the calendar already scrolled to the relevant month.
         initialDisplayedMonthMillis = seedRange?.start?.let { instantToPickerMillis(it, zoneId) },
+        yearRange = dataDays?.years ?: DatePickerDefaults.YearRange,
+        selectableDates = dataDays ?: DatePickerDefaults.AllDates,
     )
+
+    val start = pickerState.selectedStartDateMillis
+    val end = pickerState.selectedEndDateMillis
+    val selection = remember(start, end) {
+        if (start != null && end != null) pickerMillisToLocalDayRange(start, end, zoneId) else null
+    }
+    // One pass of the step 2 filter per tap on a day. That is a few
+    // milliseconds even on a year of history, and a count that lagged behind
+    // the selection would be worse than none.
+    val selectedPoints = remember(selection) { selection?.let(countPoints) }
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+        // Drawn under the status and navigation bars, with the content padded
+        // back out of them. Fitting the window to the bars instead left the
+        // dialog's dim showing through above and below it, as two grey bands
+        // framing a screen that is meant to be the whole screen.
+        properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.date_dialog_title),
-                    style = MaterialTheme.typography.headlineSmall,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                if (dataRange != null) {
-                    QuickPresetChips(
-                        dataRange = dataRange,
-                        zoneId = zoneId,
-                        onSelect = { (s, e) -> pickerState.setSelection(s, e) },
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                DateRangePicker(
-                    state = pickerState,
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
-                )
-
+        // Drawing under the bars makes their icons this window's business: left
+        // alone they stay white, and vanish against the light theme's surface.
+        val view = LocalView.current
+        val lightSurface = MaterialTheme.colorScheme.surface.luminance() > 0.5f
+        SideEffect {
+            val window = (view.parent as? DialogWindowProvider)?.window ?: return@SideEffect
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = lightSurface
+                isAppearanceLightNavigationBars = lightSurface
+            }
+        }
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.surface,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.systemBars)
+                    .padding(vertical = 8.dp),
+            ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 4.dp, end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    TextButton(onClick = onDismiss) {
-                        Text(stringResource(R.string.date_dialog_cancel))
+                    IconButton(onClick = onDismiss) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_close),
+                            contentDescription = stringResource(R.string.date_dialog_cancel),
+                        )
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    TextButton(
-                        onClick = {
-                            val s = pickerState.selectedStartDateMillis
-                            val e = pickerState.selectedEndDateMillis
-                            if (s != null && e != null) {
-                                onConfirm(pickerMillisToLocalDayRange(s, e, zoneId))
-                            }
-                        },
-                        enabled = pickerState.selectedStartDateMillis != null &&
-                                pickerState.selectedEndDateMillis != null,
+                    Text(
+                        text = stringResource(R.string.date_dialog_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 4.dp, end = 12.dp),
+                    )
+                    Button(
+                        onClick = { selection?.let(onConfirm) },
+                        enabled = selection != null,
+                        shape = MaterialTheme.shapes.small,
                     ) {
                         Text(stringResource(R.string.date_dialog_apply))
                     }
                 }
+
+                SelectionSummary(
+                    startMillis = start,
+                    endMillis = end,
+                    pointCount = selectedPoints,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                )
+
+                DateRangePicker(
+                    state = pickerState,
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    title = null,
+                    headline = null,
+                    showModeToggle = false,
+                    // Transparent, so the calendar sits on the dialog's own
+                    // surface instead of a second grey panel inside it.
+                    colors = DatePickerDefaults.colors(containerColor = Color.Transparent),
+                )
             }
         }
     }
 }
 
 /**
- * Horizontally-scrolling row of "Last 7 days" / "Last 30 days" / etc. chips.
- * Each tap calls [onSelect] with a (start, end) pair in the picker's
- * UTC-midnight-millis representation, suitable for [DateRangePickerState.setSelection].
+ * The panel above the calendar: the selection, and what is in it.
  *
- * "Last N days" is relative to the DATA's last point, not today — for
- * historical Timeline data, that's what users mean.
+ * Both lines are always there. Mid-selection, after the first tap and before
+ * the second, the second line holds a non-breaking space rather than nothing,
+ * because an empty Text measures shorter than a real line and the calendar
+ * would jump up and back down under the user's thumb.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun QuickPresetChips(
-    dataRange: ClosedRange<Instant>,
-    zoneId: ZoneId,
-    onSelect: (Pair<Long, Long>) -> Unit,
+private fun SelectionSummary(
+    startMillis: Long?,
+    endMillis: Long?,
+    pointCount: Int?,
+    modifier: Modifier = Modifier,
 ) {
-    // Range pairs are pure data so they're remembered; the localized
-    // labels are resolved at composition time via stringResource.
-    val ranges = remember(dataRange) {
-        listOf(
-            lastNDaysPickerRange(dataRange.endInclusive, 7, zoneId),
-            lastNDaysPickerRange(dataRange.endInclusive, 30, zoneId),
-            lastNDaysPickerRange(dataRange.endInclusive, 90, zoneId),
-            instantToPickerMillis(dataRange.start, zoneId) to
-                instantToPickerMillis(dataRange.endInclusive, zoneId),
-        )
-    }
-    val labels = listOf(
-        stringResource(R.string.date_preset_last_7),
-        stringResource(R.string.date_preset_last_30),
-        stringResource(R.string.date_preset_last_90),
-        stringResource(R.string.date_preset_all),
-    )
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState()),
+    val context = LocalContext.current
+    val first = startMillis?.let(::pickerDate)
+    val last = endMillis?.let(::pickerDate)
+
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = MaterialTheme.shapes.medium,
+        modifier = modifier.fillMaxWidth(),
     ) {
-        ranges.zip(labels).forEach { (range, label) ->
-            AssistChip(
-                onClick = { onSelect(range) },
-                label = { Text(label) },
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Text(
+                text = when {
+                    first == null -> "—"
+                    last == null -> stringResource(
+                        R.string.date_range_value,
+                        formatLocalDayRange(context, first, first),
+                        "…",
+                    )
+                    else -> formatLocalDayRange(context, first, last)
+                },
+                style = MaterialTheme.typography.titleLarge,
+            )
+            val details = if (first != null && last != null) {
+                val days = (ChronoUnit.DAYS.between(first, last) + 1).toInt()
+                val daysText = pluralStringResource(R.plurals.map_day_count, days, days)
+                if (pointCount != null) {
+                    "$daysText · " + stringResource(R.string.points_count, "%,d".format(pointCount))
+                } else {
+                    daysText
+                }
+            } else {
+                " "
+            }
+            Text(
+                text = details,
+                style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
 }
 
+/** Only the days the file covers can be picked, within the years that hold them. */
+@OptIn(ExperimentalMaterial3Api::class)
+private class DataDays(
+    private val firstMillis: Long,
+    private val lastMillis: Long,
+    val years: IntRange,
+) : SelectableDates {
+    override fun isSelectableDate(utcTimeMillis: Long): Boolean = utcTimeMillis in firstMillis..lastMillis
+    override fun isSelectableYear(year: Int): Boolean = year in years
+}
+
 // ---------- date/millis conversion helpers ----------
+
+/** The calendar date a picker millis value stands for. */
+private fun pickerDate(millis: Long): LocalDate =
+    Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
 
 /**
  * Convert a stored Instant back to the "UTC midnight millis" the picker
@@ -188,22 +308,9 @@ private fun pickerMillisToLocalDayRange(
     endMillis: Long,
     zoneId: ZoneId,
 ): ClosedRange<Instant> {
-    val startDate = Instant.ofEpochMilli(startMillis).atZone(ZoneOffset.UTC).toLocalDate()
-    val endDate = Instant.ofEpochMilli(endMillis).atZone(ZoneOffset.UTC).toLocalDate()
+    val startDate = pickerDate(startMillis)
+    val endDate = pickerDate(endMillis)
     val startInstant = startDate.atStartOfDay(zoneId).toInstant()
     val endInstant = endDate.plusDays(1).atStartOfDay(zoneId).toInstant().minusNanos(1)
     return startInstant..endInstant
-}
-
-/**
- * "Last N days" as a (start, end) pair in picker's UTC-midnight-millis
- * format, anchored at [anchorInstant] interpreted in [zoneId].
- *
- * E.g. anchor=2026-05-21, N=7 -> (2026-05-15, 2026-05-21).
- */
-private fun lastNDaysPickerRange(anchorInstant: Instant, days: Int, zoneId: ZoneId): Pair<Long, Long> {
-    val endDate = anchorInstant.atZone(zoneId).toLocalDate()
-    val startDate = endDate.minusDays((days - 1).toLong())
-    return startDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli() to
-        endDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
 }

@@ -1056,7 +1056,7 @@ fun TimelineMap(
                     .onSizeChanged { legendHeightPx = it.height }
                     .padding(12.dp)
                     .fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.medium,
                 // Translucent enough that a route crossing behind it stays
                 // visible, which is what lets the day count describe the whole
                 // view and still agree with what is on screen. Not so
@@ -1229,6 +1229,7 @@ fun TimelineMap(
             if (onToggleFullscreen != null) {
                 SmallFloatingActionButton(
                     onClick = onToggleFullscreen,
+                    shape = MaterialTheme.shapes.small,
                     containerColor = MaterialTheme.colorScheme.surface,
                     contentColor = MaterialTheme.colorScheme.onSurface,
                 ) {
@@ -1256,6 +1257,7 @@ fun TimelineMap(
                     },
                     // Deliberately not the primary container colour: this is a
                     // way back, not the thing to do on this screen.
+                    shape = MaterialTheme.shapes.small,
                     containerColor = MaterialTheme.colorScheme.surface,
                     contentColor = MaterialTheme.colorScheme.onSurface,
                 ) {

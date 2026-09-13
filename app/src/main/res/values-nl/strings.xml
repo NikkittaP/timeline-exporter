@@ -10,7 +10,6 @@
     <string name="step_filter">Gegevens filteren</string>
     <string name="step_preview">Voorbeeld</string>
 
-    <string name="loaded_badge">Geladen</string>
     <string name="metric_points">Punten</string>
     <string name="metric_date_range">Periode</string>
 
@@ -19,7 +18,6 @@
     <string name="format_semantic">Semantic History</string>
     <string name="format_unknown">Onbekend formaat</string>
 
-    <string name="filter_preset_custom">Aangepast…</string>
 
     <string name="pick_file_button">Timeline.json kiezen</string>
     <string name="idle_hint">Kies een Google Maps Timeline-JSON-bestand om te verwerken.</string>
@@ -34,15 +32,12 @@
     <string name="loading_sorting">Punten op tijd sorteren</string>
 
     <string name="filter_title">Filter</string>
-    <string name="filter_date_range_all">Periode: alle datums</string>
-    <string name="filter_date_range_set">Periode: %1$s — %2$s</string>
     <string name="filter_filtered_count">Na filter: %1$s van %2$s punten</string>
     <string name="filter_set_button">Periode instellen</string>
     <string name="filter_change_button">Periode wijzigen</string>
     <string name="filter_clear_button">Wissen</string>
 
     <!-- Movement breakdown -->
-    <string name="filter_movement_all">Alle vervoerswijzen</string>
     <string name="filter_movement_none">Niets geselecteerd</string>
     <string name="filter_moving_only_short">alleen onderweg</string>
     <string name="points_count">%1$s punten</string>
@@ -62,10 +57,6 @@
     <string name="date_dialog_title">Op datum filteren</string>
     <string name="date_dialog_cancel">Annuleren</string>
     <string name="date_dialog_apply">Toepassen</string>
-    <string name="date_preset_last_7">Laatste 7 dagen</string>
-    <string name="date_preset_last_30">Laatste 30 dagen</string>
-    <string name="date_preset_last_90">Laatste 90 dagen</string>
-    <string name="date_preset_all">Alle gegevens</string>
 
     <string name="preview_title">Voorbeeld</string>
     <string name="preview_no_points">Geen punten voor het huidige filter — niets te tonen.</string>
@@ -235,4 +226,9 @@
     <string name="map_days_tab_in_view">Zichtbaar (%1$d)</string>
     <string name="map_days_tab_all">Alle dagen (%1$d)</string>
     <string name="map_selected_day">Geselecteerde dag: %1$s. Tik om te wissen.</string>
+    <string name="file_change_button">Ander bestand kiezen</string>
+    <string name="metric_days">Dagen</string>
+    <string name="metric_distance">Afstand</string>
+    <string name="filter_movement_title">Vervoerswijze</string>
+    <string name="date_preset_all_short">Alles</string>
 </resources>

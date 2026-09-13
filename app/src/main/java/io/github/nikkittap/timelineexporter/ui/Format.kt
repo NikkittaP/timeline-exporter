@@ -1,9 +1,13 @@
 package io.github.nikkittap.timelineexporter.ui
 
+import android.content.Context
+import android.text.format.DateUtils
 import io.github.nikkittap.timelineexporter.parser.MINUTES_PER_DAY
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -38,6 +42,40 @@ fun formatLocalDate(instant: Instant): String {
         .withLocale(Locale.getDefault())
     return instant.atZone(ZoneId.systemDefault()).format(formatter)
 }
+
+/**
+ * A span of local days as one localized range that says the shared parts once:
+ * "May 31 – Jun 29, 2026", "Dec 28, 2025 – Jan 4, 2026", "Jun 23 – 29, 2026".
+ *
+ * Two [formatLocalDate] calls joined by a dash repeat the year on both ends,
+ * which is what made "Jun 9, 2025 – Jun 29, 2026" wrap mid-date in the stock
+ * calendar header. DateUtils knows each locale's own range pattern.
+ */
+fun formatLocalDayRange(context: Context, start: Instant, endInclusive: Instant): String {
+    val zone = ZoneId.systemDefault()
+    return formatLocalDayRange(context, start.atZone(zone).toLocalDate(), endInclusive.atZone(zone).toLocalDate())
+}
+
+fun formatLocalDayRange(context: Context, first: LocalDate, last: LocalDate): String {
+    val startMillis = first.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+    // Noon, not midnight: DateUtils reads an end that falls exactly on midnight
+    // as "up to but not including that day" and would print the day before.
+    val endMillis = last.atTime(12, 0).toInstant(ZoneOffset.UTC).toEpochMilli()
+    val range = DateUtils.formatDateRange(
+        context,
+        startMillis,
+        endMillis,
+        DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or
+            DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_UTC,
+    )
+    // Each date stays whole on its line. German spells the month out, and on a
+    // narrow phone "9. Juni 2025 – 29. Juni 2026" broke as "… – 29." over
+    // "Juni 2026". Every space becomes a non-breaking one except the one in
+    // front of the dash, which is where the line may turn.
+    return range.replace(' ', NBSP).replace("$NBSP–", " –")
+}
+
+private const val NBSP = ' '
 
 /**
  * A time of day given as minutes past local midnight, on whatever clock the

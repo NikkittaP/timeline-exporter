@@ -170,15 +170,16 @@ private fun MinuteField(label: String, minute: Int, onPick: (Int) -> Unit) {
 }
 
 /**
- * What the chip in step 2 says: the window, or the invitation to set one.
+ * What the Time of day row in step 2 says under its title: the window, or
+ * "Any time" when there is none.
  *
  * Kept next to the dialog rather than in the step, so the two cannot end up
  * describing the same state differently.
  */
 @Composable
-fun timeOfDayChipLabel(window: TimeOfDayWindow?): String =
+fun timeOfDayValueLabel(window: TimeOfDayWindow?): String =
     if (window == null || window.isWholeDay) {
-        stringResource(R.string.filter_time_any)
+        stringResource(R.string.time_preset_any)
     } else {
         stringResource(
             R.string.filter_time_range,

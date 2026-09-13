@@ -10,7 +10,6 @@
     <string name="step_filter">Фильтрация данных</string>
     <string name="step_preview">Предпросмотр</string>
 
-    <string name="loaded_badge">Загружено</string>
     <string name="metric_points">Точки</string>
     <string name="metric_date_range">Период</string>
 
@@ -19,7 +18,6 @@
     <string name="format_semantic">Semantic History</string>
     <string name="format_unknown">Неизвестный формат</string>
 
-    <string name="filter_preset_custom">Свой…</string>
 
     <string name="pick_file_button">Выбрать Timeline.json</string>
     <string name="idle_hint">Выберите JSON-файл Google Maps Timeline для разбора.</string>
@@ -34,15 +32,12 @@
     <string name="loading_sorting">Сортировка точек по времени</string>
 
     <string name="filter_title">Фильтр</string>
-    <string name="filter_date_range_all">Период: все даты</string>
-    <string name="filter_date_range_set">Период: %1$s — %2$s</string>
     <string name="filter_filtered_count">После фильтра: %1$s из %2$s точек</string>
     <string name="filter_set_button">Задать период</string>
     <string name="filter_change_button">Изменить период</string>
     <string name="filter_clear_button">Сбросить</string>
 
     <!-- Movement breakdown -->
-    <string name="filter_movement_all">Все виды передвижения</string>
     <string name="filter_movement_none">Ничего не выбрано</string>
     <string name="filter_moving_only_short">только в движении</string>
     <string name="points_count">%1$s точек</string>
@@ -62,10 +57,6 @@
     <string name="date_dialog_title">Фильтр по дате</string>
     <string name="date_dialog_cancel">Отмена</string>
     <string name="date_dialog_apply">Применить</string>
-    <string name="date_preset_last_7">Последние 7 дней</string>
-    <string name="date_preset_last_30">Последние 30 дней</string>
-    <string name="date_preset_last_90">Последние 90 дней</string>
-    <string name="date_preset_all">Все данные</string>
 
     <string name="preview_title">Предпросмотр</string>
     <string name="preview_no_points">Нет точек по текущему фильтру — нечего показать.</string>
@@ -239,4 +230,9 @@
     <string name="map_days_tab_in_view">На экране (%1$d)</string>
     <string name="map_days_tab_all">Все дни (%1$d)</string>
     <string name="map_selected_day">Выбранный день: %1$s. Нажмите, чтобы снять.</string>
+    <string name="file_change_button">Выбрать другой файл</string>
+    <string name="metric_days">Дни</string>
+    <string name="metric_distance">Расстояние</string>
+    <string name="filter_movement_title">Передвижение</string>
+    <string name="date_preset_all_short">Все</string>
 </resources>

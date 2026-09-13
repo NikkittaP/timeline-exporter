@@ -183,10 +183,9 @@ fun PlacesPreview(
         )
     }
 
-    val shape = RoundedCornerShape(8.dp)
     Surface(
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = shape,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = MaterialTheme.shapes.medium,
         modifier = Modifier.fillMaxWidth(),
     ) {
         // A plain Column, not a LazyColumn: this sits inside the screen's own
@@ -245,7 +244,7 @@ private fun PlaceRow(
             // inside a divided list reads as a text field.
             .background(
                 if (selected) MaterialTheme.colorScheme.secondaryContainer
-                else MaterialTheme.colorScheme.surfaceVariant
+                else MaterialTheme.colorScheme.surfaceContainer
             )
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 10.dp),
@@ -314,10 +313,9 @@ fun ExpandedPlaces(
                     Text(stringResource(R.string.preview_close))
                 }
             }
-            val shape = RoundedCornerShape(8.dp)
             Surface(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = shape,
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                shape = MaterialTheme.shapes.medium,
                 // weight, not fillMaxSize: a Column child asking for the full
                 // height ignores the header row above it and pushes the last
                 // list items off the bottom of the screen.

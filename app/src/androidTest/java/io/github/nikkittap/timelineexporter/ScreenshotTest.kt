@@ -218,8 +218,9 @@ class ScreenshotTest {
         }
         ActivityScenario.launch<MainActivity>(intent)
 
-        // Parse runs asynchronously; wait for the "Loaded" badge to appear.
-        waitForText(R.string.loaded_badge, timeoutMs = 20_000)
+        // Parse runs asynchronously; wait for step 1 to offer "Choose another
+        // file", which it only does once a file has loaded.
+        waitForText(R.string.file_change_button, timeoutMs = 20_000)
         // Pump the clock so the inline preview map applies its loaded style and
         // draws the route BEFORE we shoot (a bare sleep would not).
         settle(MAP_TILE_WAIT_MS)
@@ -229,10 +230,9 @@ class ScreenshotTest {
 
         // 07 — the movement breakdown, expanded: a row per movement group with
         // its trips and distance, then the two point-level switches. Matched by
-        // the collapsed row's own text, which starts with "All movement"
-        // whenever nothing has been unticked — read from resources, so this
-        // works in every locale without hard-coding a translation.
-        composeRule.onNodeWithText(str(R.string.filter_movement_all), substring = true)
+        // the row's title, read from resources, so this works in every locale
+        // without hard-coding a translation.
+        composeRule.onNodeWithText(str(R.string.filter_movement_title))
             .performScrollTo().performClick()
         composeRule.waitForIdle()
         // Scroll to the last switch so the whole expanded block is on screen,
@@ -241,14 +241,14 @@ class ScreenshotTest {
         composeRule.waitForIdle()
         Screengrab.screenshot("07_movement")
         // Collapse again so the shots that follow see the page they expect.
-        composeRule.onNodeWithText(str(R.string.filter_movement_all), substring = true)
+        composeRule.onNodeWithText(str(R.string.filter_movement_title))
             .performScrollTo().performClick()
         composeRule.waitForIdle()
 
-        // 09 — the time-of-day window. Before a window is set the chip carries
-        // the same string the dialog is titled with, so the chip is matched
-        // while it is still the only one on screen, and the dialog is waited
-        // for on a label of its own. Cancel, not Apply: the shots that follow
+        // 09 — the time-of-day window. The row in step 2 carries the same
+        // string the dialog is titled with, so the row is matched while it is
+        // still the only one on screen, and the dialog is waited for on a
+        // label of its own. Cancel, not Apply: the shots that follow
         // expect the unfiltered data.
         composeRule.onNodeWithText(str(R.string.filter_time_any))
             .performScrollTo().performClick()
@@ -294,12 +294,14 @@ class ScreenshotTest {
         composeRule.onNodeWithContentDescription(str(R.string.map_exit_fullscreen)).performClick()
         composeRule.waitForIdle()
 
-        // 04 — open the custom date-range (calendar) dialog.
-        composeRule.onNodeWithText(str(R.string.filter_preset_custom)).performScrollTo().performClick()
+        // 04 — open the calendar through the date range field in step 2.
+        composeRule.onNodeWithText(str(R.string.metric_date_range)).performScrollTo().performClick()
         waitForText(R.string.date_dialog_apply, timeoutMs = 10_000)
         composeRule.waitForIdle()
         Screengrab.screenshot("04_calendar")
-        composeRule.onNodeWithText(str(R.string.date_dialog_cancel)).performClick()
+        // The calendar closes from an icon in its top bar, so it is found by
+        // its description rather than by a label.
+        composeRule.onNodeWithContentDescription(str(R.string.date_dialog_cancel)).performClick()
     }
 
     // ---- helpers ----

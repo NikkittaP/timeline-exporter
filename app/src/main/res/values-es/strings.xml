@@ -10,7 +10,6 @@
     <string name="step_filter">Filtrar datos</string>
     <string name="step_preview">Vista previa</string>
 
-    <string name="loaded_badge">Cargado</string>
     <string name="metric_points">Puntos</string>
     <string name="metric_date_range">Periodo</string>
 
@@ -19,7 +18,6 @@
     <string name="format_semantic">Semantic History</string>
     <string name="format_unknown">Formato desconocido</string>
 
-    <string name="filter_preset_custom">Personalizado…</string>
 
     <string name="pick_file_button">Elegir Timeline.json</string>
     <string name="idle_hint">Elige un archivo JSON de Google Maps Timeline para analizar.</string>
@@ -34,15 +32,12 @@
     <string name="loading_sorting">Ordenando puntos por hora</string>
 
     <string name="filter_title">Filtro</string>
-    <string name="filter_date_range_all">Periodo: todas las fechas</string>
-    <string name="filter_date_range_set">Periodo: %1$s — %2$s</string>
     <string name="filter_filtered_count">Tras el filtro: %1$s de %2$s puntos</string>
     <string name="filter_set_button">Definir periodo</string>
     <string name="filter_change_button">Cambiar periodo</string>
     <string name="filter_clear_button">Borrar</string>
 
     <!-- Movement breakdown -->
-    <string name="filter_movement_all">Todos los desplazamientos</string>
     <string name="filter_movement_none">Nada seleccionado</string>
     <string name="filter_moving_only_short">solo en movimiento</string>
     <string name="points_count">%1$s puntos</string>
@@ -62,10 +57,6 @@
     <string name="date_dialog_title">Filtrar por fecha</string>
     <string name="date_dialog_cancel">Cancelar</string>
     <string name="date_dialog_apply">Aplicar</string>
-    <string name="date_preset_last_7">Últimos 7 días</string>
-    <string name="date_preset_last_30">Últimos 30 días</string>
-    <string name="date_preset_last_90">Últimos 90 días</string>
-    <string name="date_preset_all">Todos los datos</string>
 
     <string name="preview_title">Vista previa</string>
     <string name="preview_no_points">Ningún punto coincide con el filtro actual: nada que mostrar.</string>
@@ -235,4 +226,9 @@
     <string name="map_days_tab_in_view">Visibles (%1$d)</string>
     <string name="map_days_tab_all">Todos los días (%1$d)</string>
     <string name="map_selected_day">Día seleccionado: %1$s. Toca para quitarlo.</string>
+    <string name="file_change_button">Elegir otro archivo</string>
+    <string name="metric_days">Días</string>
+    <string name="metric_distance">Distancia</string>
+    <string name="filter_movement_title">Desplazamientos</string>
+    <string name="date_preset_all_short">Todo</string>
 </resources>

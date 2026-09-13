@@ -10,7 +10,6 @@
     <string name="step_filter">Filtruj dane</string>
     <string name="step_preview">Podgląd</string>
 
-    <string name="loaded_badge">Wczytano</string>
     <string name="metric_points">Punkty</string>
     <string name="metric_date_range">Okres</string>
 
@@ -19,7 +18,6 @@
     <string name="format_semantic">Semantic History</string>
     <string name="format_unknown">Nieznany format</string>
 
-    <string name="filter_preset_custom">Własny…</string>
 
     <string name="pick_file_button">Wybierz Timeline.json</string>
     <string name="idle_hint">Wybierz plik JSON Google Maps Timeline do przetworzenia.</string>
@@ -34,15 +32,12 @@
     <string name="loading_sorting">Sortowanie punktów według czasu</string>
 
     <string name="filter_title">Filtr</string>
-    <string name="filter_date_range_all">Okres: wszystkie daty</string>
-    <string name="filter_date_range_set">Okres: %1$s — %2$s</string>
     <string name="filter_filtered_count">Po filtrze: %1$s z %2$s punktów</string>
     <string name="filter_set_button">Ustaw okres</string>
     <string name="filter_change_button">Zmień okres</string>
     <string name="filter_clear_button">Wyczyść</string>
 
     <!-- Movement breakdown -->
-    <string name="filter_movement_all">Wszystkie sposoby przemieszczania</string>
     <string name="filter_movement_none">Nic nie wybrano</string>
     <string name="filter_moving_only_short">tylko w ruchu</string>
     <string name="points_count">Punkty: %1$s</string>
@@ -62,10 +57,6 @@
     <string name="date_dialog_title">Filtruj według daty</string>
     <string name="date_dialog_cancel">Anuluj</string>
     <string name="date_dialog_apply">Zastosuj</string>
-    <string name="date_preset_last_7">Ostatnie 7 dni</string>
-    <string name="date_preset_last_30">Ostatnie 30 dni</string>
-    <string name="date_preset_last_90">Ostatnie 90 dni</string>
-    <string name="date_preset_all">Wszystkie dane</string>
 
     <string name="preview_title">Podgląd</string>
     <string name="preview_no_points">Żaden punkt nie pasuje do bieżącego filtra — nie ma czego pokazać.</string>
@@ -239,4 +230,9 @@
     <string name="map_days_tab_in_view">Widoczne (%1$d)</string>
     <string name="map_days_tab_all">Wszystkie dni (%1$d)</string>
     <string name="map_selected_day">Wybrany dzień: %1$s. Dotknij, aby wyczyścić.</string>
+    <string name="file_change_button">Wybierz inny plik</string>
+    <string name="metric_days">Dni</string>
+    <string name="metric_distance">Dystans</string>
+    <string name="filter_movement_title">Przemieszczanie</string>
+    <string name="date_preset_all_short">Wszystko</string>
 </resources>
