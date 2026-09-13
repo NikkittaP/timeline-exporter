@@ -4,6 +4,11 @@
     "title": "Votre historique, {sur une carte}",
     "sub": "Des années de Google Maps Timeline en un coup d'œil"
   },
+  "days": {
+    "eyebrow": "Couleur par jour",
+    "title": "Chaque jour {a sa couleur}",
+    "sub": "Touchez un tracé pour voir de quel jour il s'agit"
+  },
   "places": {
     "eyebrow": "Chaque arrêt",
     "title": "{Les lieux}, pas seulement le trajet",
@@ -28,11 +33,6 @@
     "eyebrow": "Réglage fin",
     "title": "Filtrer par {mode de déplacement}",
     "sub": "Marche, vélo, voiture, transports, vols — avec la distance"
-  },
-  "calendar": {
-    "eyebrow": "Contrôle précis",
-    "title": "Filtrer par {période}",
-    "sub": "N'exportez que les jours utiles"
   },
   "privacy": {
     "eyebrow": "Confidentialité native",

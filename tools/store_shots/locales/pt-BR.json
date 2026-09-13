@@ -4,6 +4,11 @@
     "title": "Seu histórico {em um mapa}",
     "sub": "Anos da Linha do tempo do Google Maps de uma vez"
   },
+  "days": {
+    "eyebrow": "Cor por dia",
+    "title": "Cada dia {com sua cor}",
+    "sub": "Toque numa linha para ver que dia foi"
+  },
   "places": {
     "eyebrow": "Cada parada",
     "title": "{Lugares}, não só o trajeto",
@@ -28,11 +33,6 @@
     "eyebrow": "Ajuste fino",
     "title": "Filtre por {tipo de deslocamento}",
     "sub": "A pé, bicicleta, carro, transporte, voos — cada um com sua distância"
-  },
-  "calendar": {
-    "eyebrow": "Controle preciso",
-    "title": "Filtre por {intervalo de datas}",
-    "sub": "Exporte só os dias que você precisa"
   },
   "privacy": {
     "eyebrow": "Privacidade por padrão",

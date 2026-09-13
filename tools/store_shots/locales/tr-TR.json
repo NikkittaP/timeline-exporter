@@ -4,6 +4,11 @@
     "title": "Tüm geçmişin {tek haritada}",
     "sub": "Yılların Google Haritalar Zaman Tüneli tek ekranda"
   },
+  "days": {
+    "eyebrow": "Güne göre renk",
+    "title": "Her gün {kendi renginde}",
+    "sub": "Hangi gün olduğunu görmek için bir çizgiye dokun"
+  },
   "places": {
     "eyebrow": "Her durak",
     "title": "Sadece rota değil, {yerler}",
@@ -28,11 +33,6 @@
     "eyebrow": "İnce ayar",
     "title": "{Hareket türüne} göre filtrele",
     "sub": "Yürüme, bisiklet, araba, toplu taşıma, uçuş — her biri mesafesiyle"
-  },
-  "calendar": {
-    "eyebrow": "Hassas kontrol",
-    "title": "{Tarih aralığına} göre filtrele",
-    "sub": "Yalnızca ihtiyacın olan günleri dışa aktar"
   },
   "privacy": {
     "eyebrow": "Tasarımdan gelen gizlilik",

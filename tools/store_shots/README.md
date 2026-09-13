@@ -57,7 +57,7 @@ node render.mjs --locales ru-RU,ar --slot phone          # то же напря�
 
 ```bash
 node render.mjs --palette orange           # другая палитра
-node render.mjs --frames 01_map,02_places  # только эти кадры
+node render.mjs --frames 01_map,02_days    # только эти кадры
 node render.mjs --no-feature               # без feature graphic
 node render.mjs --preview-only             # рендер в ./preview, метаданные не трогаются
 node render.mjs --ingest --slot phone      # только перенести сырое из metadata в raw
@@ -107,13 +107,16 @@ render.mjs           рендерер
 | out | src | о чём |
 |---|---|---|
 | `01_map` | `03_map_fullscreen` | карта на весь экран |
-| `02_places` | `08_places` | места: точки на карте над списком |
-| `03_overview` | `02_overview` | главный экран с загруженными данными |
-| `04_timeofday` | `09_time_of_day` | окно «время суток» |
-| `05_formats` | `05_formats` | кнопки форматов |
-| `06_movement` | `07_movement` | разбивка по видам движения |
-| `07_calendar` | `04_calendar` | выбор диапазона дат |
+| `02_days` | `10_days` | последняя неделя крупнее, «Цвет по дням», выбран один день |
+| `03_places` | `08_places` | места: точки на карте над списком |
+| `04_overview` | `02_overview` | главный экран с загруженными данными |
+| `05_timeofday` | `09_time_of_day` | окно «время суток» |
+| `06_formats` | `05_formats` | кнопки форматов |
+| `07_movement` | `07_movement` | разбивка по видам движения |
 | `08_privacy` | `06_start_empty` | пустой старт |
+
+Календарь (`04_calendar`) из набора убран ради «Цвета по дням»: пресеты дат
+и так видны на обзорном экране.
 
 Если кадр переименовали или убрали, старый PNG остаётся в `metadata/` — а
 `supply` заливает всё, что там найдёт. Полный прогон (без `--frames`) сам

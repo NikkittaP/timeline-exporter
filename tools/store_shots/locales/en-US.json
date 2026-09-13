@@ -4,6 +4,11 @@
     "title": "Your history, {on one map}",
     "sub": "Years of Google Maps Timeline in one view"
   },
+  "days": {
+    "eyebrow": "Color by day",
+    "title": "Every day {in its own color}",
+    "sub": "Tap a line to see which day it was"
+  },
   "places": {
     "eyebrow": "Every stop",
     "title": "{Places}, not just the track",
@@ -28,11 +33,6 @@
     "eyebrow": "Fine-tuned",
     "title": "Filter by {how you moved}",
     "sub": "Walking, cycling, driving, transit, flights — each with its distance"
-  },
-  "calendar": {
-    "eyebrow": "Precise control",
-    "title": "Filter by {date range}",
-    "sub": "Export only the days you need"
   },
   "privacy": {
     "eyebrow": "Private by design",

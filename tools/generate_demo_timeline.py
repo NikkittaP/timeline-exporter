@@ -15,8 +15,15 @@ Why synthetic?
   * Two kinds of lines appear on the map:
       - long hops (flights) -> dashed connectors (the gap-splitting feature:
         any jump over 80 km between consecutive samples is dashed), and
-      - drives -> long SOLID red lines, because the points are interpolated
-        close together (well under 80 km) so they never trip the gap rule.
+      - drives -> long SOLID lines, because the points sit close together
+        (well under 80 km) so they never trip the gap rule.
+  * The Alps road trip follows real roads. It is the week the store's
+    "Color by day" screenshot zooms into, and at that scale a straight line
+    between two cities reads as fake at a glance — it cuts across the Baltic.
+    Its legs were routed once over OpenStreetMap with the public OSRM demo
+    server and are cached in tools/demo_routes.json, so generating stays
+    offline and deterministic. Everyday drives and day trips are still
+    interpolated: nobody zooms into them.
   * Still small enough: tens of thousands of points (a couple MB) load
     instantly in a test, but the map now tells a believable two-year story
     instead of a dense zig-zag around the globe.
@@ -27,12 +34,17 @@ on-device export the parser auto-detects as "Phone". Points are degree-string
 
 Run:  python tools/generate_demo_timeline.py
 It writes app/src/androidTest/assets/timeline_demo.json
+
+Re-route the road trip (needs network; only after changing ROAD_LEGS):
+      python tools/generate_demo_timeline.py --refresh-routes
 """
 
+import argparse
 import json
 import math
 import os
 import random
+import urllib.request
 from datetime import datetime, timedelta, timezone
 
 random.seed(42)  # deterministic — same demo file every run
@@ -93,6 +105,54 @@ TRIP_DAYS = 7
 START_DATE = END_DATE - timedelta(days=TOTAL_DAYS)
 TRIP_START = END_DATE - timedelta(days=TRIP_DAYS - 1)    # first day of the road trip
 
+# ---------------------------------------------------------------------------
+# The road trip's stops, and the roads between them.
+# ---------------------------------------------------------------------------
+
+HAMBURG = (53.5511, 9.9937)
+ZURICH = (47.3769, 8.5417)
+LUCERNE = (47.0502, 8.3093)
+INTERLAKEN = (46.6863, 7.8632)
+GRIMSEL = (46.5617, 8.3372)            # Grimsel Pass
+OBERALP = (46.6574, 8.6710)            # Oberalp Pass, above Andermatt
+INNSBRUCK = (47.2692, 11.4041)
+TIMMELSJOCH = (46.9057, 11.0980)       # the high road over into South Tyrol
+BOLZANO = (46.4983, 11.3548)
+CAREZZA = (46.3572, 11.5686)           # Lago di Carezza, Dolomites
+MUNICH = (48.1351, 11.5820)
+ROSTOCK_FERRY = (54.1530, 12.1000)     # Rostock Seehafen
+TRELLEBORG_FERRY = (55.3690, 13.1480)
+
+# Every day of the trip takes a road the others do not, so that coloured by
+# day no line is painted over by another: over the passes to Innsbruck rather
+# than back past Zurich, the Timmelsjoch into Italy and the Brenner out of it,
+# and home on the ferry from Rostock rather than up the way the trip went down.
+# The ferry itself is not here — it has no road; see alps_road_trip_segments.
+ROAD_LEGS = {
+    "malmo-hamburg":        [HOME_LATLON, HAMBURG],
+    "hamburg-zurich":       [HAMBURG, ZURICH],
+    "zurich-lucerne":       [ZURICH, LUCERNE],
+    "lucerne-interlaken":   [LUCERNE, INTERLAKEN],
+    "interlaken-innsbruck": [INTERLAKEN, GRIMSEL, OBERALP, INNSBRUCK],
+    "innsbruck-bolzano":    [INNSBRUCK, TIMMELSJOCH, BOLZANO],
+    "bolzano-carezza":      [BOLZANO, CAREZZA],
+    "carezza-bolzano":      [CAREZZA, BOLZANO],
+    "bolzano-munich":       [BOLZANO, MUNICH],
+    "munich-rostock":       [MUNICH, ROSTOCK_FERRY],
+    "trelleborg-malmo":     [TRELLEBORG_FERRY, HOME_LATLON],
+}
+
+ROUTES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "demo_routes.json")
+OSRM_ROUTE_URL = "https://router.project-osrm.org/route/v1/driving/{coords}?overview=full&geometries=geojson"
+
+# The cache keeps a vertex every kilometre: plenty for a map framing a
+# thousand kilometres, and a tenth of what OSRM returns.
+ROUTE_CACHE_STEP_KM = 1.0
+
+# How far apart a driving sample lands. A phone export records a moving car
+# every minute or two, which on a motorway is a couple of kilometres.
+ROAD_SAMPLE_KM = 2.5
+
 
 def iso(t: datetime) -> str:
     return t.strftime("%Y-%m-%dT%H:%M:%S.000+00:00")
@@ -146,6 +206,85 @@ def dense_path(waypoints, t0, step_km=20.0, speed_kmh=80.0, jitter_km=1.2):
         minutes = max(0.5, (hop_km / speed_kmh) * 60 * random.uniform(0.85, 1.25))
         t += timedelta(minutes=minutes)
         pts.append((round(jittered[i][0], 6), round(jittered[i][1], 6), t))
+    return pts
+
+
+def resample(line, step_km):
+    """Points every step_km along a polyline of (lat, lon), both ends kept."""
+    out = [line[0]]
+    since = 0.0  # distance walked since the last point put out
+    for a, b in zip(line, line[1:]):
+        seg = haversine_km(a, b)
+        if seg == 0.0:
+            continue
+        at = step_km - since
+        while at <= seg:
+            f = at / seg
+            out.append((a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f))
+            at += step_km
+        since = seg - (at - step_km)
+    if since > 0.0:
+        out.append(line[-1])
+    return out
+
+
+def fetch_road_legs():
+    """Route every leg in ROAD_LEGS with OSRM and write tools/demo_routes.json."""
+    legs = {}
+    for name, waypoints in ROAD_LEGS.items():
+        coords = ";".join(f"{lon},{lat}" for lat, lon in waypoints)
+        request = urllib.request.Request(
+            OSRM_ROUTE_URL.format(coords=coords),
+            headers={"User-Agent": "timeline-exporter-demo-data"},
+        )
+        with urllib.request.urlopen(request, timeout=60) as response:
+            body = json.load(response)
+        if body.get("code") != "Ok":
+            raise SystemExit(f"OSRM could not route {name}: {body.get('code')} {body.get('message', '')}")
+        line = [(lat, lon) for lon, lat in body["routes"][0]["geometry"]["coordinates"]]
+        legs[name] = [(round(lat, 5), round(lon, 5)) for lat, lon in resample(line, ROUTE_CACHE_STEP_KM)]
+        print(f"  routed {name}: {track_km(line):.0f} km")
+
+    # One leg per line, so a re-route shows up in a diff as the legs it changed.
+    rows = [f'    "{name}": {json.dumps([list(p) for p in points], separators=(",", ":"))}'
+            for name, points in legs.items()]
+    with open(ROUTES_PATH, "w", encoding="utf-8") as f:
+        f.write("{\n")
+        f.write('  "$comment": "Road geometry for the demo Alps road trip, one vertex per km. '
+                'Routed by tools/generate_demo_timeline.py --refresh-routes with the OSRM demo server. '
+                'Map data (c) OpenStreetMap contributors, ODbL.",\n')
+        f.write('  "legs": {\n')
+        f.write(",\n".join(rows))
+        f.write("\n  }\n}\n")
+    print(f"Wrote {ROUTES_PATH}")
+
+
+def load_road_legs():
+    if not os.path.exists(ROUTES_PATH):
+        raise SystemExit(f"{ROUTES_PATH} is missing; run with --refresh-routes")
+    with open(ROUTES_PATH, encoding="utf-8") as f:
+        legs = json.load(f)["legs"]
+    missing = sorted(set(ROAD_LEGS) - set(legs))
+    if missing:
+        raise SystemExit(f"{ROUTES_PATH} has no route for {', '.join(missing)}; run with --refresh-routes")
+    return {name: [tuple(p) for p in points] for name, points in legs.items()}
+
+
+def road_path(line, t0, speed_kmh, step_km=ROAD_SAMPLE_KM, jitter_m=15.0):
+    """A drive along a routed road: samples every step_km, a few metres of GPS
+    noise on each, and per-hop time from distance and speed_kmh with the same
+    +/-15-25% variance dense_path uses."""
+    pts = []
+    t = t0
+    prev = None
+    for lat, lon in resample(line, step_km):
+        jlat = lat + random.uniform(-jitter_m, jitter_m) / 111_000.0
+        jlon = lon + random.uniform(-jitter_m, jitter_m) / (111_000.0 * math.cos(math.radians(lat)))
+        if prev is not None:
+            hop_km = haversine_km(prev, (jlat, jlon))
+            t += timedelta(minutes=max(0.3, (hop_km / speed_kmh) * 60 * random.uniform(0.85, 1.25)))
+        pts.append((round(jlat, 6), round(jlon, 6), t))
+        prev = (jlat, jlon)
     return pts
 
 
@@ -377,11 +516,15 @@ def vacation_segments(v, t_start):
 # The last 7 days: a real car road trip through the Alps.
 # ---------------------------------------------------------------------------
 
-def alps_road_trip_segments(trip_start):
-    """Malmo -> Hamburg -> Zurich -> Lucerne -> Interlaken -> Innsbruck ->
-    Bolzano (+ a Dolomites side loop) -> Munich -> Malmo, driven the whole
-    way. Distances roughly match the real road network; each overnight stop
-    gets an evening walk so the map shows both the drive and the visit."""
+def alps_road_trip_segments(trip_start, routes):
+    """Malmo -> Hamburg -> Zurich -> Lucerne -> Interlaken -> over the Grimsel
+    and Oberalp passes to Innsbruck -> the Timmelsjoch to Bolzano (+ a
+    Dolomites side loop) -> the Brenner to Munich -> Rostock and the ferry to
+    Trelleborg -> home. Driven along routed roads (see ROAD_LEGS); each
+    overnight stop gets an evening walk so the map shows both the drive and
+    the visit. One calendar day per stretch, and a road of its own for each,
+    is what makes this week the store's "Color by day" shot: seven days,
+    seven colours, none painted over."""
     segments = []
 
     def overnight_stop(city_lat, city_lon, place_id, arrive_t, walk_minutes, sleep_until):
@@ -395,88 +538,100 @@ def alps_road_trip_segments(trip_start):
         s.append(visit(city_lat, city_lon, night_start, sleep_until, f"{place_id}_hotel", "INFERRED_POINT_OF_INTEREST", 0.9))
         return s, sleep_until
 
-    def drive_leg(wp, depart_t, distance_m, step_km=18, speed_kmh=90):
-        d = dense_path(wp, depart_t, step_km=step_km, speed_kmh=speed_kmh)
-        segs = [path_segment(d), activity(d[0][2], d[-1][2], distance_m, "IN_PASSENGER_VEHICLE", 0.96)]
+    def drive_leg(leg, depart_t, speed_kmh):
+        d = road_path(routes[leg], depart_t, speed_kmh)
+        segs = [path_segment(d), activity(d[0][2], d[-1][2], track_km(d) * 1000, "IN_PASSENGER_VEHICLE", 0.96)]
         return segs, d[-1][2]
-
-    HAMBURG = (53.5511, 9.9937)
-    ZURICH = (47.3769, 8.5417)
-    LUCERNE = (47.0502, 8.3093)
-    INTERLAKEN = (46.6863, 7.8632)
-    INNSBRUCK = (47.2692, 11.4041)
-    BOLZANO = (46.4983, 11.3548)
-    CARE_ZZA = (46.3572, 11.5686)  # Lago di Carezza, Dolomites
-    MUNICH = (48.1351, 11.5820)
 
     cursor = trip_start + timedelta(hours=8)  # depart Malmo ~08:00
 
-    # Day 0: Malmo -> Hamburg (~320 km)
-    legs, cursor = drive_leg([("Malmo",) + HOME_LATLON, ("Hamburg",) + HAMBURG], cursor, 320_000.0, speed_kmh=92)
+    # Day 0: Malmo -> Hamburg, over the Oresund bridge and the Great Belt (~500 km)
+    legs, cursor = drive_leg("malmo-hamburg", cursor, speed_kmh=92)
     segments.extend(legs)
     stop, cursor = overnight_stop(*HAMBURG, "hamburg", cursor, 110, trip_start + timedelta(days=1, hours=7))
     segments.extend(stop)
 
-    # Day 1: Hamburg -> Zurich (~800 km, the big push south)
-    legs, cursor = drive_leg([("Hamburg",) + HAMBURG, ("Zurich",) + ZURICH], cursor, 800_000.0, speed_kmh=98)
+    # Day 1: Hamburg -> Zurich (~880 km, the big push south)
+    legs, cursor = drive_leg("hamburg-zurich", cursor, speed_kmh=98)
     segments.extend(legs)
     stop, cursor = overnight_stop(*ZURICH, "zurich", cursor, 70, trip_start + timedelta(days=2, hours=8))
     segments.extend(stop)
 
-    # Day 2: Zurich -> Lucerne (stop) -> Interlaken (scenic Alpine foothills)
-    legs, cursor = drive_leg([("Zurich",) + ZURICH, ("Lucerne",) + LUCERNE], cursor, 50_000.0, step_km=12, speed_kmh=72)
+    # Day 2: Zurich -> Lucerne (stop) -> Interlaken over the Brunig
+    legs, cursor = drive_leg("zurich-lucerne", cursor, speed_kmh=72)
     segments.extend(legs)
     lucerne_walk = wander_track(*LUCERNE, cursor + timedelta(minutes=10), minutes=70)
     segments.append(path_segment(lucerne_walk))
     segments.append(activity(lucerne_walk[0][2], lucerne_walk[-1][2],
                               track_km(lucerne_walk) * 1000, "WALKING", 0.9))
     depart2 = lucerne_walk[-1][2] + timedelta(minutes=random.uniform(15, 30))
-    legs, cursor = drive_leg([("Lucerne",) + LUCERNE, ("Interlaken",) + INTERLAKEN], depart2, 70_000.0, step_km=10, speed_kmh=62)
+    legs, cursor = drive_leg("lucerne-interlaken", depart2, speed_kmh=62)
     segments.extend(legs)
     stop, cursor = overnight_stop(*INTERLAKEN, "interlaken", cursor, 140, trip_start + timedelta(days=3, hours=8))
     segments.extend(stop)
 
-    # Day 3: Interlaken -> Innsbruck, crossing the Alps
-    legs, cursor = drive_leg([("Interlaken",) + INTERLAKEN, ("Innsbruck",) + INNSBRUCK], cursor, 230_000.0, step_km=14, speed_kmh=66)
+    # Day 3: Interlaken -> Grimsel -> Oberalp -> Chur -> Arlberg -> Innsbruck (~400 km of passes)
+    legs, cursor = drive_leg("interlaken-innsbruck", cursor, speed_kmh=62)
     segments.extend(legs)
     stop, cursor = overnight_stop(*INNSBRUCK, "innsbruck", cursor, 100, trip_start + timedelta(days=4, hours=8))
     segments.extend(stop)
 
-    # Day 4: Innsbruck -> Bolzano over the Brenner Pass, then a Dolomites loop
-    legs, cursor = drive_leg([("Innsbruck",) + INNSBRUCK, ("Bolzano",) + BOLZANO], cursor, 120_000.0, step_km=12, speed_kmh=70)
+    # Day 4: Innsbruck -> Timmelsjoch -> Bolzano, then a Dolomites loop
+    legs, cursor = drive_leg("innsbruck-bolzano", cursor, speed_kmh=58)
     segments.extend(legs)
     hotel_in = cursor + timedelta(minutes=random.uniform(15, 30))
     segments.append(visit(*BOLZANO, cursor, hotel_in, "bolzano_checkin", "INFERRED_POINT_OF_INTEREST", 0.85))
     loop_depart = hotel_in + timedelta(hours=random.uniform(0.8, 1.3))
-    legs, loop_cursor = drive_leg([("Bolzano",) + BOLZANO, ("Lago di Carezza",) + CARE_ZZA], loop_depart, 35_000.0, step_km=8, speed_kmh=52)
+    legs, loop_cursor = drive_leg("bolzano-carezza", loop_depart, speed_kmh=45)
     segments.extend(legs)
-    lake_walk = wander_track(*CARE_ZZA, loop_cursor + timedelta(minutes=10), minutes=50)
+    lake_walk = wander_track(*CAREZZA, loop_cursor + timedelta(minutes=10), minutes=50)
     segments.append(path_segment(lake_walk))
     segments.append(activity(lake_walk[0][2], lake_walk[-1][2],
                               track_km(lake_walk) * 1000, "HIKING", 0.88))
     back_depart = lake_walk[-1][2] + timedelta(minutes=random.uniform(15, 30))
-    legs, cursor = drive_leg([("Lago di Carezza",) + CARE_ZZA, ("Bolzano",) + BOLZANO], back_depart, 35_000.0, step_km=8, speed_kmh=55)
+    legs, cursor = drive_leg("carezza-bolzano", back_depart, speed_kmh=48)
     segments.extend(legs)
     night_start = cursor + timedelta(minutes=random.uniform(15, 30))
     sleep_until = trip_start + timedelta(days=5, hours=8)
     segments.append(visit(*BOLZANO, night_start, sleep_until, "bolzano_hotel", "INFERRED_POINT_OF_INTEREST", 0.9))
     cursor = sleep_until
 
-    # Day 5: Bolzano -> Munich (~300 km, heading north again)
-    legs, cursor = drive_leg([("Bolzano",) + BOLZANO, ("Munich",) + MUNICH], cursor, 300_000.0, speed_kmh=92)
+    # Day 5: Bolzano -> Brenner -> Munich (~260 km, heading north again)
+    legs, cursor = drive_leg("bolzano-munich", cursor, speed_kmh=88)
     segments.extend(legs)
-    stop, cursor = overnight_stop(*MUNICH, "munich", cursor, 90, trip_start + timedelta(days=6, hours=7))
+    # An early night: tomorrow is the longest day of the trip.
+    stop, cursor = overnight_stop(*MUNICH, "munich", cursor, 90, trip_start + timedelta(days=6, hours=6))
     segments.extend(stop)
 
-    # Day 6 (today): Munich -> Malmo, the long final push home (~900 km)
-    legs, cursor = drive_leg([("Munich",) + MUNICH, ("Malmo",) + HOME_LATLON], cursor, 900_000.0, speed_kmh=100)
+    # Day 6 (today): Munich -> Rostock (~800 km), the afternoon ferry to
+    # Trelleborg, and the last half hour home.
+    legs, cursor = drive_leg("munich-rostock", cursor, speed_kmh=104)
     segments.extend(legs)
-    segments.append(visit(*HOME_LATLON, cursor, cursor + timedelta(hours=3), "home_malmo", "INFERRED_HOME", 0.95))
+    board = cursor + timedelta(minutes=random.uniform(45, 75))
+    # A ferry has no road to route along. It sails straight across, which is
+    # what a straight line over the sea looks like on a real export too.
+    ferry = dense_path([("Rostock",) + ROSTOCK_FERRY, ("Trelleborg",) + TRELLEBORG_FERRY], board,
+                       step_km=3, speed_kmh=38, jitter_km=0.1)
+    segments.append(path_segment(ferry))
+    segments.append(activity(ferry[0][2], ferry[-1][2], track_km(ferry) * 1000, "IN_FERRY", 0.9))
+    legs, cursor = drive_leg("trelleborg-malmo", ferry[-1][2] + timedelta(minutes=random.uniform(10, 20)), speed_kmh=70)
+    segments.extend(legs)
+    # Home until the end of the day at the latest: the export stops "today".
+    home_until = min(cursor + timedelta(hours=3), END_DATE + timedelta(days=1, minutes=-1))
+    segments.append(visit(*HOME_LATLON, cursor, home_until, "home_malmo", "INFERRED_HOME", 0.95))
 
     return segments
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Generate the synthetic Timeline used for store screenshots.")
+    parser.add_argument("--refresh-routes", action="store_true",
+                        help="re-route the Alps road trip with OSRM (network) before generating")
+    args = parser.parse_args()
+    if args.refresh_routes:
+        fetch_road_legs()
+    routes = load_road_legs()
+
     segments = []
     current = START_DATE
 
@@ -497,7 +652,7 @@ def main():
             segments.extend(weekend_segments(current))
         current += timedelta(days=1)
 
-    segments.extend(alps_road_trip_segments(TRIP_START))
+    segments.extend(alps_road_trip_segments(TRIP_START, routes))
 
     doc = {"semanticSegments": segments}
 
@@ -519,7 +674,7 @@ def main():
     print(f"  home base: Malmo, Sweden")
     print(f"  vacations ({len(VACATIONS)}): {vac_names}")
     print(f"  last {TRIP_DAYS} days: Alps road trip, Malmo -> Hamburg -> Zurich -> "
-          f"Lucerne -> Interlaken -> Innsbruck -> Bolzano -> Munich -> Malmo")
+          f"Lucerne -> Interlaken -> Innsbruck -> Bolzano -> Munich -> Rostock ferry -> Malmo")
 
 
 if __name__ == "__main__":

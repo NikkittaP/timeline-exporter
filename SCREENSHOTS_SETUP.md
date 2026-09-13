@@ -21,12 +21,12 @@ The raw shots the test captures (per language):
 |-------------------------|---------------------------------------------------|
 | `02_overview.png`       | Main page with the demo Timeline loaded           |
 | `03_map_fullscreen.png` | Expanded world map (clean)                        |
-| `04_calendar.png`       | Date-range picker (calendar)                      |
 | `05_formats.png`        | Export-format buttons (GPX / KML / GeoJSON / CSV) |
 | `06_start_empty.png`    | First launch, nothing loaded                      |
 | `07_movement.png`       | Movement breakdown expanded: per-type trips and distance, plus the two point filters |
 | `08_places.png`         | Step 3 on the Places side: the map of visited places above the list that names them |
 | `09_time_of_day.png`    | The time-of-day window dialog, a preset chosen     |
+| `10_days.png`           | Expanded map, "7 days" preset, Color by day on, one day of the Alps road trip picked from the day list |
 
 Those are **not** what Play gets. A second stage ("Aurora", `tools/store_shots/`)
 renders each raw shot into framed store art — gradient background, device frame,
@@ -35,18 +35,20 @@ localized headline — and that is what lands in `fastlane/metadata/`:
 | Store file         | Built from              |
 |--------------------|-------------------------|
 | `01_map.png`       | `03_map_fullscreen.png` |
-| `02_places.png`    | `08_places.png`         |
-| `03_overview.png`  | `02_overview.png`       |
-| `04_timeofday.png` | `09_time_of_day.png`    |
-| `05_formats.png`   | `05_formats.png`        |
-| `06_movement.png`  | `07_movement.png`       |
-| `07_calendar.png`  | `04_calendar.png`       |
+| `02_days.png`      | `10_days.png`           |
+| `03_places.png`    | `08_places.png`         |
+| `04_overview.png`  | `02_overview.png`       |
+| `05_timeofday.png` | `09_time_of_day.png`    |
+| `06_formats.png`   | `05_formats.png`        |
+| `07_movement.png`  | `07_movement.png`       |
 | `08_privacy.png`   | `06_start_empty.png`    |
 | feature graphic (1024x500) | `03_map_fullscreen.png` |
 
 Play orders screenshots by file name, shows the first three without scrolling
-and takes at most eight. That is the whole budget, and it is why Places sits
-second: it is the one thing 1.7.0 added that a 1.6 user does not already have.
+and takes at most eight. That is the whole budget. The newest features go right
+after the hero: Color by day (1.8.0), then Places (1.7.0). The date-range
+calendar made way for Color by day — the date presets are already on the
+overview, and the picker itself is a stock Material dialog.
 
 ### The status bar is ours, not the emulator's
 
@@ -116,6 +118,7 @@ app/src/debug/res/xml/screengrab_file_paths.xml
 app/src/androidTest/assets/timeline_demo.json   synthetic demo data (see below)
 app/src/androidTest/.../ScreenshotTest.kt        captures the raw 02..06 shots
 tools/generate_demo_timeline.py           regenerates the demo data
+tools/demo_routes.json                    cached road geometry for the demo road trip
 tools/store_shots/                        the "Aurora" store-art renderer (see its README)
 tools/add_hero_caption.py                 DEPRECATED Pillow captioner, superseded by the above
 fastlane/Appfile                          package name + key path
@@ -134,14 +137,28 @@ one movement type in it cannot show what the movement filter is for), lazy or
 errand-y weekends, day trips over the bridge to Copenhagen by train, and about
 a dozen real vacations spread out every couple of months (Stockholm, New York, Gothenburg, Rome, Prague, Dubai,
 Barcelona, Tokyo, Lisbon, Vienna, Krakow). The last 7 days are a car road trip
-through the Alps (Malmö → Hamburg → Zurich → Lucerne → Interlaken → Innsbruck
-→ Bolzano/Dolomites → Munich → home). Flights render as dashed connectors
-across the long gaps, drives render as solid red lines, and it keeps your real
-60 MB history (and your privacy) out of the store. Regenerate any time with:
+through the Alps (Malmö → Hamburg → Zurich → Lucerne → Interlaken → Grimsel and
+Oberalp passes → Innsbruck → Timmelsjoch → Bolzano/Dolomites → Brenner → Munich
+→ Rostock, ferry to Trelleborg → home), one stretch per calendar day and a road
+of its own for each, so coloured by day no day is painted over by another —
+that week is what `10_days` shows. Flights render as dashed connectors across
+the long gaps, drives as solid lines, and it keeps your real 60 MB history (and
+your privacy) out of the store. Regenerate any time with:
 
 ```bash
 python tools/generate_demo_timeline.py
 ```
+
+The road trip follows real roads: its legs were routed once over OpenStreetMap
+with the public OSRM demo server and cached in `tools/demo_routes.json`, so the
+command above needs no network. Only after changing `ROAD_LEGS` re-route them:
+
+```bash
+python tools/generate_demo_timeline.py --refresh-routes
+```
+
+`ScreenshotTest.FOCUS_DAY` names the trip day `10_days` picks; move it if the
+trip's dates move.
 
 ---
 
@@ -460,6 +477,31 @@ set (four of five) means the instrumented test itself died — usually the map
 never finished loading, so raise `MAP_TILE_WAIT_MS` in `ScreenshotTest.kt` and
 re-run just that language.
 
+### `Unable to capture screenshot` — a null `Bitmap` in `captureEmptyStart`
+
+```
+java.lang.RuntimeException: Unable to capture screenshot.
+Caused by: java.lang.NullPointerException: Attempt to invoke virtual method 'void android.graphics.Bitmap.recycle()' on a null object reference
+```
+
+UiAutomation gives a display capture one second and returns no bitmap past it
+(logcat: `captureDisplay`, then `takeScreenshot() returned null` a second
+later). The first shot of a pass is the one that misses: screengrab has just
+switched the device locale, and the launcher, SystemUI and the keyboard spend
+tens of seconds rebuilding for it. Waiting longer does not reliably help;
+trying again does, so every shot goes through `shoot()` in `ScreenshotTest.kt`,
+which retries a failed capture (`SCREENSHOT_ATTEMPTS`, `SCREENSHOT_RETRY_MS`).
+A failed try leaves a 0-byte PNG on the device that the next try overwrites.
+
+### A shot is taken at the wrong scroll position
+
+`05_formats` showing step 2 instead of the export card, or `07_movement`
+showing the top of the page: a scroll made while something is still animating
+(the time-of-day dialog closing, the movement block expanding) is undone by
+that animation. Those steps `settle()` before and after scrolling; raise the
+waits rather than removing them. Compare file sizes of one shot across
+locales in `fastlane/screenshots_raw/*/phone/` to spot the odd ones out.
+
 ### `SecurityException: … has not requested permission android.permission.DUMP`
 
 Cosmetic. screengrab grants `DUMP` to put the status bar in demo mode. The
@@ -485,7 +527,8 @@ raise `MAP_TILE_WAIT_MS` in `ScreenshotTest.kt`.
   and the `palette` key in `tools/store_shots/config.json`, then
   `bundle exec fastlane decorate_screens`.
 - **Different demo trip:** edit `HOME_LATLON`, `NEARBY`, `VACATIONS`, or the
-  `alps_road_trip_segments` route in `tools/generate_demo_timeline.py` and
-  re-run it.
+  road trip (`ROAD_LEGS` and `alps_road_trip_segments`) in
+  `tools/generate_demo_timeline.py` and re-run it — with `--refresh-routes`
+  if `ROAD_LEGS` changed.
 - **Promote to production later:** screenshots are shared across tracks, so once
   they look right on internal they're already on the listing.

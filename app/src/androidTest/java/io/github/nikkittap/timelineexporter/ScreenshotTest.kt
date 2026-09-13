@@ -7,6 +7,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.LocaleList
 import android.os.SystemClock
+import android.util.Log
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
@@ -30,6 +33,8 @@ import tools.fastlane.screengrab.Screengrab
 import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy
 import tools.fastlane.screengrab.locale.LocaleTestRule
 import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /**
@@ -45,7 +50,6 @@ import java.util.Locale
  * Captured (file name -> store screenshot):
  *   02_overview      main page with data loaded
  *   03_map_fullscreen expanded world map
- *   04_calendar      date-range picker dialog
  *   05_formats       the export-format buttons (GPX / KML / GeoJSON / CSV)
  *   06_start_empty   first launch, nothing loaded
  *   07_movement      the movement breakdown expanded (per-type trips and
@@ -53,11 +57,13 @@ import java.util.Locale
  *   08_places        step 3 switched to Places: the map draws a dot per place
  *                    sized by its visit count, over the list that names them
  *   09_time_of_day   the time-of-day window dialog, a preset chosen
+ *   10_days          the last seven days, expanded and coloured by day
  *
  * The order of the captures inside captureLoadedFlow is not cosmetic. The
  * Track / Places switch in step 3 decides what step 4 says it will export, so
  * 05_formats is taken while Track is still selected and the switch is put back
  * before the fullscreen map, which would otherwise open on the places dots.
+ * 10_days narrows the dates, so it comes after everything that wants them all.
  *
  * These are raw captures, not the store art: tools/store_shots renders the
  * framed, captioned images from them. See tools/store_shots/README.md.
@@ -176,6 +182,18 @@ class ScreenshotTest {
         // wait. Raise if maps still look half-loaded.
         const val MAP_TILE_WAIT_MS = 6_000L
 
+        // How often shoot() tries a capture, and how long it waits in between.
+        const val SCREENSHOT_ATTEMPTS = 4
+        const val SCREENSHOT_RETRY_MS = 2_000L
+        const val TAG = "ScreenshotTest"
+
+        // The day 10_days picks: day 3 of the demo file's closing road trip,
+        // Interlaken over the Grimsel and Oberalp passes to Innsbruck. Framed,
+        // it has the Swiss, Tyrolean and Dolomite days on screen around it.
+        // Moves with END_DATE / alps_road_trip_segments in
+        // tools/generate_demo_timeline.py.
+        val FOCUS_DAY: LocalDate = LocalDate.of(2026, 6, 28)
+
         // The locale of the current pass, as screengrab passes it to the
         // runner: `-e testLocale en_US`.
         const val TEST_LOCALE_ARG = "testLocale"
@@ -206,7 +224,7 @@ class ScreenshotTest {
     fun captureEmptyStart() {
         ActivityScenario.launch(MainActivity::class.java)
         waitForText(R.string.pick_file_button)
-        Screengrab.screenshot("06_start_empty")
+        shoot("06_start_empty")
     }
 
     @Test
@@ -226,7 +244,7 @@ class ScreenshotTest {
         settle(MAP_TILE_WAIT_MS)
 
         // 02 — the loaded overview (top of the page).
-        Screengrab.screenshot("02_overview")
+        shoot("02_overview")
 
         // 07 — the movement breakdown, expanded: a row per movement group with
         // its trips and distance, then the two point-level switches. Matched by
@@ -234,16 +252,19 @@ class ScreenshotTest {
         // without hard-coding a translation.
         composeRule.onNodeWithText(str(R.string.filter_movement_title))
             .performScrollTo().performClick()
-        composeRule.waitForIdle()
+        // The block expands with an animation, and a scroll made while it is
+        // still growing is undone by it: Korean came out showing the top of
+        // the page. Let it open fully before scrolling.
+        settle(1_500)
         // Scroll to the last switch so the whole expanded block is on screen,
         // not just the part that happened to fit below the date chips.
         composeRule.onNodeWithText(str(R.string.filter_drop_repeated)).performScrollTo()
-        composeRule.waitForIdle()
-        Screengrab.screenshot("07_movement")
+        settle(750)
+        shoot("07_movement")
         // Collapse again so the shots that follow see the page they expect.
         composeRule.onNodeWithText(str(R.string.filter_movement_title))
             .performScrollTo().performClick()
-        composeRule.waitForIdle()
+        settle(1_500)
 
         // 09 — the time-of-day window. The row in step 2 carries the same
         // string the dialog is titled with, so the row is matched while it is
@@ -253,18 +274,28 @@ class ScreenshotTest {
         composeRule.onNodeWithText(str(R.string.filter_time_any))
             .performScrollTo().performClick()
         waitForText(R.string.time_dialog_from, timeoutMs = 10_000)
-        composeRule.onNodeWithText(str(R.string.time_preset_day)).performClick()
-        composeRule.waitForIdle()
-        Screengrab.screenshot("09_time_of_day")
+        // The preset is matched as a chip, not as a bare label: in Hindi
+        // "Day" and the "days" caption of step 1's stats are the same word,
+        // and that caption, under the dialog, is the node a text match finds.
+        composeRule.onNode(hasText(str(R.string.time_preset_day)) and isSelectable()).performClick()
+        // The semantics say "selected" a frame or two before the chip is drawn
+        // that way, and UiAutomation shoots whatever is on the glass: a Hindi
+        // pass once came out with the preset still unselected.
+        settle(1_000)
+        shoot("09_time_of_day")
         composeRule.onNodeWithText(str(R.string.date_dialog_cancel)).performClick()
-        composeRule.waitForIdle()
+        // Closing the dialog hands focus back to the row that opened it, and
+        // the page animates that row back into view. Let that finish first, or
+        // it lands after the jump below and the formats shot comes out
+        // showing step 2 - which it did in seven languages out of eighteen.
+        settle(1_500)
 
         // 05 — scroll to the version footer, which sits just below the Export
         // card, so the whole card (including its bottom border and the
         // GPX/KML/GeoJSON/CSV buttons) is on screen.
         composeRule.onNodeWithText(BuildConfig.VERSION_NAME, substring = true).performScrollTo()
-        composeRule.waitForIdle()
-        Screengrab.screenshot("05_formats")
+        settle(750)
+        shoot("05_formats")
 
         // 08 — step 3 on the Places side: the map above, the list below.
         // onFirst() rather than onNodeWithText: "Places" is the switch's label
@@ -277,7 +308,7 @@ class ScreenshotTest {
         // first rows of the list are all in the shot.
         composeRule.onAllNodesWithText(str(R.string.content_places)).onFirst().performScrollTo()
         composeRule.waitForIdle()
-        Screengrab.screenshot("08_places")
+        shoot("08_places")
         // Back to Track before the map is expanded, or the hero shot is dots.
         composeRule.onAllNodesWithText(str(R.string.content_track)).onFirst().performClick()
         composeRule.waitForIdle()
@@ -290,18 +321,40 @@ class ScreenshotTest {
         composeRule.onNodeWithContentDescription(str(R.string.map_expand)).performScrollTo().performClick()
         waitForDescription(R.string.map_exit_fullscreen, timeoutMs = 10_000)
         settle(MAP_TILE_WAIT_MS)
-        Screengrab.screenshot("03_map_fullscreen")
+        shoot("03_map_fullscreen")
         composeRule.onNodeWithContentDescription(str(R.string.map_exit_fullscreen)).performClick()
         composeRule.waitForIdle()
 
-        // 04 — open the calendar through the date range field in step 2.
-        composeRule.onNodeWithText(str(R.string.metric_date_range)).performScrollTo().performClick()
-        waitForText(R.string.date_dialog_apply, timeoutMs = 10_000)
+        // 10 — the last week, one colour per day. The demo file ends on a
+        // seven-day road trip that takes a road of its own every day, so the
+        // "7 days" preset in step 2 leaves exactly that week on the map.
+        // Last on purpose: it leaves a date range applied and the map
+        // expanded, and every shot above wants all of the data.
+        composeRule.onAllNodesWithText(quantityStr(R.plurals.map_day_count, 7)).onFirst()
+            .performScrollTo().performClick()
         composeRule.waitForIdle()
-        Screengrab.screenshot("04_calendar")
-        // The calendar closes from an icon in its top bar, so it is found by
-        // its description rather than by a label.
-        composeRule.onNodeWithContentDescription(str(R.string.date_dialog_cancel)).performClick()
+        composeRule.onNodeWithContentDescription(str(R.string.map_expand)).performScrollTo().performClick()
+        waitForDescription(R.string.map_exit_fullscreen, timeoutMs = 10_000)
+        composeRule.onNodeWithContentDescription(str(R.string.map_color_by_day)).performClick()
+        // The day row arrives once the days have been counted off-thread.
+        waitForDescription(R.string.map_show_all_days, timeoutMs = 10_000)
+        settle(MAP_TILE_WAIT_MS)
+        // The whole week is 1,500 km of motorway with the Alps squeezed into
+        // its bottom corner. Pick the day over the passes from the day list
+        // instead: the map frames that day, which brings the Alpine days
+        // around it into view at a scale where their roads read as roads, and
+        // lifts the picked line with its date under it. The list shows dates
+        // the way the sheet formats them, in the app's language.
+        composeRule.onNodeWithContentDescription(str(R.string.map_show_all_days)).performClick()
+        val dayLabel = FOCUS_DAY.format(
+            DateTimeFormatter.ofPattern("MMM d", localizedCtx.resources.configuration.locales[0])
+        )
+        composeRule.waitUntil(timeoutMillis = 10_000) {
+            composeRule.onAllNodesWithText(dayLabel).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onAllNodesWithText(dayLabel).onFirst().performClick()
+        settle(MAP_TILE_WAIT_MS)
+        shoot("10_days")
     }
 
     // ---- helpers ----
@@ -318,6 +371,33 @@ class ScreenshotTest {
             out,
         )
     }
+
+    /**
+     * [Screengrab.screenshot], tried again when the capture fails.
+     *
+     * UiAutomation gives the display capture one second and returns no bitmap
+     * past it, which screengrab reports as "Unable to capture screenshot". The
+     * first shot of a pass is the one that misses: screengrab has just
+     * switched the device locale, and the launcher, SystemUI and the keyboard
+     * are all rebuilding themselves for it, for tens of seconds. A second try
+     * a moment later lands; a failed try leaves an empty file that the next
+     * one overwrites.
+     */
+    private fun shoot(name: String) {
+        repeat(SCREENSHOT_ATTEMPTS - 1) {
+            try {
+                Screengrab.screenshot(name)
+                return
+            } catch (e: RuntimeException) {
+                Log.w(TAG, "Capture of $name failed, trying again", e)
+                settle(SCREENSHOT_RETRY_MS)
+            }
+        }
+        Screengrab.screenshot(name)
+    }
+
+    private fun quantityStr(id: Int, count: Int): String =
+        localizedCtx.resources.getQuantityString(id, count, count)
 
     private fun waitForDescription(stringId: Int, timeoutMs: Long = 8_000) {
         val description = str(stringId)

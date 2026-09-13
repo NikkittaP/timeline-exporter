@@ -962,15 +962,21 @@ fun TimelineMap(
         val extent = withContext(Dispatchers.Default) {
             dayExtent(track.points, date, fallbackZone)
         }
-        if (!destroyed.get() && extent != null) {
-            runCatching {
-                val update = extent.bounds
-                    ?.let { boundsCameraUpdate(map, it, insets, DAY_FOCUS_ZOOM_MAX) }
-                    ?: CameraUpdateFactory.newLatLngZoom(extent.anchor, DAY_FOCUS_ZOOM_POINT)
-                map.animateCamera(update, DAY_FOCUS_CAMERA_MS)
-            }.onFailure { Log.w(TAG, "Day focus camera failed", it) }
+        // Back on the main thread by name, for the reason spelled out in the
+        // render effect: under Compose's test harness the coroutine otherwise
+        // stays on the worker, MapLibre refuses the camera call from there,
+        // and runCatching turns the refusal into a camera that never moves.
+        withContext(Dispatchers.Main.immediate) {
+            if (!destroyed.get() && extent != null) {
+                runCatching {
+                    val update = extent.bounds
+                        ?.let { boundsCameraUpdate(map, it, insets, DAY_FOCUS_ZOOM_MAX) }
+                        ?: CameraUpdateFactory.newLatLngZoom(extent.anchor, DAY_FOCUS_ZOOM_POINT)
+                    map.animateCamera(update, DAY_FOCUS_CAMERA_MS)
+                }.onFailure { Log.w(TAG, "Day focus camera failed", it) }
+            }
+            focusDay = null
         }
-        focusDay = null
     }
 
     // The selected day's highlight, its own layer over the track's own source:

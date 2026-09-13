@@ -4,6 +4,11 @@
     "title": "Hela historiken {på en karta}",
     "sub": "År av Google Maps tidslinje på en gång"
   },
+  "days": {
+    "eyebrow": "Färg per dag",
+    "title": "Varje dag {i egen färg}",
+    "sub": "Tryck på en linje för att se vilken dag det var"
+  },
   "places": {
     "eyebrow": "Varje stopp",
     "title": "{Platser}, inte bara spåret",
@@ -28,11 +33,6 @@
     "eyebrow": "Finjustering",
     "title": "Filtrera på {färdsätt}",
     "sub": "Gång, cykel, bil, kollektivt, flyg — var och en med sin sträcka"
-  },
-  "calendar": {
-    "eyebrow": "Exakt kontroll",
-    "title": "Filtrera på {datumintervall}",
-    "sub": "Exportera bara de dagar du behöver"
   },
   "privacy": {
     "eyebrow": "Integritet från start",

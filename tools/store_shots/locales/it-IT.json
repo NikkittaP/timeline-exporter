@@ -4,6 +4,11 @@
     "title": "La tua cronologia, {su una mappa}",
     "sub": "Anni di Google Maps Timeline in un colpo d'occhio"
   },
+  "days": {
+    "eyebrow": "Colore per giorno",
+    "title": "Ogni giorno {col suo colore}",
+    "sub": "Tocca una linea per vedere di che giorno è"
+  },
   "places": {
     "eyebrow": "Ogni sosta",
     "title": "{I luoghi}, non solo il percorso",
@@ -28,11 +33,6 @@
     "eyebrow": "Regolazione fine",
     "title": "Filtra per {tipo di spostamento}",
     "sub": "A piedi, bici, auto, mezzi, voli — ognuno con la sua distanza"
-  },
-  "calendar": {
-    "eyebrow": "Controllo preciso",
-    "title": "Filtra per {intervallo di date}",
-    "sub": "Esporta solo i giorni che ti servono"
   },
   "privacy": {
     "eyebrow": "Privacy per progettazione",

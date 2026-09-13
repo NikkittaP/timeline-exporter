@@ -37,15 +37,15 @@
 
   "featureGraphic": { "w": 1024, "h": 500, "enabled": true, "source": "03_map_fullscreen" },
 
-  "$frames": "Play shows the first three without scrolling and takes at most eight. Places is second: it is the one thing 1.7.0 adds that a 1.6 user does not already have.",
+  "$frames": "Play shows the first three without scrolling and takes at most eight. The newest feature goes second, right after the hero: Color by day (1.8.0), then Places (1.7.0). The calendar made way for it: the date presets are already on the overview, and the picker itself is a stock Material dialog.",
   "frames": [
     { "out": "01_map",       "src": "03_map_fullscreen", "key": "map"       },
-    { "out": "02_places",    "src": "08_places",         "key": "places"    },
-    { "out": "03_overview",  "src": "02_overview",       "key": "overview"  },
-    { "out": "04_timeofday", "src": "09_time_of_day",    "key": "timeofday" },
-    { "out": "05_formats",   "src": "05_formats",        "key": "formats"   },
-    { "out": "06_movement",  "src": "07_movement",       "key": "movement"  },
-    { "out": "07_calendar",  "src": "04_calendar",       "key": "calendar"  },
+    { "out": "02_days",      "src": "10_days",           "key": "days"      },
+    { "out": "03_places",    "src": "08_places",         "key": "places"    },
+    { "out": "04_overview",  "src": "02_overview",       "key": "overview"  },
+    { "out": "05_timeofday", "src": "09_time_of_day",    "key": "timeofday" },
+    { "out": "06_formats",   "src": "05_formats",        "key": "formats"   },
+    { "out": "07_movement",  "src": "07_movement",       "key": "movement"  },
     { "out": "08_privacy",   "src": "06_start_empty",    "key": "privacy"   }
   ],
 

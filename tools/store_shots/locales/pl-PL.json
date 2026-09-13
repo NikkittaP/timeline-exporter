@@ -4,6 +4,11 @@
     "title": "Twoja historia {na jednej mapie}",
     "sub": "Lata Osi czasu Google Maps na jednym ekranie"
   },
+  "days": {
+    "eyebrow": "Kolor według dnia",
+    "title": "Każdy dzień {w innym kolorze}",
+    "sub": "Stuknij linię, aby zobaczyć, który to dzień"
+  },
   "places": {
     "eyebrow": "Każdy postój",
     "title": "{Miejsca}, nie tylko trasa",
@@ -28,11 +33,6 @@
     "eyebrow": "Precyzyjne ustawienia",
     "title": "Filtruj według {sposobu podróży}",
     "sub": "Pieszo, rower, auto, komunikacja, loty — każde z dystansem"
-  },
-  "calendar": {
-    "eyebrow": "Precyzyjna kontrola",
-    "title": "Filtruj według {zakresu dat}",
-    "sub": "Eksportuj tylko potrzebne dni"
   },
   "privacy": {
     "eyebrow": "Prywatność u podstaw",

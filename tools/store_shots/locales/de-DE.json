@@ -4,6 +4,11 @@
     "title": "Deine Historie, {auf einer Karte}",
     "sub": "Jahre Google Maps Timeline auf einen Blick"
   },
+  "days": {
+    "eyebrow": "Farbe nach Tag",
+    "title": "Jeder Tag {in eigener Farbe}",
+    "sub": "Tippe auf eine Linie, um den Tag zu sehen"
+  },
   "places": {
     "eyebrow": "Jeder Halt",
     "title": "{Orte}, nicht nur die Strecke",
@@ -28,11 +33,6 @@
     "eyebrow": "Feinabstimmung",
     "title": "Nach {Bewegungsart} filtern",
     "sub": "Zu Fuß, Rad, Auto, Nahverkehr, Flüge — jeweils mit Distanz"
-  },
-  "calendar": {
-    "eyebrow": "Genaue Kontrolle",
-    "title": "Filtern nach {Zeitraum}",
-    "sub": "Exportiere nur die Tage, die du brauchst"
   },
   "privacy": {
     "eyebrow": "Datenschutz zuerst",

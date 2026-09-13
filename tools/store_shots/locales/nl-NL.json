@@ -4,6 +4,11 @@
     "title": "Je geschiedenis, {op één kaart}",
     "sub": "Jaren Google Maps Timeline in één oogopslag"
   },
+  "days": {
+    "eyebrow": "Kleur per dag",
+    "title": "Elke dag {in een eigen kleur}",
+    "sub": "Tik op een lijn om te zien welke dag het was"
+  },
   "places": {
     "eyebrow": "Elke stop",
     "title": "{Plaatsen}, niet alleen de route",
@@ -28,11 +33,6 @@
     "eyebrow": "Fijnafstemming",
     "title": "Filter op {vervoerswijze}",
     "sub": "Lopen, fiets, auto, ov, vluchten — elk met zijn afstand"
-  },
-  "calendar": {
-    "eyebrow": "Precieze controle",
-    "title": "Filter op {datumbereik}",
-    "sub": "Exporteer alleen de dagen die je nodig hebt"
   },
   "privacy": {
     "eyebrow": "Privacy vooraf",

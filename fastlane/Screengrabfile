@@ -4,8 +4,11 @@
 app_package_name("io.github.nikkittap.timelineexporter")
 tests_package_name("io.github.nikkittap.timelineexporter.test")
 
-# Run every test in our package (ScreenshotTest).
-use_tests_in_packages(["io.github.nikkittap.timelineexporter"])
+# Run ScreenshotTest only. A package filter also picked up TrackDayMapTest,
+# which is not a screenshot test: it cost a minute per language, and one failed
+# capture in it (it saves a debug image of its own) failed the whole pass and
+# stopped screengrab even though every store shot for that language was in.
+use_tests_in_classes(["io.github.nikkittap.timelineexporter.ScreenshotTest"])
 
 # Built by the `gradle assembleDebug assembleDebugAndroidTest` step.
 app_apk_path("app/build/outputs/apk/debug/app-debug.apk")
