@@ -33,6 +33,87 @@ above, but they no longer describe the current state. Everything from the
 ballot re-cut onward in this section is new relative to what a 1.7.0 tester
 already has.
 
+## Store changelog — draft for versionCode 17 (2026-09-13)
+
+Supersedes the versionCode 16 draft below, which stays as written. 17 is the
+same 1.7.0 → now span plus the redesign (next section), still versionName
+1.8.0: none of it has reached production, so it ships under one name. 16 is
+treated as spent — the bump to 17 was made at the uploader's instruction.
+
+Cut to all 18 `fastlane/metadata/android/<locale>/changelogs/17.txt` and to
+`F:\Timeline\Whats_New_v1.8.0_tagged.txt` (overwritten; the 16 text lives on
+in the `16.txt` files). A fifth bullet on top of 16's four would have pushed
+German past Play's 500-character limit — the 16 draft was already at 498 — so
+all four were rewritten shorter and the redesign folded in as the first.
+Longest translation is now 456 characters (fr-FR). The last bullet also stops
+calling it the *export* progress bar: the fix was to the bar shown while a
+file loads.
+
+```
+• Redesigned: see which file is open, simpler date filters, a new calendar, and a dark theme that matches the map.
+• Color your track by day and browse days by month; tap a day to see where you were.
+• Fixed a crash opening fullscreen with Color by day on, and a day count that changed with zoom.
+• Loading progress now fills evenly instead of crawling, then jumping.
+```
+
+Not in the bullets, for the same reasons as in the 16 draft: the
+feedback-ballot re-cut and the update check.
+
+### Pre-release checklist for versionCode 17
+
+- [x] Bump `versionCode` to 17 (`versionName` stays 1.8.0) — 2026-09-13
+- [x] Write the store changelog into all 18 `changelogs/17.txt` and
+      `Whats_New_v1.8.0_tagged.txt` — 2026-09-13
+- [x] `./gradlew :app:test` — 176 tests, 0 failures
+- [x] `./gradlew bundleRelease` — R8 and `lintVital` green, 2026-09-13
+- [ ] Run the instrumented suite (`ScreenshotTest` was updated for the new
+      UI but has not been run; `TrackDayMapTest` untouched)
+- [ ] Upload the AAB to the internal testing track as versionCode 17
+- [ ] On a real install, look at: light and dark theme, the calendar in both,
+      step 2 in a long language (German) on a narrow phone, and an Android
+      10/11 device if one is available — those are the versions that used to
+      get the template purple scheme
+- [ ] Move this section into *Released* only once the span is promoted to
+      production — internal testing is not release
+
+## Redesign — one visual system (local development, 2026-09-13)
+
+The screen read as parts from different kits. The causes, all fixed here:
+six corner radii on one screen; three different "pick one" controls (date
+chips that wrapped three and three, segmented buttons, the calendar's own
+chips); colour taken from the wallpaper while the logo stayed blue, with a
+pink "Loaded" badge and emoji in the top bar; step 1 still shouting "Pick
+Timeline.json" after the file had loaded and never naming the file; an
+outline on everything; and the stock date picker's grey header, mid-date
+line breaks and clipped presets.
+
+- **Palette.** The app's own light and dark schemes from the logo's #1976D2;
+  dynamic colour is off. The dark card surface is the dark basemap's ground
+  (#191D23), so the map sits inside its card at night instead of on top of
+  it. Dark mode still follows the system, as the map already did. Android
+  10/11 no longer fall back to the project template's purple.
+- **Shape.** Four radii from the theme: 12 dp controls, 16 dp panels and the
+  map, 24 dp step cards, 28 dp dialogs. Step cards are filled, not outlined;
+  only the map keeps a hairline. Vector icons replace 🌐 💜 ⋮ ▼ ›.
+- **Step 1.** Once loaded: the file's name, format and span; one panel with
+  points, days (counted the way the map legend counts them) and distance;
+  a quiet "Choose another file". The big button is only there while nothing
+  is loaded.
+- **Step 2.** A date range field that shows its own value and opens the
+  calendar; four equal presets (7 / 30 / 90 days, All) that shrink their text
+  rather than cut it in long languages; Time of day and Movement as two rows
+  of the same shape; a bar under the "After filter" count.
+- **Calendar.** Close, title and Apply in one bar; the selection as one
+  localized range with its day and point count (the point count uses step 2's
+  own filter); days outside the file can't be picked; no grey header, no
+  duplicate presets, no dim bands above and below.
+- **Strings.** Five new strings in all 18 locales (`file_change_button`,
+  `metric_days`, `metric_distance`, `filter_movement_title`,
+  `date_preset_all_short`); nine that nothing used any more removed from all
+  18.
+
+Checked on the emulator in light and dark, and in German at 320 dp wide.
+
 ## Store changelog — draft for versionCode 16 (2026-09-12)
 
 Covers the whole 1.7.0 → now span: the feedback ballot re-cut, the optional

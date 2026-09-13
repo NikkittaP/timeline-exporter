@@ -338,7 +338,20 @@ android {
         //       bar crawling then jumping). See RELEASE_NOTES.md for the
         //       full breakdown; changelogs/16.txt in all 18 locales carries
         //       the store text.
-        versionCode = 16
+        //   versionCode=17, versionName="1.8.0" -> 16's span plus the
+        //       redesign: the app's own blue palette in place of wallpaper
+        //       colour (dark theme matched to the dark map), four corner
+        //       radii from the theme, filled step cards, vector icons in the
+        //       top bar, step 1 showing the open file with points / days /
+        //       distance, step 2 rebuilt around a date range field with four
+        //       equal presets, and the calendar with its own header and only
+        //       the file's days selectable. 16 counts as spent - bumped at the
+        //       uploader's instruction - so testers get this as a new build.
+        //       Same versionName: none of 1.8.0 has reached production, and
+        //       the redesign ships inside it. changelogs/17.txt in all 18
+        //       locales carries the store text, rewritten to fit a fifth item
+        //       under Play's 500-character limit.
+        versionCode = 17
         versionName = "1.8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
