@@ -45,19 +45,24 @@ Cut to all 18 `fastlane/metadata/android/<locale>/changelogs/17.txt` and to
 in the `16.txt` files). A fifth bullet on top of 16's four would have pushed
 German past Play's 500-character limit — the 16 draft was already at 498 — so
 all four were rewritten shorter and the redesign folded in as the first.
-Longest translation is now 456 characters (fr-FR). The last bullet also stops
+With the crash bullet since dropped (see below) there are three, and the
+longest translation is 340 characters (fr-FR). The last bullet also stops
 calling it the *export* progress bar: the fix was to the bar shown while a
 file loads.
 
 ```
 • Redesigned: see which file is open, simpler date filters, a new calendar, and a dark theme that matches the map.
 • Color your track by day and browse days by month; tap a day to see where you were.
-• Fixed a crash opening fullscreen with Color by day on, and a day count that changed with zoom.
 • Loading progress now fills evenly instead of crawling, then jumping.
 ```
 
 Not in the bullets, for the same reasons as in the 16 draft: the
-feedback-ballot re-cut and the update check.
+feedback-ballot re-cut and the update check. Also left out, unlike the 16
+draft: the fullscreen crash with Color by day on and the zoom-dependent day
+count. Both were bugs in Color by day itself, which is new in this release —
+no published build ever had the feature, so no user ever hit either bug, and
+announcing their fix would describe internal work as a change to the app.
+Dropped from all 18 `17.txt` files and the tagged file on 2026-09-13.
 
 ### Pre-release checklist for versionCode 17
 
