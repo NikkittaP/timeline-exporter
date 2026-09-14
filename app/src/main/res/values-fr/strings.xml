@@ -64,7 +64,7 @@
 
     <string name="export_title">Exporter</string>
     <string name="export_save_button">Enregistrer sous…</string>
-    <string name="export_action_save">Enregistrer le fichier</string>
+    <string name="export_action_save">Enregistrer</string>
     <string name="export_action_share">Envoyer à une app</string>
     <string name="export_shared">%1$s points préparés au format %2$s</string>
     <string name="export_writing">Écriture du fichier…</string>

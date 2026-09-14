@@ -99,6 +99,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
@@ -1189,11 +1190,27 @@ private fun DateRangeField(value: String, onClick: () -> Unit) {
  * Here each segment keeps 4 dp of padding, there is no tick (the filled segment
  * already says which one is on), and a label that still does not fit steps its
  * size down rather than being cut.
+ *
+ * Step 4's Save / Send switch uses it too, for the same reason in the other
+ * direction: in Material's version "Отправить в приложение" wrapped to two
+ * lines and pushed the row out of shape. Two segments have room to spare, so
+ * that row asks for [labelPadding] wide enough that a long label does not run
+ * into the outline.
  */
 @Composable
-private fun ChoiceRow(labels: List<String>, selectedIndex: Int, onSelect: (Int) -> Unit) {
+private fun ChoiceRow(
+    labels: List<String>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+    enabled: Boolean = true,
+    labelPadding: Dp = 4.dp,
+) {
     val shape = MaterialTheme.shapes.small
-    val outline = MaterialTheme.colorScheme.outline
+    val outline = if (enabled) {
+        MaterialTheme.colorScheme.outline
+    } else {
+        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -1210,18 +1227,23 @@ private fun ChoiceRow(labels: List<String>, selectedIndex: Int, onSelect: (Int) 
                     .weight(1f)
                     .fillMaxHeight()
                     .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
-                    .selectable(selected = selected, role = Role.RadioButton, onClick = { onSelect(index) })
-                    .padding(horizontal = 4.dp),
+                    .selectable(
+                        selected = selected,
+                        enabled = enabled,
+                        role = Role.RadioButton,
+                        onClick = { onSelect(index) },
+                    )
+                    .padding(horizontal = labelPadding),
                 contentAlignment = Alignment.Center,
             ) {
                 val style = MaterialTheme.typography.labelLarge
                 BasicText(
                     text = label,
                     style = style.copy(
-                        color = if (selected) {
-                            MaterialTheme.colorScheme.onSecondaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
+                        color = when {
+                            !enabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                            selected -> MaterialTheme.colorScheme.onSecondaryContainer
+                            else -> MaterialTheme.colorScheme.onSurface
                         },
                         textAlign = TextAlign.Center,
                     ),
@@ -1727,24 +1749,16 @@ private fun ExportStep(
     // Destination first, format second — one row of format buttons either way.
     // The alternative, a second row of "share as GPX / KML / …" buttons, would
     // double the controls in this step to express one binary choice.
-    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-        SegmentedButton(
-            selected = !shareInstead,
-            onClick = { onShareInsteadChange(false) },
-            enabled = enabled,
-            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2, baseShape = MaterialTheme.shapes.small),
-        ) {
-            Text(stringResource(R.string.export_action_save))
-        }
-        SegmentedButton(
-            selected = shareInstead,
-            onClick = { onShareInsteadChange(true) },
-            enabled = enabled,
-            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2, baseShape = MaterialTheme.shapes.small),
-        ) {
-            Text(stringResource(R.string.export_action_share))
-        }
-    }
+    ChoiceRow(
+        labels = listOf(
+            stringResource(R.string.export_action_save),
+            stringResource(R.string.export_action_share),
+        ),
+        selectedIndex = if (shareInstead) 1 else 0,
+        onSelect = { onShareInsteadChange(it == 1) },
+        enabled = enabled,
+        labelPadding = 16.dp,
+    )
 
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         AllExporters.forEach { exporter ->
