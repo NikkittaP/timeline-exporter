@@ -24,8 +24,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -60,6 +58,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -1730,7 +1729,6 @@ private fun ExportSubjectPlaque(contentKind: ContentKind, itemCount: Int) {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun ExportStep(
     canSave: Boolean,
@@ -1760,14 +1758,30 @@ private fun ExportStep(
         labelPadding = 16.dp,
     )
 
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    // One row of four equal buttons, lined up with the switch above. A FlowRow
+    // of content-sized buttons put three on the first line and CSV alone on the
+    // second, each a different width. Material's 24 dp side padding is what
+    // pushed CSV down; 4 dp is enough here, and on a phone too narrow even for
+    // that, "GeoJSON" steps its size down like the switch's labels do.
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         AllExporters.forEach { exporter ->
             FilledTonalButton(
                 onClick = { onPickFormat(exporter) },
                 enabled = enabled,
                 shape = MaterialTheme.shapes.small,
+                contentPadding = PaddingValues(horizontal = 4.dp),
+                modifier = Modifier.weight(1f),
             ) {
-                Text(exporter.displayName)
+                val style = MaterialTheme.typography.labelLarge
+                BasicText(
+                    text = exporter.displayName,
+                    style = style.copy(color = LocalContentColor.current),
+                    maxLines = 1,
+                    autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = style.fontSize),
+                )
             }
         }
     }

@@ -117,7 +117,7 @@ platform :android do
   lane :upload_screens do
     upload_to_play_store(
       track: "internal",
-      version_code: 17,
+      version_code: 18,
       skip_upload_apk: true,
       skip_upload_aab: true,
       skip_upload_metadata: true,     # don't overwrite your hand-edited listing
@@ -132,7 +132,7 @@ platform :android do
   lane :upload_screens_dryrun do
     upload_to_play_store(
       track: "internal",
-      version_code: 17,
+      version_code: 18,
       skip_upload_apk: true,
       skip_upload_aab: true,
       skip_upload_metadata: true,

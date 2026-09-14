@@ -33,6 +33,26 @@ above, but they no longer describe the current state. Everything from the
 ballot re-cut onward in this section is new relative to what a 1.7.0 tester
 already has.
 
+## 1.8.1 — step 4 tidy-up (versionCode 18, 2026-09-14)
+
+versionCode 17 is uploaded to internal testing, so this is a new code. The
+store text is 17's, copied unchanged to all 18 `changelogs/18.txt` and to
+`F:\Timeline\Whats_New_v1.8.1_tagged.txt`: the span it describes has not
+changed, and nothing here is news to someone reading the listing.
+
+- **Save / Send switch.** Drawn by the same hand-built segmented row as the
+  date presets: one line, fixed height, no tick, text that shrinks instead of
+  wrapping. In ru and uk "Отправить в приложение" / "Надіслати в застосунок"
+  wrapped to two lines and bent the row out of shape; in fr the label ran
+  into the outline. Shorter labels: ru «Поделиться», uk «Поділитися»,
+  fr «Enregistrer».
+- **Format buttons.** GPX / KML / GeoJSON / CSV in one row of four equal
+  widths, instead of three on the first line and CSV alone under them.
+
+Store screenshots `06_formats` and `08_privacy` (the version footer is in
+both) recaptured and re-rendered for phone, 7" and 10" tablet in all 18
+languages.
+
 ## Store changelog — draft for versionCode 17 (2026-09-13)
 
 Supersedes the versionCode 16 draft below, which stays as written. 17 is the

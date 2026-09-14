@@ -351,8 +351,16 @@ android {
         //       the redesign ships inside it. changelogs/17.txt in all 18
         //       locales carries the store text, rewritten to fit a fifth item
         //       under Play's 500-character limit.
-        versionCode = 17
-        versionName = "1.8.0"
+        //   versionCode=18, versionName="1.8.1" -> step 4 polish on top of 17
+        //       (which is uploaded, so spent): the Save / Send switch stays on
+        //       one line in every language (it wrapped in ru and uk, and ran
+        //       into its outline in fr), with shorter ru / uk / fr labels, and
+        //       the four format buttons sit in one row of equal widths instead
+        //       of three plus CSV alone underneath. changelogs/18.txt in all 18
+        //       locales carries 17's store text: the span it describes is the
+        //       same, and a layout tidy-up is not news to a store reader.
+        versionCode = 18
+        versionName = "1.8.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
