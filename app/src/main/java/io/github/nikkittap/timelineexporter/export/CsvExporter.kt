@@ -50,18 +50,17 @@ object CsvExporter : Exporter {
     private val LOCAL_TIME_FORMAT: DateTimeFormatter =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ROOT)
 
-    override fun export(content: ExportContent, name: String): String = when (content) {
-        is ExportContent.Track -> exportTrack(content.points)
-        is ExportContent.Places -> exportPlaces(content.places)
+    override fun export(content: ExportContent, name: String, out: Appendable) = when (content) {
+        is ExportContent.Track -> exportTrack(content.points, out)
+        is ExportContent.Places -> exportPlaces(content.places, out)
     }
 
-    private fun exportTrack(points: List<PathPoint>): String {
-        val sb = StringBuilder(points.size * 70 + 60)
+    private fun exportTrack(points: List<PathPoint>, sb: Appendable) {
         sb.append("time_utc,latitude,longitude,time_local,utc_offset\r\n")
         for (p in points) {
             sb.append(DateTimeFormatter.ISO_INSTANT.format(p.timeUtc))
-                .append(',').append(p.latitude)
-                .append(',').append(p.longitude)
+                .append(',').append(p.latitude.toString())
+                .append(',').append(p.longitude.toString())
                 .append(',')
             val minutes = p.tzOffsetMinutes
             if (minutes != null) {
@@ -73,21 +72,19 @@ object CsvExporter : Exporter {
             }
             sb.append("\r\n")
         }
-        return sb.toString()
     }
 
-    private fun exportPlaces(places: List<ExportPlace>): String {
-        val sb = StringBuilder(places.size * 220 + 200)
+    private fun exportPlaces(places: List<ExportPlace>, sb: Appendable) {
         sb.append("name,latitude,longitude,visits,total_seconds,")
         sb.append("first_visit_utc,first_visit_local,first_visit_offset,")
         sb.append("last_visit_utc,last_visit_local,last_visit_offset,")
         sb.append("category,address,place_id,google_maps_url\r\n")
         for (place in places) {
             sb.append(csvField(place.name))
-                .append(',').append(place.latitude)
-                .append(',').append(place.longitude)
-                .append(',').append(place.visits)
-                .append(',').append(place.totalSeconds)
+                .append(',').append(place.latitude.toString())
+                .append(',').append(place.longitude.toString())
+                .append(',').append(place.visits.toString())
+                .append(',').append(place.totalSeconds.toString())
                 .append(',')
             appendMoment(sb, place.firstVisit, place.firstVisitOffsetMinutes)
             sb.append(',')
@@ -98,11 +95,10 @@ object CsvExporter : Exporter {
                 .append(',').append(csvField(place.mapsUrl))
                 .append("\r\n")
         }
-        return sb.toString()
     }
 
     /** Three columns: the instant in UTC, the same instant local, the offset. */
-    private fun appendMoment(sb: StringBuilder, instant: Instant, offsetMinutes: Int?) {
+    private fun appendMoment(sb: Appendable, instant: Instant, offsetMinutes: Int?) {
         sb.append(DateTimeFormatter.ISO_INSTANT.format(instant)).append(',')
         if (offsetMinutes != null) {
             val offset = ZoneOffset.ofTotalSeconds(offsetMinutes * 60)

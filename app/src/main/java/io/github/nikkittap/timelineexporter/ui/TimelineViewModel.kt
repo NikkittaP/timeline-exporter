@@ -142,6 +142,16 @@ data class PendingShare(val file: File, val mimeType: String)
 /** Cache subdirectory backing the FileProvider path of the same name. */
 const val SHARE_CACHE_DIR = "shared"
 
+/**
+ * Bytes buffered between the exporter and the file it is being written to.
+ *
+ * Eight times the stdlib default. A full phone export is tens of megabytes of
+ * short appends, and the buffer is the only thing standing between those and
+ * a write syscall each; 64 KiB is still nothing next to what the old
+ * build-the-whole-String approach held.
+ */
+private const val EXPORT_BUFFER_BYTES = 64 * 1024
+
 // ---------- ViewModel ----------
 
 class TimelineViewModel : ViewModel() {
@@ -380,10 +390,14 @@ class TimelineViewModel : ViewModel() {
         viewModelScope.launch {
             val newState = withContext(Dispatchers.IO) {
                 try {
-                    val text = exporter.export(content, name)
-                    contentResolver.openOutputStream(uri)?.use { out ->
-                        out.write(text.toByteArray(Charsets.UTF_8))
-                    } ?: throw IOException("openOutputStream returned null for $uri")
+                    val stream = contentResolver.openOutputStream(uri)
+                        ?: throw IOException("openOutputStream returned null for $uri")
+                    // Straight from the exporter into the destination, through
+                    // one buffer. Nothing ever holds the whole document: see
+                    // Exporter.export for what the String version cost.
+                    stream.writer(Charsets.UTF_8).buffered(EXPORT_BUFFER_BYTES).use { out ->
+                        exporter.export(content, name, out)
+                    }
                     ExportState.Success(
                         itemCount = content.size,
                         kind = content.kind,
@@ -453,7 +467,9 @@ class TimelineViewModel : ViewModel() {
                     // cache for the system to reap eventually is not polite.
                     dir.listFiles()?.forEach { it.delete() }
                     val file = File(dir, filename)
-                    file.writeText(exporter.export(content, name), Charsets.UTF_8)
+                    file.bufferedWriter(Charsets.UTF_8, EXPORT_BUFFER_BYTES).use { out ->
+                        exporter.export(content, name, out)
+                    }
                     _pendingShare.value = PendingShare(file, exporter.mimeType)
                     ExportState.Shared(content.size, content.kind, exporter.displayName)
                 } catch (e: Exception) {

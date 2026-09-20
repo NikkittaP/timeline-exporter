@@ -19,7 +19,18 @@ interface Exporter {
     val mimeType: String
 
     /**
-     * Produce the file contents as a UTF-8 String.
+     * Write the file contents into [out].
+     *
+     * Streaming rather than returning a String, because the string was the
+     * single most expensive thing this app did. A 284,000-point track is a
+     * ~30 MB GPX, and building that in memory cost an 85 MB StringBuilder, a
+     * 60 MB copy of it (a Java char is two bytes) and a 30 MB byte array —
+     * 175 MB of garbage for a 30 MB file, on top of the ~96 MB the parsed
+     * timeline already holds. Written straight into the destination's own
+     * buffered writer, the cost is the buffer.
+     *
+     * Implementations must therefore append as they go and never assemble the
+     * whole document first; [StreamingExportTest] enforces it.
      *
      * [content] is either a track or a list of places — every implementation
      * must handle both, and an exhaustive `when` over the sealed type is what
@@ -29,7 +40,7 @@ interface Exporter {
      * [name] is a human label embedded in the output where the format supports
      * one (the track's `<name>`, the KML `<Document><name>`). CSV ignores it.
      */
-    fun export(content: ExportContent, name: String): String
+    fun export(content: ExportContent, name: String, out: Appendable)
 }
 
 /**

@@ -6,12 +6,16 @@ import java.time.Instant
 /**
  * Shorthands so the format tests read as "export these points" / "export these
  * places" rather than repeating the [ExportContent] wrapper on every call.
+ *
+ * They also collect the streamed output back into a String, which is what a
+ * test asserting on the finished document wants. Only [StreamingExportTest]
+ * cares how the text arrives.
  */
 internal fun Exporter.exportTrack(points: List<PathPoint>, name: String): String =
-    export(ExportContent.Track(points), name)
+    buildString { export(ExportContent.Track(points), name, this) }
 
 internal fun Exporter.exportPlaces(places: List<ExportPlace>, name: String): String =
-    export(ExportContent.Places(places), name)
+    buildString { export(ExportContent.Places(places), name, this) }
 
 /**
  * A place with plausible defaults, so each test states only the field it is

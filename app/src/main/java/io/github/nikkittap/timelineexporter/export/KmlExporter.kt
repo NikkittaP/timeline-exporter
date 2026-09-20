@@ -24,13 +24,12 @@ object KmlExporter : Exporter {
     override val fileExtension = "kml"
     override val mimeType = "application/vnd.google-earth.kml+xml"
 
-    override fun export(content: ExportContent, name: String): String = when (content) {
-        is ExportContent.Track -> exportTrack(content.points, name)
-        is ExportContent.Places -> exportPlaces(content.places, name)
+    override fun export(content: ExportContent, name: String, out: Appendable) = when (content) {
+        is ExportContent.Track -> exportTrack(content.points, name, out)
+        is ExportContent.Places -> exportPlaces(content.places, name, out)
     }
 
-    private fun exportTrack(points: List<PathPoint>, trackName: String): String {
-        val sb = StringBuilder(points.size * 50 + 500)
+    private fun exportTrack(points: List<PathPoint>, trackName: String, sb: Appendable) {
         sb.append("""<?xml version="1.0" encoding="UTF-8"?>""").append('\n')
         sb.append("""<kml xmlns="http://www.opengis.net/kml/2.2">""").append('\n')
         sb.append("  <Document>\n")
@@ -49,19 +48,17 @@ object KmlExporter : Exporter {
         for (p in points) {
             // lon,lat,alt  — whitespace-separated between points.
             sb.append("          ")
-                .append(p.longitude).append(',')
-                .append(p.latitude).append(",0\n")
+                .append(p.longitude.toString()).append(',')
+                .append(p.latitude.toString()).append(",0\n")
         }
         sb.append("        </coordinates>\n")
         sb.append("      </LineString>\n")
         sb.append("    </Placemark>\n")
         sb.append("  </Document>\n")
         sb.append("</kml>\n")
-        return sb.toString()
     }
 
-    private fun exportPlaces(places: List<ExportPlace>, documentName: String): String {
-        val sb = StringBuilder(places.size * 320 + 500)
+    private fun exportPlaces(places: List<ExportPlace>, documentName: String, sb: Appendable) {
         sb.append("""<?xml version="1.0" encoding="UTF-8"?>""").append('\n')
         sb.append("""<kml xmlns="http://www.opengis.net/kml/2.2">""").append('\n')
         sb.append("  <Document>\n")
@@ -95,14 +92,13 @@ object KmlExporter : Exporter {
             sb.append("      <styleUrl>#placeStyle</styleUrl>\n")
             sb.append("      <Point>\n")
             sb.append("        <coordinates>")
-                .append(place.longitude).append(',')
-                .append(place.latitude).append(",0")
+                .append(place.longitude.toString()).append(',')
+                .append(place.latitude.toString()).append(",0")
                 .append("</coordinates>\n")
             sb.append("      </Point>\n")
             sb.append("    </Placemark>\n")
         }
         sb.append("  </Document>\n")
         sb.append("</kml>\n")
-        return sb.toString()
     }
 }

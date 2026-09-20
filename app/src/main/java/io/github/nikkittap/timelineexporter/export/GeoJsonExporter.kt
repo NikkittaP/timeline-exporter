@@ -23,13 +23,12 @@ object GeoJsonExporter : Exporter {
 
     private const val CREATOR = "Timeline Exporter for Android"
 
-    override fun export(content: ExportContent, name: String): String = when (content) {
-        is ExportContent.Track -> exportTrack(content.points, name)
-        is ExportContent.Places -> exportPlaces(content.places, name)
+    override fun export(content: ExportContent, name: String, out: Appendable) = when (content) {
+        is ExportContent.Track -> exportTrack(content.points, name, out)
+        is ExportContent.Places -> exportPlaces(content.places, name, out)
     }
 
-    private fun exportTrack(points: List<PathPoint>, trackName: String): String {
-        val sb = StringBuilder(points.size * 35 + 500)
+    private fun exportTrack(points: List<PathPoint>, trackName: String, sb: Appendable) {
         sb.append("{\n")
         sb.append("  \"type\": \"FeatureCollection\",\n")
         sb.append("  \"features\": [\n")
@@ -45,7 +44,8 @@ object GeoJsonExporter : Exporter {
         if (points.isNotEmpty()) sb.append('\n')
         for ((i, p) in points.withIndex()) {
             // [lon, lat] per RFC 7946
-            sb.append("          [").append(p.longitude).append(", ").append(p.latitude).append(']')
+            sb.append("          [").append(p.longitude.toString()).append(", ")
+                .append(p.latitude.toString()).append(']')
             if (i < points.size - 1) sb.append(',')
             sb.append('\n')
         }
@@ -55,11 +55,9 @@ object GeoJsonExporter : Exporter {
         sb.append("    }\n")
         sb.append("  ]\n")
         sb.append("}\n")
-        return sb.toString()
     }
 
-    private fun exportPlaces(places: List<ExportPlace>, documentName: String): String {
-        val sb = StringBuilder(places.size * 400 + 500)
+    private fun exportPlaces(places: List<ExportPlace>, documentName: String, sb: Appendable) {
         sb.append("{\n")
         sb.append("  \"type\": \"FeatureCollection\",\n")
         sb.append("  \"name\": ").append(jsonString(documentName)).append(",\n")
@@ -69,8 +67,9 @@ object GeoJsonExporter : Exporter {
             sb.append("      \"type\": \"Feature\",\n")
             sb.append("      \"properties\": {\n")
             sb.append("        \"name\": ").append(jsonString(place.name)).append(",\n")
-            sb.append("        \"visits\": ").append(place.visits).append(",\n")
-            sb.append("        \"total_seconds\": ").append(place.totalSeconds).append(",\n")
+            sb.append("        \"visits\": ").append(place.visits.toString()).append(",\n")
+            sb.append("        \"total_seconds\": ").append(place.totalSeconds.toString())
+                .append(",\n")
             sb.append("        \"first_visit\": ")
                 .append(jsonString(DateTimeFormatter.ISO_INSTANT.format(place.firstVisit)))
                 .append(",\n")
@@ -88,7 +87,8 @@ object GeoJsonExporter : Exporter {
             sb.append("      \"geometry\": {\n")
             sb.append("        \"type\": \"Point\",\n")
             sb.append("        \"coordinates\": [")
-                .append(place.longitude).append(", ").append(place.latitude).append("]\n")
+                .append(place.longitude.toString()).append(", ")
+                .append(place.latitude.toString()).append("]\n")
             sb.append("      }\n")
             sb.append("    }")
             if (i < places.size - 1) sb.append(',')
@@ -96,7 +96,6 @@ object GeoJsonExporter : Exporter {
         }
         sb.append("  ]\n")
         sb.append("}\n")
-        return sb.toString()
     }
 }
 
