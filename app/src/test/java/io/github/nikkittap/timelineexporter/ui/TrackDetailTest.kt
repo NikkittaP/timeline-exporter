@@ -1,0 +1,152 @@
+package io.github.nikkittap.timelineexporter.ui
+
+import io.github.nikkittap.timelineexporter.parser.PathPoint
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import java.time.Instant
+import kotlin.random.Random
+
+/**
+ * The preview map draws one line per pixel it can actually show, and the rest
+ * of the track is arithmetic nobody sees. These are the rules that decide what
+ * survives.
+ */
+class TrackDetailTest {
+
+    private val epoch = Instant.parse("2025-06-09T00:00:00Z")
+
+    private fun point(latitude: Double, longitude: Double, index: Int = 0) =
+        PathPoint(epoch.plusSeconds(index * 60L), latitude, longitude)
+
+    /** A straight run of [count] points from (0,0) heading east. */
+    private fun straightLine(count: Int, stepDegrees: Double = 0.001) =
+        List(count) { point(0.0, it * stepDegrees, it) }
+
+    // ---- simplifyTrack ----
+
+    @Test
+    fun `a straight line collapses to its two ends`() {
+        val simplified = simplifyTrack(straightLine(500), toleranceMeters = 10.0)
+        assertEquals(2, simplified.size)
+    }
+
+    @Test
+    fun `a detour wider than the tolerance is kept`() {
+        // ~111 m north of a line that runs along the equator.
+        val points = listOf(
+            point(0.0, 0.0, 0),
+            point(0.001, 0.005, 1),
+            point(0.0, 0.01, 2),
+        )
+        assertEquals(3, simplifyTrack(points, toleranceMeters = 10.0).size)
+    }
+
+    @Test
+    fun `a detour narrower than the tolerance is dropped`() {
+        // ~1.1 m off the line, against a 10 m tolerance.
+        val points = listOf(
+            point(0.0, 0.0, 0),
+            point(0.00001, 0.005, 1),
+            point(0.0, 0.01, 2),
+        )
+        assertEquals(2, simplifyTrack(points, toleranceMeters = 10.0).size)
+    }
+
+    @Test
+    fun `the first and last point always survive`() {
+        val points = straightLine(1_000)
+        val simplified = simplifyTrack(points, toleranceMeters = 1_000_000.0)
+        assertEquals(points.first(), simplified.first())
+        assertEquals(points.last(), simplified.last())
+    }
+
+    @Test
+    fun `a zero tolerance hands back the very list it was given`() {
+        val points = straightLine(10)
+        assertSame(points, simplifyTrack(points, toleranceMeters = 0.0))
+    }
+
+    @Test
+    fun `a run too short to simplify is handed straight back`() {
+        listOf(emptyList(), straightLine(1), straightLine(2)).forEach {
+            assertSame(it, simplifyTrack(it, toleranceMeters = 10.0))
+        }
+    }
+
+    @Test
+    fun `what comes out is a subsequence of what went in`() {
+        val random = Random(20260921)
+        val points = List(5_000) { i ->
+            point(55.0 + random.nextDouble() * 0.05, 13.0 + random.nextDouble() * 0.05, i)
+        }
+        val simplified = simplifyTrack(points, toleranceMeters = 50.0)
+
+        assertTrue(simplified.size < points.size)
+        var next = 0
+        for (kept in simplified) {
+            while (next < points.size && points[next] !== kept) next++
+            assertTrue("dropped out of order: $kept", next < points.size)
+            next++
+        }
+    }
+
+    @Test
+    fun `a full year of points simplifies without running out of stack`() {
+        // Recursion is the obvious way to write Douglas-Peucker and the wrong
+        // one here: a real export is 284,402 points, and a track that is one
+        // long detour recurses once per point.
+        val random = Random(1)
+        val points = List(284_402) { i ->
+            point(55.0 + i * 1e-7, 13.0 + random.nextDouble() * 0.2, i)
+        }
+        assertTrue(simplifyTrack(points, toleranceMeters = 100.0).size < points.size)
+    }
+
+    // ---- the zoom ladder ----
+
+    @Test
+    fun `zooming in never asks for less detail`() {
+        var previous = trackToleranceMeters(zoom = 0.0, latitude = 55.0)
+        var zoom = 0.5
+        while (zoom <= 22.0) {
+            val tolerance = trackToleranceMeters(zoom, latitude = 55.0)
+            assertTrue("zoom $zoom loosened to $tolerance from $previous", tolerance <= previous)
+            previous = tolerance
+            zoom += 0.5
+        }
+    }
+
+    @Test
+    fun `a close camera gets every point there is`() {
+        assertEquals(0.0, trackToleranceMeters(zoom = 16.0, latitude = 55.0), 0.0)
+        assertEquals(0.0, trackToleranceMeters(zoom = 22.0, latitude = 0.0), 0.0)
+    }
+
+    @Test
+    fun `a world view simplifies to something a pixel could not show anyway`() {
+        // At zoom 2 a screen pixel is kilometres wide; anything finer than
+        // that is arithmetic with no picture behind it.
+        assertTrue(trackToleranceMeters(zoom = 2.0, latitude = 55.0) > 500.0)
+    }
+
+    @Test
+    fun `detail steps are coarse enough not to re-render on every nudge`() {
+        // The level is what the render is keyed on, so a pinch that moves the
+        // zoom by a fraction must not rebuild a year of geometry.
+        assertEquals(trackDetailLevel(8.0), trackDetailLevel(8.4))
+        assertTrue(trackDetailLevel(8.0) < trackDetailLevel(12.0))
+    }
+
+    @Test
+    fun `every detail level names one tolerance`() {
+        // The level is the cache key for the tolerance, so two zooms on the
+        // same level have to simplify identically.
+        assertEquals(
+            trackToleranceMeters(8.0, latitude = 55.0),
+            trackToleranceMeters(8.4, latitude = 55.0),
+            0.0,
+        )
+    }
+}

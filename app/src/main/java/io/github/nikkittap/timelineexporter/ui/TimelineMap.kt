@@ -546,6 +546,14 @@ fun TimelineMap(
     // thread the moment the map stops moving; turned into days off it.
     var viewWindow by remember { mutableStateOf<TrackWindow?>(null) }
 
+    // How much of the track the current camera can actually show — see
+    // TrackDetail.kt. Starts at the coarsest step because the first render
+    // happens before this map has been framed and therefore before there is a
+    // zoom to ask about; the camera settles a moment later and says so.
+    // Re-rendering from a level that costs nothing is the cheap direction to
+    // be wrong in.
+    var detailLevel by remember { mutableIntStateOf(0) }
+
     // How tall the `Color by day` card turned out to be, in pixels. What the
     // camera fit keeps clear, so a route is never framed underneath it. The
     // day scan does not use it: see [readWindow].
@@ -781,6 +789,12 @@ fun TimelineMap(
             if (!destroyed.get()) {
                 readout = runCatching { readCamera(map, mapView, dataBounds, insets) }.getOrNull()
                 refreshWindow()
+                // The step, not the zoom: this keys a render, and a pinch
+                // that drifts a tenth of a level must not rebuild a year of
+                // geometry. Panning cannot change it at all.
+                runCatching { trackDetailLevel(map.cameraPosition.zoom) }
+                    .getOrNull()
+                    ?.let { detailLevel = it }
             }
         }
         // Two idles, because they answer different questions. Camera-idle
@@ -800,8 +814,10 @@ fun TimelineMap(
         }
     }
 
-    // Re-render whenever the subject changes OR the style becomes available.
-    LaunchedEffect(subject, loadedStyle, colorByDay, fallbackZone) {
+    // Re-render whenever the subject changes OR the style becomes available,
+    // and whenever the camera settles on a step that can show more of the
+    // track than the one it was drawn for.
+    LaunchedEffect(subject, loadedStyle, colorByDay, fallbackZone, detailLevel) {
         if (destroyed.get()) return@LaunchedEffect
         val map = loadedMap ?: return@LaunchedEffect
         val style = loadedStyle ?: return@LaunchedEffect
@@ -829,7 +845,7 @@ fun TimelineMap(
         // workers. The previous overlay stays on screen throughout, which
         // also spares the user a flash of bare basemap mid-toggle.
         val overlay = withContext(Dispatchers.Default) {
-            prepareOverlay(subject, palette, colorByDay, fallbackZone)
+            prepareOverlay(subject, palette, colorByDay, fallbackZone, detailLevel)
         }
 
         // Then back to the main thread, and named rather than assumed. Where
@@ -1464,8 +1480,10 @@ private fun prepareOverlay(
     palette: MapPalette,
     colorByDay: Boolean,
     fallbackZone: ZoneId,
+    detailLevel: Int,
 ): MapOverlay = when (subject) {
-    is MapSubject.Track -> prepareTrack(subject.points, palette, colorByDay, fallbackZone)
+    is MapSubject.Track ->
+        prepareTrack(subject.points, palette, colorByDay, fallbackZone, detailLevel)
     is MapSubject.Places ->
         if (subject.entries.isEmpty()) MapOverlay.Empty
         else MapOverlay.Places(placesGeoJson(subject.entries))
@@ -1525,8 +1543,20 @@ private fun prepareTrack(
     palette: MapPalette,
     colorByDay: Boolean,
     fallbackZone: ZoneId,
+    detailLevel: Int,
 ): MapOverlay {
     if (points.isEmpty()) return MapOverlay.Empty
+
+    // What the camera can show, measured where the track actually is: the
+    // ground a pixel covers shrinks with the cosine of the latitude, and a
+    // track through Scandinavia would otherwise be thinned as if it ran along
+    // the equator. The middle sample is a good enough stand-in for the whole,
+    // and unlike the camera's own latitude it does not change as the user
+    // pans, so it cannot set off a re-render.
+    val tolerance = trackToleranceMeters(
+        zoom = detailLevel.toDouble(),
+        latitude = points[points.size / 2].latitude,
+    )
 
     // Split the ordered points into continuous runs, breaking wherever two
     // consecutive samples are too far apart to be a real travelled segment
@@ -1559,12 +1589,22 @@ private fun prepareTrack(
     // and the whole track flashed the spec default - black - before settling.
     // Give every feature the colour it should be drawn in and the mismatched
     // frame simply draws the right colour.
+    //
+    // Thin each run separately, and in the coloured mode each day inside it,
+    // so a gap connector and a day boundary keep the endpoints they are drawn
+    // between. Thinning the whole track first would let a run be joined
+    // across the very jump it was split at.
     val drawableRuns = runs.filter { it.size >= 2 }
+    var drawnPoints = 0
+    fun thin(run: List<PathPoint>): List<PathPoint> =
+        simplifyTrack(run, tolerance).also { drawnPoints += it.size }
+
     val features = when {
         drawableRuns.isEmpty() -> null
         colorByDay -> drawableRuns.flatMap { splitTrackDays(it, fallbackZone) }.map { run ->
             val color = trackDayColor(run.date)
-            Feature.fromGeometry(LineString.fromLngLats(run.points.map { it.toPoint() })).apply {
+            val drawn = thin(run.points)
+            Feature.fromGeometry(LineString.fromLngLats(drawn.map { it.toPoint() })).apply {
                 addStringProperty(PROPERTY_CORE_COLOR, color)
                 addStringProperty(PROPERTY_GLOW_COLOR, color)
                 addStringProperty(PROPERTY_DAY_DATE, run.date.toString())
@@ -1572,13 +1612,23 @@ private fun prepareTrack(
         }
         else -> listOf(
             Feature.fromGeometry(
-                MultiLineString.fromLngLats(drawableRuns.map { run -> run.map { it.toPoint() } })
+                MultiLineString.fromLngLats(
+                    drawableRuns.map { run -> thin(run).map { it.toPoint() } }
+                )
             ).apply {
                 addStringProperty(PROPERTY_CORE_COLOR, palette.trackCore)
                 addStringProperty(PROPERTY_GLOW_COLOR, palette.trackGlow)
             }
         )
     }
+
+    // The one number that says whether the thinning is doing anything, and
+    // the one a bug report about a track that looks wrong would need.
+    Log.d(
+        TAG,
+        "Track detail $detailLevel: ${tolerance.toInt()} m tolerance, " +
+            "drew $drawnPoints of ${points.size} points",
+    )
 
     return MapOverlay.Track(
         lines = features?.let(FeatureCollection::fromFeatures),
