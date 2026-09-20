@@ -1,7 +1,6 @@
 package io.github.nikkittap.timelineexporter.export
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
-import java.time.format.DateTimeFormatter
 
 /**
  * Export to KML 2.2 (Google Earth, Google My Maps).
@@ -48,8 +47,10 @@ object KmlExporter : Exporter {
         for (p in points) {
             // lon,lat,alt  — whitespace-separated between points.
             sb.append("          ")
-                .append(p.longitude.toString()).append(',')
-                .append(p.latitude.toString()).append(",0\n")
+            appendCoordinate(sb, p.longitude)
+            sb.append(',')
+            appendCoordinate(sb, p.latitude)
+            sb.append(",0\n")
         }
         sb.append("        </coordinates>\n")
         sb.append("      </LineString>\n")
@@ -83,18 +84,19 @@ object KmlExporter : Exporter {
             // chosen window, which is most of a stats feature for four lines.
             sb.append("      <TimeSpan>\n")
             sb.append("        <begin>")
-                .append(DateTimeFormatter.ISO_INSTANT.format(place.firstVisit))
-                .append("</begin>\n")
+            appendIsoInstant(sb, place.firstVisit)
+            sb.append("</begin>\n")
             sb.append("        <end>")
-                .append(DateTimeFormatter.ISO_INSTANT.format(place.lastVisit))
-                .append("</end>\n")
+            appendIsoInstant(sb, place.lastVisit)
+            sb.append("</end>\n")
             sb.append("      </TimeSpan>\n")
             sb.append("      <styleUrl>#placeStyle</styleUrl>\n")
             sb.append("      <Point>\n")
             sb.append("        <coordinates>")
-                .append(place.longitude.toString()).append(',')
-                .append(place.latitude.toString()).append(",0")
-                .append("</coordinates>\n")
+            appendCoordinate(sb, place.longitude)
+            sb.append(',')
+            appendCoordinate(sb, place.latitude)
+            sb.append(",0</coordinates>\n")
             sb.append("      </Point>\n")
             sb.append("    </Placemark>\n")
         }

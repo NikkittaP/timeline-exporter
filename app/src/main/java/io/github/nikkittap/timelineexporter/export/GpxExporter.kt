@@ -1,7 +1,6 @@
 package io.github.nikkittap.timelineexporter.export
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
-import java.time.format.DateTimeFormatter
 
 /**
  * Export to GPX 1.1 (gpsies.com / Garmin / Strava / OsmAnd / Google Earth).
@@ -46,11 +45,14 @@ object GpxExporter : Exporter {
         sb.append("    <name>").append(escapeXml(trackName)).append("</name>\n")
         sb.append("    <trkseg>\n")
         for (p in points) {
-            sb.append("      <trkpt lat=\"").append(p.latitude.toString())
-                .append("\" lon=\"").append(p.longitude.toString()).append("\">\n")
+            sb.append("      <trkpt lat=\"")
+            appendCoordinate(sb, p.latitude)
+            sb.append("\" lon=\"")
+            appendCoordinate(sb, p.longitude)
+            sb.append("\">\n")
             sb.append("        <time>")
-                .append(DateTimeFormatter.ISO_INSTANT.format(p.timeUtc))
-                .append("</time>\n")
+            appendIsoInstant(sb, p.timeUtc)
+            sb.append("</time>\n")
             sb.append("      </trkpt>\n")
         }
         sb.append("    </trkseg>\n")
@@ -64,14 +66,17 @@ object GpxExporter : Exporter {
         sb.append("    <name>").append(escapeXml(documentName)).append("</name>\n")
         sb.append("  </metadata>\n")
         for (place in places) {
-            sb.append("  <wpt lat=\"").append(place.latitude.toString())
-                .append("\" lon=\"").append(place.longitude.toString()).append("\">\n")
+            sb.append("  <wpt lat=\"")
+            appendCoordinate(sb, place.latitude)
+            sb.append("\" lon=\"")
+            appendCoordinate(sb, place.longitude)
+            sb.append("\">\n")
             // The last visit, not the first: a waypoint's <time> is read as
             // "when this was current", and a place the user still goes to
             // should not be stamped with a date from a year ago.
             sb.append("    <time>")
-                .append(DateTimeFormatter.ISO_INSTANT.format(place.lastVisit))
-                .append("</time>\n")
+            appendIsoInstant(sb, place.lastVisit)
+            sb.append("</time>\n")
             sb.append("    <name>").append(escapeXml(place.name)).append("</name>\n")
             sb.append("    <desc>").append(escapeXml(describe(place))).append("</desc>\n")
             sb.append("    <link href=\"").append(escapeXml(place.mapsUrl)).append("\">\n")

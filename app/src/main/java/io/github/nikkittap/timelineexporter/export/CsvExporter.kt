@@ -58,10 +58,12 @@ object CsvExporter : Exporter {
     private fun exportTrack(points: List<PathPoint>, sb: Appendable) {
         sb.append("time_utc,latitude,longitude,time_local,utc_offset\r\n")
         for (p in points) {
-            sb.append(DateTimeFormatter.ISO_INSTANT.format(p.timeUtc))
-                .append(',').append(p.latitude.toString())
-                .append(',').append(p.longitude.toString())
-                .append(',')
+            appendIsoInstant(sb, p.timeUtc)
+            sb.append(',')
+            appendCoordinate(sb, p.latitude)
+            sb.append(',')
+            appendCoordinate(sb, p.longitude)
+            sb.append(',')
             val minutes = p.tzOffsetMinutes
             if (minutes != null) {
                 val offset = ZoneOffset.ofTotalSeconds(minutes * 60)
@@ -80,10 +82,11 @@ object CsvExporter : Exporter {
         sb.append("last_visit_utc,last_visit_local,last_visit_offset,")
         sb.append("category,address,place_id,google_maps_url\r\n")
         for (place in places) {
-            sb.append(csvField(place.name))
-                .append(',').append(place.latitude.toString())
-                .append(',').append(place.longitude.toString())
-                .append(',').append(place.visits.toString())
+            sb.append(csvField(place.name)).append(',')
+            appendCoordinate(sb, place.latitude)
+            sb.append(',')
+            appendCoordinate(sb, place.longitude)
+            sb.append(',').append(place.visits.toString())
                 .append(',').append(place.totalSeconds.toString())
                 .append(',')
             appendMoment(sb, place.firstVisit, place.firstVisitOffsetMinutes)
@@ -99,7 +102,8 @@ object CsvExporter : Exporter {
 
     /** Three columns: the instant in UTC, the same instant local, the offset. */
     private fun appendMoment(sb: Appendable, instant: Instant, offsetMinutes: Int?) {
-        sb.append(DateTimeFormatter.ISO_INSTANT.format(instant)).append(',')
+        appendIsoInstant(sb, instant)
+        sb.append(',')
         if (offsetMinutes != null) {
             val offset = ZoneOffset.ofTotalSeconds(offsetMinutes * 60)
             sb.append(LOCAL_TIME_FORMAT.format(instant.atOffset(offset)))

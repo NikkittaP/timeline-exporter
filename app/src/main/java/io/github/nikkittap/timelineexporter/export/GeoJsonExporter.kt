@@ -1,7 +1,6 @@
 package io.github.nikkittap.timelineexporter.export
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
-import java.time.format.DateTimeFormatter
 
 /**
  * Export to GeoJSON (RFC 7946) — the standard JSON interchange for geo data.
@@ -44,8 +43,11 @@ object GeoJsonExporter : Exporter {
         if (points.isNotEmpty()) sb.append('\n')
         for ((i, p) in points.withIndex()) {
             // [lon, lat] per RFC 7946
-            sb.append("          [").append(p.longitude.toString()).append(", ")
-                .append(p.latitude.toString()).append(']')
+            sb.append("          [")
+            appendCoordinate(sb, p.longitude)
+            sb.append(", ")
+            appendCoordinate(sb, p.latitude)
+            sb.append(']')
             if (i < points.size - 1) sb.append(',')
             sb.append('\n')
         }
@@ -70,12 +72,14 @@ object GeoJsonExporter : Exporter {
             sb.append("        \"visits\": ").append(place.visits.toString()).append(",\n")
             sb.append("        \"total_seconds\": ").append(place.totalSeconds.toString())
                 .append(",\n")
-            sb.append("        \"first_visit\": ")
-                .append(jsonString(DateTimeFormatter.ISO_INSTANT.format(place.firstVisit)))
-                .append(",\n")
-            sb.append("        \"last_visit\": ")
-                .append(jsonString(DateTimeFormatter.ISO_INSTANT.format(place.lastVisit)))
-                .append(",\n")
+            // No jsonString() around these: an ISO instant is digits, dashes,
+            // colons and a Z, none of which JSON asks to be escaped.
+            sb.append("        \"first_visit\": \"")
+            appendIsoInstant(sb, place.firstVisit)
+            sb.append("\",\n")
+            sb.append("        \"last_visit\": \"")
+            appendIsoInstant(sb, place.lastVisit)
+            sb.append("\",\n")
             // null rather than an omitted key: a table built from these
             // features keeps the same columns for every row, which is what
             // QGIS and pandas both want.
@@ -87,8 +91,10 @@ object GeoJsonExporter : Exporter {
             sb.append("      \"geometry\": {\n")
             sb.append("        \"type\": \"Point\",\n")
             sb.append("        \"coordinates\": [")
-                .append(place.longitude.toString()).append(", ")
-                .append(place.latitude.toString()).append("]\n")
+            appendCoordinate(sb, place.longitude)
+            sb.append(", ")
+            appendCoordinate(sb, place.latitude)
+            sb.append("]\n")
             sb.append("      }\n")
             sb.append("    }")
             if (i < places.size - 1) sb.append(',')
