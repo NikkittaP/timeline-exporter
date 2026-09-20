@@ -180,6 +180,14 @@
     <string name="tipjar_retry">Try again</string>
     <string name="tipjar_close">Close</string>
 
+    <!-- The tip plaque, shown in the post-export slot instead of the feedback
+         one from the second successful export onwards. The three amounts are
+         not strings: they are names and prices from Google Play, localized
+         and currency-converted there. -->
+    <string name="tip_prompt_title">Did that save you some time?</string>
+    <string name="tip_prompt_body">Timeline Exporter is free, has no ads and doesn\'t track you. If you\'d like, you can support its development.</string>
+    <string name="tip_prompt_dismiss">Not now</string>
+
     <!-- Feedback dialog. Two entry points: the line under a successful export
          and a button at the bottom of the help dialog. -->
     <!-- The plaque shown under a successful export: title reuses

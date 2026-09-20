@@ -28,6 +28,14 @@ private object TipProductIds {
     const val MEDIUM = "tip_medium"
     const val LARGE = "tip_large"
     val ALL = listOf(SMALL, MEDIUM, LARGE)
+
+    /**
+     * One glyph per amount, for the plaque shown after an export, where the
+     * three tips are three buttons in a single row and a Play Console name
+     * like "Small Tip" would not survive the width of a phone. The dialog,
+     * which has a column to itself, still shows the full names.
+     */
+    val EMOJI = mapOf(SMALL to "☕", MEDIUM to "❤️", LARGE to "🚀")
 }
 
 /**
@@ -39,6 +47,7 @@ data class TipProduct(
     val id: String,
     val name: String,           // Localized, configured per-locale in Play Console (e.g. "Small Tip").
     val formattedPrice: String, // Localized, e.g. "$1.00" / "€1,00" / "1,00 ₽".
+    val emoji: String,          // Ours, not Play's — see TipProductIds.EMOJI.
 )
 
 sealed interface TipJarState {
@@ -264,4 +273,5 @@ private fun ProductDetails.toDto(): TipProduct = TipProduct(
     id = productId,
     name = name,
     formattedPrice = oneTimePurchaseOfferDetails?.formattedPrice ?: "—",
+    emoji = TipProductIds.EMOJI[productId].orEmpty(),
 )

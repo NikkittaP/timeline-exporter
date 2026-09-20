@@ -19,8 +19,11 @@ import io.github.nikkittap.timelineexporter.parser.findKeyOffsets
 import io.github.nikkittap.timelineexporter.parser.parseTimeline
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -151,6 +154,19 @@ class TimelineViewModel : ViewModel() {
 
     private val _exportState = MutableStateFlow<ExportState>(ExportState.Idle)
     val exportState: StateFlow<ExportState> = _exportState.asStateFlow()
+
+    /**
+     * One signal per export that actually produced something, for the things
+     * that need to count exports rather than react to the current state.
+     *
+     * An event and not a [StateFlow] on purpose. The obvious alternative — the
+     * UI watching [exportState] for Success — double-counts, because a
+     * configuration change rebuilds the composition and replays the state it
+     * finds there. A [MutableSharedFlow] with no replay is delivered once, to
+     * whoever is collecting at the time, and a rotation gets nothing.
+     */
+    private val _exportCompleted = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val exportCompleted: SharedFlow<Unit> = _exportCompleted.asSharedFlow()
 
     private val _pendingShare = MutableStateFlow<PendingShare?>(null)
     val pendingShare: StateFlow<PendingShare?> = _pendingShare.asStateFlow()
@@ -381,7 +397,23 @@ class TimelineViewModel : ViewModel() {
                     )
                 }
             }
-            _exportState.value = newState
+            finishExport(newState)
+        }
+    }
+
+    /**
+     * Publish the outcome of an export, and announce the ones that worked.
+     *
+     * Both export paths — save to a file, hand to another app — end here, so
+     * that "an export finished" is defined in exactly one place. `tryEmit` is
+     * enough for a flow with buffer space: nothing downstream can be slow
+     * enough to fill a one-slot buffer, and a dropped signal would cost at
+     * most one uncounted export.
+     */
+    private fun finishExport(newState: ExportState) {
+        _exportState.value = newState
+        if (newState is ExportState.Success || newState is ExportState.Shared) {
+            _exportCompleted.tryEmit(Unit)
         }
     }
 
@@ -432,7 +464,7 @@ class TimelineViewModel : ViewModel() {
                     )
                 }
             }
-            _exportState.value = newState
+            finishExport(newState)
         }
     }
 

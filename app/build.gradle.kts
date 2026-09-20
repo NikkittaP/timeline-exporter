@@ -359,8 +359,24 @@ android {
         //       of three plus CSV alone underneath. changelogs/18.txt in all 18
         //       locales carries 17's store text: the span it describes is the
         //       same, and a layout tidy-up is not news to a store reader.
-        versionCode = 18
-        versionName = "1.8.1"
+        //   versionCode=19, versionName="1.8.2" -> the tip ask moves to the
+        //       moment the app has just been useful. 18 is uploaded, so spent.
+        //       From a user's second successful export onwards, the plaque
+        //       under the result offers the three Play amounts at their real
+        //       local prices instead of the feature-request link; the two
+        //       plaques take turns rather than stacking, because two favours
+        //       asked at once devalue each other. "Not now" buys a month of
+        //       silence and a tip buys half a year, both held in
+        //       SharedPreferences along with the count of finished exports -
+        //       persistent because the second export is usually days after the
+        //       first. Play Billing is warmed up one export early so the
+        //       prices are on screen rather than a spinner, and a device that
+        //       cannot reach Billing at all simply keeps the feedback plaque.
+        //       The heart in the top bar is unchanged. No new store changelog:
+        //       changelogs/19.txt would need cutting before this goes further
+        //       than internal testing.
+        versionCode = 19
+        versionName = "1.8.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

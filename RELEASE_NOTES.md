@@ -33,6 +33,58 @@ above, but they no longer describe the current state. Everything from the
 ballot re-cut onward in this section is new relative to what a 1.7.0 tester
 already has.
 
+## 1.8.2 — the tip ask moves to where the app has just helped (versionCode 19, 2026-09-20)
+
+versionCode 18 is uploaded to internal testing, so this is a new code. **No
+store changelog is cut yet**: `changelogs/19.txt` still needs writing before
+this goes further than internal testing.
+
+Until now the only way to tip was the heart in the top bar — a button you press
+because you already decided to, which means it is only ever found by people who
+went looking. The ask now also appears where the app has demonstrably just done
+something for someone: in the slot under a finished export.
+
+- **Where it appears.** The slot under a successful export, which the
+  feature-request plaque already owned. The two take turns rather than
+  stacking. Two favours asked at once — tell me what is missing, and also,
+  would you pay — devalue each other, and the export result would stop being
+  the thing the screen is about.
+- **When it appears.** From the user's second successful export onwards. The
+  first export is someone finding out whether the app works at all; asking then
+  is asking a stranger. The count is kept in `SharedPreferences` and is
+  deliberately persistent: the second export is usually days or weeks after the
+  first, and a counter living in memory would never reach two.
+- **How often.** "Not now" buys a month of silence; a tip buys half a year, and
+  supersedes an earlier decline. Both timestamps sit next to the count. A
+  timestamp in the future — a device clock set forward and then back — reads as
+  "not elapsed", so the worst a doctored clock can do is cost one ask.
+- **What it offers.** The three Play amounts as three buttons, at their real
+  local prices, so tipping is one tap rather than a tap into a dialog. The row
+  borrows step 4's format-button geometry — equal weights, labels that step
+  their own size down — because three prices side by side is the same width
+  problem as four format names, and a price in rubles is wider than "GPX".
+- **Where the prices come from.** Play Billing is warmed up one export early,
+  the moment a file is open and the next export would earn the ask, so the
+  plaque appears with prices in it instead of a spinner. A user who is not
+  about to be asked never opens a billing connection at all — confirmed on the
+  emulator: a cold launch logs nothing from BillingClient.
+- **When it does not appear.** No Play services, billing unreachable, or an
+  empty product list — which is what Play returns when the tips are not
+  configured against the package or not sold in the user's country. In every
+  one of those cases the slot quietly keeps the feedback plaque. That last case
+  was found by the test that now pins it: a plaque with a question in it and no
+  buttons underneath.
+- **The top bar is unchanged.** The heart still opens the full dialog, and a
+  tip made there quiets the plaque too.
+
+Tests: `TipPromptPolicyTest` (12, JVM) covers the rules — the two-export floor,
+both cooldown boundaries either side, a tip outranking an old decline, and the
+clock moved backwards. `TipPromptTest` (5, instrumented) covers the plaque —
+every amount offered, the right product id reported on a tap, the ask always
+declinable, an empty answer not drawn at all, and a finished purchase thanked
+rather than re-offered. Its expected text is read from the app's own resources:
+these emulators are left in whatever locale the last screenshot run used.
+
 ## 1.8.1 — step 4 tidy-up (versionCode 18, 2026-09-14)
 
 versionCode 17 is uploaded to internal testing, so this is a new code. The

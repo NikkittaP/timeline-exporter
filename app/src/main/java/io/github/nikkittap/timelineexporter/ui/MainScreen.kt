@@ -143,6 +143,13 @@ fun TimelineExporterApp() {
     var feedbackDialogOpen by remember { mutableStateOf(false) }
     var overflowMenuOpen by remember { mutableStateOf(false) }
 
+    // How many exports this user has finished, and when they last declined or
+    // last tipped. Owned here rather than inside MainScreen so that the tip
+    // dialog above and the plaque below are reading one set of numbers; here
+    // rather than in the ViewModel for the same reason the place labels are,
+    // which is that reading it needs a Context.
+    val tipPrompt = rememberTipPrompt()
+
     // Same activity-scoped instance MainScreen resolves to; read here only to
     // pre-fill the feedback diagnostics with what is currently loaded.
     val viewModel: TimelineViewModel = viewModel()
@@ -305,6 +312,7 @@ fun TimelineExporterApp() {
             onHelpClick = { helpDialogOpen = true },
             onFeedbackClick = { feedbackDialogOpen = true },
             viewModel = viewModel,
+            tipPrompt = tipPrompt,
         )
     }
 
@@ -318,7 +326,19 @@ fun TimelineExporterApp() {
         )
     }
     if (tipJarDialogOpen) {
-        TipJarDialog(onDismiss = { tipJarDialogOpen = false })
+        // The ViewModel is hoisted out of the dialog only so that a tip made
+        // here counts too. Without this, someone who tipped from the top bar
+        // before their second export would still be asked again afterwards -
+        // the plaque's own thank-you handler is not composed yet at that point.
+        val dialogTipJar: TipJarViewModel = viewModel()
+        val dialogTipState by dialogTipJar.state.collectAsStateWithLifecycle()
+        LaunchedEffect(dialogTipState) {
+            if (dialogTipState is TipJarState.ThankYou) tipPrompt.recordTipped()
+        }
+        TipJarDialog(
+            onDismiss = { tipJarDialogOpen = false },
+            viewModel = dialogTipJar,
+        )
     }
     if (languageDialogOpen) {
         LanguageDialog(onDismiss = { languageDialogOpen = false })
@@ -341,6 +361,7 @@ fun MainScreen(
     onHelpClick: () -> Unit = {},
     onFeedbackClick: () -> Unit = {},
     viewModel: TimelineViewModel = viewModel(),
+    tipPrompt: TipPromptState = rememberTipPrompt(),
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -402,6 +423,69 @@ fun MainScreen(
     // filtered list — one for the preview, one for the fullscreen map, one
     // inside the ViewModel — into the single source all three now read.
     val loadedResult = (uiState as? TimelineUiState.Loaded)?.result
+
+    // ---- the tip ask, which can take the slot under a finished export ----
+    //
+    // Warmed up one export early. The plaque shows three real prices, and
+    // getting them means a Play Billing connection plus a product query —
+    // several hundred milliseconds that would otherwise be spent as a spinner
+    // where the prices belong. Asking for the ViewModel is what starts that,
+    // so it is asked for only when it is going to be used: a user whose next
+    // export will not earn the ask never opens a billing connection at all.
+    //
+    // `|| tipAskVisible` keeps it alive while the plaque is on screen. Without
+    // it, recording a tip would flip the policy to "not due" and pull the
+    // ViewModel out from under the thank-you the user is still reading.
+    val tipAskLikely = loadedResult != null &&
+        wouldOfferTipAfterNextExport(tipPrompt.record, System.currentTimeMillis())
+    var tipAskVisible by rememberSaveable { mutableStateOf(false) }
+    var tipAskDeclined by rememberSaveable { mutableStateOf(false) }
+    val tipJar: TipJarViewModel? =
+        if (tipAskLikely || tipAskVisible) viewModel() else null
+    val tipJarState = tipJar?.let { it.state.collectAsStateWithLifecycle().value }
+
+    // Read inside the collector below, which outlives the recomposition that
+    // creates the ViewModel — capturing `tipJar` directly would pin the null.
+    val currentTipJar by rememberUpdatedState(tipJar)
+
+    // Counting exports off an event rather than off exportState is what keeps
+    // a rotation from counting the same export twice: a SharedFlow with no
+    // replay has nothing to hand a collector that arrives afterwards.
+    //
+    // The decision is taken here, once, and then held. Re-deriving it on every
+    // recomposition would swap the plaque out from under the user the instant
+    // they declined, and would put it up with a spinner in it whenever Play
+    // was still answering.
+    LaunchedEffect(viewModel, tipPrompt) {
+        viewModel.exportCompleted.collect {
+            tipPrompt.recordSuccessfulExport()
+            tipAskDeclined = false
+            tipAskVisible = shouldOfferTip(tipPrompt.record, System.currentTimeMillis()) &&
+                (currentTipJar?.state?.value as? TipJarState.Loaded)
+                    ?.products?.isNotEmpty() == true
+        }
+    }
+
+    // A tip is a tip wherever it was made — the toolbar dialog shares this
+    // ViewModel — so this quiets the ask either way.
+    LaunchedEffect(tipJarState) {
+        if (tipJarState is TipJarState.ThankYou) tipPrompt.recordTipped()
+    }
+
+    val activity = context as? Activity
+    val postExportAsk: PostExportAsk = when {
+        tipAskVisible && tipJarState != null && activity != null -> PostExportAsk.Tip(
+            state = tipJarState,
+            onPick = { productId -> currentTipJar?.launchPurchase(activity, productId) },
+            onDismiss = {
+                tipPrompt.recordDeclined()
+                tipAskVisible = false
+                tipAskDeclined = true
+            },
+        )
+        tipAskDeclined -> PostExportAsk.None
+        else -> PostExportAsk.Feedback
+    }
     val filteredPoints by remember(loadedResult, filter) {
         derivedStateOf {
             loadedResult?.let { applyFilter(it.pathPoints, filter, it.segments) } ?: emptyList()
@@ -751,6 +835,7 @@ fun MainScreen(
                         onShareInsteadChange = { shareInstead = it },
                         onPickFormat = onPickFormat,
                         onFeedbackClick = onFeedbackClick,
+                        postExportAsk = postExportAsk,
                     )
                 }
             }
@@ -1739,6 +1824,7 @@ private fun ExportStep(
     onShareInsteadChange: (Boolean) -> Unit,
     onPickFormat: (Exporter) -> Unit,
     onFeedbackClick: () -> Unit = {},
+    postExportAsk: PostExportAsk = PostExportAsk.Feedback,
 ) {
     val enabled = canSave && exportState !is ExportState.Working
 
@@ -1811,7 +1897,7 @@ private fun ExportStep(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
             )
-            FeedbackPrompt(onClick = onFeedbackClick)
+            PostExportPrompt(ask = postExportAsk, onFeedbackClick = onFeedbackClick)
         }
         is ExportState.Shared -> {
             // Deliberately not phrased as "sent": the share sheet is open and
@@ -1829,7 +1915,7 @@ private fun ExportStep(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
             )
-            FeedbackPrompt(onClick = onFeedbackClick)
+            PostExportPrompt(ask = postExportAsk, onFeedbackClick = onFeedbackClick)
         }
         ExportState.Failure.NoPoints -> Text(
             text = stringResource(
@@ -1858,8 +1944,187 @@ private fun ExportStep(
 }
 
 /**
- * The feedback ask, shown only after a successful export — the one moment the
- * user demonstrably got what they came for.
+ * What goes in the one slot under a finished export.
+ *
+ * There is exactly one slot and it holds at most one ask. Two favours stacked
+ * on each other — tell me what is missing, and also, would you pay — devalue
+ * each other, so they take turns: the tip plaque on the exports that earn it
+ * (see [shouldOfferTip]), the feedback plaque the rest of the time.
+ */
+internal sealed interface PostExportAsk {
+    /** The feature request. The default, and what every export showed before tips. */
+    data object Feedback : PostExportAsk
+
+    /** The tip ask, built only once Play has returned prices. */
+    class Tip(
+        val state: TipJarState,
+        val onPick: (String) -> Unit,
+        val onDismiss: () -> Unit,
+    ) : PostExportAsk {
+        /**
+         * Play answers OK with an empty product list when the tips are not
+         * configured against this package, or not sold where the user is.
+         * That is not an ask, it is a question with nothing underneath it to
+         * answer, so the slot goes back to the feedback plaque instead.
+         */
+        val hasSomethingToOffer: Boolean =
+            state !is TipJarState.Loaded || state.products.isNotEmpty()
+    }
+
+    /** Nothing: the user has just said "Not now", and one no settles one export. */
+    data object None : PostExportAsk
+}
+
+@Composable
+internal fun PostExportPrompt(ask: PostExportAsk, onFeedbackClick: () -> Unit) {
+    when {
+        ask is PostExportAsk.Tip && ask.hasSomethingToOffer -> TipPrompt(ask)
+        ask is PostExportAsk.None -> Unit
+        else -> FeedbackPrompt(onClick = onFeedbackClick)
+    }
+}
+
+/**
+ * The tip ask: the same tertiary plaque as [FeedbackPrompt], in the same slot,
+ * with the three amounts as buttons instead of a single link.
+ *
+ * The prices are not string resources. They come from Play already localized
+ * and converted into the user's currency, which is also why the plaque is only
+ * ever built after they have arrived — see the warm-up in `MainScreen`.
+ *
+ * The row borrows step 4's format-button geometry, down to the 4 dp of
+ * horizontal padding and the label that steps its own size down: three prices
+ * side by side on a narrow phone is the same problem as four format names, and
+ * a price in rubles or yen is wider than "GPX" or "$1.00" ever gets.
+ *
+ * The amount buttons are `tertiary` rather than the tonal default, which is
+ * `secondaryContainer` — on a tertiary plaque that would have read as a button
+ * borrowed from somewhere else. The dismiss keeps the plaque's own content
+ * colour, the way the feedback action does, so that saying no stays quieter
+ * than saying yes without being hidden.
+ */
+@Composable
+internal fun TipPrompt(ask: PostExportAsk.Tip) {
+    Surface(
+        color = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier.padding(start = 4.dp, end = 12.dp, top = 12.dp, bottom = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.tip_prompt_title),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(start = 8.dp),
+            )
+            Text(
+                text = stringResource(R.string.tip_prompt_body),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 8.dp),
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            when (val state = ask.state) {
+                is TipJarState.Loaded -> {
+                    TipAmountRow(products = state.products, onPick = ask.onPick)
+                    TipDismissButton(onClick = ask.onDismiss)
+                }
+                // Play's own sheet is on screen on top of all this; the plaque
+                // only has to stop offering buttons underneath it.
+                TipJarState.Processing -> TipPlaqueLine(stringResource(R.string.tipjar_processing))
+                TipJarState.ThankYou -> Text(
+                    text = stringResource(R.string.tipjar_thank_you),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(start = 8.dp, bottom = 8.dp),
+                )
+                // Reachable only if Play fails between the plaque appearing and
+                // the purchase completing. No retry offered on purpose: the
+                // whole point of this placement is that the user is finished
+                // and free to leave, and the toolbar heart still opens the
+                // full dialog, which does have one.
+                is TipJarState.Error -> {
+                    TipPlaqueLine(stringResource(R.string.tipjar_error))
+                    TipDismissButton(onClick = ask.onDismiss)
+                }
+                else -> TipDismissButton(onClick = ask.onDismiss)
+            }
+        }
+    }
+}
+
+/** The three amounts, in Play's order, each button as wide as the next. */
+@Composable
+private fun TipAmountRow(products: List<TipProduct>, onPick: (String) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        products.forEach { product ->
+            // The emoji is ours and the price is Play's. A screen reader gets
+            // the product's own name instead, which is the only part of this
+            // that reads as words.
+            val spokenLabel = "${product.name} — ${product.formattedPrice}"
+            FilledTonalButton(
+                onClick = { onPick(product.id) },
+                shape = MaterialTheme.shapes.small,
+                contentPadding = PaddingValues(horizontal = 4.dp),
+                colors = ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary,
+                ),
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = spokenLabel },
+            ) {
+                val style = MaterialTheme.typography.labelLarge
+                BasicText(
+                    text = "${product.emoji} ${product.formattedPrice}",
+                    style = style.copy(color = LocalContentColor.current),
+                    maxLines = 1,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 10.sp,
+                        maxFontSize = style.fontSize,
+                    ),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TipDismissButton(onClick: () -> Unit) {
+    TextButton(
+        onClick = onClick,
+        colors = ButtonDefaults.textButtonColors(
+            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        ),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.tip_prompt_dismiss),
+            style = MaterialTheme.typography.labelLarge,
+        )
+    }
+}
+
+/** A status line inside the plaque, indented to sit under the two lines above. */
+@Composable
+private fun TipPlaqueLine(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        modifier = Modifier.padding(start = 8.dp),
+    )
+}
+
+/**
+ * The feedback ask, shown after a successful export — the one moment the user
+ * demonstrably got what they came for. Shares that slot with [TipPrompt];
+ * [PostExportAsk] decides which of them any given export gets.
  *
  * A tinted plaque rather than a bare text line: the first version was a muted
  * `bodySmall` link and read as a caption, which is exactly what people skip.
