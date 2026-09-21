@@ -385,7 +385,15 @@ android {
         //       to what the zoom level can show - exact past zoom 15.
         //       changelogs/19.txt in all 18 locales carries 18's three items
         //       plus one for this; the tip ask is not store news.
-        versionCode = 19
+        //   versionCode=20, versionName="1.8.3" -> 19's span plus the map no
+        //       longer flickers on small zooms: detail is drawn to a point
+        //       budget taken from the phone's memory (a flagship gets a whole
+        //       year at full detail, once), and a change of detail swaps the
+        //       source's data in place instead of rebuilding the layers. Same
+        //       versionName: 1.8.3 has not reached a store reader yet.
+        //       changelogs/20.txt is 19.txt unchanged - its "map detail" line
+        //       already covers this.
+        versionCode = 20
         versionName = "1.8.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
