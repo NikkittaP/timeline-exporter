@@ -33,6 +33,34 @@ above, but they no longer describe the current state. Everything from the
 ballot re-cut onward in this section is new relative to what a 1.7.0 tester
 already has.
 
+## 1.8.3 — big exports, fast (still versionCode 19, 2026-09-21)
+
+1.8.2 was never built or uploaded, so 19 is still unspent and this is the first
+AAB to carry it: it contains 1.8.2's tip ask as well as everything below.
+
+- **Exports are streamed.** Every format writes into the destination's own
+  buffered writer instead of returning the whole document as a String. On a
+  Pixel 7, a 284,402-point export (115 MB of Timeline JSON) went from 5.1 s and
+  a full 136 MB heap to no GC at all and 69 MB, with a byte-identical file.
+  One size up would have been an `OutOfMemoryError` — a crash, not the
+  friendly failure the parse path gives. Pinned by `StreamingExportTest`.
+- **Per-point formatting without java.text.** Timestamps and coordinates are
+  written by integer arithmetic, falling back to `ISO_INSTANT` / `BigDecimal`
+  whenever the fast path could differ. Same bytes as before, except that a
+  coordinate below 0.001 is no longer written as `1.0E-5`, which is not a
+  valid `xsd:decimal`. Pinned by `IsoInstantTest` and `CoordinateTest`.
+- **The map draws what the zoom can show.** Douglas-Peucker (iterative) at a
+  quarter of a pixel's ground size, taken at the track's own latitude: 844
+  points at zoom 0, 190,378 at zoom 10, the exact track past zoom 15. Runs and
+  day boundaries are thinned separately so no connector jumps a gap. Pinned by
+  `TrackDetailTest`.
+
+Store text: `changelogs/19.txt` in all 18 locales and
+`F:\Timeline\Whats_New_v1.8.3_tagged.txt` — 18's three items plus one for
+faster big exports and a sharper map. The tip ask is left out: it is not
+something a store reader needs to be told. Longest locale is fr at 473 of
+Play's 500 characters.
+
 ## 1.8.2 — the tip ask moves to where the app has just helped (versionCode 19, 2026-09-20)
 
 versionCode 18 is uploaded to internal testing, so this is a new code. **No

@@ -375,8 +375,18 @@ android {
         //       The heart in the top bar is unchanged. No new store changelog:
         //       changelogs/19.txt would need cutting before this goes further
         //       than internal testing.
+        //   versionCode=19, versionName="1.8.3" -> big exports, fast. Still 19:
+        //       1.8.2 was committed but never built or uploaded, so the code
+        //       is unspent and this is the first AAB to carry it. An export
+        //       is streamed into its file instead of being built as one
+        //       String (a 284,402-point track no longer fills the heap), the
+        //       per-point timestamp and coordinate formatting skips
+        //       java.text, and the preview map is handed the track thinned
+        //       to what the zoom level can show - exact past zoom 15.
+        //       changelogs/19.txt in all 18 locales carries 18's three items
+        //       plus one for this; the tip ask is not store news.
         versionCode = 19
-        versionName = "1.8.2"
+        versionName = "1.8.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
