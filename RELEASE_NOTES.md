@@ -22,7 +22,37 @@ Where things go at release time:
 
 ---
 
-# Unreleased — everything since v1.6.2
+# Unreleased — everything since v1.8.3
+
+## 1.8.4 — the distance for the chosen dates (versionCode 21, 2026-09-22)
+
+FB-018 asked "distance of the track from the filtered dates?". The figure
+existed, but only one movement group at a time, inside the collapsed
+*Movement* expander; step 1's *Distance* is the whole file.
+
+- The *Movement* summary line in step 2 now carries the total distance for the
+  chosen dates, e.g. "All · 493 km · 36 places" for the last 30 days of the
+  reference export. It follows the date range, the time-of-day window and the
+  ticked groups, so it is the distance of what the export will contain.
+- With the section open and more than one group ticked, a bold *Total* row
+  under the groups sums their trips and kilometres. "Total" is translated into
+  all 17 other locales.
+- `MovementStats.totalFor` does the sum; it returns null rather than 0 km when
+  nothing ticked has trips. Unit-tested in `MovementTotalTest`.
+
+Store text: `fastlane/metadata/android/<locale>/changelogs/21.txt`, and
+`F:\Timeline\Whats_New_v1.8.4_tagged.txt`.
+
+---
+
+# Released
+
+## v1.8.3 (versionCode 20) — released 22 September 2026
+
+Everything below was the *Unreleased* section from v1.6.2 up to this upload,
+moved here unchanged (headings demoted one level). The checklists and "not
+uploaded yet" notes inside it describe how things stood while it was written.
+Store text: `fastlane/metadata/android/<locale>/changelogs/20.txt`.
 
 **Status update, 2026-09-12:** versionCode 15 (versionName 1.7.0) shipped to
 the internal testing track on 2026-09-05, confirmed by the person doing the
@@ -33,7 +63,7 @@ above, but they no longer describe the current state. Everything from the
 ballot re-cut onward in this section is new relative to what a 1.7.0 tester
 already has.
 
-## 1.8.3 — big exports, fast (still versionCode 19, 2026-09-21)
+### 1.8.3 — big exports, fast (still versionCode 19, 2026-09-21)
 
 1.8.2 was never built or uploaded, so 19 is still unspent and this is the first
 AAB to carry it: it contains 1.8.2's tip ask as well as everything below.
@@ -61,7 +91,7 @@ faster big exports and a sharper map. The tip ask is left out: it is not
 something a store reader needs to be told. Longest locale is fr at 473 of
 Play's 500 characters.
 
-## 1.8.2 — the tip ask moves to where the app has just helped (versionCode 19, 2026-09-20)
+### 1.8.2 — the tip ask moves to where the app has just helped (versionCode 19, 2026-09-20)
 
 versionCode 18 is uploaded to internal testing, so this is a new code. **No
 store changelog is cut yet**: `changelogs/19.txt` still needs writing before
@@ -113,7 +143,7 @@ declinable, an empty answer not drawn at all, and a finished purchase thanked
 rather than re-offered. Its expected text is read from the app's own resources:
 these emulators are left in whatever locale the last screenshot run used.
 
-## 1.8.1 — step 4 tidy-up (versionCode 18, 2026-09-14)
+### 1.8.1 — step 4 tidy-up (versionCode 18, 2026-09-14)
 
 versionCode 17 is uploaded to internal testing, so this is a new code. The
 store text is 17's, copied unchanged to all 18 `changelogs/18.txt` and to
@@ -133,7 +163,7 @@ Store screenshots `06_formats` and `08_privacy` (the version footer is in
 both) recaptured and re-rendered for phone, 7" and 10" tablet in all 18
 languages.
 
-## Store changelog — draft for versionCode 17 (2026-09-13)
+### Store changelog — draft for versionCode 17 (2026-09-13)
 
 Supersedes the versionCode 16 draft below, which stays as written. 17 is the
 same 1.7.0 → now span plus the redesign (next section), still versionName
@@ -181,7 +211,7 @@ Dropped from all 18 `17.txt` files and the tagged file on 2026-09-13.
 - [ ] Move this section into *Released* only once the span is promoted to
       production — internal testing is not release
 
-## Redesign — one visual system (local development, 2026-09-13)
+### Redesign — one visual system (local development, 2026-09-13)
 
 The screen read as parts from different kits. The causes, all fixed here:
 six corner radii on one screen; three different "pick one" controls (date
@@ -219,7 +249,7 @@ line breaks and clipped presets.
 
 Checked on the emulator in light and dark, and in German at 320 dp wide.
 
-## Store changelog — draft for versionCode 16 (2026-09-12)
+### Store changelog — draft for versionCode 16 (2026-09-12)
 
 Covers the whole 1.7.0 → now span: the feedback ballot re-cut, the optional
 update check, Color by day, the day legend/sheet/camera rework, and the four
@@ -252,7 +282,7 @@ dialog's option list, not what the app does with a file) and the update check
 - [ ] Move this section into *Released* only once the span is promoted to
       production — internal testing is not release
 
-## Color route by day (local development, 2026-09-09)
+### Color route by day (local development, 2026-09-09)
 
 - Added an optional **Color by day** map toggle for tracks, with a horizontally
   scrollable, localized date legend. Available in the preview and fullscreen map.
@@ -318,7 +348,7 @@ app does, so it moves versionName to 1.7.1. The whole 1.6.2 → now span is
 still the one release the store changelog describes; the production upload of
 this span is 15, and its changelog files are named for that code.
 
-## v1.8.0 (still versionCode 15) — the day legend, and the map that answers back
+### v1.8.0 (still versionCode 15) — the day legend, and the map that answers back
 
 The first half of this landed with the fullscreen rework: the `Expand` text
 button left the Preview header for a control on the map itself, and the
@@ -365,7 +395,7 @@ a scrollable, Year → Month grouped sheet. What follows is the second half.
   control stack and the attribution, so the two cannot disagree about where
   the usable edges of the view are.
 
-## v1.8.0 (still versionCode 15) — the day count, and the crash behind it
+### v1.8.0 (still versionCode 15) — the day count, and the crash behind it
 
 Two reports against the build above, both from a 61 MB phone export of a
 year's travel, and both traced to the same call.
@@ -408,7 +438,7 @@ year's travel, and both traced to the same call.
   is why the new scan clips edges against the window rather than testing where
   their endpoints fall.
 
-## v1.8.0 (still versionCode 15) — the card stops eating the map
+### v1.8.0 (still versionCode 15) — the card stops eating the map
 
 Follow-up to the day count above, from the same session.
 
@@ -428,7 +458,7 @@ Follow-up to the day count above, from the same session.
   old size the card was most of the tile and the map was the strip underneath
   it; this is the old 280 dp of map with room for the card above it.
 
-## v1.8.0 (still versionCode 15) — the card, tidied
+### v1.8.0 (still versionCode 15) — the card, tidied
 
 Two things the translucency and the new height turned up.
 
@@ -446,7 +476,7 @@ Two things the translucency and the new height turned up.
   at its own line. Same height in all 17 locales, for every date, and when the
   camera is off the track and there is no span to show.
 
-## Store changelog — draft for the next upload
+### Store changelog — draft for the next upload
 
 Four bullets, because that is what fits above the fold. Written from the whole
 span 1.6.2 → now; re-cut before upload if anything lands after this. **Cut in
@@ -481,7 +511,7 @@ fix, the export-step wording, the scale bar, the chevrons and the place
 selection. They matter to someone using the app, not to someone deciding
 whether to update.
 
-## v1.6.3 (versionCode 13) — correctness
+### v1.6.3 (versionCode 13) — correctness
 
 - **Local time in CSV was the exporting phone's, not the point's.** Every path
   point carried the home UTC offset, so a week in Tokyo exported with Stockholm
@@ -495,7 +525,7 @@ whether to update.
   third candidate on the 1.6.1 feedback ballot.
 - `TimelineParserTimezoneTest` (144 lines) pins the offset behaviour.
 
-## v1.7.0 (versionCode 14) — Places
+### v1.7.0 (versionCode 14) — Places
 
 The app could only ever export *the line between* the places someone went. A
 Timeline file also records the places themselves — where, how long, how often —
@@ -521,7 +551,7 @@ and none of it could leave the app.
 - 26 new strings across all 18 locales. `PlaceEntryTest` and `PlacesExportTest`
   (~410 lines) cover aggregation and all four writers.
 
-## Also in versionCode 14 — the map, time of day, places on the map
+### Also in versionCode 14 — the map, time of day, places on the map
 
 Written after the commit tagged 1.7.0, shipped in the same build.
 
@@ -703,7 +733,7 @@ Written after the commit tagged 1.7.0, shipped in the same build.
     `place_unnamed_hint` was rewritten in place across all 18 locales.
 
 
-## v1.7.0 (versionCode 15) — the feedback ballot, re-cut
+### v1.7.0 (versionCode 15) — the feedback ballot, re-cut
 
 The dialog is the app's only source of signal, and it had been asking for two
 things it can now do. `feedback_option_places` (7 votes, the most-requested item
@@ -741,7 +771,7 @@ now character-for-character the `values/strings.xml` label, from 15 on.
 Twenty-two strings across all 18 locales: four added, one shortened, two
 removed.
 
-## v1.7.1 (still versionCode 15) — an optional update check
+### v1.7.1 (still versionCode 15) — an optional update check
 
 Nothing before this told a user a newer build existed short of noticing it on
 the Play listing. `AppUpdateViewModel` wraps Play Core's *flexible* in-app
@@ -774,7 +804,7 @@ Only testable end to end from a build actually installed *through* Play — a
 to the Play Store app on device, not this codebase. Internal-track testing is
 the only way to see the Snackbar fire for real.
 
-## Store art for this upload
+### Store art for this upload
 
 Eight screenshots instead of six, and the emulator's own chrome is no longer in
 any of them.
@@ -800,7 +830,7 @@ any of them.
   to a 2000 px-wide tablet is a 150 px arc, and it was swallowing the whole
   status bar.
 
-## Pre-release checklist for this span
+### Pre-release checklist for this span
 
 Places (1.7.0):
 
@@ -917,10 +947,6 @@ Always:
 - [x] Bump `versionName` to 1.7.1 for the update check (`versionCode` stays 15
       — set the real code just before the upload build) — done 2026-09-05
 - [ ] Move this section into *Released* once 15 is up
-
----
-
-# Released
 
 ## v1.6.2 (versionCode 12) — published 27 August 2026
 

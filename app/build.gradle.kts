@@ -393,8 +393,15 @@ android {
         //       versionName: 1.8.3 has not reached a store reader yet.
         //       changelogs/20.txt is 19.txt unchanged - its "map detail" line
         //       already covers this.
-        versionCode = 20
-        versionName = "1.8.3"
+        //   versionCode=21, versionName="1.8.4" -> 20 is live on Play (1.8.3
+        //       released 2026-09-22), so this is a fresh code. The Movement
+        //       summary in step 2 shows the distance for the chosen dates, and
+        //       the open section adds a Total row over the ticked groups
+        //       (FB-018: "distance of the track from the filtered dates?").
+        //       Patch, not minor: the figure was already computed, it was only
+        //       hard to find. changelogs/21.txt describes this alone.
+        versionCode = 21
+        versionName = "1.8.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
