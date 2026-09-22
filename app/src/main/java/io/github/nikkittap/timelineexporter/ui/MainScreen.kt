@@ -97,6 +97,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -120,6 +121,7 @@ import io.github.nikkittap.timelineexporter.filter.TimelineFilter
 import io.github.nikkittap.timelineexporter.filter.applyFilter
 import io.github.nikkittap.timelineexporter.parser.MovementGroup
 import io.github.nikkittap.timelineexporter.parser.MovementStats
+import io.github.nikkittap.timelineexporter.parser.totalFor
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.PlaceEntry
 import io.github.nikkittap.timelineexporter.parser.TimelineFormat
@@ -1461,6 +1463,11 @@ private fun MovementSection(
     val places = remember(parsed, filter.dateRange, filter.timeOfDay, includeContainers) {
         parsed.placeCount(filter.dateRange, includeContainers, filter.timeOfDay)
     }
+    // The distance for the chosen dates, over the groups actually ticked —
+    // what the export will contain. Shown in the collapsed summary so it is
+    // on screen without opening the expander: the per-group rows alone left
+    // users asking where the total for their dates was (FB-018).
+    val total = remember(breakdown, selected) { breakdown.totalFor(selected) }
     val labels = movementLabels()
 
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -1472,7 +1479,7 @@ private fun MovementSection(
     SettingRow(
         iconRes = R.drawable.ic_content_track,
         title = stringResource(R.string.filter_movement_title),
-        value = movementSummaryLabel(selected, available, filter.movingOnly, places, labels),
+        value = movementSummaryLabel(selected, available, filter.movingOnly, total, places, labels),
         onClick = { expanded = !expanded },
     ) {
         Icon(
@@ -1493,6 +1500,11 @@ private fun MovementSection(
                 checked = stats.group in selected,
                 onCheckedChange = { onToggleMovement(stats.group, it, available) },
             )
+        }
+
+        // One group needs no sum: its own row already is the total.
+        if (total != null && breakdown.count { it.group in selected } > 1) {
+            MovementTotalRow(total)
         }
 
         if (places > 0) {
@@ -1551,6 +1563,39 @@ private fun MovementRow(
         Text(
             text = formatKm(stats.distanceMeters),
             style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(end = 12.dp),
+        )
+    }
+}
+
+/**
+ * The ticked groups summed, lined up under [MovementRow]'s columns: the
+ * checkbox's width left empty so "Total" sits under the group names and the
+ * kilometres under theirs.
+ */
+@Composable
+private fun MovementTotalRow(total: MovementStats) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Spacer(Modifier.width(48.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(R.string.filter_movement_total),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                text = stringResource(R.string.filter_trip_count, formatGrouped(total.trips)),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Text(
+            text = formatKm(total.distanceMeters),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(end = 12.dp),
         )
     }
@@ -1617,6 +1662,7 @@ private fun movementSummaryLabel(
     selected: Set<MovementGroup>,
     available: Set<MovementGroup>,
     movingOnly: Boolean,
+    total: MovementStats?,
     places: Int,
     labels: Map<MovementGroup, String>,
 ): String {
@@ -1629,6 +1675,7 @@ private fun movementSummaryLabel(
                 .joinToString(", ") { labels[it] ?: it.name }
         }
     )
+    total?.takeIf { it.distanceMeters > 0 }?.let { parts += formatKm(it.distanceMeters) }
     if (movingOnly) parts += stringResource(R.string.filter_moving_only_short)
     if (places > 0) parts += stringResource(R.string.places_count, formatGrouped(places))
     return parts.joinToString(" · ")

@@ -105,6 +105,23 @@ data class MovementStats(
 )
 
 /**
+ * Trips and distance summed over the [groups] the user has ticked — the
+ * figure for "how far did I go in these dates", which the per-group rows
+ * answer only piecemeal. Null when nothing ticked is in the breakdown, so
+ * the UI shows no total rather than a "0 km" that reads like a measurement.
+ */
+fun List<MovementStats>.totalFor(groups: Set<MovementGroup>): MovementStats? =
+    filter { it.group in groups }
+        .takeIf { it.isNotEmpty() }
+        ?.let { rows ->
+            MovementStats(
+                group = MovementGroup.OTHER,
+                trips = rows.sumOf { it.trips },
+                distanceMeters = rows.sumOf { it.distanceMeters },
+            )
+        }
+
+/**
  * A place Google matched a visit to.
  *
  * [probability] is Google's confidence in the visit itself. It is worth

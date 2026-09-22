@@ -43,6 +43,7 @@
     <string name="points_count">포인트 %1$s개</string>
     <string name="places_count">장소 %1$s곳</string>
     <string name="filter_trip_count">이동 %1$s회</string>
+    <string name="filter_movement_total">합계</string>
     <string name="filter_moving_only">이동 중만</string>
     <string name="filter_moving_only_hint">머무는 동안 기록된 지점 제외</string>
     <string name="filter_drop_repeated">반복 지점 건너뛰기</string>

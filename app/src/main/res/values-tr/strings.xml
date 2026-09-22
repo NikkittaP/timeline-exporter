@@ -43,6 +43,7 @@
     <string name="points_count">%1$s nokta</string>
     <string name="places_count">%1$s yer</string>
     <string name="filter_trip_count">%1$s yolculuk</string>
+    <string name="filter_movement_total">Toplam</string>
     <string name="filter_moving_only">Yalnızca hareket hâlinde</string>
     <string name="filter_moving_only_hint">Durakta kaydedilen noktaları dışarıda bırak</string>
     <string name="filter_drop_repeated">Tekrarları atla</string>

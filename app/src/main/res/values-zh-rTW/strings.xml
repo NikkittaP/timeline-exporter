@@ -43,6 +43,7 @@
     <string name="points_count">%1$s 個點</string>
     <string name="places_count">%1$s 個地點</string>
     <string name="filter_trip_count">%1$s 趟行程</string>
+    <string name="filter_movement_total">合計</string>
     <string name="filter_moving_only">僅移動中</string>
     <string name="filter_moving_only_hint">不包含停留期間記錄的點</string>
     <string name="filter_drop_repeated">略過重複的點</string>

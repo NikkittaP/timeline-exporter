@@ -43,6 +43,7 @@
     <string name="points_count">%1$s точок</string>
     <string name="places_count">%1$s місць</string>
     <string name="filter_trip_count">%1$s поїздок</string>
+    <string name="filter_movement_total">Усього</string>
     <string name="filter_moving_only">Лише в русі</string>
     <string name="filter_moving_only_hint">Не додавати точки, записані під час зупинок</string>
     <string name="filter_drop_repeated">Пропускати повтори</string>

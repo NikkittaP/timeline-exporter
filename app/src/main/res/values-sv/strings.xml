@@ -43,6 +43,7 @@
     <string name="points_count">%1$s punkter</string>
     <string name="places_count">%1$s platser</string>
     <string name="filter_trip_count">%1$s resor</string>
+    <string name="filter_movement_total">Totalt</string>
     <string name="filter_moving_only">Bara i rörelse</string>
     <string name="filter_moving_only_hint">Utelämna punkter som spelats in vid stillastående</string>
     <string name="filter_drop_repeated">Hoppa över upprepningar</string>

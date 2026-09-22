@@ -43,6 +43,7 @@
     <string name="points_count">%1$s puntos</string>
     <string name="places_count">%1$s lugares</string>
     <string name="filter_trip_count">%1$s trayectos</string>
+    <string name="filter_movement_total">Total</string>
     <string name="filter_moving_only">Solo en movimiento</string>
     <string name="filter_moving_only_hint">Omitir los puntos registrados durante una parada</string>
     <string name="filter_drop_repeated">Omitir repeticiones</string>
