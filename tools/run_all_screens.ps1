@@ -56,8 +56,10 @@ $SlotConfig = @{
 $BootTimeoutSec = 600
 $ShutdownTimeoutSec = 90
 
-$Slots = @($Slots -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ })
-foreach ($slot in $Slots) {
+# A new variable: assigned back to the [string] parameter, the list would be
+# joined into "phone tablet7 tablet10".
+$SlotList = @($Slots -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+foreach ($slot in $SlotList) {
     if (-not $SlotConfig.ContainsKey($slot)) {
         Write-Host "Unknown slot '$slot'. Use phone, tablet7, tablet10." -ForegroundColor Red
         exit 1
@@ -205,10 +207,10 @@ $started = Get-Date
 $localeArg = if ($Locales) { "locales:$Locales" } else { "" }
 $results = [ordered]@{}
 
-Log ("Slots: {0}; locales: {1}; upload: {2}" -f ($Slots -join ", "), $(if ($Locales) { $Locales } else { "all" }), [bool]$Upload)
+Log ("Slots: {0}; locales: {1}; upload: {2}" -f ($SlotList -join ", "), $(if ($Locales) { $Locales } else { "all" }), [bool]$Upload)
 Log "Log file: $LogFile"
 
-foreach ($slot in $Slots) {
+foreach ($slot in $SlotList) {
     $cfg = $SlotConfig[$slot]
     $ok = $false
     foreach ($attempt in 1..2) {
