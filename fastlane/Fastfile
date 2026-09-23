@@ -29,6 +29,13 @@ def capture_options(device_type, options)
   args
 end
 
+# The newest build on the internal track, which is the release supply attaches
+# the screenshots to. Read from Play on every upload: it was hard-coded as 18
+# and went stale as soon as 19 was uploaded.
+def internal_version_code
+  google_play_track_version_codes(track: "internal").max
+end
+
 platform :android do
 
   desc "Build the debug app + instrumentation APKs that screengrab drives"
@@ -117,7 +124,7 @@ platform :android do
   lane :upload_screens do
     upload_to_play_store(
       track: "internal",
-      version_code: 18,
+      version_code: internal_version_code,
       skip_upload_apk: true,
       skip_upload_aab: true,
       skip_upload_metadata: true,     # don't overwrite your hand-edited listing
@@ -132,7 +139,7 @@ platform :android do
   lane :upload_screens_dryrun do
     upload_to_play_store(
       track: "internal",
-      version_code: 18,
+      version_code: internal_version_code,
       skip_upload_apk: true,
       skip_upload_aab: true,
       skip_upload_metadata: true,

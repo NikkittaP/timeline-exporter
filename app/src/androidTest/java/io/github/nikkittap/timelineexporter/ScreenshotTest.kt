@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.LocaleList
+import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import android.util.Log
 import androidx.compose.ui.test.hasText
@@ -120,6 +121,33 @@ class ScreenshotTest {
     private fun str(id: Int): String = localizedCtx.getString(id)
 
     /**
+     * Wake the device and drop the keyguard before anything is launched.
+     *
+     * A full pass takes the better part of an hour, longer than the AVD's
+     * screen timeout. Once the screen is off, a launched activity never
+     * resumes, so Compose has no hierarchy and every test in that language
+     * fails with "No compose hierarchies found" - which is how a phone pass
+     * died at de-DE after en-US and ar had gone through. `stayon` keeps it
+     * from happening again later in the same pass.
+     */
+    @Before
+    fun wakeDevice() {
+        for (command in listOf(
+            "input keyevent KEYCODE_WAKEUP",
+            "wm dismiss-keyguard",
+            "svc power stayon true",
+        )) {
+            // executeShellCommand returns at once; reading the pipe to its end
+            // waits for the command to finish.
+            InstrumentationRegistry.getInstrumentation().uiAutomation
+                .executeShellCommand(command)
+                .let { ParcelFileDescriptor.AutoCloseInputStream(it) }
+                .use { it.readBytes() }
+        }
+        Thread.sleep(WAKE_SETTLE_MS)
+    }
+
+    /**
      * Put the app into this pass's language through the app's own language
      * setting, not the device's.
      *
@@ -205,6 +233,10 @@ class ScreenshotTest {
         // applyAppLanguage() without waiting at all.
         const val LOCALE_APPLY_TIMEOUT_MS = 5_000L
         const val LOCALE_SETTLE_MS = 400L
+
+        // After waking the screen, how long we let the keyguard go away and
+        // the display come up before an activity is launched on it.
+        const val WAKE_SETTLE_MS = 500L
 
         // Switches the device locale for each run of the suite. The app's own
         // language is set per test in applyAppLanguage() — on Android 13+ this
