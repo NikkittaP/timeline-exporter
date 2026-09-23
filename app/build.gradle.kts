@@ -400,7 +400,12 @@ android {
         //       (FB-018: "distance of the track from the filtered dates?").
         //       Patch, not minor: the figure was already computed, it was only
         //       hard to find. changelogs/21.txt describes this alone.
-        versionCode = 21
+        //   versionCode=22, versionName="1.8.4" -> 21 plus the summary fitting
+        //       its row: "All except …" when fewer groups are unticked than
+        //       ticked, a third line for the value, and each language's own
+        //       list comma. Same versionName: 1.8.4 has not reached a store
+        //       reader yet. changelogs/22.txt is 21.txt plus one line.
+        versionCode = 22
         versionName = "1.8.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

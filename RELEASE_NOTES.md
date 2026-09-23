@@ -52,6 +52,14 @@ existed, but only one movement group at a time, inside the collapsed
 Store text: `fastlane/metadata/android/<locale>/changelogs/21.txt`, and
 `F:\Timeline\Whats_New_v1.8.4_tagged.txt`.
 
+### Still 1.8.4, now versionCode 22 (2026-09-23)
+
+A new code for the last three items above: "All except …", the third line and
+the per-language list comma. The versionName stays 1.8.4, since 1.8.4 has not
+reached a store reader yet. `changelogs/22.txt` is 21.txt plus one line about
+"All except …", in all 18 locales; the tagged file carries the same two lines.
+Longest locale is de at 312 of Play's 500 characters.
+
 ---
 
 # Released
