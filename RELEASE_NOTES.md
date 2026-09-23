@@ -42,6 +42,9 @@ existed, but only one movement group at a time, inside the collapsed
 - When fewer groups are unticked than ticked, the summary names the unticked
   ones: "All except Flights · 2,000 km · 96 places". Listing four of five
   groups ran past the row's two lines in Russian and cut off the distance.
+- The value under a step-2 row may now take three lines instead of two. With
+  two groups unticked, Russian still needed the third: "Все, кроме:
+  Общественный транспорт, Перелёты · 10 478 km · 25 мест".
 
 Store text: `fastlane/metadata/android/<locale>/changelogs/21.txt`, and
 `F:\Timeline\Whats_New_v1.8.4_tagged.txt`.

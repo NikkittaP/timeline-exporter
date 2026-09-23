@@ -1347,6 +1347,11 @@ private fun ChoiceRow(
  *
  * Padded 12 dp at the sides so its icon lines up with the calendar icon inside
  * the date field above and with the tick boxes the movement row expands into.
+ *
+ * The value may take three lines. Two was enough until the movement summary
+ * started carrying distance and places: "Все, кроме: Общественный транспорт,
+ * Перелёты · 10 478 km · 25 мест" needs the third, and cutting it drops the
+ * figures the line is there to show.
  */
 @Composable
 private fun SettingRow(
@@ -1376,7 +1381,7 @@ private fun SettingRow(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
+                maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
         }
@@ -1672,7 +1677,7 @@ private fun movementSummaryLabel(
             // Just "All": the row's title already says "Movement".
             selected == available -> stringResource(R.string.date_preset_all_short)
             // Name whichever side is shorter. Listing four of five modes spills
-            // past the row's two lines in longer languages and pushes the
+            // past the row's line cap in longer languages and pushes the
             // distance and places off the end.
             (available - selected).size < selected.size -> stringResource(
                 R.string.filter_movement_all_except,
