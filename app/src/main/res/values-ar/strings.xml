@@ -39,6 +39,7 @@
 
     <!-- Movement breakdown -->
     <string name="filter_movement_none">لم يتم تحديد شيء</string>
+    <string name="filter_movement_all_except">الكل باستثناء: %1$s</string>
     <string name="filter_moving_only_short">أثناء الحركة فقط</string>
     <string name="points_count">%1$s نقطة</string>
     <string name="places_count">%1$s أماكن</string>

@@ -1671,6 +1671,14 @@ private fun movementSummaryLabel(
             selected.isEmpty() -> stringResource(R.string.filter_movement_none)
             // Just "All": the row's title already says "Movement".
             selected == available -> stringResource(R.string.date_preset_all_short)
+            // Name whichever side is shorter. Listing four of five modes spills
+            // past the row's two lines in longer languages and pushes the
+            // distance and places off the end.
+            (available - selected).size < selected.size -> stringResource(
+                R.string.filter_movement_all_except,
+                (available - selected).sortedBy { it.ordinal }
+                    .joinToString(", ") { labels[it] ?: it.name },
+            )
             else -> selected.sortedBy { it.ordinal }
                 .joinToString(", ") { labels[it] ?: it.name }
         }

@@ -59,6 +59,7 @@
          It is both the statistics view and the movement filter — the rows a
          user reads are the rows they tick. -->
     <string name="filter_movement_none">No movement selected</string>
+    <string name="filter_movement_all_except">All except %1$s</string>
     <string name="filter_moving_only_short">moving only</string>
     <string name="points_count">%1$s points</string>
     <string name="places_count">%1$s places</string>

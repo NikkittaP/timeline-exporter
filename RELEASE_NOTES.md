@@ -39,6 +39,9 @@ existed, but only one movement group at a time, inside the collapsed
   all 17 other locales.
 - `MovementStats.totalFor` does the sum; it returns null rather than 0 km when
   nothing ticked has trips. Unit-tested in `MovementTotalTest`.
+- When fewer groups are unticked than ticked, the summary names the unticked
+  ones: "All except Flights · 2,000 km · 96 places". Listing four of five
+  groups ran past the row's two lines in Russian and cut off the distance.
 
 Store text: `fastlane/metadata/android/<locale>/changelogs/21.txt`, and
 `F:\Timeline\Whats_New_v1.8.4_tagged.txt`.

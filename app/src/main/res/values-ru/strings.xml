@@ -39,6 +39,7 @@
 
     <!-- Movement breakdown -->
     <string name="filter_movement_none">Ничего не выбрано</string>
+    <string name="filter_movement_all_except">Все, кроме: %1$s</string>
     <string name="filter_moving_only_short">только в движении</string>
     <string name="points_count">%1$s точек</string>
     <string name="places_count">%1$s мест</string>
