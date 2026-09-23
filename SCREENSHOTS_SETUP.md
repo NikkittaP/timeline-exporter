@@ -2,7 +2,9 @@
 
 This captures every store screenshot, in all 18 languages, on phone + 7"
 tablet + 10" tablet, renders the framed store art from them, and uploads it to
-Play — without you tapping anything.
+Play — without you tapping anything. One double-click on
+**`run_all_screens.bat`** does all of it, emulators included: start it and walk
+away (see [The one-command run](#the-one-command-run)).
 
 It works by letting an instrumented UI test (`ScreenshotTest.kt`) drive the app
 while **screengrab** runs it once per language and grabs a PNG of each screen.
@@ -79,7 +81,21 @@ One-time, installs the renderer (Node 18+):
 cd tools/store_shots && npm install && npx playwright install chromium
 ```
 
-Then, from `TimelineApp/`, **once per emulator boot**:
+Then, from `TimelineApp/`, the whole job — all three emulators, all 18
+languages, store art, and the upload to Play:
+
+```bash
+run_all_screens.bat -Upload
+```
+
+Leave out `-Upload` to capture and render without touching Play. No emulator
+needs to be running beforehand, and no `adb root` by hand: the script boots,
+prepares and shuts down each AVD itself. A full run with the upload took 1 h
+23 min on 2026-09-23. Details in [The one-command run](#the-one-command-run).
+
+### By hand, one lane at a time
+
+From `TimelineApp/`, **once per emulator boot**:
 
 ```bash
 adb root
@@ -116,7 +132,7 @@ app/build.gradle.kts                      + screengrab / test deps
 app/src/debug/AndroidManifest.xml         FileProvider + screengrab permissions
 app/src/debug/res/xml/screengrab_file_paths.xml
 app/src/androidTest/assets/timeline_demo.json   synthetic demo data (see below)
-app/src/androidTest/.../ScreenshotTest.kt        captures the raw 02..06 shots
+app/src/androidTest/.../ScreenshotTest.kt        captures the raw 02..10 shots
 tools/generate_demo_timeline.py           regenerates the demo data
 tools/demo_routes.json                    cached road geometry for the demo road trip
 tools/store_shots/                        the "Aurora" store-art renderer (see its README)
@@ -127,6 +143,8 @@ fastlane/Fastfile                         lanes: screens_phone / _tablet7 / _tab
 fastlane/Screengrabfile                   18 locales, apk paths
 fastlane/screenshots_raw/                 raw captures, kept so re-rendering needs no emulator
 fastlane/screenshot_captions.txt          old captions, only used by add_hero_caption.py
+run_all_screens.bat                       the one-command run (double-click)
+tools/run_all_screens.ps1                 what the .bat runs: boots each AVD, runs its lane
 Gemfile                                    fastlane
 ```
 
@@ -185,8 +203,10 @@ and `adb` works:
 adb --version
 ```
 
-(Android Studio already installed the SDK at
-`C:\Users\Nikita\AppData\Local\Android\Sdk` — point `ANDROID_HOME` there.)
+On this machine the SDK is at `G:\Android\sdk` (`sdk.dir` in
+`local.properties`), and `emulator` is not on PATH — use
+`G:\Android\sdk\emulator\emulator.exe`. `run_all_screens.ps1` reads the SDK
+path from `local.properties` itself, so it needs neither on PATH.
 
 ### 3. Play service account (only needed for the upload step)
 
@@ -212,9 +232,64 @@ set the locale freely.
 
 ---
 
-## Capturing
+## The one-command run
 
-Run one device class at a time. Boot the matching emulator first (only one
+```bash
+run_all_screens.bat                                  # all three slots, all 18 languages
+run_all_screens.bat -Upload                          # ...then upload_screens
+run_all_screens.bat -Slots phone -Locales ru-RU,ar   # quick check of one change
+```
+
+From Explorer, a double-click is the first line. The window stays open at the
+end (`pause`) so the summary can be read when you come back.
+
+For each slot in turn — `phone`, `tablet7`, `tablet10` — the script
+(`tools/run_all_screens.ps1`):
+
+1. shuts down any running emulator, so exactly one device is attached;
+2. cold-boots the slot's AVD (`Pixel_7`, `7_inch_Tablet`, `Pixel_Tablet`),
+   minimised but with a window: with `-no-window` nothing consumes the frames
+   and the AVD stalls;
+3. waits for `sys.boot_completed`, runs `adb root`, keeps the screen on
+   (`svc power stayon true`) and lets SystemUI settle for 30 s;
+4. runs the slot's `screens_*` lane — capture, ingest, decorate;
+5. shuts the emulator down.
+
+A lane that fails is run once more on a freshly booted emulator. After the
+slots come `decorate_screens` for everything, and with `-Upload`
+`upload_screens` — only if every slot went through, so a half-captured set
+never reaches Play.
+
+While it runs the PC is kept from going to sleep (the monitor may still turn
+off). The whole output, with a timestamped line per step, goes to
+`build/screens_logs/screens_<date>_<time>.log`, and the run ends with a table:
+
+```
+=== Done in 01:22:45 ===
+  phone     OK
+  tablet7   OK
+  tablet10  OK
+  upload    OK
+  decorate  OK
+```
+
+The exit code is 0 only when every line says OK.
+
+| Option     | Default                   | Meaning                                        |
+|------------|---------------------------|------------------------------------------------|
+| `-Slots`   | `phone,tablet7,tablet10`  | Which slots, comma-separated, in that order    |
+| `-Locales` | all 18                    | Passed to the lanes as `locales:<value>`       |
+| `-Upload`  | off                       | Run `upload_screens` after a clean run         |
+
+A `-Locales` run leaves the other languages' raw captures in place, and the
+closing `decorate_screens` re-renders their store art, so a quick check does
+not strip the listing of the rest.
+
+---
+
+## Capturing by hand
+
+What the script does, one step at a time. Run one device class at a time. Boot the matching emulator first (only one
 device attached, or pass `--specific_device <id>`).
 
 **First, enable adb root on the emulator** — once per boot, every time:
@@ -251,7 +326,7 @@ bundle exec fastlane screens_phone locales:ru-RU,ar
 ```
 
 Each lane rebuilds the debug + test APKs, then loops through all 18 locales.
-Expect ~1–2 min per locale, so a full phone run is ~25–40 min. The lane then
+Expect ~1.2 min per locale, so a full phone run is ~25 min. The lane then
 moves the raw PNGs aside and renders the store art on top of them:
 
 ```
@@ -262,7 +337,7 @@ fastlane/metadata/android/<locale>/images/tenInchScreenshots/
 ```
 
 Open a few and sanity-check the map actually rendered (needs network), the UI is
-in the right language, and the count is five per locale — not one.
+in the right language, and the count is eight per locale — not one.
 
 Anything odd, go to [Troubleshooting](#troubleshooting).
 
@@ -270,7 +345,8 @@ Anything odd, go to [Troubleshooting](#troubleshooting).
 
 ## Tablets
 
-Same three steps as the phone, run once per device class. What differs is only
+`run_all_screens.bat` covers the tablets too. By hand it is the same three
+steps as the phone, run once per device class. What differs is only
 which AVD is booted and which lane you call.
 
 | Device class | AVD here        | Lane                    | Play folder            |
@@ -366,12 +442,45 @@ your listing text, release notes and AAB are left untouched):
 bundle exec fastlane upload_screens
 ```
 
+`run_all_screens.bat -Upload` runs the same lane at the end of a clean capture.
+
+supply attaches the screenshots to a release on the internal track, so a build
+must already be there. Both upload lanes ask Play for the newest version code
+on that track (`internal_version_code` in the Fastfile) instead of naming one;
+it used to be hard-coded as 18 and went stale with every upload. Check what is
+there with:
+
+```bash
+bundle exec fastlane run google_play_track_version_codes track:internal
+```
+
 Open Play Console → your app → **Store listing → Phone / Tablet** and confirm the
 images per language, then save/submit as usual.
 
 ---
 
 ## Troubleshooting
+
+### `Tests failed for locale de-DE` — "No compose hierarchies found"
+
+```
+java.lang.IllegalStateException: No compose hierarchies found in the app.
+```
+
+Both tests of one language fail, often well into a run (en-US and ar went
+through, then de-DE died). The emulator's screen had gone off. With the display
+asleep a launched activity never resumes, so Compose has nothing to find.
+`dumpsys power` shows it: `mWakefulness=Asleep`.
+
+`ScreenshotTest.wakeDevice()` now wakes the device, dismisses the keyguard and
+sets `svc power stayon true` before every test, and `run_all_screens.ps1` does
+the same after boot. If it happens anyway on a hand-started AVD:
+
+```bash
+adb shell input keyevent KEYCODE_WAKEUP
+adb shell wm dismiss-keyguard
+adb shell svc power stayon true
+```
 
 ### The run "succeeds" but you get one corrupt PNG per language
 
