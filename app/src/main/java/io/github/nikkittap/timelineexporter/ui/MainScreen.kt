@@ -1671,6 +1671,8 @@ private fun movementSummaryLabel(
     places: Int,
     labels: Map<MovementGroup, String>,
 ): String {
+    // Arabic lists with "، " and Chinese and Japanese with "、", not ", ".
+    val separator = stringResource(R.string.list_separator)
     val parts = mutableListOf(
         when {
             selected.isEmpty() -> stringResource(R.string.filter_movement_none)
@@ -1682,10 +1684,10 @@ private fun movementSummaryLabel(
             (available - selected).size < selected.size -> stringResource(
                 R.string.filter_movement_all_except,
                 (available - selected).sortedBy { it.ordinal }
-                    .joinToString(", ") { labels[it] ?: it.name },
+                    .joinToString(separator) { labels[it] ?: it.name },
             )
             else -> selected.sortedBy { it.ordinal }
-                .joinToString(", ") { labels[it] ?: it.name }
+                .joinToString(separator) { labels[it] ?: it.name }
         }
     )
     total?.takeIf { it.distanceMeters > 0 }?.let { parts += formatKm(it.distanceMeters) }

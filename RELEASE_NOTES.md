@@ -45,6 +45,9 @@ existed, but only one movement group at a time, inside the collapsed
 - The value under a step-2 row may now take three lines instead of two. With
   two groups unticked, Russian still needed the third: "Все, кроме:
   Общественный транспорт, Перелёты · 10 478 km · 25 мест".
+- The groups in that summary are joined by each language's own list comma:
+  "، " in Arabic and "、" in Chinese and Japanese, instead of ", " everywhere.
+  The new `list_separator` string is in all 18 locales.
 
 Store text: `fastlane/metadata/android/<locale>/changelogs/21.txt`, and
 `F:\Timeline\Whats_New_v1.8.4_tagged.txt`.

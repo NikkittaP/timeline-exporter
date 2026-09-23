@@ -40,6 +40,7 @@
     <!-- Movement breakdown -->
     <string name="filter_movement_none">선택 없음</string>
     <string name="filter_movement_all_except">%1$s 제외 전체</string>
+    <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">이동 중만</string>
     <string name="points_count">포인트 %1$s개</string>
     <string name="places_count">장소 %1$s곳</string>

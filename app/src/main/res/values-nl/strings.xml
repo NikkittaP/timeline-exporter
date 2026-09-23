@@ -40,6 +40,7 @@
     <!-- Movement breakdown -->
     <string name="filter_movement_none">Niets geselecteerd</string>
     <string name="filter_movement_all_except">Alles behalve: %1$s</string>
+    <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">alleen onderweg</string>
     <string name="points_count">%1$s punten</string>
     <string name="places_count">%1$s plaatsen</string>
