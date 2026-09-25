@@ -262,6 +262,9 @@ private const val DAY_FOCUS_CAMERA_MS = 700
  */
 private val MAP_BOTTOM_CHROME = 56.dp
 
+/** Distance between the map's edges and the chrome drawn over it. */
+private val MAP_CHROME_INSET = 12.dp
+
 /** Sprite id for the direction chevron repeated along the track. */
 private const val IMAGE_TRACK_ARROW = "track-arrow"
 
@@ -1095,20 +1098,37 @@ fun TimelineMap(
         }
     }
 
+    // Offer the switch only where flipping it would change something.
+    // "Two or more samples" is not that test: a pair of samples further
+    // apart than GAP_DISTANCE_METERS - a flight with location off in
+    // between - draws only the dashed connector and no track layer at
+    // all, so the switch would toggle nothing and the legend would never
+    // arrive. Ask instead whether any consecutive pair is close enough to
+    // become a line; the answer is normally the first pair tested.
+    val hasTrack = remember(subject) {
+        subject is MapSubject.Track && subject.points.asSequence().zipWithNext()
+            .any { (a, b) -> haversineMeters(a, b) <= GAP_DISTANCE_METERS }
+    }
+
+    // MapLibre's own compass appears in the top-right corner as soon as the
+    // map is rotated, and is the only way back to north up. That corner is
+    // where the `Color by day` card sits, which swallowed every tap aimed at
+    // it, so the compass is pushed down below the card - following it as it
+    // grows a row for the legend - and lined up with the card's right edge.
+    LaunchedEffect(loadedMap, hasTrack, legendHeightPx) {
+        if (destroyed.get()) return@LaunchedEffect
+        val map = loadedMap ?: return@LaunchedEffect
+        val edge = (MAP_CHROME_INSET.value * density).toInt()
+        // The measured height already includes the card's inset on both
+        // sides, so it lands the compass one inset below the card.
+        val top = if (hasTrack) legendHeightPx else edge
+        runCatching { map.uiSettings.setCompassMargins(0, top, edge, 0) }
+            .onFailure { Log.w(TAG, "Compass margins failed", it) }
+    }
+
     Box(modifier = modifier) {
         AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
 
-        // Offer the switch only where flipping it would change something.
-        // "Two or more samples" is not that test: a pair of samples further
-        // apart than GAP_DISTANCE_METERS - a flight with location off in
-        // between - draws only the dashed connector and no track layer at
-        // all, so the switch would toggle nothing and the legend would never
-        // arrive. Ask instead whether any consecutive pair is close enough to
-        // become a line; the answer is normally the first pair tested.
-        val hasTrack = remember(subject) {
-            subject is MapSubject.Track && subject.points.asSequence().zipWithNext()
-                .any { (a, b) -> haversineMeters(a, b) <= GAP_DISTANCE_METERS }
-        }
         // This card is now only about colouring the track — exiting fullscreen
         // moved to its own control below, always in the same spot regardless
         // of whether this card is even showing.
