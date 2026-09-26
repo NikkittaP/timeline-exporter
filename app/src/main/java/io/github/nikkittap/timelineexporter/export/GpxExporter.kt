@@ -17,6 +17,12 @@ import io.github.nikkittap.timelineexporter.parser.PathPoint
  * wptType as a `xsd:sequence`, so time → name → desc → link → type is the only
  * order that validates. Writing them in a "nicer" order produces a file that
  * strict readers reject.
+ *
+ * `Color by day` is ignored here. GPX 1.1 has no line colour, every app that
+ * adds one does it with its own extension, and the only way to give each day
+ * its own colour would be one `<trk>` per day - which breaks the imports that
+ * read just the first track, Strava's among them, for the sake of a colour
+ * most of them would not draw anyway.
  */
 object GpxExporter : Exporter {
     override val displayName = "GPX"

@@ -87,6 +87,23 @@ class StreamingExportTest {
     }
 
     @Test
+    fun `every format streams a track coloured by day`() {
+        for (exporter in AllExporters) {
+            val sink = ChunkRecorder()
+            exporter.export(ExportContent.Track(track(), colorByDay = true), "Big trip", sink)
+
+            assertTrue(
+                "${exporter.displayName} wrote only ${sink.text.length} chars",
+                sink.text.length > 100_000,
+            )
+            assertTrue(
+                "${exporter.displayName} appended ${sink.largestChunk} chars at once",
+                sink.largestChunk <= maxChunkChars,
+            )
+        }
+    }
+
+    @Test
     fun `every format streams places instead of handing over one string`() {
         val places = List(2_000) { i -> place(name = "Place $i") }
         for (exporter in AllExporters) {

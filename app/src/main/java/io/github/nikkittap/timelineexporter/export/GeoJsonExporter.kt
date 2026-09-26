@@ -9,8 +9,8 @@ import io.github.nikkittap.timelineexporter.parser.PathPoint
  * Coordinate order per RFC 7946 §3.1.1: longitude FIRST, then latitude.
  *
  * A track is a FeatureCollection containing one Feature whose geometry is a
- * single LineString. Places are a FeatureCollection of Point Features, one per
- * place, each carrying the whole aggregate in its `properties` — which is the
+ * single LineString - or, with `Color by day` on, one Feature per local day.
+ * Places are a FeatureCollection of Point Features, one per place, each carrying the whole aggregate in its `properties` — which is the
  * point of choosing GeoJSON over the two XML formats: QGIS and pandas will
  * happily sort, filter and join on `visits` or `total_seconds` without anyone
  * having to parse a description string back apart.
@@ -23,7 +23,11 @@ object GeoJsonExporter : Exporter {
     private const val CREATOR = "Timeline Exporter for Android"
 
     override fun export(content: ExportContent, name: String, out: Appendable) = when (content) {
-        is ExportContent.Track -> exportTrack(content.points, name, out)
+        is ExportContent.Track -> {
+            val days = if (content.colorByDay) trackDays(content.points, content.fallbackZone) else emptyList()
+            if (days.isEmpty()) exportTrack(content.points, name, out)
+            else exportTrackByDay(content.points, days, name, out)
+        }
         is ExportContent.Places -> exportPlaces(content.places, name, out)
     }
 
@@ -57,6 +61,89 @@ object GeoJsonExporter : Exporter {
         sb.append("    }\n")
         sb.append("  ]\n")
         sb.append("}\n")
+    }
+
+    /**
+     * The track as one Feature per local day, coloured the way the map's
+     * `Color by day` mode draws it.
+     *
+     * GeoJSON itself has no notion of style, so the colour travels in the
+     * `stroke` / `stroke-width` properties of the simplestyle convention,
+     * which geojson.io, GitHub's viewer and uMap honour, and everything else
+     * simply keeps as data. `date` is there for the readers that ignore
+     * style: filtering a day out of the file should not mean parsing a name.
+     *
+     * A day made of more than one run - see [trackDaySpans] - is a
+     * MultiLineString, so each date is one Feature.
+     */
+    private fun exportTrackByDay(
+        points: List<PathPoint>,
+        days: List<TrackDay>,
+        trackName: String,
+        sb: Appendable,
+    ) {
+        sb.append("{\n")
+        sb.append("  \"type\": \"FeatureCollection\",\n")
+        sb.append("  \"name\": ").append(jsonString(trackName)).append(",\n")
+        sb.append("  \"features\": [\n")
+        for ((d, day) in days.withIndex()) {
+            // No jsonString() around the date or the colour: digits, dashes
+            // and a hash, none of which JSON asks to be escaped.
+            val date = day.date.toString()
+            sb.append("    {\n")
+            sb.append("      \"type\": \"Feature\",\n")
+            sb.append("      \"properties\": {\n")
+            sb.append("        \"name\": \"").append(date).append("\",\n")
+            sb.append("        \"date\": \"").append(date).append("\",\n")
+            sb.append("        \"start_time\": \"")
+            appendIsoInstant(sb, day.runs.minOf { points[it.first].timeUtc })
+            sb.append("\",\n")
+            sb.append("        \"end_time\": \"")
+            appendIsoInstant(sb, day.runs.maxOf { points[it.last].timeUtc })
+            sb.append("\",\n")
+            sb.append("        \"stroke\": \"").append(day.color).append("\",\n")
+            sb.append("        \"stroke-width\": 4,\n")
+            sb.append("        \"creator\": ").append(jsonString(CREATOR)).append('\n')
+            sb.append("      },\n")
+            sb.append("      \"geometry\": {\n")
+            if (day.runs.size == 1) {
+                sb.append("        \"type\": \"LineString\",\n")
+                sb.append("        \"coordinates\": [\n")
+                appendPositions(points, day.runs.single(), "          ", sb)
+                sb.append("        ]\n")
+            } else {
+                sb.append("        \"type\": \"MultiLineString\",\n")
+                sb.append("        \"coordinates\": [\n")
+                for ((r, run) in day.runs.withIndex()) {
+                    sb.append("          [\n")
+                    appendPositions(points, run, "            ", sb)
+                    sb.append("          ]")
+                    if (r < day.runs.size - 1) sb.append(',')
+                    sb.append('\n')
+                }
+                sb.append("        ]\n")
+            }
+            sb.append("      }\n")
+            sb.append("    }")
+            if (d < days.size - 1) sb.append(',')
+            sb.append('\n')
+        }
+        sb.append("  ]\n")
+        sb.append("}\n")
+    }
+
+    /** One `[lon, lat]` per line for the samples of [span], comma-separated. */
+    private fun appendPositions(points: List<PathPoint>, span: TrackDaySpan, indent: String, sb: Appendable) {
+        for (i in span.first..span.last) {
+            val p = points[i]
+            sb.append(indent).append('[')
+            appendCoordinate(sb, p.longitude)
+            sb.append(", ")
+            appendCoordinate(sb, p.latitude)
+            sb.append(']')
+            if (i < span.last) sb.append(',')
+            sb.append('\n')
+        }
     }
 
     private fun exportPlaces(places: List<ExportPlace>, documentName: String, sb: Appendable) {

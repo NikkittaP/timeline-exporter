@@ -524,8 +524,14 @@ fun MainScreen(
         }
     }
 
+    // The map's `Color by day` switch, held here rather than inside the map
+    // because the track export follows it: what the preview shows in colour
+    // is what a KML or GeoJSON is written in. One State object for the life
+    // of the screen, so the movable map below can close over it directly.
+    val colorByDayState = rememberSaveable { mutableStateOf(false) }
+
     val exportContent: ExportContent = when (contentKind) {
-        ContentKind.TRACK -> ExportContent.Track(filteredPoints)
+        ContentKind.TRACK -> ExportContent.Track(filteredPoints, colorByDay = colorByDayState.value)
         ContentKind.PLACES -> ExportContent.Places(exportPlaces(places, placeLabels))
     }
 
@@ -563,6 +569,7 @@ fun MainScreen(
                 selectedPlaceName = currentSelectedName,
                 onPlaceSelected = currentPlacePicked,
                 onInteractionChange = { mapInteracting = it },
+                colorByDayState = colorByDayState,
                 modifier = m,
             )
         }

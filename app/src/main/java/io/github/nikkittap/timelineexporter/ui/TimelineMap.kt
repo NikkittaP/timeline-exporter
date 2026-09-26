@@ -48,6 +48,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -77,6 +78,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.nikkittap.timelineexporter.R
+import io.github.nikkittap.timelineexporter.export.trackDayColor
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import io.github.nikkittap.timelineexporter.parser.PlaceEntry
 import org.maplibre.android.MapLibre
@@ -488,12 +490,18 @@ fun TimelineMap(
      * under their finger.
      */
     onInteractionChange: (interacting: Boolean) -> Unit = {},
+    /**
+     * The `Color by day` switch. Owned by the caller where the export needs
+     * to follow it - a track saved with the switch on is written one line per
+     * day in the same colours - and by the map itself otherwise.
+     */
+    colorByDayState: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
 ) {
     val context = LocalContext.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val darkTheme = isSystemInDarkTheme()
     val palette = if (darkTheme) DarkPalette else LightPalette
-    var colorByDay by rememberSaveable { mutableStateOf(false) }
+    var colorByDay by colorByDayState
     var showDayList by rememberSaveable { mutableStateOf(false) }
     val fallbackZone = remember { ZoneId.systemDefault() }
     val locale = LocalConfiguration.current.locales[0]

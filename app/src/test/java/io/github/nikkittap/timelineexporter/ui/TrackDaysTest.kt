@@ -1,5 +1,7 @@
 package io.github.nikkittap.timelineexporter.ui
 
+import io.github.nikkittap.timelineexporter.export.trackDate
+import io.github.nikkittap.timelineexporter.export.trackDayColor
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

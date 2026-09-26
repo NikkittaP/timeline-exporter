@@ -2,6 +2,7 @@ package io.github.nikkittap.timelineexporter.export
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import java.time.Instant
+import java.time.ZoneId
 import java.util.Locale
 
 /**
@@ -38,8 +39,21 @@ sealed interface ExportContent {
 
     val isEmpty: Boolean get() = size == 0
 
-    /** A GPS track: what every version before 1.7.0 could export. */
-    data class Track(val points: List<PathPoint>) : ExportContent {
+    /**
+     * A GPS track: what every version before 1.7.0 could export.
+     *
+     * [colorByDay] mirrors the map's `Color by day` switch: the preview is
+     * what the user expects the file to look like, and a KML that came out in
+     * one colour after a preview in seven was reported as a bug. Formats that
+     * can carry a line colour then write one line per local day in that day's
+     * [trackDayColor]; the rest ignore it. [fallbackZone] decides the day of a
+     * sample recorded without an offset, exactly as it does on the map.
+     */
+    data class Track(
+        val points: List<PathPoint>,
+        val colorByDay: Boolean = false,
+        val fallbackZone: ZoneId = ZoneId.systemDefault(),
+    ) : ExportContent {
         override val size: Int get() = points.size
         override val kind: ContentKind get() = ContentKind.TRACK
     }
