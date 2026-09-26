@@ -60,6 +60,22 @@ reached a store reader yet. `changelogs/22.txt` is 21.txt plus one line about
 "All except …", in all 18 locales; the tagged file carries the same two lines.
 Longest locale is de at 312 of Play's 500 characters.
 
+### After versionCode 22: tracks exported coloured by day (2026-09-26)
+
+Not in any build yet. Feedback from 1.8.4 (ja-JP): the preview colours each
+day, but the KML came out as one line.
+
+- With the map's **Color by day** switch on, a KML track is one Placemark per
+  day, named by date, in the preview's colour and with a TimeSpan for Google
+  Earth's time slider. GeoJSON is one Feature per day with simplestyle
+  `stroke`, which geojson.io, GitHub and uMap draw.
+- With the switch off the file is unchanged. GPX and CSV ignore the switch,
+  because GPX has no standard line colour.
+- A multi-year export produces one Placemark per day (4,479 for
+  Timeline_merged_big.json). Google Earth handles that; Google My Maps caps a
+  layer at 2,000 features, so for My Maps export a shorter range or leave the
+  switch off.
+
 ---
 
 # Released
