@@ -60,10 +60,12 @@ reached a store reader yet. `changelogs/22.txt` is 21.txt plus one line about
 "All except …", in all 18 locales; the tagged file carries the same two lines.
 Longest locale is de at 312 of Play's 500 characters.
 
-### After versionCode 22: tracks exported coloured by day (2026-09-26)
+### Still 1.8.4, now versionCode 23: tracks exported coloured by day (2026-09-26)
 
-Not in any build yet. Feedback from 1.8.4 (ja-JP): the preview colours each
-day, but the KML came out as one line.
+Feedback from 1.8.4 (ja-JP): the preview colours each day, but the KML came
+out as one line. `changelogs/23.txt` is 22.txt plus one line about it, in all
+18 locales, and the tagged file has the same line. The longest locale is de at
+451 of Play's 500 characters.
 
 - With the map's **Color by day** switch on, a KML track is one Placemark per
   day, named by date, in the preview's colour and with a TimeSpan for Google
