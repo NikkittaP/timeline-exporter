@@ -405,15 +405,15 @@ android {
         //       ticked, a third line for the value, and each language's own
         //       list comma. Same versionName: 1.8.4 has not reached a store
         //       reader yet. changelogs/22.txt is 21.txt plus one line.
-        //   versionCode=23, versionName="1.8.4" -> 22 plus tracks exported
-        //       coloured by day: with the map's Color by day switch on, KML
-        //       writes one Placemark per day and GeoJSON one Feature per day
-        //       with a simplestyle stroke, in the preview's colours (feedback
-        //       from 1.8.4, ja-JP). GPX and CSV unchanged. Same versionName:
-        //       1.8.4 is still only on the internal track. changelogs/23.txt
-        //       is 22.txt plus one line.
+        //   versionCode=22, versionName="1.8.4" is live on Play.
+        //   versionCode=23, versionName="1.8.5" -> tracks exported coloured
+        //       by day: with the map's Color by day switch on, KML writes one
+        //       Placemark per day and GeoJSON one Feature per day with a
+        //       simplestyle stroke, in the preview's colours (feedback from
+        //       1.8.4, ja-JP). GPX and CSV unchanged. Patch: a new output of
+        //       an existing switch. changelogs/23.txt describes this alone.
         versionCode = 23
-        versionName = "1.8.4"
+        versionName = "1.8.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

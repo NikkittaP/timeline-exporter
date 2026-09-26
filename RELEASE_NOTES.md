@@ -22,9 +22,38 @@ Where things go at release time:
 
 ---
 
-# Unreleased — everything since v1.8.3
+# Unreleased — everything since v1.8.4
 
-## 1.8.4 — the distance for the chosen dates (versionCode 21, 2026-09-22)
+## 1.8.5 — tracks exported coloured by day (versionCode 23, 2026-09-26)
+
+Feedback from 1.8.4 (ja-JP): the preview colours each day, but the KML came
+out as one line.
+
+- With the map's **Color by day** switch on, a KML track is one Placemark per
+  day, named by date, in the preview's colour and with a TimeSpan for Google
+  Earth's time slider. GeoJSON is one Feature per day with simplestyle
+  `stroke`, which geojson.io, GitHub and uMap draw.
+- With the switch off the file is unchanged. GPX and CSV ignore the switch,
+  because GPX has no standard line colour.
+- A multi-year export produces one Placemark per day (4,479 for
+  Timeline_merged_big.json). Google Earth handles that; Google My Maps caps a
+  layer at 2,000 features, so for My Maps export a shorter range or leave the
+  switch off.
+
+Store text: `fastlane/metadata/android/<locale>/changelogs/23.txt` (this one
+line only, 18 locales) and `F:\Timeline\Whats_New_v1.8.5_tagged.txt`.
+
+---
+
+# Released
+
+## v1.8.4 (versionCode 22) — released by 26 September 2026
+
+The *Unreleased* section from v1.8.3 up to this upload, moved here
+unchanged (headings demoted one level). Store text:
+`fastlane/metadata/android/<locale>/changelogs/22.txt`.
+
+### 1.8.4 — the distance for the chosen dates (versionCode 21, 2026-09-22)
 
 FB-018 asked "distance of the track from the filtered dates?". The figure
 existed, but only one movement group at a time, inside the collapsed
@@ -52,35 +81,13 @@ existed, but only one movement group at a time, inside the collapsed
 Store text: `fastlane/metadata/android/<locale>/changelogs/21.txt`, and
 `F:\Timeline\Whats_New_v1.8.4_tagged.txt`.
 
-### Still 1.8.4, now versionCode 22 (2026-09-23)
+#### Still 1.8.4, now versionCode 22 (2026-09-23)
 
 A new code for the last three items above: "All except …", the third line and
 the per-language list comma. The versionName stays 1.8.4, since 1.8.4 has not
 reached a store reader yet. `changelogs/22.txt` is 21.txt plus one line about
 "All except …", in all 18 locales; the tagged file carries the same two lines.
 Longest locale is de at 312 of Play's 500 characters.
-
-### Still 1.8.4, now versionCode 23: tracks exported coloured by day (2026-09-26)
-
-Feedback from 1.8.4 (ja-JP): the preview colours each day, but the KML came
-out as one line. `changelogs/23.txt` is 22.txt plus one line about it, in all
-18 locales, and the tagged file has the same line. The longest locale is de at
-451 of Play's 500 characters.
-
-- With the map's **Color by day** switch on, a KML track is one Placemark per
-  day, named by date, in the preview's colour and with a TimeSpan for Google
-  Earth's time slider. GeoJSON is one Feature per day with simplestyle
-  `stroke`, which geojson.io, GitHub and uMap draw.
-- With the switch off the file is unchanged. GPX and CSV ignore the switch,
-  because GPX has no standard line colour.
-- A multi-year export produces one Placemark per day (4,479 for
-  Timeline_merged_big.json). Google Earth handles that; Google My Maps caps a
-  layer at 2,000 features, so for My Maps export a shorter range or leave the
-  switch off.
-
----
-
-# Released
 
 ## v1.8.3 (versionCode 20) — released 22 September 2026
 
