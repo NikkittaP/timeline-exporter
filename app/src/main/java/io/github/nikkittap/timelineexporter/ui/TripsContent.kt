@@ -2,6 +2,7 @@ package io.github.nikkittap.timelineexporter.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -9,11 +10,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,12 +26,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.nikkittap.timelineexporter.R
 import io.github.nikkittap.timelineexporter.export.localDate
+import io.github.nikkittap.timelineexporter.trips.TransportMode
 import io.github.nikkittap.timelineexporter.trips.Trip
 import java.time.Instant
 import java.time.ZoneId
@@ -170,12 +175,22 @@ private fun TripRow(
         } else {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = dates,
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    // Icons beside the dates, which rarely fill their line,
+                    // rather than beside the distance, where they squeezed
+                    // the details onto a second line.
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = dates,
+                            style = MaterialTheme.typography.titleSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false),
+                        )
+                        if (trip.transport.isNotEmpty()) {
+                            Spacer(Modifier.width(8.dp))
+                            TransportIcons(trip.transport)
+                        }
+                    }
                     Text(
                         text = details.joinToString(" · "),
                         style = MaterialTheme.typography.bodySmall,
@@ -213,6 +228,47 @@ private fun TripRow(
             TextButton(onClick = onOnlyThis, contentPadding = PaddingValues(horizontal = 0.dp)) {
                 Text(stringResource(R.string.trip_only_this))
             }
+        }
+    }
+}
+
+/**
+ * The one or two ways the trip was mostly travelled, as small icons. Chosen by
+ * `transportOf`, which leaves them out whenever the data is too thin to say;
+ * so no icons is a normal state, not a gap to explain.
+ *
+ * Each icon is labelled for TalkBack with the movement group the filter
+ * already names, so a screen reader hears "Flights, Driving" and no new text
+ * had to be translated.
+ */
+@Composable
+private fun TransportIcons(modes: List<TransportMode>) {
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        for (mode in modes) {
+            Icon(
+                painter = painterResource(
+                    when (mode) {
+                        TransportMode.FLIGHT -> R.drawable.ic_transport_flight
+                        TransportMode.CAR -> R.drawable.ic_transport_car
+                        TransportMode.TRAIN -> R.drawable.ic_transport_train
+                        TransportMode.BUS -> R.drawable.ic_transport_bus
+                        TransportMode.BOAT -> R.drawable.ic_transport_boat
+                        TransportMode.BICYCLE -> R.drawable.ic_transport_bicycle
+                        TransportMode.WALK -> R.drawable.ic_transport_walk
+                    }
+                ),
+                contentDescription = stringResource(
+                    when (mode) {
+                        TransportMode.FLIGHT -> R.string.movement_flying
+                        TransportMode.CAR -> R.string.movement_driving
+                        TransportMode.TRAIN, TransportMode.BUS, TransportMode.BOAT -> R.string.movement_transit
+                        TransportMode.BICYCLE -> R.string.movement_cycling
+                        TransportMode.WALK -> R.string.movement_walking
+                    }
+                ),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp),
+            )
         }
     }
 }

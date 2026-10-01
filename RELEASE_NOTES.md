@@ -68,6 +68,23 @@ Where things go at release time:
       GPX/KML description says "about".
     - "km from home" is unchanged: the greatest distance from the detected
       home of any position in the trip.
+  - Transport icons. A multi-day trip shows one or two small Material
+    icons beside its dates for how it was mostly travelled (✈ car train
+    bus boat bicycle walk). This was evaluated on the 13-year file first:
+    older activities carry no confidence and are often mislabelled
+    (27,000 km of "walking" at up to 2,500 km/h, a 9,174 km "car" to
+    Florida), and taking the longest label as given put the wrong main icon
+    on 8 of 83 trips. The rule (`transportOf`):
+    - a leg of 150 km+ averaging 250 km/h+ is a flight whatever its label;
+    - implausible walking or cycling and UNKNOWN are dropped;
+    - a mode needs 10% of the typed distance and 25 km;
+    - walking only on a walk-only trip;
+    - at most two icons, longest first;
+    - none at all when the typed distance is under 1.2 times the farthest
+      point.
+    On the 13-year file that gives 24 ✈, 24 car, 19 ✈+car, 3 train, 1 train
+    +boat, 1 ✈+train and 11 without icons. Day trips stay iconless. TalkBack
+    reads the movement-group names the filter already uses.
   - The same double count is fixed in steps 1 and 2. The file's *Distance*,
     the *Movement* breakdown, its trip counts and the total for the chosen
     groups now sum `ParsedTimeline.distinctActivities`. That is one rule,

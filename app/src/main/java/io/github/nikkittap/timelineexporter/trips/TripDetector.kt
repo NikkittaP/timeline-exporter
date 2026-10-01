@@ -62,6 +62,8 @@ data class Trip(
     val movements: List<Pair<MovementGroup, Double>>,
     val openStart: Boolean,
     val openEnd: Boolean,
+    /** How the person mostly got around, longest first; see [transportOf]. */
+    val transport: List<TransportMode> = emptyList(),
 ) {
     val durationSeconds: Long get() = end.epochSecond - start.epochSecond
 
@@ -75,6 +77,13 @@ data class Trip(
 
     fun covers(time: Instant): Boolean = time >= start && time <= end
 }
+
+/**
+ * A means of transport worth an icon. Finer than [MovementGroup] where the
+ * difference is visible at a glance (a train trip and a bus tour are not the
+ * same holiday), coarser where it is not (a taxi is a car).
+ */
+enum class TransportMode { FLIGHT, CAR, TRAIN, BUS, BOAT, BICYCLE, WALK }
 
 /** What [detectTrips] found, or why it found nothing. */
 sealed interface TripDetection {
@@ -202,6 +211,7 @@ private class Span(var from: Position, val openStart: Boolean) {
         // Each stretch of time once: see ParsedTimeline.distinctActivities.
         val activities = parsed.distinctActivities.filter { it.end > start && it.start < end }
         val activityMeters = activities.sumOf { it.distanceMeters ?: 0.0 }
+        val transport = transportOf(activities, maxDistance)
         val untyped = untypedTrackMeters(parsed, start, end, activities)
         val movements = activities
             .groupBy { it.movement ?: MovementGroup.OTHER }
@@ -230,8 +240,91 @@ private class Span(var from: Position, val openStart: Boolean) {
             movements = movements,
             openStart = openStart,
             openEnd = openEnd,
+            transport = transport,
         )
     }
+}
+
+/** Only a plane averages this over a leg of at least [FLIGHT_MIN_METERS]. */
+private const val FLIGHT_MIN_KMH = 250.0
+private const val FLIGHT_MIN_METERS = 150_000.0
+private const val WALK_MAX_KMH = 15.0
+private const val BICYCLE_MAX_KMH = 45.0
+
+/** A mode earns an icon from this share of the trip's typed distance... */
+private const val TRANSPORT_MIN_SHARE = 0.10
+
+/** ...and at least this far, so the taxi to the hotel never does. */
+private const val TRANSPORT_MIN_METERS = 25_000.0
+
+/** A walk-only trip shows the walker from this far. */
+private const val WALK_ONLY_MIN_METERS = 5_000.0
+
+/** Typed distance below this multiple of the farthest point is too little to describe. */
+private const val TRANSPORT_MIN_COVERAGE = 1.2
+
+private const val MAX_TRANSPORT_ICONS = 2
+
+/**
+ * The one or two ways of travelling that carried most of the trip, or none
+ * when the data cannot say.
+ *
+ * Measured on the 13-year reference file before writing this. Recent data is
+ * clean, but older activities carry no confidence at all and are often
+ * plainly mislabelled: 27,000 km of "walking" at up to 2,500 km/h, a 9,174 km
+ * "car" journey to Florida, flights typed UNKNOWN. Taking the longest label
+ * as given put the wrong main icon on 8 of 83 multi-day trips. So:
+ *
+ * - Physics first. A leg of 150 km or more averaging 250 km/h or more is a
+ *   flight whatever it is labelled. Walking faster than 15 km/h and cycling
+ *   faster than 45 km/h are dropped, and so is anything Google did not type.
+ * - A mode counts from 10% of the typed distance and 25 km.
+ * - Walking is shown only on a trip that was nothing else.
+ * - Longest first, at most two. The reference data never produced a third.
+ * - No icons at all when the typed distance is under 1.2 times the farthest
+ *   point. That much movement does not reach the place and back, so most of
+ *   the journey went unrecorded (September 2013: 19 km typed of ~1,300), and
+ *   any icon would describe only the part that happened to be typed.
+ */
+internal fun transportOf(activities: List<Segment>, maxDistanceMeters: Double): List<TransportMode> {
+    val byMode = HashMap<TransportMode, Double>()
+    for (seg in activities) {
+        val meters = seg.distanceMeters ?: continue
+        val hours = (seg.end.epochSecond - seg.start.epochSecond).coerceAtLeast(60) / 3600.0
+        val kmh = meters / 1000 / hours
+        val mode = when {
+            meters >= FLIGHT_MIN_METERS && kmh >= FLIGHT_MIN_KMH -> TransportMode.FLIGHT
+            else -> when (val m = transportModeOf(seg.activityType)) {
+                TransportMode.WALK -> m.takeIf { kmh <= WALK_MAX_KMH }
+                TransportMode.BICYCLE -> m.takeIf { kmh <= BICYCLE_MAX_KMH }
+                else -> m
+            }
+        } ?: continue
+        byMode[mode] = (byMode[mode] ?: 0.0) + meters
+    }
+    val typed = byMode.values.sum()
+    if (typed < maxDistanceMeters * TRANSPORT_MIN_COVERAGE) return emptyList()
+    val ranked = byMode.entries.sortedByDescending { it.value }
+    val shown = ranked
+        .filter { it.key != TransportMode.WALK }
+        .filter { it.value >= TRANSPORT_MIN_METERS && it.value >= typed * TRANSPORT_MIN_SHARE }
+        .map { it.key }
+        .take(MAX_TRANSPORT_ICONS)
+    if (shown.isNotEmpty()) return shown
+    val walked = byMode[TransportMode.WALK] ?: 0.0
+    return if (walked >= WALK_ONLY_MIN_METERS) listOf(TransportMode.WALK) else emptyList()
+}
+
+/** Google's raw activity type as an icon, or null for types not worth one. */
+internal fun transportModeOf(rawType: String?): TransportMode? = when (rawType?.uppercase()) {
+    "FLYING" -> TransportMode.FLIGHT
+    "IN_PASSENGER_VEHICLE", "IN_VEHICLE", "IN_TAXI", "DRIVING", "MOTORCYCLING", "IN_CAR" -> TransportMode.CAR
+    "IN_TRAIN", "IN_SUBWAY", "IN_TRAM", "IN_FUNICULAR", "IN_CABLECAR" -> TransportMode.TRAIN
+    "IN_BUS" -> TransportMode.BUS
+    "IN_FERRY", "BOATING", "SAILING" -> TransportMode.BOAT
+    "CYCLING", "ON_BICYCLE" -> TransportMode.BICYCLE
+    "WALKING", "ON_FOOT", "RUNNING", "HIKING" -> TransportMode.WALK
+    else -> null
 }
 
 private class Home(val time: Instant, val latitude: Double, val longitude: Double)
