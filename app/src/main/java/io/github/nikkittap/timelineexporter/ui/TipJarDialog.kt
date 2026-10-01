@@ -1,6 +1,6 @@
 package io.github.nikkittap.timelineexporter.ui
 
-import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,9 +31,11 @@ fun TipJarDialog(
     viewModel: TipJarViewModel = viewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    // LocalContext is the hosting Activity (ComponentActivity from MainActivity).
-    // Required by Play Billing's launchBillingFlow.
-    val activity = LocalContext.current as ComponentActivity
+    // The hosting Activity, required by Play Billing's launchBillingFlow.
+    // LocalActivity rather than casting LocalContext: a Context is not always
+    // an Activity, and the cast would crash where a lookup just comes back
+    // empty. Null only outside an Activity, where there is nothing to buy from.
+    val activity = LocalActivity.current
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -50,7 +51,7 @@ fun TipJarDialog(
                     TipJarState.Connecting -> ConnectingRow()
                     is TipJarState.Loaded -> ProductButtons(
                         products = s.products,
-                        onPick = { id -> viewModel.launchPurchase(activity, id) },
+                        onPick = { id -> activity?.let { viewModel.launchPurchase(it, id) } },
                     )
                     TipJarState.Processing -> ConnectingRow(
                         label = stringResource(R.string.tipjar_processing),
