@@ -122,6 +122,32 @@ fun List<MovementStats>.totalFor(groups: Set<MovementGroup>): MovementStats? =
         }
 
 /**
+ * Two activities overlapping by more than this are one stretch of time
+ * recorded twice, not two journeys. Activities in a single export abut but
+ * never overlap; a minute of slack keeps rounding in a merged file from
+ * reading as a real overlap.
+ */
+private const val ACTIVITY_OVERLAP_TOLERANCE_SECONDS = 60L
+
+/**
+ * The activities in [segments] (sorted by start), skipping any that begins
+ * before an already-kept one has ended: the first copy of a duplicated
+ * stretch is kept, later copies are not.
+ */
+internal fun distinctActivities(segments: List<Segment>): List<Segment> {
+    val out = ArrayList<Segment>()
+    var lastEnd: Long? = null
+    for (seg in segments) {
+        if (seg.kind != SegmentKind.ACTIVITY) continue
+        val previousEnd = lastEnd
+        if (previousEnd != null && seg.start.epochSecond < previousEnd - ACTIVITY_OVERLAP_TOLERANCE_SECONDS) continue
+        out += seg
+        if (previousEnd == null || seg.end.epochSecond > previousEnd) lastEnd = seg.end.epochSecond
+    }
+    return out
+}
+
+/**
  * A place Google matched a visit to.
  *
  * [probability] is Google's confidence in the visit itself. It is worth
@@ -262,6 +288,19 @@ data class ParsedTimeline(
     /** Activity segments only, in time order. */
     val activities: List<Segment> by lazy { segments.filter { it.kind == SegmentKind.ACTIVITY } }
 
+    /**
+     * Activities with each stretch of time counted once: the ones every
+     * distance total should sum.
+     *
+     * A single export never has overlapping activities (none in four
+     * reference files). A merged one does: the 13-year reference file carries
+     * 455 activities twice, one copy from each export that covered those
+     * years, and summing all of them doubled every flight in the overlap.
+     * [activities] keeps both copies, because joining a point to the activity
+     * it falls in does not care which copy it finds.
+     */
+    val distinctActivities: List<Segment> by lazy { distinctActivities(segments) }
+
     /** Visit segments only, in time order. One stay may appear more than once. */
     val visits: List<Segment> by lazy { segments.filter { it.kind == SegmentKind.VISIT } }
 
@@ -271,8 +310,7 @@ data class ParsedTimeline(
      * rather than being estimated from the track.
      */
     fun distanceByMovement(): Map<MovementGroup, Double> =
-        segments.asSequence()
-            .filter { it.kind == SegmentKind.ACTIVITY }
+        distinctActivities.asSequence()
             .mapNotNull { seg -> seg.distanceMeters?.let { (seg.movement ?: MovementGroup.OTHER) to it } }
             .groupingBy { it.first }
             .fold(0.0) { acc, (_, meters) -> acc + meters }
@@ -297,8 +335,7 @@ data class ParsedTimeline(
         timeOfDay: TimeOfDayWindow? = null,
         fallbackZone: ZoneId = ZoneId.systemDefault(),
     ): List<MovementStats> =
-        segments.asSequence()
-            .filter { it.kind == SegmentKind.ACTIVITY }
+        distinctActivities.asSequence()
             .filter { range == null || it.start in range }
             .filter { seg ->
                 val window = timeOfDay?.takeIf { w -> !w.isWholeDay } ?: return@filter true

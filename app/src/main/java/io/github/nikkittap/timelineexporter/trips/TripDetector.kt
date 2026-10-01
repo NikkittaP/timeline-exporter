@@ -102,14 +102,6 @@ const val LONG_ABSENCE_DAYS = 60L
 private const val ESTIMATE_SHARE = 0.10
 private const val ESTIMATE_MIN_METERS = 10_000.0
 
-/**
- * Two activities overlapping by more than this are the same stretch of time
- * recorded twice. A single export never does that (zero overlaps in four
- * reference files); a merged one does, 517 times in the 13-year file, and
- * each one doubled a flight or a train.
- */
-private const val OVERLAP_TOLERANCE_SECONDS = 60L
-
 private const val SECONDS_PER_DAY = 86_400L
 
 private val HOME_TYPES = setOf("HOME", "INFERRED_HOME")
@@ -207,14 +199,8 @@ private class Span(var from: Position, val openStart: Boolean) {
         // within 50 km of home, which on a drive is part-way through the
         // activity that took the person away. Counting only activities fully
         // inside dropped the journey out and back.
-        val activities = ArrayList<Segment>()
-        var lastEnd = Instant.MIN
-        for (seg in parsed.segments) {
-            if (seg.kind != SegmentKind.ACTIVITY || seg.end <= start || seg.start >= end) continue
-            if (seg.start.epochSecond < lastEnd.epochSecond - OVERLAP_TOLERANCE_SECONDS) continue
-            activities += seg
-            if (seg.end > lastEnd) lastEnd = seg.end
-        }
+        // Each stretch of time once: see ParsedTimeline.distinctActivities.
+        val activities = parsed.distinctActivities.filter { it.end > start && it.start < end }
         val activityMeters = activities.sumOf { it.distanceMeters ?: 0.0 }
         val untyped = untypedTrackMeters(parsed, start, end, activities)
         val movements = activities

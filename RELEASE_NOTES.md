@@ -58,7 +58,7 @@ Where things go at release time:
       inside. A trip starts part-way through the drive away from home, so
       the drive used to be dropped (12-19 May 2026: 568 -> 2,151 km).
     - Each stretch of time is counted once. Merged files carry many
-      activities twice (517 in the 13-year file); June 2025 went from
+      activities twice (455 in the 13-year file); June 2025 went from
       14,171 to 11,821 km.
     - Track that Google never classified is measured too. Sep 2013's
       ~640 km drive each way had no activities at all: 19 -> 1,557 km.
@@ -68,6 +68,15 @@ Where things go at release time:
       GPX/KML description says "about".
     - "km from home" is unchanged: the greatest distance from the detected
       home of any position in the trip.
+  - The same double count is fixed in steps 1 and 2. The file's *Distance*,
+    the *Movement* breakdown, its trip counts and the total for the chosen
+    groups now sum `ParsedTimeline.distinctActivities`. That is one rule,
+    shared with the trip detector: an activity starting more than a minute
+    before the previous kept one ends is a second copy. Single exports are
+    unaffected (Timeline_2.json keeps all 1,175 activities). On the 13-year
+    merged file 455 copies drop out, and the distance goes from 497,939 to
+    487,362 km. Filtering points by movement still sees every copy, which
+    changes nothing there.
   - Copy: the hint now says trips are *detected* past 50 km (the trip
     includes the way there). The selected-trip action is "Use only this
     trip". The full list's title shows the total ("Trips · 126"), and step 4
