@@ -88,6 +88,7 @@ import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.geometry.LatLngBounds
 import org.maplibre.android.maps.MapLibreMap
+import org.maplibre.android.maps.MapLibreMapOptions
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
 import org.maplibre.android.style.expressions.Expression
@@ -637,7 +638,15 @@ fun TimelineMap(
     // GL surface; onCreate(null) means "no saved instance state to restore".
     val mapView = remember {
         MapLibre.getInstance(context)
-        MapView(context).apply {
+        // TextureView rather than the default SurfaceView renderer. Detaching a
+        // SurfaceView map calls nativeReset() on the main thread while its
+        // render thread is still running, and the native renderer is then
+        // destroyed a second time by its finalizer: SIGABRT "Scudo ERROR:
+        // invalid chunk state" in ~MapRenderer on FinalizerDaemon, every time
+        // a second file was loaded on a Galaxy S25 Edge (maplibre-native#4622,
+        // still open in 13.x). The texture renderer has no reset on detach
+        // and stops its thread in onDestroy.
+        MapView(context, MapLibreMapOptions.createFromAttributes(context).textureMode(true)).apply {
             onCreate(null)
             // Spy on touch events to tell the parent verticalScroll to back
             // off while the map is being interacted with. Returning false

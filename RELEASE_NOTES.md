@@ -111,6 +111,20 @@ Where things go at release time:
   still opens on Track.
 - Re-ticking every movement group this file has now clears the movement
   filter even when the remembered selection names groups this file lacks.
+- **Crash fix: loading a second file.** On a Galaxy S25 Edge (Android 16)
+  the app died every time a second file was opened after the first had been
+  looked at: SIGABRT "Scudo ERROR: invalid chunk state" in
+  `mbgl::android::MapRenderer::~MapRenderer()` on the FinalizerDaemon
+  thread. Loading hides steps 2-4, so the map is torn down. With MapLibre's
+  default SurfaceView renderer, detaching calls `nativeReset()` on the main
+  thread while the render thread is still running, and the finalizer later
+  destroys the native renderer a second time (maplibre-native#4622, still
+  open in 13.x, so upgrading would not help). The map now uses
+  `textureMode(true)`, whose renderer has no reset on detach and stops its
+  thread in `onDestroy`. The emulator never showed it. On the phone it was
+  reproducible every time before the change; after it, the same steps plus
+  tab switches and the fullscreen map rebuilt the map three times without a
+  native crash.
 - AndroidX: core-ktx 1.18.0, lifecycle 2.10.0, activity-compose 1.13.0,
   core-splashscreen 1.2.0. core 1.19 and lifecycle 2.11 need compileSdk 37.
   The TipJar dialog now gets its Activity from LocalActivity instead of
