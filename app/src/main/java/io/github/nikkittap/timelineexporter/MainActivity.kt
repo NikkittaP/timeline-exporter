@@ -12,6 +12,7 @@ import androidx.core.content.IntentCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.github.nikkittap.timelineexporter.ui.TimelineExporterApp
 import io.github.nikkittap.timelineexporter.ui.TimelineViewModel
+import io.github.nikkittap.timelineexporter.ui.TimelineViewModelFactory
 import io.github.nikkittap.timelineexporter.ui.theme.TimelineExporterTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
     // Activity-scoped ViewModel. Compose's `viewModel()` inside MainScreen
     // returns the same instance because both use this Activity's
     // ViewModelStore.
-    private val viewModel: TimelineViewModel by viewModels()
+    private val viewModel: TimelineViewModel by viewModels { TimelineViewModelFactory }
 
     // Apply the user's in-app language choice before any resources are resolved.
     override fun attachBaseContext(newBase: Context) {

@@ -22,9 +22,48 @@ Where things go at release time:
 
 ---
 
-# Unreleased — everything since v1.8.4
+# Unreleased — everything since v1.8.5
 
-## 1.8.5 — tracks exported coloured by day (versionCode 23, 2026-09-26)
+## 1.9.0 — filters remembered between sessions (versionCode 24, in progress)
+
+1.9.0 is planned around Trips. These changes come first.
+
+- **Filters and export choices are remembered.** On the feedback ballot as
+  "Remember my filters and format for the next export" (FB-016, FB-019).
+  The movement groups, *Only while moving*, *Skip repeated points*, the
+  time-of-day window, the date range, *Include containers*, Save / Send and
+  *Color by day* come back with the next file, after a restart too. A
+  remembered date range is applied only if it overlaps the new file's
+  points; a range that misses the file would open it on zero points, so it
+  is dropped. The format is not remembered, because each format button
+  saves straight away and nothing is selected. The Track / Places switch
+  still opens on Track.
+- Re-ticking every movement group this file has now clears the movement
+  filter even when the remembered selection names groups this file lacks.
+- AndroidX: core-ktx 1.18.0, lifecycle 2.10.0, activity-compose 1.13.0,
+  core-splashscreen 1.2.0. core 1.19 and lifecycle 2.11 need compileSdk 37.
+  The TipJar dialog now gets its Activity from LocalActivity instead of
+  casting LocalContext.
+- Memory measured against the Play thresholds that take effect in February
+  2027 (2 GB foreground, 1 GB background on a 4 GB phone). Pixel_7 AVD,
+  API 34, debug build, Timeline_merged_big.json (115 MB, 284,402 points),
+  fresh process: peak VmHWM 268 MB, of which anonymous ~122 MB plus 18 MB
+  swap. With the map on screen and Color by day on, RssAnon is 111 MB and
+  swap 26 MB, and it stays there in the background. That is roughly 1/15 of
+  the foreground limit, so no work is needed. GPU memory is not counted on
+  the emulator.
+
+---
+
+# Released
+
+## v1.8.5 (versionCode 23) — released by 1 October 2026
+
+The *Unreleased* section from v1.8.4 up to this upload, moved here
+unchanged (headings demoted one level). Store text:
+`fastlane/metadata/android/<locale>/changelogs/23.txt`.
+
+### 1.8.5 — tracks exported coloured by day (versionCode 23, 2026-09-26)
 
 Feedback from 1.8.4 (ja-JP): the preview colours each day, but the KML came
 out as one line.
@@ -42,10 +81,6 @@ out as one line.
 
 Store text: `fastlane/metadata/android/<locale>/changelogs/23.txt` (this one
 line only, 18 locales) and `F:\Timeline\Whats_New_v1.8.5_tagged.txt`.
-
----
-
-# Released
 
 ## v1.8.4 (versionCode 22) — released by 26 September 2026
 

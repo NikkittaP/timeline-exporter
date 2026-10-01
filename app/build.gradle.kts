@@ -412,8 +412,12 @@ android {
         //       simplestyle stroke, in the preview's colours (feedback from
         //       1.8.4, ja-JP). GPX and CSV unchanged. Patch: a new output of
         //       an existing switch. changelogs/23.txt describes this alone.
-        versionCode = 23
-        versionName = "1.8.5"
+        //   versionCode=23, versionName="1.8.5" is live on Play.
+        //   versionCode=24, versionName="1.9.0" -> filters and export
+        //       choices remembered between sessions, AndroidX bump. Minor:
+        //       1.9.0 is the Trips release, and this is its first part.
+        versionCode = 24
+        versionName = "1.9.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

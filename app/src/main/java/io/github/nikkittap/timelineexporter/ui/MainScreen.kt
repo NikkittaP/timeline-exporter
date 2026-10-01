@@ -84,6 +84,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
@@ -154,7 +155,7 @@ fun TimelineExporterApp() {
 
     // Same activity-scoped instance MainScreen resolves to; read here only to
     // pre-fill the feedback diagnostics with what is currently loaded.
-    val viewModel: TimelineViewModel = viewModel()
+    val viewModel: TimelineViewModel = viewModel(factory = TimelineViewModelFactory)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Optional "a new version is available" / "restart to install it" prompt,
@@ -362,7 +363,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     onHelpClick: () -> Unit = {},
     onFeedbackClick: () -> Unit = {},
-    viewModel: TimelineViewModel = viewModel(),
+    viewModel: TimelineViewModel = viewModel(factory = TimelineViewModelFactory),
     tipPrompt: TipPromptState = rememberTipPrompt(),
 ) {
     val context = LocalContext.current
@@ -382,9 +383,9 @@ fun MainScreen(
     var timeDialogOpen by remember { mutableStateOf(false) }
     var mapInteracting by remember { mutableStateOf(false) }
     // What the format buttons in step 4 do: write a file the user picks a home
-    // for, or hand it straight to another app. Survives rotation so a chosen
-    // destination is not silently reset under the user.
-    var shareInstead by rememberSaveable { mutableStateOf(false) }
+    // for, or hand it straight to another app. Held by the ViewModel, which
+    // remembers it for the next session along with the filters.
+    val shareInstead by viewModel.shareInstead.collectAsStateWithLifecycle()
     var mapFullscreen by remember { mutableStateOf(false) }
     var placesFullscreen by remember { mutableStateOf(false) }
     // Non-null while the naming dialog is open, and the place it is about.
@@ -528,7 +529,13 @@ fun MainScreen(
     // because the track export follows it: what the preview shows in colour
     // is what a KML or GeoJSON is written in. One State object for the life
     // of the screen, so the movable map below can close over it directly.
-    val colorByDayState = rememberSaveable { mutableStateOf(false) }
+    //
+    // Seeded from the ViewModel and written back to it, which is what carries
+    // the switch over to the next session.
+    val colorByDayState = rememberSaveable { mutableStateOf(viewModel.colorByDay.value) }
+    LaunchedEffect(colorByDayState) {
+        snapshotFlow { colorByDayState.value }.collect(viewModel::setColorByDay)
+    }
 
     val exportContent: ExportContent = when (contentKind) {
         ContentKind.TRACK -> ExportContent.Track(filteredPoints, colorByDay = colorByDayState.value)
@@ -841,7 +848,7 @@ fun MainScreen(
                         itemCount = exportContent.size,
                         exportState = exportState,
                         shareInstead = shareInstead,
-                        onShareInsteadChange = { shareInstead = it },
+                        onShareInsteadChange = viewModel::setShareInstead,
                         onPickFormat = onPickFormat,
                         onFeedbackClick = onFeedbackClick,
                         postExportAsk = postExportAsk,

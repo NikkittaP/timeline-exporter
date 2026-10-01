@@ -154,7 +154,17 @@ private const val EXPORT_BUFFER_BYTES = 64 * 1024
 
 // ---------- ViewModel ----------
 
-class TimelineViewModel : ViewModel() {
+/**
+ * [settings] is where the user's filters and export choices are remembered
+ * between sessions. The default keeps them in memory only, for tests; the app
+ * builds this through [TimelineViewModelFactory].
+ */
+class TimelineViewModel(
+    private val settings: SettingsStore = SettingsStore.InMemory(),
+) : ViewModel() {
+
+    /** What was remembered at start, kept current as the user changes things. */
+    private var remembered: RememberedSettings = settings.load()
 
     private val _uiState = MutableStateFlow<TimelineUiState>(TimelineUiState.Idle)
     val uiState: StateFlow<TimelineUiState> = _uiState.asStateFlow()
@@ -200,8 +210,20 @@ class TimelineViewModel : ViewModel() {
      * level-0 visit, so including them reports one afternoon as two stays.
      * See `placeEntries` for why it is nevertheless offered.
      */
-    private val _includeContainers = MutableStateFlow(false)
+    private val _includeContainers = MutableStateFlow(remembered.includeContainers)
     val includeContainers: StateFlow<Boolean> = _includeContainers.asStateFlow()
+
+    /**
+     * Step 4's Save / Send switch: write a file the user picks a home for, or
+     * hand it straight to another app. Here rather than in the screen so that
+     * it is remembered with everything else.
+     */
+    private val _shareInstead = MutableStateFlow(remembered.shareInstead)
+    val shareInstead: StateFlow<Boolean> = _shareInstead.asStateFlow()
+
+    /** The map's Color by day switch, which KML and GeoJSON exports follow. */
+    private val _colorByDay = MutableStateFlow(remembered.colorByDay)
+    val colorByDay: StateFlow<Boolean> = _colorByDay.asStateFlow()
 
     // ----- parse pipeline -----
 
@@ -259,6 +281,13 @@ class TimelineViewModel : ViewModel() {
                             )
                         }
                     }
+                    // The remembered filter goes on before the screen sees the
+                    // file, so the first count it shows is already the filtered
+                    // one rather than the whole file for a frame.
+                    _filter.value = remembered.filterFor(
+                        dataFirst = result.pathPoints.firstOrNull()?.timeUtc,
+                        dataLast = result.pathPoints.lastOrNull()?.timeUtc,
+                    )
                     TimelineUiState.Loaded(result, fileName = queryDisplayName(uri, contentResolver))
                 } catch (e: CancellationException) {
                     throw e
@@ -290,14 +319,30 @@ class TimelineViewModel : ViewModel() {
 
     // ----- filter -----
 
-    fun setDateRange(range: ClosedRange<Instant>) {
-        _filter.value = _filter.value.copy(dateRange = range)
+    /**
+     * Every filter change goes through here, so that each one is also
+     * remembered for the next file. Only a change the user made is saved: the
+     * blank filter a new file starts loading under is not, or opening a file
+     * would forget everything before the remembered filter could be applied.
+     */
+    private fun updateFilter(change: (TimelineFilter) -> TimelineFilter) {
+        _filter.value = change(_filter.value)
         _exportState.value = ExportState.Idle
+        persist(remembered.withFilter(_filter.value))
+    }
+
+    private fun persist(updated: RememberedSettings) {
+        if (updated == remembered) return
+        remembered = updated
+        settings.save(updated)
+    }
+
+    fun setDateRange(range: ClosedRange<Instant>) {
+        updateFilter { it.copy(dateRange = range) }
     }
 
     fun clearDateRange() {
-        _filter.value = _filter.value.copy(dateRange = null)
-        _exportState.value = ExportState.Idle
+        updateFilter { it.copy(dateRange = null) }
     }
 
     /**
@@ -313,24 +358,25 @@ class TimelineViewModel : ViewModel() {
      * an empty set rather than being bounced back to null: it really does match
      * no points, the count under the chips says so, and export is disabled —
      * quietly reinterpreting it as "everything" would be worse.
+     *
+     * "Everything" is every group [available] has, not equality with it. A
+     * selection remembered from another file can name groups this one lacks,
+     * and re-ticking all of this file's groups should still clear the filter.
      */
     fun toggleMovement(group: MovementGroup, enabled: Boolean, available: Set<MovementGroup>) {
-        val current = _filter.value.movements ?: available
-        val updated = if (enabled) current + group else current - group
-        _filter.value = _filter.value.copy(
-            movements = if (updated == available) null else updated,
-        )
-        _exportState.value = ExportState.Idle
+        updateFilter { filter ->
+            val current = filter.movements ?: available
+            val updated = if (enabled) current + group else current - group
+            filter.copy(movements = if (updated.containsAll(available)) null else updated)
+        }
     }
 
     fun setMovingOnly(enabled: Boolean) {
-        _filter.value = _filter.value.copy(movingOnly = enabled)
-        _exportState.value = ExportState.Idle
+        updateFilter { it.copy(movingOnly = enabled) }
     }
 
     fun setDropRepeatedPoints(enabled: Boolean) {
-        _filter.value = _filter.value.copy(dropRepeatedPoints = enabled)
-        _exportState.value = ExportState.Idle
+        updateFilter { it.copy(dropRepeatedPoints = enabled) }
     }
 
     /**
@@ -341,8 +387,7 @@ class TimelineViewModel : ViewModel() {
      * filtering.
      */
     fun setTimeOfDay(window: TimeOfDayWindow?) {
-        _filter.value = _filter.value.copy(timeOfDay = window?.takeIf { !it.isWholeDay })
-        _exportState.value = ExportState.Idle
+        updateFilter { it.copy(timeOfDay = window?.takeIf { !it.isWholeDay }) }
     }
 
     // ----- content selection -----
@@ -358,6 +403,17 @@ class TimelineViewModel : ViewModel() {
     fun setIncludeContainers(enabled: Boolean) {
         _includeContainers.value = enabled
         _exportState.value = ExportState.Idle
+        persist(remembered.copy(includeContainers = enabled))
+    }
+
+    fun setShareInstead(enabled: Boolean) {
+        _shareInstead.value = enabled
+        persist(remembered.copy(shareInstead = enabled))
+    }
+
+    fun setColorByDay(enabled: Boolean) {
+        _colorByDay.value = enabled
+        persist(remembered.copy(colorByDay = enabled))
     }
 
     // ----- export -----
