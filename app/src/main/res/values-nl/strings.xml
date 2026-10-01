@@ -178,6 +178,25 @@
     <!-- Places (1.7.0) -->
     <string name="content_track">Route</string>
     <string name="content_places">Plaatsen</string>
+    <string name="content_trips">Reizen</string>
+    <plurals name="trips_count">
+        <item quantity="one">%1$s reis</item>
+        <item quantity="other">%1$s reizen</item>
+    </plurals>
+    <string name="step_export_trips">Reizen exporteren</string>
+    <string name="export_success_trips">%1$s reizen opgeslagen in %2$s</string>
+    <string name="export_shared_trips">%1$s reizen voorbereid als %2$s</string>
+    <string name="export_error_no_trips">Geen reizen in het huidige datumbereik.</string>
+    <string name="trips_none">Geen reizen: in dit bestand kom je nooit verder dan 50 km van huis.</string>
+    <string name="trips_none_filtered">Geen reizen in het gekozen datumbereik.</string>
+    <string name="trips_no_home">Dit bestand vermeldt geen thuis, dus er kunnen geen reizen worden gevonden.</string>
+    <string name="trips_hint">Een reis is de tijd die je meer dan 50 km van huis doorbrengt. Tik op een reis om hem op de kaart te zien.</string>
+    <string name="trip_only_this">Alleen deze reis</string>
+    <string name="trip_far_from_home">%1$s van huis</string>
+    <string name="trip_travelled_label">afgelegd</string>
+    <string name="trip_open_start">begon vóór dit bestand</string>
+    <string name="trip_open_end">nog niet voorbij</string>
+    <string name="trip_long_absence">lange afwezigheid, misschien een verhuizing</string>
     <string name="places_none">Dit bestand bevat geen plaatsen.</string>
     <string name="places_none_filtered">Geen plaatsen in het geselecteerde datumbereik.</string>
     <string name="places_visits_label">bezoeken</string>

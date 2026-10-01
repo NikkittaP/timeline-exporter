@@ -178,6 +178,25 @@
     <!-- Places (1.7.0) -->
     <string name="content_track">ट्रैक</string>
     <string name="content_places">जगहें</string>
+    <string name="content_trips">यात्राएँ</string>
+    <plurals name="trips_count">
+        <item quantity="one">%1$s यात्रा</item>
+        <item quantity="other">%1$s यात्राएँ</item>
+    </plurals>
+    <string name="step_export_trips">यात्राएँ एक्सपोर्ट करें</string>
+    <string name="export_success_trips">%1$s यात्राएँ %2$s में सहेजी गईं</string>
+    <string name="export_shared_trips">%1$s यात्राएँ %2$s के रूप में तैयार की गईं</string>
+    <string name="export_error_no_trips">मौजूदा तारीख सीमा में कोई यात्रा नहीं है।</string>
+    <string name="trips_none">कोई यात्रा नहीं: इस फ़ाइल में आप घर से कभी 50 किमी से ज़्यादा दूर नहीं गए।</string>
+    <string name="trips_none_filtered">चुनी गई तारीख सीमा में कोई यात्रा नहीं है।</string>
+    <string name="trips_no_home">इस फ़ाइल में घर दर्ज नहीं है, इसलिए यात्राएँ नहीं मिल सकतीं।</string>
+    <string name="trips_hint">यात्रा वह समय है जो घर से 50 किमी से ज़्यादा दूर बीता। मैप पर देखने के लिए किसी यात्रा पर टैप करें।</string>
+    <string name="trip_only_this">सिर्फ़ यह यात्रा</string>
+    <string name="trip_far_from_home">घर से %1$s</string>
+    <string name="trip_travelled_label">तय दूरी</string>
+    <string name="trip_open_start">इस फ़ाइल से पहले शुरू हुई</string>
+    <string name="trip_open_end">अभी खत्म नहीं हुई</string>
+    <string name="trip_long_absence">लंबी अनुपस्थिति, शायद घर बदला</string>
     <string name="places_none">इस फ़ाइल में कोई जगह दर्ज नहीं है।</string>
     <string name="places_none_filtered">चुनी गई तारीख़ सीमा में कोई जगह नहीं है।</string>
     <string name="places_visits_label">बार</string>

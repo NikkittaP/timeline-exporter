@@ -28,6 +28,32 @@ Where things go at release time:
 
 1.9.0 is planned around Trips. These changes come first.
 
+- **Trips.** Step 3's switch is now Track / Trips / Places. A trip is time
+  spent more than 50 km from home: a two-week holiday is one trip, not forty
+  activities. It was the most-voted open request ("a list of trips with
+  start, end, time and distance", 7 votes).
+  - Detection is `trips/TripDetector.kt`. Home is the latest `HOME` /
+    `INFERRED_HOME` visit, so a move is followed. Without labels, home is
+    where the nights are spent. Gaps at home under 3 h are merged, and
+    absences under 3 h are dropped. Google's own `timelineMemory` trips were
+    measured and not used: their destinations are city IDs with no name or
+    position in the file, a whole year of them is missing from the 13-year
+    export, and May 2026 is not there at all. On Timeline_2.json the rule
+    finds the 8 trips checked by hand, and 108 of Google's 114 on the
+    13-year file. The 6 it misses are under 3 h.
+  - The list is newest first. Multi-day trips show dates, calendar days,
+    distance from home, places and km travelled; day trips get one compact
+    line. Trips starting before the file, still open, or longer than 60 days
+    (possibly a move) are flagged.
+  - Tapping a trip shows it alone on the map. "Only this trip" sets step 2's
+    dates to the trip's, so every count and export follows it.
+  - Export: GPX has one `<trk>` per trip (the ballot's "each trip as a
+    separate track inside one file"). KML has one Placemark per trip with a
+    TimeSpan. GeoJSON has one Feature per trip with its figures. CSV has one
+    row per trip. Points are the filtered track's, so the step-2 filters
+    apply.
+  - New strings in all 18 locales; the trip count is a plural.
+
 - **Filters and export choices are remembered.** On the feedback ballot as
   "Remember my filters and format for the next export" (FB-016, FB-019).
   The movement groups, *Only while moving*, *Skip repeated points*, the

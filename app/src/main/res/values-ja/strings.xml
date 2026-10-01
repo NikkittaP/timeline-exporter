@@ -178,6 +178,24 @@
     <!-- Places (1.7.0) -->
     <string name="content_track">軌跡</string>
     <string name="content_places">場所</string>
+    <string name="content_trips">旅行</string>
+    <plurals name="trips_count">
+        <item quantity="other">%1$s 件の旅行</item>
+    </plurals>
+    <string name="step_export_trips">旅行を書き出す</string>
+    <string name="export_success_trips">%1$s 件の旅行を %2$s に保存しました</string>
+    <string name="export_shared_trips">%1$s 件の旅行を %2$s として準備しました</string>
+    <string name="export_error_no_trips">現在の期間に旅行はありません。</string>
+    <string name="trips_none">旅行はありません：このファイルでは自宅から 50 km 以上離れていません。</string>
+    <string name="trips_none_filtered">選択した期間に旅行はありません。</string>
+    <string name="trips_no_home">このファイルには自宅が記録されていないため、旅行を見つけられません。</string>
+    <string name="trips_hint">旅行とは自宅から 50 km 以上離れていた期間です。タップすると地図に表示されます。</string>
+    <string name="trip_only_this">この旅行だけ</string>
+    <string name="trip_far_from_home">自宅から %1$s</string>
+    <string name="trip_travelled_label">移動距離</string>
+    <string name="trip_open_start">ファイルの開始前に出発</string>
+    <string name="trip_open_end">まだ終わっていません</string>
+    <string name="trip_long_absence">長期不在（引っ越しの可能性）</string>
     <string name="places_none">このファイルには場所の記録がありません。</string>
     <string name="places_none_filtered">選択した期間に場所はありません。</string>
     <string name="places_visits_label">回</string>

@@ -178,6 +178,29 @@
     <!-- Places (1.7.0) -->
     <string name="content_track">المسار</string>
     <string name="content_places">الأماكن</string>
+    <string name="content_trips">الرحلات</string>
+    <plurals name="trips_count">
+        <item quantity="zero">%1$s رحلة</item>
+        <item quantity="one">رحلة واحدة</item>
+        <item quantity="two">رحلتان</item>
+        <item quantity="few">%1$s رحلات</item>
+        <item quantity="many">%1$s رحلة</item>
+        <item quantity="other">%1$s رحلة</item>
+    </plurals>
+    <string name="step_export_trips">تصدير الرحلات</string>
+    <string name="export_success_trips">تم حفظ %1$s رحلة في %2$s</string>
+    <string name="export_shared_trips">تم تجهيز %1$s رحلة بصيغة %2$s</string>
+    <string name="export_error_no_trips">لا توجد رحلات في النطاق الزمني الحالي.</string>
+    <string name="trips_none">لا توجد رحلات: في هذا الملف لم تبتعد عن المنزل أكثر من 50 كم.</string>
+    <string name="trips_none_filtered">لا توجد رحلات في النطاق الزمني المحدد.</string>
+    <string name="trips_no_home">لا يحدد هذا الملف مكان المنزل، لذا لا يمكن العثور على الرحلات.</string>
+    <string name="trips_hint">الرحلة هي الوقت الذي تقضيه على بُعد أكثر من 50 كم من المنزل. انقر على رحلة لرؤيتها على الخريطة.</string>
+    <string name="trip_only_this">هذه الرحلة فقط</string>
+    <string name="trip_far_from_home">على بُعد %1$s من المنزل</string>
+    <string name="trip_travelled_label">المسافة المقطوعة</string>
+    <string name="trip_open_start">بدأت قبل بداية الملف</string>
+    <string name="trip_open_end">لم تنتهِ بعد</string>
+    <string name="trip_long_absence">غياب طويل، ربما انتقال</string>
     <string name="places_none">لا يحتوي هذا الملف على أماكن.</string>
     <string name="places_none_filtered">لا توجد أماكن في النطاق الزمني المحدد.</string>
     <string name="places_visits_label">زيارة</string>

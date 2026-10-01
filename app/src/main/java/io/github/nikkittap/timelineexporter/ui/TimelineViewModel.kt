@@ -17,6 +17,8 @@ import io.github.nikkittap.timelineexporter.parser.ParserStage
 import io.github.nikkittap.timelineexporter.parser.TimeOfDayWindow
 import io.github.nikkittap.timelineexporter.parser.findKeyOffsets
 import io.github.nikkittap.timelineexporter.parser.parseTimeline
+import io.github.nikkittap.timelineexporter.trips.TripDetection
+import io.github.nikkittap.timelineexporter.trips.detectTrips
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -225,6 +227,15 @@ class TimelineViewModel(
     private val _colorByDay = MutableStateFlow(remembered.colorByDay)
     val colorByDay: StateFlow<Boolean> = _colorByDay.asStateFlow()
 
+    /**
+     * The trips found in the loaded file, or null while none is loaded or the
+     * search failed. Found once per file on the loading thread: it walks every
+     * point, and doing that during composition would stall the first frame of
+     * the Trips tab on a large file.
+     */
+    private val _trips = MutableStateFlow<TripDetection?>(null)
+    val trips: StateFlow<TripDetection?> = _trips.asStateFlow()
+
     // ----- parse pipeline -----
 
     fun onFileSelected(uri: Uri, contentResolver: ContentResolver) {
@@ -232,6 +243,7 @@ class TimelineViewModel(
         _filter.value = TimelineFilter()
         _exportState.value = ExportState.Idle
         _pendingShare.value = null
+        _trips.value = null
         // A new file is a new subject: start on the track, the way step 3 has
         // always opened, rather than on a places list built from the old one.
         _contentKind.value = ContentKind.TRACK
@@ -284,6 +296,15 @@ class TimelineViewModel(
                     // The remembered filter goes on before the screen sees the
                     // file, so the first count it shows is already the filtered
                     // one rather than the whole file for a frame.
+                    // A failure here must not cost the user the file: the track,
+                    // places and every export still work without trips.
+                    _trips.value = try {
+                        detectTrips(result)
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (_: Exception) {
+                        null
+                    }
                     _filter.value = remembered.filterFor(
                         dataFirst = result.pathPoints.firstOrNull()?.timeUtc,
                         dataLast = result.pathPoints.lastOrNull()?.timeUtc,
@@ -645,6 +666,7 @@ fun suggestFilename(
 ): String {
     val stem = when (kind) {
         ContentKind.TRACK -> "Timeline"
+        ContentKind.TRIPS -> "Timeline_trips"
         ContentKind.PLACES -> "Timeline_places"
     }
     val range = filter.dateRange

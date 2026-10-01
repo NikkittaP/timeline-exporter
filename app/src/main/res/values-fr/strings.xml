@@ -178,6 +178,26 @@
     <!-- Places (1.7.0) -->
     <string name="content_track">Trace</string>
     <string name="content_places">Lieux</string>
+    <string name="content_trips">Voyages</string>
+    <plurals name="trips_count">
+        <item quantity="one">%1$s voyage</item>
+        <item quantity="many">%1$s voyages</item>
+        <item quantity="other">%1$s voyages</item>
+    </plurals>
+    <string name="step_export_trips">Exporter les voyages</string>
+    <string name="export_success_trips">%1$s voyages enregistrés dans %2$s</string>
+    <string name="export_shared_trips">%1$s voyages préparés en %2$s</string>
+    <string name="export_error_no_trips">Aucun voyage dans la plage de dates actuelle.</string>
+    <string name="trips_none">Aucun voyage : dans ce fichier, vous ne vous éloignez jamais de plus de 50 km de chez vous.</string>
+    <string name="trips_none_filtered">Aucun voyage dans la plage de dates sélectionnée.</string>
+    <string name="trips_no_home">Ce fichier n\'indique pas votre domicile, les voyages ne peuvent donc pas être trouvés.</string>
+    <string name="trips_hint">Un voyage est le temps passé à plus de 50 km de chez vous. Touchez-en un pour le voir sur la carte.</string>
+    <string name="trip_only_this">Seulement ce voyage</string>
+    <string name="trip_far_from_home">à %1$s de chez vous</string>
+    <string name="trip_travelled_label">parcourus</string>
+    <string name="trip_open_start">commencé avant ce fichier</string>
+    <string name="trip_open_end">pas encore terminé</string>
+    <string name="trip_long_absence">longue absence, peut-être un déménagement</string>
     <string name="places_none">Ce fichier ne contient aucun lieu.</string>
     <string name="places_none_filtered">Aucun lieu dans la période sélectionnée.</string>
     <string name="places_visits_label">visites</string>

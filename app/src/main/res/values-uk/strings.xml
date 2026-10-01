@@ -178,6 +178,27 @@
     <!-- Places (1.7.0) -->
     <string name="content_track">Трек</string>
     <string name="content_places">Місця</string>
+    <string name="content_trips">Поїздки</string>
+    <plurals name="trips_count">
+        <item quantity="one">%1$s поїздка</item>
+        <item quantity="few">%1$s поїздки</item>
+        <item quantity="many">%1$s поїздок</item>
+        <item quantity="other">%1$s поїздки</item>
+    </plurals>
+    <string name="step_export_trips">Експорт поїздок</string>
+    <string name="export_success_trips">Збережено поїздок: %1$s — у %2$s</string>
+    <string name="export_shared_trips">Підготовлено поїздок: %1$s у форматі %2$s</string>
+    <string name="export_error_no_trips">У поточному діапазоні дат немає поїздок.</string>
+    <string name="trips_none">Поїздок немає: у цьому файлі ви не від\'їжджали від дому далі ніж на 50 км.</string>
+    <string name="trips_none_filtered">У вибраному діапазоні дат немає поїздок.</string>
+    <string name="trips_no_home">У файлі не позначено дім, тому поїздки знайти неможливо.</string>
+    <string name="trips_hint">Поїздка — час далі ніж 50 км від дому. Торкніться поїздки, щоб побачити її на мапі.</string>
+    <string name="trip_only_this">Лише ця поїздка</string>
+    <string name="trip_far_from_home">%1$s від дому</string>
+    <string name="trip_travelled_label">у дорозі</string>
+    <string name="trip_open_start">почалася до початку файлу</string>
+    <string name="trip_open_end">ще не завершилася</string>
+    <string name="trip_long_absence">тривала відсутність, можливо переїзд</string>
     <string name="places_none">У цьому файлі немає місць.</string>
     <string name="places_none_filtered">У вибраному діапазоні дат немає місць.</string>
     <string name="places_visits_label">візитів</string>

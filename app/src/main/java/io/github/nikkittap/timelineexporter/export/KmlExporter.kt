@@ -33,6 +33,46 @@ object KmlExporter : Exporter {
             else exportTrackByDay(content.points, days, name, out)
         }
         is ExportContent.Places -> exportPlaces(content.places, name, out)
+        is ExportContent.Trips -> exportTrips(content.trips, name, out)
+    }
+
+    /**
+     * One Placemark per trip: a line in the trip's colour, named by its dates,
+     * with a TimeSpan for Google Earth's time slider and the summary as its
+     * description. Trips with no points left after filtering are left out.
+     */
+    private fun exportTrips(trips: List<ExportTrip>, documentName: String, sb: Appendable) {
+        val drawn = trips.filter { it.points.isNotEmpty() }
+        sb.append("""<?xml version="1.0" encoding="UTF-8"?>""").append('\n')
+        sb.append("""<kml xmlns="http://www.opengis.net/kml/2.2">""").append('\n')
+        sb.append("  <Document>\n")
+        sb.append("    <name>").append(escapeXml(documentName)).append("</name>\n")
+        for (color in drawn.map { it.color }.distinct()) {
+            sb.append("    <Style id=\"").append(dayStyleId(color)).append("\">\n")
+            sb.append("      <LineStyle>\n")
+            sb.append("        <color>").append(kmlColor(color)).append("</color>\n")
+            sb.append("        <width>4</width>\n")
+            sb.append("      </LineStyle>\n")
+            sb.append("    </Style>\n")
+        }
+        for (trip in drawn) {
+            sb.append("    <Placemark>\n")
+            sb.append("      <name>").append(escapeXml(trip.name)).append("</name>\n")
+            sb.append("      <description>").append(escapeXml(describe(trip))).append("</description>\n")
+            sb.append("      <TimeSpan>\n")
+            sb.append("        <begin>")
+            appendIsoInstant(sb, trip.trip.start)
+            sb.append("</begin>\n")
+            sb.append("        <end>")
+            appendIsoInstant(sb, trip.trip.end)
+            sb.append("</end>\n")
+            sb.append("      </TimeSpan>\n")
+            sb.append("      <styleUrl>#").append(dayStyleId(trip.color)).append("</styleUrl>\n")
+            appendLineString(trip.points, wholeTrack(trip.points), "      ", sb)
+            sb.append("    </Placemark>\n")
+        }
+        sb.append("  </Document>\n")
+        sb.append("</kml>\n")
     }
 
     private fun exportTrack(points: List<PathPoint>, trackName: String, sb: Appendable) {

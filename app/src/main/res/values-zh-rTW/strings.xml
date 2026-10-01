@@ -178,6 +178,24 @@
     <!-- Places (1.7.0) -->
     <string name="content_track">軌跡</string>
     <string name="content_places">地點</string>
+    <string name="content_trips">旅行</string>
+    <plurals name="trips_count">
+        <item quantity="other">%1$s 次旅行</item>
+    </plurals>
+    <string name="step_export_trips">匯出旅行</string>
+    <string name="export_success_trips">已將 %1$s 次旅行儲存至 %2$s</string>
+    <string name="export_shared_trips">已將 %1$s 次旅行準備為 %2$s</string>
+    <string name="export_error_no_trips">目前日期範圍內沒有旅行。</string>
+    <string name="trips_none">沒有旅行：此檔案中你從未離家超過 50 公里。</string>
+    <string name="trips_none_filtered">所選日期範圍內沒有旅行。</string>
+    <string name="trips_no_home">此檔案未標明住所，因此無法找出旅行。</string>
+    <string name="trips_hint">旅行是指離家超過 50 公里的時間。輕觸一次旅行即可在地圖上查看。</string>
+    <string name="trip_only_this">僅此旅行</string>
+    <string name="trip_far_from_home">離家 %1$s</string>
+    <string name="trip_travelled_label">行程</string>
+    <string name="trip_open_start">在檔案開始前出發</string>
+    <string name="trip_open_end">尚未結束</string>
+    <string name="trip_long_absence">長期離開，可能是搬家</string>
     <string name="places_none">此檔案不含地點記錄。</string>
     <string name="places_none_filtered">所選日期範圍內沒有地點。</string>
     <string name="places_visits_label">次</string>

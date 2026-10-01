@@ -114,6 +114,7 @@ import io.github.nikkittap.timelineexporter.export.AllExporters
 import io.github.nikkittap.timelineexporter.export.ContentKind
 import io.github.nikkittap.timelineexporter.export.CsvExporter
 import io.github.nikkittap.timelineexporter.export.ExportContent
+import io.github.nikkittap.timelineexporter.export.exportTrips
 import io.github.nikkittap.timelineexporter.export.Exporter
 import io.github.nikkittap.timelineexporter.export.GeoJsonExporter
 import io.github.nikkittap.timelineexporter.export.GpxExporter
@@ -125,6 +126,7 @@ import io.github.nikkittap.timelineexporter.parser.MovementStats
 import io.github.nikkittap.timelineexporter.parser.totalFor
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.PlaceEntry
+import io.github.nikkittap.timelineexporter.trips.TripDetection
 import io.github.nikkittap.timelineexporter.parser.TimelineFormat
 import io.github.nikkittap.timelineexporter.parser.placeEntries
 import java.time.Instant
@@ -374,6 +376,7 @@ fun MainScreen(
     val pendingShare by viewModel.pendingShare.collectAsStateWithLifecycle()
     val contentKind by viewModel.contentKind.collectAsStateWithLifecycle()
     val includeContainers by viewModel.includeContainers.collectAsStateWithLifecycle()
+    val tripDetection by viewModel.trips.collectAsStateWithLifecycle()
 
     // The user's own names for places. Lives here rather than in the ViewModel
     // because reading it needs a Context — see PlaceLabelState.
@@ -388,6 +391,10 @@ fun MainScreen(
     val shareInstead by viewModel.shareInstead.collectAsStateWithLifecycle()
     var mapFullscreen by remember { mutableStateOf(false) }
     var placesFullscreen by remember { mutableStateOf(false) }
+    var tripsFullscreen by remember { mutableStateOf(false) }
+    // The trip the map shows alone, by its start. A key rather than the trip,
+    // for the same reason as the place selection below.
+    var selectedTripKey by rememberSaveable { mutableStateOf<Long?>(null) }
     // Non-null while the naming dialog is open, and the place it is about.
     var placeBeingNamed by remember { mutableStateOf<PlaceEntry?>(null) }
     // The one place the map and the list both point at. Held as a key rather
@@ -508,6 +515,30 @@ fun MainScreen(
     }
     val selectedPlaceName = selectedPlace?.let { placeDisplayName(it, placeLabels[it.key]) }
 
+    // Trips that touch the chosen dates, newest first, and each one's slice of
+    // the filtered track. The slices are what the Trips map draws and what the
+    // exports write, so the step-2 filters shape a trip's line exactly as they
+    // shape the plain track.
+    val visibleTrips = remember(tripDetection, filter.dateRange) {
+        tripsIn((tripDetection as? TripDetection.Found)?.trips.orEmpty(), filter.dateRange)
+    }
+    val tripExports = remember(visibleTrips, filteredPoints) {
+        exportTrips(visibleTrips.sortedBy { it.start }, filteredPoints)
+    }
+    val selectedTripExport = tripExports.firstOrNull { it.trip.key == selectedTripKey }
+    val tripPoints = remember(tripExports, selectedTripExport) {
+        selectedTripExport?.points ?: tripExports.flatMap { it.points }
+    }
+    // A second tap on the selected trip lets go of it, so the map can go back
+    // to showing every trip without a separate control for it.
+    val onTripPicked: (io.github.nikkittap.timelineexporter.trips.Trip) -> Unit = { trip ->
+        selectedTripKey = if (trip.key == selectedTripKey) null else trip.key
+    }
+    val onOnlyThisTrip: (io.github.nikkittap.timelineexporter.trips.Trip) -> Unit = { trip ->
+        viewModel.setDateRange(trip.start..trip.end)
+        tripsFullscreen = false
+    }
+
     /**
      * One tap selects, a second names.
      *
@@ -539,6 +570,7 @@ fun MainScreen(
 
     val exportContent: ExportContent = when (contentKind) {
         ContentKind.TRACK -> ExportContent.Track(filteredPoints, colorByDay = colorByDayState.value)
+        ContentKind.TRIPS -> ExportContent.Trips(tripExports)
         ContentKind.PLACES -> ExportContent.Places(exportPlaces(places, placeLabels))
     }
 
@@ -547,9 +579,12 @@ fun MainScreen(
     // track. Remembered so the instance is stable across recompositions: the
     // map re-frames its camera when the subject changes, and a new wrapper
     // every frame would re-frame every frame.
-    val mapSubject = remember(contentKind, filteredPoints, places) {
+    val mapSubject = remember(contentKind, filteredPoints, places, tripPoints) {
         when (contentKind) {
             ContentKind.TRACK -> MapSubject.Track(filteredPoints)
+            // The trips' own points, or the selected trip's alone: a new
+            // subject re-frames the camera, which is what takes the map to it.
+            ContentKind.TRIPS -> MapSubject.Track(tripPoints)
             ContentKind.PLACES -> MapSubject.Places(places)
         }
     }
@@ -798,6 +833,25 @@ fun MainScreen(
                             mapContent = movableMap,
                         )
 
+                        ContentKind.TRIPS -> {
+                            if (!mapSubject.isEmpty) {
+                                MapTile(
+                                    subject = mapSubject,
+                                    inlineMapActive = !mapFullscreen,
+                                    mapContent = movableMap,
+                                )
+                            }
+                            TripsPreview(
+                                trips = visibleTrips,
+                                noHome = tripDetection == TripDetection.NoHome,
+                                dateRangeActive = filter.dateRange != null,
+                                selectedKey = selectedTripKey,
+                                onTripClick = onTripPicked,
+                                onOnlyThis = onOnlyThisTrip,
+                                onShowAll = { tripsFullscreen = true },
+                            )
+                        }
+
                         ContentKind.PLACES -> {
                             // Map first, list second. A place list is 262 rows
                             // of coordinates and counts; the one thing it
@@ -838,6 +892,7 @@ fun MainScreen(
                     title = stringResource(
                         when (contentKind) {
                             ContentKind.TRACK -> R.string.step_export_track
+                            ContentKind.TRIPS -> R.string.step_export_trips
                             ContentKind.PLACES -> R.string.step_export_places
                         }
                     ),
@@ -864,6 +919,17 @@ fun MainScreen(
             ExpandedMap(
                 subject = mapSubject,
                 mapContent = movableMap,
+            )
+        }
+
+        if (tripsFullscreen && visibleTrips.isNotEmpty()) {
+            BackHandler { tripsFullscreen = false }
+            ExpandedTrips(
+                trips = visibleTrips,
+                selectedKey = selectedTripKey,
+                onTripClick = onTripPicked,
+                onOnlyThis = onOnlyThisTrip,
+                onClose = { tripsFullscreen = false },
             )
         }
 
@@ -1800,6 +1866,7 @@ private fun ContentSwitch(
                 Text(
                     when (kind) {
                         ContentKind.TRACK -> stringResource(R.string.content_track)
+                        ContentKind.TRIPS -> stringResource(R.string.content_trips)
                         ContentKind.PLACES -> stringResource(R.string.content_places)
                     }
                 )
@@ -1836,16 +1903,17 @@ private fun ExportSubjectPlaque(contentKind: ContentKind, itemCount: Int) {
     val kindLabel = stringResource(
         when (contentKind) {
             ContentKind.TRACK -> R.string.content_track
+            ContentKind.TRIPS -> R.string.content_trips
             ContentKind.PLACES -> R.string.content_places
         }
     )
-    val countLabel = stringResource(
-        when (contentKind) {
-            ContentKind.TRACK -> R.string.points_count
-            ContentKind.PLACES -> R.string.places_count
-        },
-        formatGrouped(itemCount),
-    )
+    // Trips are counted in ones, and "1 trips" read wrong in every language,
+    // so that count is a plural. The other two keep their existing strings.
+    val countLabel = when (contentKind) {
+        ContentKind.TRACK -> stringResource(R.string.points_count, formatGrouped(itemCount))
+        ContentKind.TRIPS -> pluralStringResource(R.plurals.trips_count, itemCount, formatGrouped(itemCount))
+        ContentKind.PLACES -> stringResource(R.string.places_count, formatGrouped(itemCount))
+    }
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainer,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1861,6 +1929,7 @@ private fun ExportSubjectPlaque(contentKind: ContentKind, itemCount: Int) {
                 painter = painterResource(
                     when (contentKind) {
                         ContentKind.TRACK -> R.drawable.ic_content_track
+                        ContentKind.TRIPS -> R.drawable.ic_content_trips
                         ContentKind.PLACES -> R.drawable.ic_content_places
                     }
                 ),
@@ -1965,6 +2034,7 @@ private fun ExportStep(
                 text = stringResource(
                     when (s.kind) {
                         ContentKind.TRACK -> R.string.export_success
+                        ContentKind.TRIPS -> R.string.export_success_trips
                         ContentKind.PLACES -> R.string.export_success_places
                     },
                     formatGrouped(s.itemCount),
@@ -1983,6 +2053,7 @@ private fun ExportStep(
                 text = stringResource(
                     when (s.kind) {
                         ContentKind.TRACK -> R.string.export_shared
+                        ContentKind.TRIPS -> R.string.export_shared_trips
                         ContentKind.PLACES -> R.string.export_shared_places
                     },
                     formatGrouped(s.itemCount),
@@ -1997,6 +2068,7 @@ private fun ExportStep(
             text = stringResource(
                 when (contentKind) {
                     ContentKind.TRACK -> R.string.export_error_no_points
+                    ContentKind.TRIPS -> R.string.export_error_no_trips
                     ContentKind.PLACES -> R.string.export_error_no_places
                 }
             ),
@@ -2413,6 +2485,7 @@ private fun buildContentName(filter: TimelineFilter, kind: ContentKind): String 
     return stringResource(
         when (kind) {
             ContentKind.TRACK -> R.string.track_name
+            ContentKind.TRIPS -> R.string.track_name_trips
             ContentKind.PLACES -> R.string.track_name_places
         },
         described,

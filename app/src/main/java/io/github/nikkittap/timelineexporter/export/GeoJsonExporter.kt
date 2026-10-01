@@ -29,7 +29,59 @@ object GeoJsonExporter : Exporter {
             else exportTrackByDay(content.points, days, name, out)
         }
         is ExportContent.Places -> exportPlaces(content.places, name, out)
+        is ExportContent.Trips -> exportTrips(content.trips, name, out)
     }
+
+    /**
+     * One Feature per trip, a LineString in the trip's simplestyle `stroke`,
+     * with the trip's figures as properties so a table built from the file
+     * has them as columns. Trips with no points left after filtering are left
+     * out; the CSV still lists them.
+     */
+    private fun exportTrips(trips: List<ExportTrip>, documentName: String, sb: Appendable) {
+        val drawn = trips.filter { it.points.isNotEmpty() }
+        sb.append("{\n")
+        sb.append("  \"type\": \"FeatureCollection\",\n")
+        sb.append("  \"name\": ").append(jsonString(documentName)).append(",\n")
+        sb.append("  \"features\": [\n")
+        for ((i, trip) in drawn.withIndex()) {
+            val t = trip.trip
+            sb.append("    {\n")
+            sb.append("      \"type\": \"Feature\",\n")
+            sb.append("      \"properties\": {\n")
+            sb.append("        \"name\": ").append(jsonString(trip.name)).append(",\n")
+            sb.append("        \"start_time\": \"")
+            appendIsoInstant(sb, t.start)
+            sb.append("\",\n")
+            sb.append("        \"end_time\": \"")
+            appendIsoInstant(sb, t.end)
+            sb.append("\",\n")
+            sb.append("        \"duration_seconds\": ").append(t.durationSeconds.toString()).append(",\n")
+            sb.append("        \"max_distance_km\": ").append(km(t.maxDistanceMeters)).append(",\n")
+            sb.append("        \"travelled_km\": ").append(km(t.travelledMeters)).append(",\n")
+            sb.append("        \"places\": ").append(t.placeCount.toString()).append(",\n")
+            sb.append("        \"movements\": ").append(jsonString(movementList(t))).append(",\n")
+            sb.append("        \"open_start\": ").append(t.openStart.toString()).append(",\n")
+            sb.append("        \"open_end\": ").append(t.openEnd.toString()).append(",\n")
+            sb.append("        \"stroke\": \"").append(trip.color).append("\",\n")
+            sb.append("        \"stroke-width\": 4,\n")
+            sb.append("        \"creator\": ").append(jsonString(CREATOR)).append('\n')
+            sb.append("      },\n")
+            sb.append("      \"geometry\": {\n")
+            sb.append("        \"type\": \"LineString\",\n")
+            sb.append("        \"coordinates\": [\n")
+            appendPositions(trip.points, wholeTrack(trip.points), "          ", sb)
+            sb.append("        ]\n")
+            sb.append("      }\n")
+            sb.append("    }")
+            if (i < drawn.size - 1) sb.append(',')
+            sb.append('\n')
+        }
+        sb.append("  ]\n")
+        sb.append("}\n")
+    }
+
+    private fun km(meters: Double): String = String.format(java.util.Locale.ROOT, "%.1f", meters / 1000)
 
     private fun exportTrack(points: List<PathPoint>, trackName: String, sb: Appendable) {
         sb.append("{\n")

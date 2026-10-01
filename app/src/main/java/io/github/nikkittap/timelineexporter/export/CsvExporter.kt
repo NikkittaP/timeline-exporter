@@ -53,6 +53,39 @@ object CsvExporter : Exporter {
     override fun export(content: ExportContent, name: String, out: Appendable) = when (content) {
         is ExportContent.Track -> exportTrack(content.points, out)
         is ExportContent.Places -> exportPlaces(content.places, out)
+        is ExportContent.Trips -> exportTrips(content.trips, out)
+    }
+
+    /**
+     * One row per trip: the list the ballot asked for ("start, end, time and
+     * distance"), ready for a spreadsheet. Every trip is listed, including one
+     * whose points the filters removed, because its dates and distances are
+     * still true. `movements` is the groups by distance, separated by `;`.
+     */
+    private fun exportTrips(trips: List<ExportTrip>, sb: Appendable) {
+        sb.append("name,start_utc,start_local,start_offset,end_utc,end_local,end_offset,")
+        sb.append("duration_seconds,max_distance_km,travelled_km,places,movements,")
+        sb.append("farthest_latitude,farthest_longitude,open_start,open_end,points\r\n")
+        for (trip in trips) {
+            val t = trip.trip
+            sb.append(csvField(trip.name)).append(',')
+            appendMoment(sb, t.start, t.startOffsetMinutes)
+            sb.append(',')
+            appendMoment(sb, t.end, t.endOffsetMinutes)
+            sb.append(',').append(t.durationSeconds.toString())
+            sb.append(',').append(String.format(Locale.ROOT, "%.1f", t.maxDistanceMeters / 1000))
+            sb.append(',').append(String.format(Locale.ROOT, "%.1f", t.travelledMeters / 1000))
+            sb.append(',').append(t.placeCount.toString())
+            sb.append(',').append(csvField(movementList(t)))
+            sb.append(',')
+            appendCoordinate(sb, t.farthestLatitude)
+            sb.append(',')
+            appendCoordinate(sb, t.farthestLongitude)
+            sb.append(',').append(t.openStart.toString())
+            sb.append(',').append(t.openEnd.toString())
+            sb.append(',').append(trip.points.size.toString())
+            sb.append("\r\n")
+        }
     }
 
     private fun exportTrack(points: List<PathPoint>, sb: Appendable) {

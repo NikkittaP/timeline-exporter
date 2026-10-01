@@ -235,6 +235,26 @@
     <!-- Places (1.7.0) -->
     <string name="content_track">Track</string>
     <string name="content_places">Places</string>
+    <string name="content_trips">Trips</string>
+    <plurals name="trips_count">
+        <item quantity="one">%1$s trip</item>
+        <item quantity="other">%1$s trips</item>
+    </plurals>
+    <string name="step_export_trips">Export trips</string>
+    <string name="export_success_trips">Saved %1$s trips to %2$s</string>
+    <string name="export_shared_trips">Prepared %1$s trips as %2$s</string>
+    <string name="export_error_no_trips">No trips in the current date range.</string>
+    <string name="trips_none">No trips: this file never goes more than 50 km from home.</string>
+    <string name="trips_none_filtered">No trips in the selected date range.</string>
+    <string name="trips_no_home">This file does not say where home is, so trips cannot be found.</string>
+    <string name="trips_hint">A trip is time spent more than 50 km from home. Tap one to see it on the map.</string>
+    <string name="trip_only_this">Only this trip</string>
+    <string name="trip_far_from_home">%1$s from home</string>
+    <string name="trip_travelled_label">travelled</string>
+    <string name="trip_open_start">began before this file</string>
+    <string name="trip_open_end">not over yet</string>
+    <string name="trip_long_absence">long absence, maybe a move</string>
+    <string name="track_name_trips" translatable="false">Google Timeline trips %1$s</string>
     <string name="places_none">This file records no places.</string>
     <string name="places_none_filtered">No places in the selected date range.</string>
     <string name="places_visits_label">visits</string>

@@ -11,10 +11,11 @@ import java.util.Locale
  *
  * One enum shared by the UI (the Track / Places switch in steps 3 and 4), the
  * export payload ([ExportContent]) and the result state ([ExportState]) —
- * rather than three parallel booleans that can drift out of step. 1.8.0 adds
- * TRIPS here and the switch grows a third segment.
+ * rather than three parallel booleans that can drift out of step.
+ *
+ * Declaration order is the order of the switch: Track, Trips, Places.
  */
-enum class ContentKind { TRACK, PLACES }
+enum class ContentKind { TRACK, TRIPS, PLACES }
 
 /**
  * What an [Exporter] is asked to write.
@@ -56,6 +57,12 @@ sealed interface ExportContent {
     ) : ExportContent {
         override val size: Int get() = points.size
         override val kind: ContentKind get() = ContentKind.TRACK
+    }
+
+    /** Trips in time order, each with the part of the track recorded during it. */
+    data class Trips(val trips: List<ExportTrip>) : ExportContent {
+        override val size: Int get() = trips.size
+        override val kind: ContentKind get() = ContentKind.TRIPS
     }
 
     /** Distinct places, most-visited first. */

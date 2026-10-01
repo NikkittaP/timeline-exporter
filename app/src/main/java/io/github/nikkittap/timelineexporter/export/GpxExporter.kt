@@ -34,6 +34,7 @@ object GpxExporter : Exporter {
     override fun export(content: ExportContent, name: String, out: Appendable) = when (content) {
         is ExportContent.Track -> exportTrack(content.points, name, out)
         is ExportContent.Places -> exportPlaces(content.places, name, out)
+        is ExportContent.Trips -> exportTrips(content.trips, name, out)
     }
 
     private fun header(sb: Appendable) {
@@ -63,6 +64,43 @@ object GpxExporter : Exporter {
         }
         sb.append("    </trkseg>\n")
         sb.append("  </trk>\n")
+        sb.append("</gpx>\n")
+    }
+
+    /**
+     * One `<trk>` per trip, named by its dates. Requested on the ballot as
+     * "each trip as a separate track inside one file": GPX has had multiple
+     * tracks since 1.0, so Garmin, OsmAnd and Google Earth list the trips one
+     * by one. A trip with no points left after filtering has nothing to draw
+     * and is left out. Order inside `<trk>` follows the schema: name → desc →
+     * type → trkseg.
+     */
+    private fun exportTrips(trips: List<ExportTrip>, documentName: String, sb: Appendable) {
+        header(sb)
+        sb.append("  <metadata>\n")
+        sb.append("    <name>").append(escapeXml(documentName)).append("</name>\n")
+        sb.append("  </metadata>\n")
+        for (trip in trips) {
+            if (trip.points.isEmpty()) continue
+            sb.append("  <trk>\n")
+            sb.append("    <name>").append(escapeXml(trip.name)).append("</name>\n")
+            sb.append("    <desc>").append(escapeXml(describe(trip))).append("</desc>\n")
+            sb.append("    <type>trip</type>\n")
+            sb.append("    <trkseg>\n")
+            for (p in trip.points) {
+                sb.append("      <trkpt lat=\"")
+                appendCoordinate(sb, p.latitude)
+                sb.append("\" lon=\"")
+                appendCoordinate(sb, p.longitude)
+                sb.append("\">\n")
+                sb.append("        <time>")
+                appendIsoInstant(sb, p.timeUtc)
+                sb.append("</time>\n")
+                sb.append("      </trkpt>\n")
+            }
+            sb.append("    </trkseg>\n")
+            sb.append("  </trk>\n")
+        }
         sb.append("</gpx>\n")
     }
 
