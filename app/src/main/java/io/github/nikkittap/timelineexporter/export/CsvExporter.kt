@@ -1,6 +1,7 @@
 package io.github.nikkittap.timelineexporter.export
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
+import io.github.nikkittap.timelineexporter.trips.Trip
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -61,10 +62,12 @@ object CsvExporter : Exporter {
      * distance"), ready for a spreadsheet. Every trip is listed, including one
      * whose points the filters removed, because its dates and distances are
      * still true. `movements` is the groups by distance, separated by `;`.
+     * `travelled_estimated` is true when the distance is partly measured off
+     * the track or the file cuts the trip off; see [Trip.travelledMeters].
      */
     private fun exportTrips(trips: List<ExportTrip>, sb: Appendable) {
         sb.append("name,start_utc,start_local,start_offset,end_utc,end_local,end_offset,")
-        sb.append("duration_seconds,max_distance_km,travelled_km,places,movements,")
+        sb.append("duration_seconds,max_distance_km,travelled_km,travelled_estimated,places,movements,")
         sb.append("farthest_latitude,farthest_longitude,open_start,open_end,points\r\n")
         for (trip in trips) {
             val t = trip.trip
@@ -75,6 +78,7 @@ object CsvExporter : Exporter {
             sb.append(',').append(t.durationSeconds.toString())
             sb.append(',').append(String.format(Locale.ROOT, "%.1f", t.maxDistanceMeters / 1000))
             sb.append(',').append(String.format(Locale.ROOT, "%.1f", t.travelledMeters / 1000))
+            sb.append(',').append(t.travelledEstimated.toString())
             sb.append(',').append(t.placeCount.toString())
             sb.append(',').append(csvField(movementList(t)))
             sb.append(',')

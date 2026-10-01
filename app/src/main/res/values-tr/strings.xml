@@ -179,19 +179,21 @@
     <string name="content_track">İz</string>
     <string name="content_places">Yerler</string>
     <string name="content_trips">Seyahatler</string>
+    <string name="content_trip">Seyahat</string>
     <plurals name="trips_count">
         <item quantity="one">%1$s seyahat</item>
         <item quantity="other">%1$s seyahat</item>
     </plurals>
     <string name="step_export_trips">Seyahatleri dışa aktar</string>
+    <string name="step_export_trip">Seyahati dışa aktar</string>
     <string name="export_success_trips">%1$s seyahat %2$s dosyasına kaydedildi</string>
     <string name="export_shared_trips">%1$s seyahat %2$s olarak hazırlandı</string>
     <string name="export_error_no_trips">Geçerli tarih aralığında seyahat yok.</string>
     <string name="trips_none">Seyahat yok: bu dosyada evden hiç 50 km\'den fazla uzaklaşmıyorsunuz.</string>
     <string name="trips_none_filtered">Seçilen tarih aralığında seyahat yok.</string>
     <string name="trips_no_home">Bu dosya evinizin nerede olduğunu belirtmiyor, bu yüzden seyahatler bulunamıyor.</string>
-    <string name="trips_hint">Seyahat, evden 50 km\'den uzakta geçen süredir. Haritada görmek için birine dokunun.</string>
-    <string name="trip_only_this">Yalnızca bu seyahat</string>
+    <string name="trips_hint">Evden 50 km\'den fazla uzaklaştığınızda bir seyahat algılanır. Haritada görmek için bir seyahate dokunun.</string>
+    <string name="trip_only_this">Yalnızca bu seyahati kullan</string>
     <string name="trip_far_from_home">evden %1$s</string>
     <string name="trip_travelled_label">yol</string>
     <string name="trip_open_start">bu dosyadan önce başladı</string>

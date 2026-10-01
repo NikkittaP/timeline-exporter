@@ -179,6 +179,7 @@
     <string name="content_track">Trasa</string>
     <string name="content_places">Miejsca</string>
     <string name="content_trips">Podróże</string>
+    <string name="content_trip">Podróż</string>
     <plurals name="trips_count">
         <item quantity="one">%1$s podróż</item>
         <item quantity="few">%1$s podróże</item>
@@ -186,14 +187,15 @@
         <item quantity="other">%1$s podróży</item>
     </plurals>
     <string name="step_export_trips">Eksport podróży</string>
+    <string name="step_export_trip">Eksport podróży</string>
     <string name="export_success_trips">Zapisano podróże (%1$s) w %2$s</string>
     <string name="export_shared_trips">Przygotowano podróże (%1$s) jako %2$s</string>
     <string name="export_error_no_trips">Brak podróży w bieżącym zakresie dat.</string>
     <string name="trips_none">Brak podróży: w tym pliku nigdy nie oddalasz się od domu o więcej niż 50 km.</string>
     <string name="trips_none_filtered">Brak podróży w wybranym zakresie dat.</string>
     <string name="trips_no_home">Plik nie wskazuje domu, więc nie można znaleźć podróży.</string>
-    <string name="trips_hint">Podróż to czas spędzony dalej niż 50 km od domu. Dotknij podróży, aby zobaczyć ją na mapie.</string>
-    <string name="trip_only_this">Tylko ta podróż</string>
+    <string name="trips_hint">Podróż jest wykrywana, gdy oddalasz się od domu o ponad 50 km. Dotknij podróży, aby zobaczyć ją na mapie.</string>
+    <string name="trip_only_this">Użyj tylko tej podróży</string>
     <string name="trip_far_from_home">%1$s od domu</string>
     <string name="trip_travelled_label">w drodze</string>
     <string name="trip_open_start">zaczęła się przed początkiem pliku</string>

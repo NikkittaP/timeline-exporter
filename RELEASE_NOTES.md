@@ -53,6 +53,25 @@ Where things go at release time:
     row per trip. Points are the filtered track's, so the step-2 filters
     apply.
   - New strings in all 18 locales; the trip count is a plural.
+  - "km travelled" is the distance the movement data accounts for:
+    - Every activity overlapping the trip is counted, not only those fully
+      inside. A trip starts part-way through the drive away from home, so
+      the drive used to be dropped (12-19 May 2026: 568 -> 2,151 km).
+    - Each stretch of time is counted once. Merged files carry many
+      activities twice (517 in the 13-year file); June 2025 went from
+      14,171 to 11,821 km.
+    - Track that Google never classified is measured too. Sep 2013's
+      ~640 km drive each way had no activities at all: 19 -> 1,557 km.
+    - When that untyped part is significant, or the file cuts the trip off,
+      the trip is marked `travelledEstimated`. The UI shows "≈" before the
+      figure, CSV and GeoJSON have a `travelled_estimated` column, and the
+      GPX/KML description says "about".
+    - "km from home" is unchanged: the greatest distance from the detected
+      home of any position in the trip.
+  - Copy: the hint now says trips are *detected* past 50 km (the trip
+    includes the way there). The selected-trip action is "Use only this
+    trip". The full list's title shows the total ("Trips · 126"), and step 4
+    says "Export trip" / "Trip — 1 trip" when exactly one trip is selected.
 
 - **Filters and export choices are remembered.** On the feedback ballot as
   "Remember my filters and format for the next export" (FB-016, FB-019).

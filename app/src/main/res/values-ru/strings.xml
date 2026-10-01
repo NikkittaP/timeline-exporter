@@ -179,6 +179,7 @@
     <string name="content_track">Трек</string>
     <string name="content_places">Места</string>
     <string name="content_trips">Поездки</string>
+    <string name="content_trip">Поездка</string>
     <plurals name="trips_count">
         <item quantity="one">%1$s поездка</item>
         <item quantity="few">%1$s поездки</item>
@@ -186,14 +187,15 @@
         <item quantity="other">%1$s поездки</item>
     </plurals>
     <string name="step_export_trips">Экспорт поездок</string>
+    <string name="step_export_trip">Экспорт поездки</string>
     <string name="export_success_trips">Сохранено поездок: %1$s — в %2$s</string>
     <string name="export_shared_trips">Подготовлено поездок: %1$s в формате %2$s</string>
     <string name="export_error_no_trips">В текущем диапазоне дат нет поездок.</string>
     <string name="trips_none">Поездок нет: в этом файле вы не уезжали от дома дальше 50 км.</string>
     <string name="trips_none_filtered">В выбранном диапазоне дат нет поездок.</string>
     <string name="trips_no_home">В файле не отмечен дом, поэтому поездки найти нельзя.</string>
-    <string name="trips_hint">Поездка — время дальше 50 км от дома. Нажмите на поездку, чтобы увидеть её на карте.</string>
-    <string name="trip_only_this">Только эта поездка</string>
+    <string name="trips_hint">Поездка начинается, когда вы уезжаете от дома дальше чем на 50 км. Нажмите на поездку, чтобы посмотреть её на карте.</string>
+    <string name="trip_only_this">Использовать только эту поездку</string>
     <string name="trip_far_from_home">%1$s от дома</string>
     <string name="trip_travelled_label">в пути</string>
     <string name="trip_open_start">началась до начала файла</string>

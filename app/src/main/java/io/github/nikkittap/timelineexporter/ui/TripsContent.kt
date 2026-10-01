@@ -187,7 +187,11 @@ private fun TripRow(
                 Spacer(Modifier.width(12.dp))
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = formatTripKm(trip.travelledMeters),
+                        // "≈" and nothing more when the distance is partly
+                        // measured off the track or the file cuts the trip
+                        // off: a hint that it is not Google's full figure,
+                        // without turning the row into a warning.
+                        text = (if (trip.travelledEstimated) "≈ " else "") + formatTripKm(trip.travelledMeters),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
@@ -234,7 +238,7 @@ fun ExpandedTrips(
         Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = stringResource(R.string.content_trips),
+                    text = "${stringResource(R.string.content_trips)} · ${"%,d".format(trips.size)}",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )

@@ -31,6 +31,7 @@ class TripsExportTest {
         farthestLatitude = 61.08,
         farthestLongitude = 6.45,
         travelledMeters = 2_317_000.0,
+        travelledEstimated = fromH > 0,
         placeCount = 56,
         movements = listOf(MovementGroup.DRIVING to 2_000_000.0, MovementGroup.WALKING to 317_000.0),
         openStart = false,
@@ -91,6 +92,9 @@ class TripsExportTest {
         val lines = export(CsvExporter).trimEnd().split("\r\n")
         assertEquals(3, lines.size)
         assertTrue(lines[0].startsWith("name,start_utc,start_local,start_offset,end_utc"))
+        assertTrue(lines[0].contains(",travelled_km,travelled_estimated,places,"))
+        assertTrue(lines[1].contains(",2317.0,false,56,"))
+        assertTrue(lines[2].contains(",2317.0,true,56,"))
         assertTrue(lines[1].startsWith("2025-07-19 – 2025-08-01,2025-07-19T10:00:00Z,2025-07-19 12:00:00,+02:00,"))
         assertTrue(lines[1].endsWith(",false,false,313"))
         assertTrue(lines[2].endsWith(",0"))

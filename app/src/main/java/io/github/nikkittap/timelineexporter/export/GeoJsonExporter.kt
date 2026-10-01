@@ -59,6 +59,7 @@ object GeoJsonExporter : Exporter {
             sb.append("        \"duration_seconds\": ").append(t.durationSeconds.toString()).append(",\n")
             sb.append("        \"max_distance_km\": ").append(km(t.maxDistanceMeters)).append(",\n")
             sb.append("        \"travelled_km\": ").append(km(t.travelledMeters)).append(",\n")
+            sb.append("        \"travelled_estimated\": ").append(t.travelledEstimated.toString()).append(",\n")
             sb.append("        \"places\": ").append(t.placeCount.toString()).append(",\n")
             sb.append("        \"movements\": ").append(jsonString(movementList(t))).append(",\n")
             sb.append("        \"open_start\": ").append(t.openStart.toString()).append(",\n")

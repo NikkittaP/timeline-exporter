@@ -179,19 +179,21 @@
     <string name="content_track">Spår</string>
     <string name="content_places">Platser</string>
     <string name="content_trips">Resor</string>
+    <string name="content_trip">Resa</string>
     <plurals name="trips_count">
         <item quantity="one">%1$s resa</item>
         <item quantity="other">%1$s resor</item>
     </plurals>
     <string name="step_export_trips">Exportera resor</string>
+    <string name="step_export_trip">Exportera resa</string>
     <string name="export_success_trips">%1$s resor sparade i %2$s</string>
     <string name="export_shared_trips">%1$s resor förberedda som %2$s</string>
     <string name="export_error_no_trips">Inga resor i det aktuella datumintervallet.</string>
     <string name="trips_none">Inga resor: i den här filen är du aldrig längre än 50 km hemifrån.</string>
     <string name="trips_none_filtered">Inga resor i det valda datumintervallet.</string>
     <string name="trips_no_home">Filen anger inget hem, så inga resor kan hittas.</string>
-    <string name="trips_hint">En resa är tid mer än 50 km hemifrån. Tryck på en resa för att se den på kartan.</string>
-    <string name="trip_only_this">Bara den här resan</string>
+    <string name="trips_hint">En resa upptäcks när du är mer än 50 km hemifrån. Tryck på en resa för att se den på kartan.</string>
+    <string name="trip_only_this">Använd bara den här resan</string>
     <string name="trip_far_from_home">%1$s hemifrån</string>
     <string name="trip_travelled_label">färdväg</string>
     <string name="trip_open_start">började före filen</string>

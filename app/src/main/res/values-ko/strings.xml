@@ -179,18 +179,20 @@
     <string name="content_track">경로</string>
     <string name="content_places">장소</string>
     <string name="content_trips">여행</string>
+    <string name="content_trip">여행</string>
     <plurals name="trips_count">
         <item quantity="other">여행 %1$s건</item>
     </plurals>
     <string name="step_export_trips">여행 내보내기</string>
+    <string name="step_export_trip">여행 내보내기</string>
     <string name="export_success_trips">여행 %1$s건을 %2$s에 저장했습니다</string>
     <string name="export_shared_trips">여행 %1$s건을 %2$s 형식으로 준비했습니다</string>
     <string name="export_error_no_trips">현재 기간에 여행이 없습니다.</string>
     <string name="trips_none">여행 없음: 이 파일에서는 집에서 50km 이상 떨어진 적이 없습니다.</string>
     <string name="trips_none_filtered">선택한 기간에 여행이 없습니다.</string>
     <string name="trips_no_home">이 파일에 집이 기록되어 있지 않아 여행을 찾을 수 없습니다.</string>
-    <string name="trips_hint">여행은 집에서 50km 넘게 떨어져 있던 시간입니다. 여행을 탭하면 지도에 표시됩니다.</string>
-    <string name="trip_only_this">이 여행만</string>
+    <string name="trips_hint">집에서 50km 넘게 이동하면 여행으로 감지됩니다. 여행을 탭하면 지도에서 미리 볼 수 있습니다.</string>
+    <string name="trip_only_this">이 여행만 사용</string>
     <string name="trip_far_from_home">집에서 %1$s</string>
     <string name="trip_travelled_label">이동 거리</string>
     <string name="trip_open_start">파일 시작 전에 시작됨</string>

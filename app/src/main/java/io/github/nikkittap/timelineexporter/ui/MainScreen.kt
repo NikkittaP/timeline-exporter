@@ -889,13 +889,7 @@ fun MainScreen(
                 // out the count.
                 StepCard(
                     step = 4,
-                    title = stringResource(
-                        when (contentKind) {
-                            ContentKind.TRACK -> R.string.step_export_track
-                            ContentKind.TRIPS -> R.string.step_export_trips
-                            ContentKind.PLACES -> R.string.step_export_places
-                        }
-                    ),
+                    title = stringResource(exportStepTitle(contentKind, exportContent.size)),
                 ) {
                     ExportStep(
                         canSave = !exportContent.isEmpty,
@@ -1900,13 +1894,7 @@ private fun ContentSwitch(
  */
 @Composable
 private fun ExportSubjectPlaque(contentKind: ContentKind, itemCount: Int) {
-    val kindLabel = stringResource(
-        when (contentKind) {
-            ContentKind.TRACK -> R.string.content_track
-            ContentKind.TRIPS -> R.string.content_trips
-            ContentKind.PLACES -> R.string.content_places
-        }
-    )
+    val kindLabel = stringResource(exportKindLabel(contentKind, itemCount))
     // Trips are counted in ones, and "1 trips" read wrong in every language,
     // so that count is a plural. The other two keep their existing strings.
     val countLabel = when (contentKind) {
@@ -2490,6 +2478,25 @@ private fun buildContentName(filter: TimelineFilter, kind: ContentKind): String 
         },
         described,
     )
+}
+
+/**
+ * Step 4's heading. One trip reads "Export trip", not "Export trips": with
+ * "Use only this trip" that is the common case, and the plural over a single
+ * item looked like a mistake. Track and Places are mass nouns here and keep
+ * their one heading.
+ */
+internal fun exportStepTitle(kind: ContentKind, count: Int): Int = when (kind) {
+    ContentKind.TRACK -> R.string.step_export_track
+    ContentKind.TRIPS -> if (count == 1) R.string.step_export_trip else R.string.step_export_trips
+    ContentKind.PLACES -> R.string.step_export_places
+}
+
+/** The kind in step 4's plaque, singular for exactly one trip ("Trip — 1 trip"). */
+internal fun exportKindLabel(kind: ContentKind, count: Int): Int = when (kind) {
+    ContentKind.TRACK -> R.string.content_track
+    ContentKind.TRIPS -> if (count == 1) R.string.content_trip else R.string.content_trips
+    ContentKind.PLACES -> R.string.content_places
 }
 
 // ---------- shared shapes / formatting helpers ----------

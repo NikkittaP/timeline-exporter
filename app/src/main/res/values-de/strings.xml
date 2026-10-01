@@ -179,19 +179,21 @@
     <string name="content_track">Route</string>
     <string name="content_places">Orte</string>
     <string name="content_trips">Reisen</string>
+    <string name="content_trip">Reise</string>
     <plurals name="trips_count">
         <item quantity="one">%1$s Reise</item>
         <item quantity="other">%1$s Reisen</item>
     </plurals>
     <string name="step_export_trips">Reisen exportieren</string>
+    <string name="step_export_trip">Reise exportieren</string>
     <string name="export_success_trips">%1$s Reisen in %2$s gespeichert</string>
     <string name="export_shared_trips">%1$s Reisen als %2$s vorbereitet</string>
     <string name="export_error_no_trips">Keine Reisen im aktuellen Zeitraum.</string>
     <string name="trips_none">Keine Reisen: In dieser Datei bist du nie weiter als 50 km von zu Hause entfernt.</string>
     <string name="trips_none_filtered">Keine Reisen im gewählten Zeitraum.</string>
     <string name="trips_no_home">Die Datei enthält kein Zuhause, daher lassen sich keine Reisen finden.</string>
-    <string name="trips_hint">Eine Reise ist die Zeit mehr als 50 km von zu Hause entfernt. Tippe auf eine, um sie auf der Karte zu sehen.</string>
-    <string name="trip_only_this">Nur diese Reise</string>
+    <string name="trips_hint">Eine Reise wird erkannt, wenn du dich mehr als 50 km von zu Hause entfernst. Tippe auf eine Reise, um sie auf der Karte anzusehen.</string>
+    <string name="trip_only_this">Nur diese Reise verwenden</string>
     <string name="trip_far_from_home">%1$s von zu Hause</string>
     <string name="trip_travelled_label">unterwegs</string>
     <string name="trip_open_start">begann vor dieser Datei</string>

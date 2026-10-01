@@ -236,19 +236,21 @@
     <string name="content_track">Track</string>
     <string name="content_places">Places</string>
     <string name="content_trips">Trips</string>
+    <string name="content_trip">Trip</string>
     <plurals name="trips_count">
         <item quantity="one">%1$s trip</item>
         <item quantity="other">%1$s trips</item>
     </plurals>
     <string name="step_export_trips">Export trips</string>
+    <string name="step_export_trip">Export trip</string>
     <string name="export_success_trips">Saved %1$s trips to %2$s</string>
     <string name="export_shared_trips">Prepared %1$s trips as %2$s</string>
     <string name="export_error_no_trips">No trips in the current date range.</string>
     <string name="trips_none">No trips: this file never goes more than 50 km from home.</string>
     <string name="trips_none_filtered">No trips in the selected date range.</string>
     <string name="trips_no_home">This file does not say where home is, so trips cannot be found.</string>
-    <string name="trips_hint">A trip is time spent more than 50 km from home. Tap one to see it on the map.</string>
-    <string name="trip_only_this">Only this trip</string>
+    <string name="trips_hint">Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map.</string>
+    <string name="trip_only_this">Use only this trip</string>
     <string name="trip_far_from_home">%1$s from home</string>
     <string name="trip_travelled_label">travelled</string>
     <string name="trip_open_start">began before this file</string>

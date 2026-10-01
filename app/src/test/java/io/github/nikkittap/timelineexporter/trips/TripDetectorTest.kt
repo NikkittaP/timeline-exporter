@@ -173,13 +173,66 @@ class TripDetectorTest {
     }
 
     @Test
+    fun `an activity recorded twice by a merge is counted once`() {
+        val trip = found(
+            timeline(
+                listOf(
+                    visit(0, 10, home, "HOME"),
+                    drive(10, 13, 230_000.0),
+                    drive(10, 13, 231_000.0), // the same drive from the other export
+                    visit(13, 40, far, id = "hotel"),
+                    drive(40, 43, 230_000.0),
+                    visit(43, 60, home, "HOME"),
+                ),
+            ),
+        ).single()
+        assertEquals(460_000.0, trip.travelledMeters, 0.1)
+        assertFalse(trip.travelledEstimated)
+    }
+
+    @Test
+    fun `the drive out counts even when the trip starts part-way through it`() {
+        // Home visit ends at 10, the drive runs 10-13, but the last track point
+        // within 50 km is at 10:30, so that is where the trip starts.
+        val points = listOf(point(10.5, near), point(12, far))
+        val trip = found(
+            timeline(
+                listOf(visit(0, 10, home, "HOME"), drive(10, 13, 230_000.0), visit(13, 40, far, id = "hotel"), visit(41, 60, home, "HOME")),
+                points,
+            ),
+        ).single()
+        assertEquals(h(10.5), trip.start)
+        assertTrue(trip.travelledMeters >= 230_000.0)
+    }
+
+    @Test
+    fun `track Google did not classify is measured and marks the figure as an estimate`() {
+        // September 2013 in miniature: a drive recorded only as points.
+        val points = (0..10).map { i -> point(10 + i * 0.3, (home.first + (far.first - home.first) * i / 10) to home.second) }
+        val trip = found(
+            timeline(listOf(visit(0, 10, home, "HOME"), visit(14, 40, far, id = "hotel"), visit(44, 60, home, "HOME")), points),
+        ).single()
+        // About 187 km: the trip starts at the last point within 50 km of home,
+        // so the first stretch of the road belongs to no trip.
+        assertTrue(trip.travelledMeters > 150_000)
+        assertTrue(trip.travelledEstimated)
+    }
+
+    @Test
+    fun `a trip cut off by the file is an estimate`() {
+        val trips = found(timeline(listOf(visit(0, 20, far, id = "a"), visit(22, 40, home, "HOME"))))
+        assertTrue(trips.single().openStart)
+        assertTrue(trips.single().travelledEstimated)
+    }
+
+    @Test
     fun `the reference year has the eight trips measured by hand`() {
         val file = Path.of("F:/Timeline/Timeline_2.json")
         assumeTrue("Skipped: $file not present (developer-local only).", Files.exists(file))
         val parsed = Files.newInputStream(file).use { parseTimeline(it) }
         val trips = (detectTrips(parsed, ZoneId.of("Europe/Stockholm")) as TripDetection.Found).trips
         trips.forEach {
-            println("${it.start} – ${it.end}  ${it.maxDistanceMeters.toInt() / 1000} km  ${it.placeCount} places  open=${it.openStart}/${it.openEnd}")
+            println("${it.start} – ${it.end}  ${it.maxDistanceMeters.toInt() / 1000} km from home  ${it.travelledMeters.toInt() / 1000} km travelled est=${it.travelledEstimated}  ${it.placeCount} places  open=${it.openStart}/${it.openEnd}")
         }
         assertEquals(8, trips.size)
         assertEquals(3, trips.count { !it.isDayTrip })
@@ -187,5 +240,27 @@ class TripDetectorTest {
         // Norway, 19 July – 1 August 2025.
         val norway = trips.single { it.start.toString().startsWith("2025-07-19") }
         assertTrue(norway.durationSeconds > 13 * 86_400L)
+    }
+
+    @Test
+    fun `the merged 13-year file counts drives without activities and flights only once`() {
+        val file = Path.of("F:/Timeline/Timeline_merged_big.json")
+        assumeTrue("Skipped: $file not present (developer-local only).", Files.exists(file))
+        val parsed = Files.newInputStream(file).use { parseTimeline(it) }
+        val trips = (detectTrips(parsed, ZoneId.of("Europe/Stockholm")) as TripDetection.Found).trips
+        fun at(moment: String) = trips.single { it.covers(java.time.Instant.parse(moment)) }
+
+        // 12-15 Sep 2013: ~640 km each way by road, recorded as points only.
+        // Was "19 km travelled".
+        val ukraine = at("2013-09-13T12:00:00Z")
+        println("2013: ${ukraine.travelledMeters.toInt() / 1000} km, estimated=${ukraine.travelledEstimated}")
+        assertTrue(ukraine.travelledMeters > 1_000_000)
+        assertTrue(ukraine.travelledEstimated)
+
+        // 7-14 Jun 2025, Copenhagen - Istanbul - Tashkent and back: four
+        // flights of about 10,850 km, each in the merged file twice. Was 14,171.
+        val tashkent = at("2025-06-10T12:00:00Z")
+        println("2025: ${tashkent.travelledMeters.toInt() / 1000} km, estimated=${tashkent.travelledEstimated}")
+        assertTrue(tashkent.travelledMeters in 10_800_000.0..12_500_000.0)
     }
 }

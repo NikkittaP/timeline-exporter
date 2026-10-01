@@ -2,6 +2,8 @@ package io.github.nikkittap.timelineexporter.trips
 
 import io.github.nikkittap.timelineexporter.parser.MovementGroup
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
+import io.github.nikkittap.timelineexporter.parser.PathPoint
+import io.github.nikkittap.timelineexporter.parser.Segment
 import io.github.nikkittap.timelineexporter.parser.SegmentKind
 import io.github.nikkittap.timelineexporter.parser.localMinuteOfDay
 import java.time.Instant
@@ -28,8 +30,17 @@ import kotlin.math.sqrt
  *
  * [farthestLatitude]/[farthestLongitude] is the point furthest from home,
  * which is the closest thing to "where" a trip has without a place name.
- * [travelledMeters] sums Google's per-activity distances, the same figure the
- * movement breakdown uses, so the two agree.
+ * [maxDistanceMeters] is the greatest straight-line distance from home of any
+ * position in the trip.
+ *
+ * [travelledMeters] is the distance the file's movement data accounts for:
+ * Google's own figure for every activity that overlaps the trip, each stretch
+ * of time counted once, plus the length of any track recorded outside both
+ * activities and visits. That last part is usually zero; it matters in old
+ * exports where Google kept the track but classified none of it (a 1,300 km
+ * drive in September 2013 that came out as "19 km" before). When that part is
+ * significant, or the file cuts the trip off, [travelledEstimated] is set and
+ * the figure is an estimate rather than Google's number.
  *
  * [openStart] / [openEnd]: the file begins or ends while the person is away,
  * so the real trip is longer than what is shown. [longAbsence]: away longer
@@ -45,6 +56,7 @@ data class Trip(
     val farthestLatitude: Double,
     val farthestLongitude: Double,
     val travelledMeters: Double,
+    val travelledEstimated: Boolean,
     val placeCount: Int,
     /** Metres per movement group, longest first; drives the transport icons. */
     val movements: List<Pair<MovementGroup, Double>>,
@@ -82,6 +94,21 @@ const val MERGE_GAP_SECONDS = 3 * 3600L
 const val MIN_TRIP_SECONDS = 3 * 3600L
 
 const val LONG_ABSENCE_DAYS = 60L
+
+/**
+ * Untyped track above this share of the activity total (and above
+ * [ESTIMATE_MIN_METERS]) makes the trip's distance an estimate.
+ */
+private const val ESTIMATE_SHARE = 0.10
+private const val ESTIMATE_MIN_METERS = 10_000.0
+
+/**
+ * Two activities overlapping by more than this are the same stretch of time
+ * recorded twice. A single export never does that (zero overlaps in four
+ * reference files); a merged one does, 517 times in the 13-year file, and
+ * each one doubled a flight or a train.
+ */
+private const val OVERLAP_TOLERANCE_SECONDS = 60L
 
 private const val SECONDS_PER_DAY = 86_400L
 
@@ -176,8 +203,21 @@ private class Span(var from: Position, val openStart: Boolean) {
         val start = from.time
         val end = to.time
         val inside = parsed.segments.filter { it.start >= start && it.end <= end }
-        val movements = inside
-            .filter { it.kind == SegmentKind.ACTIVITY }
+        // Overlapping rather than inside: a trip begins at the last position
+        // within 50 km of home, which on a drive is part-way through the
+        // activity that took the person away. Counting only activities fully
+        // inside dropped the journey out and back.
+        val activities = ArrayList<Segment>()
+        var lastEnd = Instant.MIN
+        for (seg in parsed.segments) {
+            if (seg.kind != SegmentKind.ACTIVITY || seg.end <= start || seg.start >= end) continue
+            if (seg.start.epochSecond < lastEnd.epochSecond - OVERLAP_TOLERANCE_SECONDS) continue
+            activities += seg
+            if (seg.end > lastEnd) lastEnd = seg.end
+        }
+        val activityMeters = activities.sumOf { it.distanceMeters ?: 0.0 }
+        val untyped = untypedTrackMeters(parsed, start, end, activities)
+        val movements = activities
             .groupBy { it.movement ?: MovementGroup.OTHER }
             .mapValues { (_, segs) -> segs.sumOf { it.distanceMeters ?: 0.0 } }
             .filterValues { it > 0.0 }
@@ -197,7 +237,9 @@ private class Span(var from: Position, val openStart: Boolean) {
             maxDistanceMeters = maxDistance,
             farthestLatitude = farthest.latitude,
             farthestLongitude = farthest.longitude,
-            travelledMeters = movements.sumOf { it.second },
+            travelledMeters = activityMeters + untyped,
+            travelledEstimated = openStart || openEnd ||
+                (untyped > ESTIMATE_MIN_METERS && untyped > activityMeters * ESTIMATE_SHARE),
             placeCount = places.size,
             movements = movements,
             openStart = openStart,
@@ -207,6 +249,64 @@ private class Span(var from: Position, val openStart: Boolean) {
 }
 
 private class Home(val time: Instant, val latitude: Double, val longitude: Double)
+
+/**
+ * Length of the track between [start] and [end] that no activity and no visit
+ * covers: consecutive points both outside every such interval. Points inside a
+ * visit are a phone at rest, and points inside an activity are already in
+ * Google's figure for it, so neither is counted again.
+ */
+private fun untypedTrackMeters(
+    parsed: ParsedTimeline,
+    start: Instant,
+    end: Instant,
+    activities: List<Segment>,
+): Double {
+    val points = parsed.pathPoints
+    var lo = 0
+    var hi = points.size
+    while (lo < hi) {
+        val mid = (lo + hi) ushr 1
+        if (points[mid].timeUtc < start) lo = mid + 1 else hi = mid
+    }
+    if (lo >= points.size || points[lo].timeUtc > end) return 0.0
+
+    // Covered intervals, merged and in time order, walked with one cursor.
+    val covered = (activities + parsed.segments.filter {
+        it.kind == SegmentKind.VISIT && it.end >= start && it.start <= end
+    }).map { it.start to it.end }.sortedBy { it.first }
+    val merged = ArrayList<Pair<Instant, Instant>>()
+    for (c in covered) {
+        val last = merged.lastOrNull()
+        if (last != null && c.first <= last.second) {
+            if (c.second > last.second) merged[merged.lastIndex] = last.first to c.second
+        } else {
+            merged += c
+        }
+    }
+    var cursor = 0
+    fun isCovered(t: Instant): Boolean {
+        while (cursor < merged.size && merged[cursor].second < t) cursor++
+        return cursor < merged.size && merged[cursor].first <= t
+    }
+
+    var total = 0.0
+    var previous: PathPoint? = null
+    var previousFree = false
+    var i = lo
+    while (i < points.size && points[i].timeUtc <= end) {
+        val p = points[i]
+        val free = !isCovered(p.timeUtc)
+        val prev = previous
+        if (prev != null && free && previousFree) {
+            total += haversineMeters(prev.latitude, prev.longitude, p.latitude, p.longitude)
+        }
+        previous = p
+        previousFree = free
+        i++
+    }
+    return total
+}
 
 private fun positionsOf(parsed: ParsedTimeline): List<Position> {
     val out = ArrayList<Position>(parsed.pathPoints.size + parsed.segments.size * 2)
