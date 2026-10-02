@@ -43,7 +43,12 @@
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">лише в русі</string>
     <string name="points_count">%1$s точок</string>
-    <string name="places_count">%1$s місць</string>
+    <plurals name="places_count">
+        <item quantity="one">%1$s місце</item>
+        <item quantity="few">%1$s місця</item>
+        <item quantity="many">%1$s місць</item>
+        <item quantity="other">%1$s місця</item>
+    </plurals>
     <string name="filter_trip_count">%1$s поїздок</string>
     <string name="filter_movement_total">Усього</string>
     <string name="filter_moving_only">Лише в русі</string>

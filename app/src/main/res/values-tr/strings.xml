@@ -43,7 +43,10 @@
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">yalnızca hareket hâlinde</string>
     <string name="points_count">%1$s nokta</string>
-    <string name="places_count">%1$s yer</string>
+    <plurals name="places_count">
+        <item quantity="one">%1$s yer</item>
+        <item quantity="other">%1$s yer</item>
+    </plurals>
     <string name="filter_trip_count">%1$s yolculuk</string>
     <string name="filter_movement_total">Toplam</string>
     <string name="filter_moving_only">Yalnızca hareket hâlinde</string>

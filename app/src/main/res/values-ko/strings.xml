@@ -43,7 +43,9 @@
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">이동 중만</string>
     <string name="points_count">포인트 %1$s개</string>
-    <string name="places_count">장소 %1$s곳</string>
+    <plurals name="places_count">
+        <item quantity="other">장소 %1$s곳</item>
+    </plurals>
     <string name="filter_trip_count">이동 %1$s회</string>
     <string name="filter_movement_total">합계</string>
     <string name="filter_moving_only">이동 중만</string>

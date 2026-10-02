@@ -43,7 +43,10 @@
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">nur in Bewegung</string>
     <string name="points_count">%1$s Punkte</string>
-    <string name="places_count">%1$s Orte</string>
+    <plurals name="places_count">
+        <item quantity="one">%1$s Ort</item>
+        <item quantity="other">%1$s Orte</item>
+    </plurals>
     <string name="filter_trip_count">%1$s Fahrten</string>
     <string name="filter_movement_total">Gesamt</string>
     <string name="filter_moving_only">Nur in Bewegung</string>

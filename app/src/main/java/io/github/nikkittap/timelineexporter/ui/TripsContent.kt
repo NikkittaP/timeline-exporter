@@ -149,7 +149,14 @@ fun SelectedTripCard(
     ) {
         Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 10.dp)) {
             TripSummary(trip, detailed = true)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            // Side by side where they fit. Where they do not (German, and
+            // Russian on a narrow phone), stacked 40 dp apart rather than
+            // 48: the buttons' touch areas overlap by the 8 dp of padding
+            // around each label, which still leaves every label its own row.
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy((-8).dp),
+            ) {
                 TextButton(onClick = onOnlyThis, contentPadding = PaddingValues(horizontal = 0.dp)) {
                     Text(stringResource(R.string.trip_only_this))
                 }
@@ -193,10 +200,15 @@ private fun TripRow(trip: Trip, highlighted: Boolean, onClick: () -> Unit) {
 @Composable
 private fun TripSummary(trip: Trip, detailed: Boolean) {
     val dates = tripDates(trip)
-    val details = listOf(
-        formatTripLength(trip),
-        stringResource(R.string.trip_far_from_home, formatTripKm(trip.maxDistanceMeters)),
-    ) + if (detailed) listOf(stringResource(R.string.places_count, "%,d".format(trip.placeCount))) else emptyList()
+    // Each figure held together with no-break spaces, so a line that runs out
+    // of room breaks between "866 km from home" and "21 places", never inside
+    // one of them.
+    val details = (
+        listOf(
+            formatTripLength(trip),
+            stringResource(R.string.trip_far_from_home, formatTripKm(trip.maxDistanceMeters)),
+        ) + if (detailed) listOf(pluralStringResource(R.plurals.places_count, trip.placeCount, "%,d".format(trip.placeCount))) else emptyList()
+        ).map { it.replace(' ', ' ') }
 
     if (trip.isDayTrip && !detailed) {
         Text(

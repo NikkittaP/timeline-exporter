@@ -43,7 +43,9 @@
     <string name="list_separator">"、"</string>
     <string name="filter_moving_only_short">僅移動中</string>
     <string name="points_count">%1$s 個點</string>
-    <string name="places_count">%1$s 個地點</string>
+    <plurals name="places_count">
+        <item quantity="other">%1$s 個地點</item>
+    </plurals>
     <string name="filter_trip_count">%1$s 趟行程</string>
     <string name="filter_movement_total">合計</string>
     <string name="filter_moving_only">僅移動中</string>

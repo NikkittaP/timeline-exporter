@@ -1625,7 +1625,7 @@ private fun MovementSection(
 
         if (places > 0) {
             Text(
-                text = stringResource(R.string.places_count, formatGrouped(places)),
+                text = pluralStringResource(R.plurals.places_count, places, formatGrouped(places)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 12.dp, top = 4.dp),
@@ -1803,7 +1803,7 @@ private fun movementSummaryLabel(
     )
     total?.takeIf { it.distanceMeters > 0 }?.let { parts += formatKm(it.distanceMeters) }
     if (movingOnly) parts += stringResource(R.string.filter_moving_only_short)
-    if (places > 0) parts += stringResource(R.string.places_count, formatGrouped(places))
+    if (places > 0) parts += pluralStringResource(R.plurals.places_count, places, formatGrouped(places))
     return parts.joinToString(" · ")
 }
 
@@ -1932,12 +1932,12 @@ private fun ContentSwitch(
 @Composable
 private fun ExportSubjectPlaque(contentKind: ContentKind, itemCount: Int) {
     val kindLabel = stringResource(exportKindLabel(contentKind, itemCount))
-    // Trips are counted in ones, and "1 trips" read wrong in every language,
-    // so that count is a plural. The other two keep their existing strings.
+    // Trips and places are counted in ones, and "1 trips" or "21 мест" read
+    // wrong, so those counts are plurals. Points keep their existing string.
     val countLabel = when (contentKind) {
         ContentKind.TRACK -> stringResource(R.string.points_count, formatGrouped(itemCount))
         ContentKind.TRIPS -> pluralStringResource(R.plurals.trips_count, itemCount, formatGrouped(itemCount))
-        ContentKind.PLACES -> stringResource(R.string.places_count, formatGrouped(itemCount))
+        ContentKind.PLACES -> pluralStringResource(R.plurals.places_count, itemCount, formatGrouped(itemCount))
     }
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainer,

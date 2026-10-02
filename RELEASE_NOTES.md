@@ -41,6 +41,18 @@ Where things go at release time:
     export, and May 2026 is not there at all. On Timeline_2.json the rule
     finds the 8 trips checked by hand, and 108 of Google's 114 on the
     13-year file. The 6 it misses are under 3 h.
+  - A trip runs door to door. The 50 km line decides whether someone is
+    away, but the trip's ends are then moved out to the nearest position
+    within 1 km of home, searched up to 6 h before leaving and after coming
+    back. The Norway trip used to end at Helsingborg, the first point within
+    50 km of Malmö, 45 minutes before home. Without a home position in that
+    window (days at a friend's nearby, a gap in the data) the end stays at
+    the 50 km line. The 3 h minimum is still measured beyond the line, so
+    the 13-year file keeps its 126 trips; measured door to door it would
+    have been 145, with afternoon drives just past the line counted.
+    Figures grow by the part inside 50 km: on Timeline_2.json Norway goes
+    from 2,459 to 2,481 km travelled, May 2026 from 2,349 to 2,405 km (the
+    airport trains), and day trips gain about an hour.
   - The list is newest first. A multi-day row is two lines: dates, transport
     icons and km travelled, then calendar days and distance from home. A day
     trip is one compact line (date · hours · km from home). The full list
@@ -61,7 +73,11 @@ Where things go at release time:
     TimeSpan. GeoJSON has one Feature per trip with its figures. CSV has one
     row per trip. Points are the filtered track's, so the step-2 filters
     apply.
-  - New strings in all 18 locales; the trip count is a plural.
+  - New strings in all 18 locales; the trip count is a plural. The place
+    count is now a plural too ("21 мест" was wrong in Russian, "1 places"
+    in English), everywhere it appears. Each figure on a trip line is held
+    together with no-break spaces, so "21 places" never splits across two
+    lines.
   - "km travelled" is the distance the movement data accounts for:
     - Every activity overlapping the trip is counted, not only those fully
       inside. A trip starts part-way through the drive away from home, so
@@ -70,7 +86,8 @@ Where things go at release time:
       activities twice (455 in the 13-year file); June 2025 went from
       14,171 to 11,821 km.
     - Track that Google never classified is measured too. Sep 2013's
-      ~640 km drive each way had no activities at all: 19 -> 1,557 km.
+      ~640 km drive each way had no activities at all: 19 -> 1,557 km, and
+      1,701 km once the trip runs from the door.
     - When that untyped part is significant, or the file cuts the trip off,
       the trip is marked `travelledEstimated`. The UI shows "≈" before the
       figure, CSV and GeoJSON have a `travelled_estimated` column, and the

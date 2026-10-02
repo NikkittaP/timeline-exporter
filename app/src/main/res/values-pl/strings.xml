@@ -43,7 +43,12 @@
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">tylko w ruchu</string>
     <string name="points_count">Punkty: %1$s</string>
-    <string name="places_count">Miejsca: %1$s</string>
+    <plurals name="places_count">
+        <item quantity="one">%1$s miejsce</item>
+        <item quantity="few">%1$s miejsca</item>
+        <item quantity="many">%1$s miejsc</item>
+        <item quantity="other">%1$s miejsca</item>
+    </plurals>
     <string name="filter_trip_count">Podróże: %1$s</string>
     <string name="filter_movement_total">Razem</string>
     <string name="filter_moving_only">Tylko w ruchu</string>
