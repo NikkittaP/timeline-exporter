@@ -195,9 +195,12 @@
     <string name="trips_none">कोई यात्रा नहीं: इस फ़ाइल में आप घर से कभी 50 किमी से ज़्यादा दूर नहीं गए।</string>
     <string name="trips_none_filtered">चुनी गई तारीख सीमा में कोई यात्रा नहीं है।</string>
     <string name="trips_no_home">इस फ़ाइल में घर दर्ज नहीं है, इसलिए यात्राएँ नहीं मिल सकतीं।</string>
-    <string name="trips_hint">जब आप घर से 50 किमी से ज़्यादा दूर जाते हैं, तब यात्रा पहचानी जाती है। मैप पर देखने के लिए किसी यात्रा पर टैप करें।</string>
-    <string name="trip_only_this">सिर्फ़ यही यात्रा इस्तेमाल करें</string>
+    <string name="trips_hint">जब आप घर से 50 किमी से ज़्यादा दूर जाते हैं, तब यात्रा पहचानी जाती है। मैप पर देखने के लिए किसी यात्रा पर टैप करें। सिर्फ़ कुछ यात्राएँ एक्सपोर्ट करने के लिए उन पर निशान लगाएँ।</string>
+    <string name="trip_export_checkbox">यह यात्रा एक्सपोर्ट करें</string>
+    <string name="trips_checked_none">सभी यात्राएँ एक्सपोर्ट होंगी</string>
+    <string name="trips_checked">एक्सपोर्ट के लिए चुनी गईं: %2$s में से %1$s</string>
     <string name="trip_show_all_on_map">मैप पर सभी यात्राएँ दिखाएँ</string>
+    <string name="trip_show_checked_on_map">चुनी हुई यात्राएँ मैप पर दिखाएँ</string>
     <string name="trip_far_from_home">घर से %1$s</string>
     <string name="trip_travelled_label">तय दूरी</string>
     <string name="trip_open_start">इस फ़ाइल से पहले शुरू हुई</string>

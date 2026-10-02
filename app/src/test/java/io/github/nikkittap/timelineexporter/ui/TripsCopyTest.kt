@@ -54,22 +54,29 @@ class TripsCopyTest {
     fun `english copy is the reviewed wording`() {
         val en = strings(File(res, "values"))
         assertEquals(
-            "Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map.",
+            "Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map. " +
+                "Tick trips to export only those.",
             en["trips_hint"],
         )
-        assertEquals("Use only this trip", en["trip_only_this"])
+        assertEquals("Marked for export: %1\$s of %2\$s", en["trips_checked"])
+        assertEquals("Show marked trips on map", en["trip_show_checked_on_map"])
         assertEquals("Export trip", en["step_export_trip"])
         assertEquals("Trip", en["content_trip"])
     }
 
     @Test
     fun `every locale has the trips strings and a trip-count plural with other`() {
-        val keys = listOf("content_trip", "content_trips", "step_export_trip", "step_export_trips", "trips_hint", "trip_only_this")
+        val keys = listOf("content_trip", "content_trips", "step_export_trip", "step_export_trips", "trips_hint",
+            "trip_export_checkbox", "trips_checked", "trips_checked_none", "trip_show_all_on_map", "trip_show_checked_on_map")
         val locales = res.listFiles { f -> f.isDirectory && f.name.startsWith("values") && File(f, "strings.xml").exists() }!!
         assertEquals(18, locales.size)
         for (dir in locales) {
             val s = strings(dir)
             for (k in keys) assertTrue("${dir.name} lacks $k", !s[k].isNullOrBlank())
+            // Both counts, in whatever order the language puts them.
+            for (arg in listOf("%1\$s", "%2\$s")) {
+                assertTrue("${dir.name} trips_checked lacks $arg", arg in s.getValue("trips_checked"))
+            }
             assertTrue("${dir.name} trips_count lacks other", "other" in plurals(dir, "trips_count"))
         }
         assertTrue("one" in plurals(File(res, "values-ru"), "trips_count"))

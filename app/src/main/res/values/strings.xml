@@ -252,9 +252,12 @@
     <string name="trips_none">No trips: this file never goes more than 50 km from home.</string>
     <string name="trips_none_filtered">No trips in the selected date range.</string>
     <string name="trips_no_home">This file does not say where home is, so trips cannot be found.</string>
-    <string name="trips_hint">Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map.</string>
-    <string name="trip_only_this">Use only this trip</string>
+    <string name="trips_hint">Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map. Tick trips to export only those.</string>
+    <string name="trip_export_checkbox">Export this trip</string>
+    <string name="trips_checked_none">All trips will be exported</string>
+    <string name="trips_checked">Marked for export: %1$s of %2$s</string>
     <string name="trip_show_all_on_map">Show all trips on map</string>
+    <string name="trip_show_checked_on_map">Show marked trips on map</string>
     <string name="trip_far_from_home">%1$s from home</string>
     <string name="trip_travelled_label">travelled</string>
     <string name="trip_open_start">began before this file</string>

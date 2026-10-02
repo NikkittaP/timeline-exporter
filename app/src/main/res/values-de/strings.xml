@@ -195,9 +195,12 @@
     <string name="trips_none">Keine Reisen: In dieser Datei bist du nie weiter als 50 km von zu Hause entfernt.</string>
     <string name="trips_none_filtered">Keine Reisen im gewählten Zeitraum.</string>
     <string name="trips_no_home">Die Datei enthält kein Zuhause, daher lassen sich keine Reisen finden.</string>
-    <string name="trips_hint">Eine Reise wird erkannt, wenn du dich mehr als 50 km von zu Hause entfernst. Tippe auf eine Reise, um sie auf der Karte anzusehen.</string>
-    <string name="trip_only_this">Nur diese Reise verwenden</string>
+    <string name="trips_hint">Eine Reise wird erkannt, wenn du dich mehr als 50 km von zu Hause entfernst. Tippe auf eine Reise, um sie auf der Karte anzusehen. Hake Reisen an, um nur diese zu exportieren.</string>
+    <string name="trip_export_checkbox">Diese Reise exportieren</string>
+    <string name="trips_checked_none">Alle Reisen werden exportiert</string>
+    <string name="trips_checked">Zum Export markiert: %1$s von %2$s</string>
     <string name="trip_show_all_on_map">Alle Reisen auf der Karte zeigen</string>
+    <string name="trip_show_checked_on_map">Markierte Reisen auf der Karte zeigen</string>
     <string name="trip_far_from_home">%1$s von zu Hause</string>
     <string name="trip_travelled_label">unterwegs</string>
     <string name="trip_open_start">begann vor dieser Datei</string>

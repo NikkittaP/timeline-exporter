@@ -193,9 +193,12 @@
     <string name="trips_none">沒有旅行：此檔案中你從未離家超過 50 公里。</string>
     <string name="trips_none_filtered">所選日期範圍內沒有旅行。</string>
     <string name="trips_no_home">此檔案未標明住所，因此無法找出旅行。</string>
-    <string name="trips_hint">當你離家超過 50 公里時即識別為一次旅行。輕觸旅行即可在地圖上預覽。</string>
-    <string name="trip_only_this">僅使用此旅行</string>
+    <string name="trips_hint">當你離家超過 50 公里時即識別為一次旅行。輕觸旅行即可在地圖上預覽。勾選旅行即可只匯出這些旅行。</string>
+    <string name="trip_export_checkbox">匯出此旅行</string>
+    <string name="trips_checked_none">將匯出所有旅行</string>
+    <string name="trips_checked">已選擇匯出：%1$s / %2$s</string>
     <string name="trip_show_all_on_map">在地圖上顯示所有旅行</string>
+    <string name="trip_show_checked_on_map">在地圖上顯示已勾選的旅行</string>
     <string name="trip_far_from_home">離家 %1$s</string>
     <string name="trip_travelled_label">行程</string>
     <string name="trip_open_start">在檔案開始前出發</string>

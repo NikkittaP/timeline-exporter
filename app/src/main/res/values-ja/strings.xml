@@ -193,9 +193,12 @@
     <string name="trips_none">旅行はありません：このファイルでは自宅から 50 km 以上離れていません。</string>
     <string name="trips_none_filtered">選択した期間に旅行はありません。</string>
     <string name="trips_no_home">このファイルには自宅が記録されていないため、旅行を見つけられません。</string>
-    <string name="trips_hint">自宅から 50 km 以上離れると旅行として検出されます。旅行をタップすると地図でプレビューできます。</string>
-    <string name="trip_only_this">この旅行だけを使う</string>
+    <string name="trips_hint">自宅から 50 km 以上離れると旅行として検出されます。旅行をタップすると地図でプレビューできます。チェックを入れた旅行だけを書き出すこともできます。</string>
+    <string name="trip_export_checkbox">この旅行を書き出す</string>
+    <string name="trips_checked_none">すべての旅行を書き出します</string>
+    <string name="trips_checked">書き出しに選択済み: %1$s / %2$s</string>
     <string name="trip_show_all_on_map">すべての旅行を地図に表示</string>
+    <string name="trip_show_checked_on_map">選択した旅行を地図に表示</string>
     <string name="trip_far_from_home">自宅から %1$s</string>
     <string name="trip_travelled_label">移動距離</string>
     <string name="trip_open_start">ファイルの開始前に出発</string>

@@ -199,9 +199,12 @@
     <string name="trips_none">Поездок нет: в этом файле вы не уезжали от дома дальше 50 км.</string>
     <string name="trips_none_filtered">В выбранном диапазоне дат нет поездок.</string>
     <string name="trips_no_home">В файле не отмечен дом, поэтому поездки найти нельзя.</string>
-    <string name="trips_hint">Поездка начинается, когда вы уезжаете от дома дальше чем на 50 км. Нажмите на поездку, чтобы посмотреть её на карте.</string>
-    <string name="trip_only_this">Использовать только эту поездку</string>
+    <string name="trips_hint">Поездка начинается, когда вы уезжаете от дома дальше чем на 50 км. Нажмите на поездку, чтобы посмотреть её на карте. Отметьте поездки галочкой, чтобы экспортировать только их.</string>
+    <string name="trip_export_checkbox">Экспортировать эту поездку</string>
+    <string name="trips_checked_none">Экспортируются все поездки</string>
+    <string name="trips_checked">Отмечено для экспорта: %1$s из %2$s</string>
     <string name="trip_show_all_on_map">Показать все поездки на карте</string>
+    <string name="trip_show_checked_on_map">Показать отмеченные на карте</string>
     <string name="trip_far_from_home">%1$s от дома</string>
     <string name="trip_travelled_label">в пути</string>
     <string name="trip_open_start">началась до начала файла</string>

@@ -199,9 +199,12 @@
     <string name="trips_none">Brak podróży: w tym pliku nigdy nie oddalasz się od domu o więcej niż 50 km.</string>
     <string name="trips_none_filtered">Brak podróży w wybranym zakresie dat.</string>
     <string name="trips_no_home">Plik nie wskazuje domu, więc nie można znaleźć podróży.</string>
-    <string name="trips_hint">Podróż jest wykrywana, gdy oddalasz się od domu o ponad 50 km. Dotknij podróży, aby zobaczyć ją na mapie.</string>
-    <string name="trip_only_this">Użyj tylko tej podróży</string>
+    <string name="trips_hint">Podróż jest wykrywana, gdy oddalasz się od domu o ponad 50 km. Dotknij podróży, aby zobaczyć ją na mapie. Zaznacz podróże, aby wyeksportować tylko je.</string>
+    <string name="trip_export_checkbox">Eksportuj tę podróż</string>
+    <string name="trips_checked_none">Zostaną wyeksportowane wszystkie podróże</string>
+    <string name="trips_checked">Zaznaczone do eksportu: %1$s z %2$s</string>
     <string name="trip_show_all_on_map">Pokaż wszystkie podróże na mapie</string>
+    <string name="trip_show_checked_on_map">Pokaż zaznaczone na mapie</string>
     <string name="trip_far_from_home">%1$s od domu</string>
     <string name="trip_travelled_label">w drodze</string>
     <string name="trip_open_start">zaczęła się przed początkiem pliku</string>

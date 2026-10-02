@@ -86,6 +86,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
@@ -398,6 +399,10 @@ fun MainScreen(
     // The trip the map shows alone, by its start. A key rather than the trip,
     // for the same reason as the place selection below.
     var selectedTripKey by rememberSaveable { mutableStateOf<Long?>(null) }
+    // The trips ticked for export, by the same key. Empty means every trip.
+    // Kept when the dates change: a ticked trip outside the range is simply
+    // not counted, and is ticked again when the range takes it back in.
+    var checkedTripKeys by rememberSaveable(stateSaver = LongSetSaver) { mutableStateOf(emptySet<Long>()) }
     // Non-null while the naming dialog is open, and the place it is about.
     var placeBeingNamed by remember { mutableStateOf<PlaceEntry?>(null) }
     // The one place the map and the list both point at. Held as a key rather
@@ -539,11 +544,20 @@ fun MainScreen(
     val visibleTrips = remember(tripDetection, filter.dateRange) {
         tripsIn((tripDetection as? TripDetection.Found)?.trips.orEmpty(), filter.dateRange)
     }
-    val tripExports = remember(visibleTrips, filteredPoints) {
+    val allTripExports = remember(visibleTrips, filteredPoints) {
         exportTrips(visibleTrips.sortedBy { it.start }, filteredPoints)
     }
+    // What step 4 writes: the ticked trips, or all of them when none are.
+    // With no trip selected the map draws this same set, so the preview is
+    // the export.
+    val anyTripChecked = visibleTrips.any { it.key in checkedTripKeys }
+    val tripExports = remember(allTripExports, checkedTripKeys, anyTripChecked) {
+        if (anyTripChecked) allTripExports.filter { it.trip.key in checkedTripKeys } else allTripExports
+    }
     val selectedTrip = visibleTrips.firstOrNull { it.key == selectedTripKey }
-    val selectedTripExport = tripExports.firstOrNull { it.trip.key == selectedTripKey }
+    // From every trip, not only the ticked ones: an unticked trip can still
+    // be looked at.
+    val selectedTripExport = allTripExports.firstOrNull { it.trip.key == selectedTripKey }
     val tripPoints = remember(tripExports, selectedTripExport) {
         selectedTripExport?.points ?: tripExports.flatMap { it.points }
     }
@@ -554,9 +568,8 @@ fun MainScreen(
         selectedTripKey = trip.key
         tripReveals++
     }
-    val onOnlyThisTrip: (io.github.nikkittap.timelineexporter.trips.Trip) -> Unit = { trip ->
-        viewModel.setDateRange(trip.start..trip.end)
-        tripsFullscreen = false
+    val onTripChecked: (io.github.nikkittap.timelineexporter.trips.Trip, Boolean) -> Unit = { trip, on ->
+        checkedTripKeys = if (on) checkedTripKeys + trip.key else checkedTripKeys - trip.key
     }
 
     /**
@@ -871,7 +884,9 @@ fun MainScreen(
                                     if (selectedTrip != null) {
                                         SelectedTripCard(
                                             trip = selectedTrip,
-                                            onOnlyThis = { onOnlyThisTrip(selectedTrip) },
+                                            checked = selectedTrip.key in checkedTripKeys,
+                                            anyChecked = anyTripChecked,
+                                            onCheckedChange = { onTripChecked(selectedTrip, it) },
                                             onShowAllOnMap = { selectedTripKey = null },
                                         )
                                     }
@@ -882,7 +897,10 @@ fun MainScreen(
                                 noHome = tripDetection == TripDetection.NoHome,
                                 dateRangeActive = filter.dateRange != null,
                                 selectedKey = selectedTripKey,
+                                checkedKeys = checkedTripKeys,
                                 onTripClick = onTripPicked,
+                                onCheckedChange = onTripChecked,
+                                onClearChecked = { checkedTripKeys = emptySet() },
                                 onShowAll = { tripsFullscreen = true },
                             )
                         }
@@ -956,6 +974,8 @@ fun MainScreen(
             ExpandedTrips(
                 trips = visibleTrips,
                 selectedKey = selectedTripKey,
+                checkedKeys = checkedTripKeys,
+                onCheckedChange = onTripChecked,
                 onTripClick = { trip ->
                     tripsFullscreen = false
                     onTripPicked(trip)
@@ -2570,3 +2590,9 @@ private fun lastNDaysRange(anchor: Instant, days: Int): ClosedRange<Instant> {
     val end = endDate.plusDays(1).atStartOfDay(zone).toInstant().minusNanos(1)
     return start..end
 }
+
+/** Saves a set of trip keys across a rotation or process death. */
+private val LongSetSaver = listSaver<Set<Long>, Long>(
+    save = { it.toList() },
+    restore = { it.toSet() },
+)

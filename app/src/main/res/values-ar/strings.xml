@@ -203,9 +203,12 @@
     <string name="trips_none">لا توجد رحلات: في هذا الملف لم تبتعد عن المنزل أكثر من 50 كم.</string>
     <string name="trips_none_filtered">لا توجد رحلات في النطاق الزمني المحدد.</string>
     <string name="trips_no_home">لا يحدد هذا الملف مكان المنزل، لذا لا يمكن العثور على الرحلات.</string>
-    <string name="trips_hint">تُكتشف الرحلة عندما تبتعد عن المنزل أكثر من 50 كم. انقر على رحلة لمعاينتها على الخريطة.</string>
-    <string name="trip_only_this">استخدام هذه الرحلة فقط</string>
+    <string name="trips_hint">تُكتشف الرحلة عندما تبتعد عن المنزل أكثر من 50 كم. انقر على رحلة لمعاينتها على الخريطة. حدّد الرحلات لتصديرها وحدها.</string>
+    <string name="trip_export_checkbox">تصدير هذه الرحلة</string>
+    <string name="trips_checked_none">سيتم تصدير كل الرحلات</string>
+    <string name="trips_checked">محدّدة للتصدير: %1$s من %2$s</string>
     <string name="trip_show_all_on_map">عرض كل الرحلات على الخريطة</string>
+    <string name="trip_show_checked_on_map">عرض الرحلات المحدّدة على الخريطة</string>
     <string name="trip_far_from_home">على بُعد %1$s من المنزل</string>
     <string name="trip_travelled_label">المسافة المقطوعة</string>
     <string name="trip_open_start">بدأت قبل بداية الملف</string>

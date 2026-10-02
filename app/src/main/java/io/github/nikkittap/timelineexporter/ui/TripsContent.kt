@@ -3,7 +3,6 @@ package io.github.nikkittap.timelineexporter.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,19 +10,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,6 +36,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,10 +67,18 @@ fun tripsIn(trips: List<Trip>, range: ClosedRange<Instant>?): List<Trip> =
  * The trips half of the preview step, under the map and the selected trip's
  * card (see [SelectedTripCard]).
  *
- * One tap shows a trip on the map. Tapping never lets go of a trip: someone
- * who just scrolled through a hundred rows to find one should not lose it to
- * a second tap, so going back to every trip is the card's own button. The
- * selected trip leaves this list for the card, which is where it always is.
+ * Two separate choices live here. A tap on a row shows that trip on the map.
+ * Tapping never lets go of a trip: someone who just scrolled through a
+ * hundred rows to find one should not lose it to a second tap, so going back
+ * is the card's own button. The selected trip leaves this list for the card,
+ * which is where it always is.
+ *
+ * The checkbox on each row is the other choice: which trips step 4 writes.
+ * None ticked means all of them, so nothing changes for someone who never
+ * touches a box. Once any are ticked, a line above the list says how many of
+ * how many and offers to clear them, so a narrowed export is never silent.
+ * It used to be "Use only this trip", which narrowed step 2's dates: one
+ * trip at most, and nothing on this card said how to get the rest back.
  *
  * [noHome] says the file has no home to measure from, which is a different
  * thing to say than "no trips".
@@ -76,7 +89,10 @@ fun TripsPreview(
     noHome: Boolean,
     dateRangeActive: Boolean,
     selectedKey: Long?,
+    checkedKeys: Set<Long>,
     onTripClick: (Trip) -> Unit,
+    onCheckedChange: (Trip, Boolean) -> Unit,
+    onClearChecked: () -> Unit,
     onShowAll: () -> Unit,
 ) {
     if (trips.isEmpty()) {
@@ -100,6 +116,32 @@ fun TripsPreview(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
+    // Always there, at the button's height, ticks or none. When it appeared
+    // only with the first tick, it pushed the list down under the finger and
+    // the next tap ticked the row below the one aimed at.
+    val checkedCount = trips.count { it.key in checkedKeys }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.heightIn(min = 48.dp),
+    ) {
+        Text(
+            text = if (checkedCount > 0) {
+                stringResource(R.string.trips_checked, "%,d".format(checkedCount), "%,d".format(trips.size))
+            } else {
+                stringResource(R.string.trips_checked_none)
+            },
+            style = MaterialTheme.typography.labelLarge,
+            color = if (checkedCount > 0) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f),
+        )
+        if (checkedCount > 0) {
+            TextButton(onClick = onClearChecked) {
+                Text(stringResource(R.string.filter_clear_button))
+            }
+        }
+    }
+
     val rest = trips.filter { it.key != selectedKey }
     if (rest.isNotEmpty()) {
         Surface(
@@ -112,7 +154,13 @@ fun TripsPreview(
             Column {
                 rest.take(INLINE_TRIP_LIMIT).forEachIndexed { index, trip ->
                     if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    TripRow(trip = trip, highlighted = false, onClick = { onTripClick(trip) })
+                    TripRow(
+                        trip = trip,
+                        highlighted = false,
+                        checked = trip.key in checkedKeys,
+                        onCheckedChange = { onCheckedChange(trip, it) },
+                        onClick = { onTripClick(trip) },
+                    )
                 }
             }
         }
@@ -130,17 +178,17 @@ fun TripsPreview(
  * about it: the place count and the notes on how complete it is, which the
  * rows leave out to stay scannable.
  *
- * "Use only this trip" sets step 2's dates to the trip's. Narrowing the dates
- * rather than keeping a separate selection is deliberate: the date range is
- * already what every count, the map and every export follow, so one trip
- * exported is just one trip's dates, with no second filter to explain. Until
- * then the selection is the map's alone, and "Show all trips on map" is how
- * to let go of it.
+ * Its checkbox is the same one the trip had in the list, in the same place,
+ * since the trip left the list for this card. The one button lets go of the
+ * trip: back to everything step 4 will write, which is every trip, or the
+ * ticked ones once there are any, and the label says which.
  */
 @Composable
 fun SelectedTripCard(
     trip: Trip,
-    onOnlyThis: () -> Unit,
+    checked: Boolean,
+    anyChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
     onShowAllOnMap: () -> Unit,
 ) {
     Surface(
@@ -149,36 +197,49 @@ fun SelectedTripCard(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(top = 10.dp)) {
-            Column(modifier = Modifier.padding(horizontal = 12.dp)) {
-                TripSummary(trip, detailed = true)
-            }
-            // Side by side where they fit. Where they do not (German, and
-            // Russian on a narrow phone), stacked 40 dp apart rather than
-            // 48: the buttons' touch areas overlap by the 8 dp of padding
-            // around each label, which still leaves every label its own row.
-            // The buttons keep their own 12 dp of padding, so the pressed
-            // shape has room around the label, and that padding is what
-            // lines the labels up with the summary above.
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalArrangement = Arrangement.spacedBy((-8).dp),
-                modifier = Modifier.padding(bottom = 2.dp),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(end = 12.dp),
             ) {
-                TextButton(onClick = onOnlyThis, contentPadding = PaddingValues(horizontal = 12.dp)) {
-                    Text(stringResource(R.string.trip_only_this))
+                ExportCheckbox(checked, onCheckedChange)
+                Column(modifier = Modifier.weight(1f)) {
+                    TripSummary(trip, detailed = true)
                 }
-                TextButton(onClick = onShowAllOnMap, contentPadding = PaddingValues(horizontal = 12.dp)) {
-                    Text(stringResource(R.string.trip_show_all_on_map))
-                }
+            }
+            // The button keeps its own 12 dp of padding, so the pressed
+            // shape has room around the label, and that padding is what
+            // lines the label up with the row above.
+            TextButton(
+                onClick = onShowAllOnMap,
+                contentPadding = PaddingValues(horizontal = 12.dp),
+                modifier = Modifier.padding(start = CHECKBOX_WIDTH - 12.dp, bottom = 2.dp),
+            ) {
+                Text(
+                    stringResource(
+                        if (anyChecked) R.string.trip_show_checked_on_map
+                        else R.string.trip_show_all_on_map
+                    )
+                )
             }
         }
     }
 }
 
-/** One trip in a list: the summary, tappable, tinted when it is the one on the map. */
+/**
+ * One trip in a list: its export checkbox, then the summary, tappable, tinted
+ * when it is the one on the map. The box and the row are separate targets:
+ * ticking a trip does not move the map, and showing one does not tick it.
+ */
 @Composable
-private fun TripRow(trip: Trip, highlighted: Boolean, onClick: () -> Unit) {
-    Column(
+private fun TripRow(
+    trip: Trip,
+    highlighted: Boolean,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    onClick: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .background(
@@ -186,9 +247,34 @@ private fun TripRow(trip: Trip, highlighted: Boolean, onClick: () -> Unit) {
                 else MaterialTheme.colorScheme.surfaceContainer
             )
             .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = if (trip.isDayTrip) 6.dp else 10.dp),
+            // A day trip's single line sits inside the checkbox's 40 dp, so
+            // it needs no padding of its own to keep the rows apart.
+            .padding(end = 12.dp, top = if (trip.isDayTrip) 0.dp else 10.dp, bottom = if (trip.isDayTrip) 0.dp else 10.dp),
     ) {
-        TripSummary(trip, detailed = false)
+        ExportCheckbox(checked, onCheckedChange)
+        Column(modifier = Modifier.weight(1f)) {
+            TripSummary(trip, detailed = false)
+        }
+    }
+}
+
+/** Width the checkbox takes at the start of a row, touch area included. */
+private val CHECKBOX_WIDTH = 40.dp
+
+/**
+ * The box that puts a trip in the export. 40 dp to touch rather than the
+ * usual 48: at 48 every one-line day trip would be half as tall again, and a
+ * year of them is most of the list. 40 is still a comfortable target.
+ */
+@Composable
+private fun ExportCheckbox(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    val label = stringResource(R.string.trip_export_checkbox)
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides CHECKBOX_WIDTH) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            modifier = Modifier.semantics { contentDescription = label },
+        )
     }
 }
 
@@ -347,7 +433,9 @@ private fun TransportIcons(modes: List<TransportMode>) {
 fun ExpandedTrips(
     trips: List<Trip>,
     selectedKey: Long?,
+    checkedKeys: Set<Long>,
     onTripClick: (Trip) -> Unit,
+    onCheckedChange: (Trip, Boolean) -> Unit,
     onClose: () -> Unit,
 ) {
     // Newest first in, newest year first out: groupBy keeps first-seen order.
@@ -400,6 +488,10 @@ fun ExpandedTrips(
                             TripRow(
                                 trip = trip,
                                 highlighted = trip.key == selectedKey,
+                                checked = trip.key in checkedKeys,
+                                // Ticking stays in the list, so several
+                                // trips can be ticked in one visit.
+                                onCheckedChange = { onCheckedChange(trip, it) },
                                 onClick = { onTripClick(trip) },
                             )
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
