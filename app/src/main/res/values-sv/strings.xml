@@ -194,6 +194,7 @@
     <string name="trips_no_home">Filen anger inget hem, så inga resor kan hittas.</string>
     <string name="trips_hint">En resa upptäcks när du är mer än 50 km hemifrån. Tryck på en resa för att se den på kartan.</string>
     <string name="trip_only_this">Använd bara den här resan</string>
+    <string name="trip_show_all_on_map">Visa alla resor på kartan</string>
     <string name="trip_far_from_home">%1$s hemifrån</string>
     <string name="trip_travelled_label">färdväg</string>
     <string name="trip_open_start">började före filen</string>

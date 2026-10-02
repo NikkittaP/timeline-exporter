@@ -195,6 +195,7 @@
     <string name="trips_no_home">Ce fichier n\'indique pas votre domicile, les voyages ne peuvent donc pas être trouvés.</string>
     <string name="trips_hint">Un voyage est détecté quand vous vous éloignez de plus de 50 km de chez vous. Touchez un voyage pour l\'afficher sur la carte.</string>
     <string name="trip_only_this">Utiliser uniquement ce voyage</string>
+    <string name="trip_show_all_on_map">Afficher tous les voyages sur la carte</string>
     <string name="trip_far_from_home">à %1$s de chez vous</string>
     <string name="trip_travelled_label">parcourus</string>
     <string name="trip_open_start">commencé avant ce fichier</string>

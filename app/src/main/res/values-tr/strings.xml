@@ -194,6 +194,7 @@
     <string name="trips_no_home">Bu dosya evinizin nerede olduğunu belirtmiyor, bu yüzden seyahatler bulunamıyor.</string>
     <string name="trips_hint">Evden 50 km\'den fazla uzaklaştığınızda bir seyahat algılanır. Haritada görmek için bir seyahate dokunun.</string>
     <string name="trip_only_this">Yalnızca bu seyahati kullan</string>
+    <string name="trip_show_all_on_map">Tüm seyahatleri haritada göster</string>
     <string name="trip_far_from_home">evden %1$s</string>
     <string name="trip_travelled_label">yol</string>
     <string name="trip_open_start">bu dosyadan önce başladı</string>

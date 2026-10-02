@@ -38,6 +38,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -79,6 +81,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -424,6 +427,20 @@ fun MainScreen(
         }
     }
 
+    // Picking a trip is asking to see it, and the map that shows it sits above
+    // the list the pick came from, often scrolled off — or behind the full
+    // list, which the pick closes. Each pick bumps the counter, and the map
+    // and the selected trip's card are scrolled into view together.
+    val tripRevealRequester = remember { BringIntoViewRequester() }
+    var tripReveals by remember { mutableIntStateOf(0) }
+    LaunchedEffect(tripReveals) {
+        if (tripReveals == 0) return@LaunchedEffect
+        // The card for the new trip is composed in this same frame; wait for
+        // its layout so the area brought into view includes it.
+        withFrameNanos { }
+        tripRevealRequester.bringIntoView()
+    }
+
     // What the user has selected, derived once at the top of the screen.
     //
     // Hoisted above the launchers on purpose: a save destination comes back
@@ -525,14 +542,17 @@ fun MainScreen(
     val tripExports = remember(visibleTrips, filteredPoints) {
         exportTrips(visibleTrips.sortedBy { it.start }, filteredPoints)
     }
+    val selectedTrip = visibleTrips.firstOrNull { it.key == selectedTripKey }
     val selectedTripExport = tripExports.firstOrNull { it.trip.key == selectedTripKey }
     val tripPoints = remember(tripExports, selectedTripExport) {
         selectedTripExport?.points ?: tripExports.flatMap { it.points }
     }
-    // A second tap on the selected trip lets go of it, so the map can go back
-    // to showing every trip without a separate control for it.
+    // Always selects, even the trip already selected: a second tap used to let
+    // go of it, which made a trip found after a long scroll easy to lose.
+    // Going back to every trip is the selected card's own button.
     val onTripPicked: (io.github.nikkittap.timelineexporter.trips.Trip) -> Unit = { trip ->
-        selectedTripKey = if (trip.key == selectedTripKey) null else trip.key
+        selectedTripKey = trip.key
+        tripReveals++
     }
     val onOnlyThisTrip: (io.github.nikkittap.timelineexporter.trips.Trip) -> Unit = { trip ->
         viewModel.setDateRange(trip.start..trip.end)
@@ -834,12 +854,28 @@ fun MainScreen(
                         )
 
                         ContentKind.TRIPS -> {
-                            if (!mapSubject.isEmpty) {
-                                MapTile(
-                                    subject = mapSubject,
-                                    inlineMapActive = !mapFullscreen,
-                                    mapContent = movableMap,
-                                )
+                            // The map and the trip it is showing, as one block
+                            // that a pick scrolls into view.
+                            if (!mapSubject.isEmpty || selectedTrip != null) {
+                                Column(
+                                    modifier = Modifier.bringIntoViewRequester(tripRevealRequester),
+                                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                                ) {
+                                    if (!mapSubject.isEmpty) {
+                                        MapTile(
+                                            subject = mapSubject,
+                                            inlineMapActive = !mapFullscreen,
+                                            mapContent = movableMap,
+                                        )
+                                    }
+                                    if (selectedTrip != null) {
+                                        SelectedTripCard(
+                                            trip = selectedTrip,
+                                            onOnlyThis = { onOnlyThisTrip(selectedTrip) },
+                                            onShowAllOnMap = { selectedTripKey = null },
+                                        )
+                                    }
+                                }
                             }
                             TripsPreview(
                                 trips = visibleTrips,
@@ -847,7 +883,6 @@ fun MainScreen(
                                 dateRangeActive = filter.dateRange != null,
                                 selectedKey = selectedTripKey,
                                 onTripClick = onTripPicked,
-                                onOnlyThis = onOnlyThisTrip,
                                 onShowAll = { tripsFullscreen = true },
                             )
                         }
@@ -921,8 +956,10 @@ fun MainScreen(
             ExpandedTrips(
                 trips = visibleTrips,
                 selectedKey = selectedTripKey,
-                onTripClick = onTripPicked,
-                onOnlyThis = onOnlyThisTrip,
+                onTripClick = { trip ->
+                    tripsFullscreen = false
+                    onTripPicked(trip)
+                },
                 onClose = { tripsFullscreen = false },
             )
         }

@@ -195,6 +195,7 @@
     <string name="trips_no_home">Este arquivo não indica onde fica sua casa, então não é possível encontrar viagens.</string>
     <string name="trips_hint">Uma viagem é detectada quando você se afasta mais de 50 km de casa. Toque em uma viagem para vê-la no mapa.</string>
     <string name="trip_only_this">Usar só esta viagem</string>
+    <string name="trip_show_all_on_map">Mostrar todas as viagens no mapa</string>
     <string name="trip_far_from_home">a %1$s de casa</string>
     <string name="trip_travelled_label">percorridos</string>
     <string name="trip_open_start">começou antes deste arquivo</string>

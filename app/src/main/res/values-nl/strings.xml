@@ -194,6 +194,7 @@
     <string name="trips_no_home">Dit bestand vermeldt geen thuis, dus er kunnen geen reizen worden gevonden.</string>
     <string name="trips_hint">Een reis wordt herkend als je meer dan 50 km van huis gaat. Tik op een reis om hem op de kaart te bekijken.</string>
     <string name="trip_only_this">Alleen deze reis gebruiken</string>
+    <string name="trip_show_all_on_map">Alle reizen op de kaart tonen</string>
     <string name="trip_far_from_home">%1$s van huis</string>
     <string name="trip_travelled_label">afgelegd</string>
     <string name="trip_open_start">begon vóór dit bestand</string>

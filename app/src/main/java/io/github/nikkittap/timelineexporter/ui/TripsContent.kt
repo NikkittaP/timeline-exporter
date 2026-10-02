@@ -3,12 +3,14 @@ package io.github.nikkittap.timelineexporter.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,9 +25,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -54,13 +58,13 @@ fun tripsIn(trips: List<Trip>, range: ClosedRange<Instant>?): List<Trip> =
 // ---------- step 3 content ----------
 
 /**
- * The trips half of the preview step.
+ * The trips half of the preview step, under the map and the selected trip's
+ * card (see [SelectedTripCard]).
  *
- * One tap selects a trip, which the map then shows alone; the selected row
- * offers "Only this trip", which sets step 2's dates to the trip's. Narrowing
- * the dates rather than keeping a separate selection is deliberate: the date
- * range is already what every count, the map and every export follow, so one
- * trip exported is just one trip's dates, with no second filter to explain.
+ * One tap shows a trip on the map. Tapping never lets go of a trip: someone
+ * who just scrolled through a hundred rows to find one should not lose it to
+ * a second tap, so going back to every trip is the card's own button. The
+ * selected trip leaves this list for the card, which is where it always is.
  *
  * [noHome] says the file has no home to measure from, which is a different
  * thing to say than "no trips".
@@ -72,7 +76,6 @@ fun TripsPreview(
     dateRangeActive: Boolean,
     selectedKey: Long?,
     onTripClick: (Trip) -> Unit,
-    onOnlyThis: (Trip) -> Unit,
     onShowAll: () -> Unit,
 ) {
     if (trips.isEmpty()) {
@@ -96,138 +99,174 @@ fun TripsPreview(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        // A plain Column for the same reason as the places list: it sits inside
-        // the screen's own vertical scroll.
-        Column {
-            inlineTrips(trips, selectedKey).forEachIndexed { index, trip ->
-                if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                TripRow(
-                    trip = trip,
-                    selected = trip.key == selectedKey,
-                    onClick = { onTripClick(trip) },
-                    onOnlyThis = { onOnlyThis(trip) },
-                )
+    val rest = trips.filter { it.key != selectedKey }
+    if (rest.isNotEmpty()) {
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            // A plain Column for the same reason as the places list: it sits inside
+            // the screen's own vertical scroll.
+            Column {
+                rest.take(INLINE_TRIP_LIMIT).forEachIndexed { index, trip ->
+                    if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    TripRow(trip = trip, highlighted = false, onClick = { onTripClick(trip) })
+                }
             }
         }
     }
 
-    if (trips.size > INLINE_TRIP_LIMIT) {
+    if (rest.size > INLINE_TRIP_LIMIT) {
         TextButton(onClick = onShowAll) {
             Text(stringResource(R.string.places_show_all, "%,d".format(trips.size)))
         }
     }
 }
 
-/** The newest [INLINE_TRIP_LIMIT], plus the selected trip pinned in front if it is older. */
-private fun inlineTrips(trips: List<Trip>, selectedKey: Long?): List<Trip> {
-    val head = trips.take(INLINE_TRIP_LIMIT)
-    if (selectedKey == null || head.any { it.key == selectedKey }) return head
-    val selected = trips.firstOrNull { it.key == selectedKey } ?: return head
-    return listOf(selected) + head
-}
-
 /**
- * One trip. A trip of a day or more gets two lines and the distance travelled
- * on the right; a day trip is one quiet line, so a year of Sunday outings does
- * not bury the holidays.
+ * The trip the map is showing, directly under the map, with everything known
+ * about it: the place count and the notes on how complete it is, which the
+ * rows leave out to stay scannable.
+ *
+ * "Use only this trip" sets step 2's dates to the trip's. Narrowing the dates
+ * rather than keeping a separate selection is deliberate: the date range is
+ * already what every count, the map and every export follow, so one trip
+ * exported is just one trip's dates, with no second filter to explain. Until
+ * then the selection is the map's alone, and "Show all trips on map" is how
+ * to let go of it.
  */
 @Composable
-private fun TripRow(
+fun SelectedTripCard(
     trip: Trip,
-    selected: Boolean,
-    onClick: () -> Unit,
     onOnlyThis: () -> Unit,
+    onShowAllOnMap: () -> Unit,
 ) {
-    val dates = tripDates(trip)
-    val details = listOf(
-        formatTripLength(trip),
-        stringResource(R.string.trip_far_from_home, formatTripKm(trip.maxDistanceMeters)),
-    ) + if (trip.isDayTrip) emptyList() else listOf(stringResource(R.string.places_count, "%,d".format(trip.placeCount)))
-    val flags = listOfNotNull(
-        if (trip.openStart) stringResource(R.string.trip_open_start) else null,
-        if (trip.openEnd) stringResource(R.string.trip_open_end) else null,
-        if (trip.longAbsence) stringResource(R.string.trip_long_absence) else null,
-    )
+    Surface(
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 10.dp)) {
+            TripSummary(trip, detailed = true)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                TextButton(onClick = onOnlyThis, contentPadding = PaddingValues(horizontal = 0.dp)) {
+                    Text(stringResource(R.string.trip_only_this))
+                }
+                TextButton(onClick = onShowAllOnMap, contentPadding = PaddingValues(horizontal = 0.dp)) {
+                    Text(stringResource(R.string.trip_show_all_on_map))
+                }
+            }
+        }
+    }
+}
 
+/** One trip in a list: the summary, tappable, tinted when it is the one on the map. */
+@Composable
+private fun TripRow(trip: Trip, highlighted: Boolean, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                if (selected) MaterialTheme.colorScheme.secondaryContainer
+                if (highlighted) MaterialTheme.colorScheme.secondaryContainer
                 else MaterialTheme.colorScheme.surfaceContainer
             )
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = if (trip.isDayTrip) 6.dp else 10.dp),
     ) {
-        if (trip.isDayTrip) {
-            Text(
-                text = (listOf(dates) + details).joinToString(" · "),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        } else {
+        TripSummary(trip, detailed = false)
+    }
+}
+
+/**
+ * What a trip is, at two depths.
+ *
+ * In a list, only what tells one trip from the next: the dates, how it was
+ * travelled, how long, how far from home (the nearest thing to a destination
+ * until trips have names) and the distance covered. A day trip is one quiet
+ * line, so a year of Sunday outings does not bury the holidays.
+ *
+ * [detailed], for the selected trip's card, adds the place count, labels the
+ * distance, and says when the trip is cut off by the file or looks like a
+ * move.
+ */
+@Composable
+private fun TripSummary(trip: Trip, detailed: Boolean) {
+    val dates = tripDates(trip)
+    val details = listOf(
+        formatTripLength(trip),
+        stringResource(R.string.trip_far_from_home, formatTripKm(trip.maxDistanceMeters)),
+    ) + if (detailed) listOf(stringResource(R.string.places_count, "%,d".format(trip.placeCount))) else emptyList()
+
+    if (trip.isDayTrip && !detailed) {
+        Text(
+            text = (listOf(dates) + details).joinToString(" · "),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        return
+    }
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(modifier = Modifier.weight(1f)) {
+            // Icons beside the dates, which rarely fill their line,
+            // rather than beside the distance, where they squeezed
+            // the details onto a second line.
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(modifier = Modifier.weight(1f)) {
-                    // Icons beside the dates, which rarely fill their line,
-                    // rather than beside the distance, where they squeezed
-                    // the details onto a second line.
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = dates,
-                            style = MaterialTheme.typography.titleSmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false),
-                        )
-                        if (trip.transport.isNotEmpty()) {
-                            Spacer(Modifier.width(8.dp))
-                            TransportIcons(trip.transport)
-                        }
-                    }
-                    Text(
-                        text = details.joinToString(" · "),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-                Spacer(Modifier.width(12.dp))
-                Column(horizontalAlignment = Alignment.End) {
-                    Text(
-                        // "≈" and nothing more when the distance is partly
-                        // measured off the track or the file cuts the trip
-                        // off: a hint that it is not Google's full figure,
-                        // without turning the row into a warning.
-                        text = (if (trip.travelledEstimated) "≈ " else "") + formatTripKm(trip.travelledMeters),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Text(
-                        text = stringResource(R.string.trip_travelled_label),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                Text(
+                    text = dates,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false),
+                )
+                if (trip.transport.isNotEmpty()) {
+                    Spacer(Modifier.width(8.dp))
+                    TransportIcons(trip.transport)
                 }
             }
+            Text(
+                text = details.joinToString(" · "),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
+        Spacer(Modifier.width(12.dp))
+        Column(horizontalAlignment = Alignment.End) {
+            Text(
+                // "≈" and nothing more when the distance is partly
+                // measured off the track or the file cuts the trip
+                // off: a hint that it is not Google's full figure,
+                // without turning the row into a warning.
+                text = (if (trip.travelledEstimated) "≈ " else "") + formatTripKm(trip.travelledMeters),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            if (detailed) {
+                Text(
+                    text = stringResource(R.string.trip_travelled_label),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+
+    if (detailed) {
+        val flags = listOfNotNull(
+            if (trip.openStart) stringResource(R.string.trip_open_start) else null,
+            if (trip.openEnd) stringResource(R.string.trip_open_end) else null,
+            if (trip.longAbsence) stringResource(R.string.trip_long_absence) else null,
+        )
         if (flags.isNotEmpty()) {
             Text(
                 text = flags.joinToString(" · "),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.tertiary,
             )
-        }
-        if (selected) {
-            TextButton(onClick = onOnlyThis, contentPadding = PaddingValues(horizontal = 0.dp)) {
-                Text(stringResource(R.string.trip_only_this))
-            }
         }
     }
 }
@@ -273,19 +312,41 @@ private fun TransportIcons(modes: List<TransportMode>) {
     }
 }
 
-/** Fullscreen trips list, the counterpart to the expanded places list. */
+/**
+ * Fullscreen trips list, the counterpart to the expanded places list.
+ *
+ * Picking a trip here is picking it to look at, and the map is behind this
+ * list, so a tap selects and closes in one: [onTripClick] is expected to do
+ * both. The trips are grouped under sticky year headers, which is how a
+ * hundred-odd holidays and outings are easiest to find again.
+ */
 @Composable
 fun ExpandedTrips(
     trips: List<Trip>,
     selectedKey: Long?,
     onTripClick: (Trip) -> Unit,
-    onOnlyThis: (Trip) -> Unit,
     onClose: () -> Unit,
 ) {
+    // Newest first in, newest year first out: groupBy keeps first-seen order.
+    val byYear = remember(trips) {
+        val zone = ZoneId.systemDefault()
+        trips.groupBy { localDate(it.start, it.startOffsetMinutes, zone).year }
+    }
     val listState = rememberLazyListState()
-    LaunchedEffect(selectedKey, trips) {
-        val index = trips.indexOfFirst { it.key == selectedKey }
-        if (index >= 0) listState.animateScrollToItem(index)
+    val headerOffset = with(LocalDensity.current) { -YEAR_HEADER_HEIGHT.roundToPx() }
+    // Open on the trip the map is showing, below its year's header rather
+    // than under it.
+    LaunchedEffect(Unit) {
+        var index = 0
+        for (yearTrips in byYear.values) {
+            index++ // the header
+            val at = yearTrips.indexOfFirst { it.key == selectedKey }
+            if (at >= 0) {
+                listState.scrollToItem(index + at, headerOffset)
+                break
+            }
+            index += yearTrips.size
+        }
     }
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -308,17 +369,40 @@ fun ExpandedTrips(
                 modifier = Modifier.fillMaxWidth().weight(1f),
             ) {
                 LazyColumn(state = listState) {
-                    items(trips, key = { it.key }) { trip ->
-                        TripRow(
-                            trip = trip,
-                            selected = trip.key == selectedKey,
-                            onClick = { onTripClick(trip) },
-                            onOnlyThis = { onOnlyThis(trip) },
-                        )
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    for ((year, yearTrips) in byYear) {
+                        stickyHeader(key = "year-$year") {
+                            YearHeader(year, yearTrips.size)
+                        }
+                        items(yearTrips, key = { it.key }) { trip ->
+                            TripRow(
+                                trip = trip,
+                                highlighted = trip.key == selectedKey,
+                                onClick = { onTripClick(trip) },
+                            )
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        }
                     }
                 }
             }
+        }
+    }
+}
+
+private val YEAR_HEADER_HEIGHT = 36.dp
+
+/** "2025 · 14 trips", opaque so the rows scroll under it. */
+@Composable
+private fun YearHeader(year: Int, count: Int) {
+    Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.height(YEAR_HEADER_HEIGHT).padding(horizontal = 12.dp),
+        ) {
+            Text(
+                text = "$year · ${pluralStringResource(R.plurals.trips_count, count, "%,d".format(count))}",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

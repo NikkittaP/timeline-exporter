@@ -194,6 +194,7 @@
     <string name="trips_no_home">Die Datei enthält kein Zuhause, daher lassen sich keine Reisen finden.</string>
     <string name="trips_hint">Eine Reise wird erkannt, wenn du dich mehr als 50 km von zu Hause entfernst. Tippe auf eine Reise, um sie auf der Karte anzusehen.</string>
     <string name="trip_only_this">Nur diese Reise verwenden</string>
+    <string name="trip_show_all_on_map">Alle Reisen auf der Karte zeigen</string>
     <string name="trip_far_from_home">%1$s von zu Hause</string>
     <string name="trip_travelled_label">unterwegs</string>
     <string name="trip_open_start">begann vor dieser Datei</string>

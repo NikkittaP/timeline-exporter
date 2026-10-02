@@ -41,12 +41,21 @@ Where things go at release time:
     export, and May 2026 is not there at all. On Timeline_2.json the rule
     finds the 8 trips checked by hand, and 108 of Google's 114 on the
     13-year file. The 6 it misses are under 3 h.
-  - The list is newest first. Multi-day trips show dates, calendar days,
-    distance from home, places and km travelled; day trips get one compact
-    line. Trips starting before the file, still open, or longer than 60 days
-    (possibly a move) are flagged.
-  - Tapping a trip shows it alone on the map. "Only this trip" sets step 2's
-    dates to the trip's, so every count and export follows it.
+  - The list is newest first. A multi-day row is two lines: dates, transport
+    icons and km travelled, then calendar days and distance from home. A day
+    trip is one compact line (date · hours · km from home). The full list
+    groups the trips under sticky year headers ("2025 · 9 trips").
+  - Tapping a trip shows it alone on the map and puts it in a card directly
+    under the map, with everything the rows leave out: the place count, the
+    "travelled" label, and the flags for trips that start before the file,
+    are still open, or last over 60 days (possibly a move). Every tap
+    scrolls the map and card into view. A tap in the full list also closes
+    the list, because the map is behind it.
+  - Tapping the selected trip again keeps it selected. It used to clear it,
+    which lost a trip found after a long scroll. The card's "Show all trips
+    on map" lets go of it. "Use only this trip" sets step 2's dates to the
+    trip's, so every count and export follows it. Until then the selection
+    only changes the map.
   - Export: GPX has one `<trk>` per trip (the ballot's "each trip as a
     separate track inside one file"). KML has one Placemark per trip with a
     TimeSpan. GeoJSON has one Feature per trip with its figures. CSV has one

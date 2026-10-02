@@ -194,6 +194,7 @@
     <string name="trips_no_home">इस फ़ाइल में घर दर्ज नहीं है, इसलिए यात्राएँ नहीं मिल सकतीं।</string>
     <string name="trips_hint">जब आप घर से 50 किमी से ज़्यादा दूर जाते हैं, तब यात्रा पहचानी जाती है। मैप पर देखने के लिए किसी यात्रा पर टैप करें।</string>
     <string name="trip_only_this">सिर्फ़ यही यात्रा इस्तेमाल करें</string>
+    <string name="trip_show_all_on_map">मैप पर सभी यात्राएँ दिखाएँ</string>
     <string name="trip_far_from_home">घर से %1$s</string>
     <string name="trip_travelled_label">तय दूरी</string>
     <string name="trip_open_start">इस फ़ाइल से पहले शुरू हुई</string>
