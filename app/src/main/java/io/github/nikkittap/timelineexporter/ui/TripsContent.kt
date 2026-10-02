@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.nikkittap.timelineexporter.R
@@ -147,20 +148,26 @@ fun SelectedTripCard(
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Column(modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 10.dp)) {
-            TripSummary(trip, detailed = true)
+        Column(modifier = Modifier.padding(top = 10.dp)) {
+            Column(modifier = Modifier.padding(horizontal = 12.dp)) {
+                TripSummary(trip, detailed = true)
+            }
             // Side by side where they fit. Where they do not (German, and
             // Russian on a narrow phone), stacked 40 dp apart rather than
             // 48: the buttons' touch areas overlap by the 8 dp of padding
             // around each label, which still leaves every label its own row.
+            // The buttons keep their own 12 dp of padding, so the pressed
+            // shape has room around the label, and that padding is what
+            // lines the labels up with the summary above.
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalArrangement = Arrangement.spacedBy((-8).dp),
+                modifier = Modifier.padding(bottom = 2.dp),
             ) {
-                TextButton(onClick = onOnlyThis, contentPadding = PaddingValues(horizontal = 0.dp)) {
+                TextButton(onClick = onOnlyThis, contentPadding = PaddingValues(horizontal = 12.dp)) {
                     Text(stringResource(R.string.trip_only_this))
                 }
-                TextButton(onClick = onShowAllOnMap, contentPadding = PaddingValues(horizontal = 0.dp)) {
+                TextButton(onClick = onShowAllOnMap, contentPadding = PaddingValues(horizontal = 12.dp)) {
                     Text(stringResource(R.string.trip_show_all_on_map))
                 }
             }
@@ -227,10 +234,14 @@ private fun TripSummary(trip: Trip, detailed: Boolean) {
             // rather than beside the distance, where they squeezed
             // the details onto a second line.
             Row(verticalAlignment = Alignment.CenterVertically) {
+                // The card has room for a second line and nothing to save
+                // it for, so its dates turn at the dash (see
+                // formatLocalDayRange) instead of losing the year, as
+                // "28 сент. – 20 нояб. 202…" did in Russian.
                 Text(
                     text = dates,
                     style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
+                    maxLines = if (detailed) 2 else 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false),
                 )
@@ -402,16 +413,28 @@ fun ExpandedTrips(
 
 private val YEAR_HEADER_HEIGHT = 36.dp
 
-/** "2025 · 14 trips", opaque so the rows scroll under it. */
+/**
+ * "2025 · 14 trips", opaque so the rows scroll under it. The year in the
+ * accent colour and a step up in weight, the count quieter beside it: the
+ * header has to stand out from rows that use the same type sizes, and colour
+ * plus weight does that without a band of solid colour across the list.
+ */
 @Composable
 private fun YearHeader(year: Int, count: Int) {
-    Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, modifier = Modifier.fillMaxWidth()) {
+    Surface(color = MaterialTheme.colorScheme.surfaceContainerHighest, modifier = Modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.height(YEAR_HEADER_HEIGHT).padding(horizontal = 12.dp),
         ) {
             Text(
-                text = "$year · ${pluralStringResource(R.plurals.trips_count, count, "%,d".format(count))}",
+                text = year.toString(),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = pluralStringResource(R.plurals.trips_count, count, "%,d".format(count)),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
