@@ -104,6 +104,16 @@ const val MIN_TRIP_SECONDS = 3 * 3600L
 
 const val LONG_ABSENCE_DAYS = 60L
 
+/** Within this of home is at the door, where a trip starts and ends. */
+private const val AT_HOME_METERS = 1_000.0
+
+/**
+ * How far before leaving, or after coming back within [AWAY_RADIUS_METERS],
+ * to look for the door. Long enough for a drive across the 50 km with stops,
+ * short enough that a few days with friends nearby are not absorbed.
+ */
+private const val DOOR_SEARCH_SECONDS = 6 * 3600L
+
 /**
  * Untyped track above this share of the activity total (and above
  * [ESTIMATE_MIN_METERS]) makes the trip's distance an estimate.
@@ -125,9 +135,11 @@ private val HOME_TYPES = setOf("HOME", "INFERRED_HOME")
  * home and no trips.
  *
  * Positions are every visit's place at its start and end plus every track
- * point, in time order. A trip runs from the last position at home to the
- * first one back. Pieces separated by less than [MERGE_GAP_SECONDS] at home
- * are one trip, and anything shorter than [MIN_TRIP_SECONDS] is dropped.
+ * point, in time order. Being more than [AWAY_RADIUS_METERS] from home is
+ * what makes a trip; pieces separated by less than [MERGE_GAP_SECONDS] back
+ * inside that radius are one trip. A trip less than [MIN_TRIP_SECONDS]
+ * beyond the radius is dropped, and the ends of the rest are moved out to
+ * the door (see [reachDoor]).
  *
  * Linear in the number of points after one sort; well under a second for the
  * 284,000-point reference file, but still meant for a background thread.
@@ -139,26 +151,29 @@ fun detectTrips(parsed: ParsedTimeline, fallbackZone: ZoneId = ZoneId.systemDefa
 
     val raw = ArrayList<Span>()
     var current: Span? = null
-    var lastHome: Position? = null
+    var lastHome = -1
     var homeIndex = 0
-    for (p in positions) {
+    val distances = DoubleArray(positions.size)
+    for ((i, p) in positions.withIndex()) {
         while (homeIndex + 1 < homes.size && homes[homeIndex + 1].time <= p.time) homeIndex++
         val home = homes[homeIndex]
         val distance = haversineMeters(p.latitude, p.longitude, home.latitude, home.longitude)
+        distances[i] = distance
         if (distance > AWAY_RADIUS_METERS) {
-            val span = current ?: Span(from = lastHome ?: p, openStart = lastHome == null).also { current = it }
-            span.to = p
+            val span = current
+                ?: Span(positions, if (lastHome >= 0) lastHome else i, openStart = lastHome < 0).also { current = it }
+            span.toIndex = i
             if (distance > span.maxDistance) {
                 span.maxDistance = distance
                 span.farthest = p
             }
         } else {
             current?.let {
-                it.to = p
+                it.toIndex = i
                 raw += it
                 current = null
             }
-            lastHome = p
+            lastHome = i
         }
     }
     current?.let {
@@ -170,7 +185,7 @@ fun detectTrips(parsed: ParsedTimeline, fallbackZone: ZoneId = ZoneId.systemDefa
     for (span in raw) {
         val previous = merged.lastOrNull()
         if (previous != null && span.from.time.epochSecond - previous.to.time.epochSecond < MERGE_GAP_SECONDS) {
-            previous.to = span.to
+            previous.toIndex = span.toIndex
             previous.openEnd = span.openEnd
             if (span.maxDistance > previous.maxDistance) {
                 previous.maxDistance = span.maxDistance
@@ -181,8 +196,12 @@ fun detectTrips(parsed: ParsedTimeline, fallbackZone: ZoneId = ZoneId.systemDefa
         }
     }
 
+    // The minimum is measured between the 50 km crossings, before the ends
+    // move to the door. Measured door to door, an afternoon drive just past
+    // the line became a trip: 145 on the 13-year file instead of 126.
     val trips = merged
         .filter { it.to.time.epochSecond - it.from.time.epochSecond >= MIN_TRIP_SECONDS }
+        .onEach { reachDoor(it, distances) }
         .map { it.toTrip(parsed) }
     return TripDetection.Found(trips)
 }
@@ -194,8 +213,51 @@ private class Position(
     val offsetMinutes: Int?,
 )
 
-private class Span(var from: Position, val openStart: Boolean) {
-    var to: Position = from
+/**
+ * Move a trip's ends from the 50 km circle out to the door.
+ *
+ * The circle decides whether someone is away, but it is a poor place for a
+ * trip to begin or end: on the drive back from Norway the first position
+ * within 50 km of Malmö is at Helsingborg, 45 minutes before home, so the
+ * trip stopped there on the map and in every export. Each end now walks
+ * outward to the nearest position within [AT_HOME_METERS] of home, if there
+ * is one within [DOOR_SEARCH_SECONDS] before the trip goes away again.
+ * Without one (a night at friends' 20 km off, a gap in the data) the end
+ * stays where it was. An end cut off by the file stays too.
+ *
+ * Two neighbouring trips cannot overlap: one end looks for the first door
+ * position and the other for the last, both in the same stretch at home.
+ */
+private fun reachDoor(span: Span, distances: DoubleArray) {
+    val positions = span.positions
+    if (!span.openStart) {
+        val limit = positions[span.fromIndex].time.epochSecond - DOOR_SEARCH_SECONDS
+        var i = span.fromIndex
+        while (i >= 0 && positions[i].time.epochSecond >= limit && distances[i] <= AWAY_RADIUS_METERS) {
+            if (distances[i] <= AT_HOME_METERS) {
+                span.fromIndex = i
+                break
+            }
+            i--
+        }
+    }
+    if (!span.openEnd) {
+        val limit = positions[span.toIndex].time.epochSecond + DOOR_SEARCH_SECONDS
+        var i = span.toIndex
+        while (i < positions.size && positions[i].time.epochSecond <= limit && distances[i] <= AWAY_RADIUS_METERS) {
+            if (distances[i] <= AT_HOME_METERS) {
+                span.toIndex = i
+                break
+            }
+            i++
+        }
+    }
+}
+
+private class Span(val positions: List<Position>, var fromIndex: Int, val openStart: Boolean) {
+    var toIndex: Int = fromIndex
+    val from: Position get() = positions[fromIndex]
+    val to: Position get() = positions[toIndex]
     var maxDistance: Double = 0.0
     var farthest: Position = from
     var openEnd: Boolean = false

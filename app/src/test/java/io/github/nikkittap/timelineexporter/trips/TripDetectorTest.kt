@@ -191,18 +191,43 @@ class TripDetectorTest {
     }
 
     @Test
-    fun `the drive out counts even when the trip starts part-way through it`() {
-        // Home visit ends at 10, the drive runs 10-13, but the last track point
-        // within 50 km is at 10:30, so that is where the trip starts.
-        val points = listOf(point(10.5, near), point(12, far))
+    fun `a trip starts and ends at the door, not at the fifty kilometre line`() {
+        // Home visit ends at 10, the drive runs 10-13, and the last track point
+        // within 50 km is at 10:30. Coming back, the first point within 50 km
+        // is at 46:00 and home is reached at 47. The trip is 10 to 47.
+        val points = listOf(point(10.5, near), point(12, far), point(45, far), point(46, near))
         val trip = found(
             timeline(
-                listOf(visit(0, 10, home, "HOME"), drive(10, 13, 230_000.0), visit(13, 40, far, id = "hotel"), visit(41, 60, home, "HOME")),
+                listOf(
+                    visit(0, 10, home, "HOME"),
+                    drive(10, 13, 230_000.0),
+                    visit(13, 40, far, id = "hotel"),
+                    drive(44, 47, 230_000.0),
+                    visit(47, 60, home, "HOME"),
+                ),
                 points,
             ),
         ).single()
-        assertEquals(h(10.5), trip.start)
-        assertTrue(trip.travelledMeters >= 230_000.0)
+        assertEquals(h(10), trip.start)
+        assertEquals(h(47), trip.end)
+        assertEquals(460_000.0, trip.travelledMeters, 0.1)
+    }
+
+    @Test
+    fun `without a return home nearby the trip ends at the fifty kilometre line`() {
+        // Back within 50 km at 46, then days at a friend's 30 km from home.
+        val trip = found(
+            timeline(
+                listOf(
+                    visit(0, 10, home, "HOME"),
+                    visit(13, 40, far, id = "hotel"),
+                    visit(46, 100, near, id = "friend"),
+                    visit(101, 120, home, "HOME"),
+                ),
+            ),
+        ).single()
+        assertEquals(h(10), trip.start)
+        assertEquals(h(46), trip.end)
     }
 
     @Test
@@ -212,9 +237,9 @@ class TripDetectorTest {
         val trip = found(
             timeline(listOf(visit(0, 10, home, "HOME"), visit(14, 40, far, id = "hotel"), visit(44, 60, home, "HOME")), points),
         ).single()
-        // About 187 km: the trip starts at the last point within 50 km of home,
-        // so the first stretch of the road belongs to no trip.
-        assertTrue(trip.travelledMeters > 150_000)
+        // About 230 km: the trip starts at the door, so the road out of town
+        // belongs to it too.
+        assertTrue(trip.travelledMeters > 200_000)
         assertTrue(trip.travelledEstimated)
     }
 
@@ -248,6 +273,7 @@ class TripDetectorTest {
         assumeTrue("Skipped: $file not present (developer-local only).", Files.exists(file))
         val parsed = Files.newInputStream(file).use { parseTimeline(it) }
         val trips = (detectTrips(parsed, ZoneId.of("Europe/Stockholm")) as TripDetection.Found).trips
+        println("${trips.size} trips")
         fun at(moment: String) = trips.single { it.covers(java.time.Instant.parse(moment)) }
 
         // 12-15 Sep 2013: ~640 km each way by road, recorded as points only.
