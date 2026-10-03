@@ -123,6 +123,7 @@ import io.github.nikkittap.timelineexporter.export.Exporter
 import io.github.nikkittap.timelineexporter.export.GeoJsonExporter
 import io.github.nikkittap.timelineexporter.export.GpxExporter
 import io.github.nikkittap.timelineexporter.export.KmlExporter
+import io.github.nikkittap.timelineexporter.export.localDate
 import io.github.nikkittap.timelineexporter.filter.TimelineFilter
 import io.github.nikkittap.timelineexporter.filter.applyFilter
 import io.github.nikkittap.timelineexporter.parser.MovementGroup
@@ -135,6 +136,9 @@ import io.github.nikkittap.timelineexporter.parser.TimelineFormat
 import io.github.nikkittap.timelineexporter.parser.placeEntries
 import java.time.Instant
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -654,7 +658,11 @@ fun MainScreen(
     // suggest for them. Both depend on what is being exported, so both change
     // when the user flips the Track / Places switch. They recompute per
     // recomposition; the launcher callbacks below capture the current value.
-    val contentName = buildContentName(filter, contentKind)
+    //
+    // Both are named apart from "every trip" only when the ticks pick some
+    // out: step 2's dates no longer describe what is in the file then.
+    val checkedTrips = if (anyTripChecked) tripExports.map { it.trip } else emptyList()
+    val contentName = buildContentName(filter, contentKind, checkedTrips)
 
     val pickFileLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
@@ -715,8 +723,6 @@ fun MainScreen(
         }
     }
 
-    // Named apart from "every trip" only when the ticks pick some out.
-    val checkedTrips = if (anyTripChecked) tripExports.map { it.trip } else emptyList()
     val launchSave: (Exporter) -> Unit = { exporter ->
         val name = suggestFilename(filter, exporter, contentKind, checkedTrips)
         when (exporter) {
@@ -2502,11 +2508,30 @@ private fun VersionFooter(modifier: Modifier = Modifier) {
  * "Google Timeline 9 Jun 2025 — 21 May 2026" and the other "Google Timeline
  * places …", which is the only thing distinguishing them once they are sitting
  * in the same folder as two orange layers.
+ *
+ * A trips export with trips ticked ([checkedTrips]) is dated by those trips,
+ * from the first one's start to the last one's end in their own local dates,
+ * the dates the filename and each trip's own name use. Step 2's range would
+ * say "(full export)" over two holidays.
  */
 @Composable
-private fun buildContentName(filter: TimelineFilter, kind: ContentKind): String {
+private fun buildContentName(
+    filter: TimelineFilter,
+    kind: ContentKind,
+    checkedTrips: List<io.github.nikkittap.timelineexporter.trips.Trip> = emptyList(),
+): String {
     val range = filter.dateRange
-    val rangePart = if (range == null) {
+    val rangePart = if (kind == ContentKind.TRIPS && checkedTrips.isNotEmpty()) {
+        val zone = ZoneId.systemDefault()
+        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault())
+        val first = checkedTrips.minBy { it.start }
+        val last = checkedTrips.maxBy { it.end }
+        stringResource(
+            R.string.track_name_date_range,
+            localDate(first.start, first.startOffsetMinutes, zone).format(formatter),
+            localDate(last.end, last.endOffsetMinutes, zone).format(formatter),
+        )
+    } else if (range == null) {
         stringResource(R.string.track_name_full_range)
     } else {
         stringResource(
@@ -2541,8 +2566,8 @@ private fun buildContentName(filter: TimelineFilter, kind: ContentKind): String 
 
 /**
  * Step 4's heading. One trip reads "Export trip", not "Export trips": with
- * "Use only this trip" that is the common case, and the plural over a single
- * item looked like a mistake. Track and Places are mass nouns here and keep
+ * one trip ticked that is the common case, and the plural over a single item
+ * looked like a mistake. Track and Places are mass nouns here and keep
  * their one heading.
  */
 internal fun exportStepTitle(kind: ContentKind, count: Int): Int = when (kind) {
