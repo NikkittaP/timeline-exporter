@@ -65,14 +65,26 @@ Where things go at release time:
     the list, because the map is behind it.
   - Tapping the selected trip again keeps it selected. It used to clear it,
     which lost a trip found after a long scroll. The card's "Show all trips
-    on map" lets go of it. "Use only this trip" sets step 2's dates to the
-    trip's, so every count and export follows it. Until then the selection
-    only changes the map.
+    on map" lets go of it. Selecting only changes the map.
+  - What is exported is picked with checkboxes. Every row, and the selected
+    trip's card, has one; ticked trips are what step 4 writes, and none
+    ticked means all of them. A line above the list always says which
+    ("All trips will be exported" / "Marked for export: 2 of 8" with
+    Clear), at a fixed height so the first tick does not push the rows
+    under the finger. With no trip selected the map draws the export. Ticks
+    survive rotation and a change of dates. This replaced "Use only this
+    trip", which set step 2's dates to one trip's and left no visible way
+    back to the others.
   - Export: GPX has one `<trk>` per trip (the ballot's "each trip as a
     separate track inside one file"). KML has one Placemark per trip with a
     TimeSpan. GeoJSON has one Feature per trip with its figures. CSV has one
     row per trip. Points are the filtered track's, so the step-2 filters
     apply.
+  - With trips ticked, the export is named after them, not after step 2's
+    dates: one trip is `Timeline_trip_<from>_<to>`, several are
+    `Timeline_trips_<N>`, and the name inside the file (GPX/KML/GeoJSON) is
+    dated from the first ticked trip's start to the last one's end. It used
+    to say "Google Timeline trips (full export)" over two holidays.
   - New strings in all 18 locales; the trip count is a plural. The place
     count is now a plural too ("21 мест" was wrong in Russian, "1 places"
     in English), everywhere it appears. Each figure on a trip line is held
@@ -121,9 +133,22 @@ Where things go at release time:
     487,362 km. Filtering points by movement still sees every copy, which
     changes nothing there.
   - Copy: the hint now says trips are *detected* past 50 km (the trip
-    includes the way there). The selected-trip action is "Use only this
-    trip". The full list's title shows the total ("Trips · 126"), and step 4
-    says "Export trip" / "Trip — 1 trip" when exactly one trip is selected.
+    includes the way there) and that ticking picks the trips to export. The
+    full list's title shows the total ("Trips · 126"), and step 4 says
+    "Export trip" / "Trip — 1 trip" when exactly one trip is ticked.
+
+- **Feedback ballot re-cut.** What 1.9.0 ships is off it: "A list of trips
+  with start, end, time and distance" (8 votes), "Each trip as a separate
+  track inside one file" (2) and "Remember my filters and format for the
+  next export" (3). New: "Choose how far from home counts as a trip", the
+  one fixed number in trip detection (50 km); it measures whether anyone
+  needs it before a setting is built. Eight lines stay as they were. In
+  de, fr, ja, ko, nl, tr, zh-CN and zh-TW "A separate file per trip" now
+  uses the Trips tab's word for a trip (it said *Fahrt*, *trajet*, 移动 …
+  beside a tab called *Reisen*, *Voyages*, 旅行); the English it mails is
+  unchanged, so votes still match FEEDBACK.md. `FeedbackBallotTest` checks
+  that each option mails its English label word for word and that every
+  locale has exactly the ballot's lines.
 
 - **Filters and export choices are remembered.** On the feedback ballot as
   "Remember my filters and format for the next export" (FB-016, FB-019).

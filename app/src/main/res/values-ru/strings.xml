@@ -156,16 +156,14 @@
     <string name="feedback_help_button">Предложить функцию или сообщить о проблеме →</string>
     <string name="feedback_title">Чего не хватает?</string>
     <string name="feedback_intro">Приложение развивается по запросам пользователей. Аналитики в нём нет — я не вижу, как вы им пользуетесь, поэтому спрашиваю напрямую. Отметьте нужное и выберите, как отправить.</string>
-    <string name="feedback_option_trip_list">Список поездок с началом, концом, временем и расстоянием</string>
     <string name="feedback_option_file_per_trip">Отдельный файл на каждую поездку вместо одного большого</string>
-    <string name="feedback_option_track_per_trip">Каждая поездка отдельным треком внутри одного файла</string>
+    <string name="feedback_option_trip_distance">Выбирать, на каком расстоянии от дома начинается поездка</string>
     <string name="feedback_option_stats">Итоги по месяцам и годам</string>
     <string name="feedback_option_place_names">Настоящие названия для мест, показанных только координатами</string>
     <string name="feedback_option_area">Оставлять только точки внутри области на карте</string>
     <string name="feedback_option_elevation_speed">Высота и скорость в GPX</string>
     <string name="feedback_option_merge">Объединение нескольких файлов Timeline</string>
     <string name="feedback_option_photo_geotag">Геотегирование фотографий по времени</string>
-    <string name="feedback_option_remember_settings">Запоминать фильтры и формат до следующего экспорта</string>
     <string name="feedback_option_owner">Показывать, из какого аккаунта сделан экспорт</string>
     <string name="feedback_other_label">Что-то ещё?</string>
     <string name="feedback_diagnostics_label">Технические данные</string>

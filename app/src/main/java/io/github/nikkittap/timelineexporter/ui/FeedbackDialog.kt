@@ -68,20 +68,16 @@ data class FeedbackContext(
  * before 1.8.0 three of them paraphrased the label and had to be matched by
  * hand.
  */
-private class FeedbackOption(val labelRes: Int, val outgoing: String)
+internal class FeedbackOption(val labelRes: Int, val outgoing: String)
 
-private val FEEDBACK_OPTIONS = listOf(
-    FeedbackOption(
-        R.string.feedback_option_trip_list,
-        "A list of trips with start, end, time and distance",
-    ),
+internal val FEEDBACK_OPTIONS = listOf(
     FeedbackOption(
         R.string.feedback_option_file_per_trip,
         "A separate file per trip instead of one large file",
     ),
     FeedbackOption(
-        R.string.feedback_option_track_per_trip,
-        "Each trip as a separate track inside one file",
+        R.string.feedback_option_trip_distance,
+        "Choose how far from home counts as a trip",
     ),
     FeedbackOption(
         R.string.feedback_option_stats,
@@ -106,10 +102,6 @@ private val FEEDBACK_OPTIONS = listOf(
     FeedbackOption(
         R.string.feedback_option_photo_geotag,
         "Geotagging photos by time",
-    ),
-    FeedbackOption(
-        R.string.feedback_option_remember_settings,
-        "Remember my filters and format for the next export",
     ),
     FeedbackOption(
         R.string.feedback_option_owner,

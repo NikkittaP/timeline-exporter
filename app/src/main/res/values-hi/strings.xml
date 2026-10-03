@@ -154,16 +154,14 @@
     <string name="feedback_help_button">कोई सुविधा माँगें या समस्या बताएँ →</string>
     <string name="feedback_title">क्या कमी है?</string>
     <string name="feedback_intro">यह ऐप उपयोगकर्ताओं के अनुरोध पर बढ़ता है। इसमें कोई एनालिटिक्स नहीं है — मुझे नहीं दिखता कि आप इसे कैसे इस्तेमाल करते हैं, इसलिए सीधे पूछ रहा हूँ। जो चाहिए उसे चुनें और भेजने का तरीका तय करें।</string>
-    <string name="feedback_option_trip_list">यात्राओं की सूची — शुरुआत, अंत, समय और दूरी के साथ</string>
     <string name="feedback_option_file_per_trip">एक बड़ी फ़ाइल के बजाय हर यात्रा की अलग फ़ाइल</string>
-    <string name="feedback_option_track_per_trip">एक ही फ़ाइल में हर यात्रा अलग ट्रैक के रूप में</string>
+    <string name="feedback_option_trip_distance">चुनना कि घर से कितनी दूरी पर यात्रा शुरू मानी जाए</string>
     <string name="feedback_option_stats">महीने और साल के कुल आँकड़े</string>
     <string name="feedback_option_place_names">जिन जगहों पर सिर्फ़ निर्देशांक दिखते हैं, उनके असली नाम</string>
     <string name="feedback_option_area">मानचित्र पर चुने गए क्षेत्र के अंदर के बिंदु ही रखें</string>
     <string name="feedback_option_elevation_speed">GPX में ऊँचाई और गति</string>
     <string name="feedback_option_merge">कई Timeline फ़ाइलें जोड़ना</string>
     <string name="feedback_option_photo_geotag">समय के आधार पर फ़ोटो जियोटैग करना</string>
-    <string name="feedback_option_remember_settings">अगले एक्सपोर्ट के लिए मेरे फ़िल्टर और फ़ॉर्मैट याद रखें</string>
     <string name="feedback_option_owner">एक्सपोर्ट किस खाते से आया है, यह दिखाएँ</string>
     <string name="feedback_other_label">और कुछ?</string>
     <string name="feedback_diagnostics_label">तकनीकी जानकारी</string>

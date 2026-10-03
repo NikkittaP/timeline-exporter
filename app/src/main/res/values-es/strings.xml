@@ -155,16 +155,14 @@
     <string name="feedback_help_button">Pedir una función o informar de un problema →</string>
     <string name="feedback_title">¿Qué falta?</string>
     <string name="feedback_intro">La app crece con las peticiones de quienes la usan. No tiene analítica: no veo cómo la usas, así que te lo pregunto directamente. Marca lo que quieras y elige cómo enviarlo.</string>
-    <string name="feedback_option_trip_list">Una lista de trayectos con inicio, fin, hora y distancia</string>
     <string name="feedback_option_file_per_trip">Un archivo por viaje en lugar de uno grande</string>
-    <string name="feedback_option_track_per_trip">Cada viaje como una traza separada dentro de un solo archivo</string>
+    <string name="feedback_option_trip_distance">Elegir a qué distancia de casa empieza un viaje</string>
     <string name="feedback_option_stats">Totales mensuales y anuales</string>
     <string name="feedback_option_place_names">Nombres reales para los lugares que solo muestran coordenadas</string>
     <string name="feedback_option_area">Conservar solo los puntos dentro de una zona del mapa</string>
     <string name="feedback_option_elevation_speed">Altitud y velocidad en GPX</string>
     <string name="feedback_option_merge">Combinar varios archivos de Timeline</string>
     <string name="feedback_option_photo_geotag">Geoetiquetar fotos por hora</string>
-    <string name="feedback_option_remember_settings">Recordar mis filtros y el formato para la próxima exportación</string>
     <string name="feedback_option_owner">Mostrar de qué cuenta procede la exportación</string>
     <string name="feedback_other_label">¿Algo más?</string>
     <string name="feedback_diagnostics_label">Datos técnicos</string>

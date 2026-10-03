@@ -158,16 +158,14 @@
     <string name="feedback_help_button">اطلب ميزة أو أبلغ عن مشكلة ←</string>
     <string name="feedback_title">ما الذي ينقص؟</string>
     <string name="feedback_intro">يتطور التطبيق بناءً على طلبات المستخدمين. لا يحتوي على أي تحليلات — لا أرى كيف تستخدمه، لذلك أسألك مباشرة. حدّد ما تريده ثم اختر طريقة الإرسال.</string>
-    <string name="feedback_option_trip_list">قائمة بالرحلات مع نقطة البداية والنهاية والوقت والمسافة</string>
     <string name="feedback_option_file_per_trip">ملف منفصل لكل رحلة بدل ملف واحد كبير</string>
-    <string name="feedback_option_track_per_trip">كل رحلة كمسار منفصل داخل ملف واحد</string>
+    <string name="feedback_option_trip_distance">اختيار المسافة من المنزل التي تبدأ عندها الرحلة</string>
     <string name="feedback_option_stats">إجماليات شهرية وسنوية</string>
     <string name="feedback_option_place_names">أسماء حقيقية للأماكن التي تظهر بإحداثيات فقط</string>
     <string name="feedback_option_area">الاحتفاظ بالنقاط الواقعة داخل منطقة محددة على الخريطة فقط</string>
     <string name="feedback_option_elevation_speed">الارتفاع والسرعة في GPX</string>
     <string name="feedback_option_merge">دمج عدة ملفات Timeline</string>
     <string name="feedback_option_photo_geotag">إضافة الموقع إلى الصور حسب الوقت</string>
-    <string name="feedback_option_remember_settings">تذكُّر عوامل التصفية والصيغة للتصدير التالي</string>
     <string name="feedback_option_owner">إظهار الحساب الذي جاء منه الملف المُصدَّر</string>
     <string name="feedback_other_label">أي شيء آخر؟</string>
     <string name="feedback_diagnostics_label">تفاصيل تقنية</string>
