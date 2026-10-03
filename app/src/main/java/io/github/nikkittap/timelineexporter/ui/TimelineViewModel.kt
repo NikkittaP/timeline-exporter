@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import io.github.nikkittap.timelineexporter.export.ContentKind
 import io.github.nikkittap.timelineexporter.export.ExportContent
 import io.github.nikkittap.timelineexporter.export.Exporter
+import io.github.nikkittap.timelineexporter.export.localDate
 import io.github.nikkittap.timelineexporter.filter.TimelineFilter
 import io.github.nikkittap.timelineexporter.parser.MINUTES_PER_DAY
 import io.github.nikkittap.timelineexporter.parser.MovementGroup
@@ -17,6 +18,7 @@ import io.github.nikkittap.timelineexporter.parser.ParserStage
 import io.github.nikkittap.timelineexporter.parser.TimeOfDayWindow
 import io.github.nikkittap.timelineexporter.parser.findKeyOffsets
 import io.github.nikkittap.timelineexporter.parser.parseTimeline
+import io.github.nikkittap.timelineexporter.trips.Trip
 import io.github.nikkittap.timelineexporter.trips.TripDetection
 import io.github.nikkittap.timelineexporter.trips.detectTrips
 import kotlinx.coroutines.CancellationException
@@ -658,12 +660,29 @@ private class CountingInputStream(private val wrapped: InputStream) : InputStrea
  * The content kind is part of the name because a user exporting both ends up
  * with two files in the same folder, and "Timeline.gpx" twice would mean the
  * second silently replaces the first.
+ *
+ * [checkedTrips] are the trips ticked for a trips export; empty means every
+ * trip. One ticked trip is named by its own local dates, several by their
+ * count — neither by step 2's dates, which no longer say what is in the file.
  */
 fun suggestFilename(
     filter: TimelineFilter,
     exporter: Exporter,
     kind: ContentKind = ContentKind.TRACK,
+    checkedTrips: List<Trip> = emptyList(),
 ): String {
+    if (kind == ContentKind.TRIPS && checkedTrips.isNotEmpty()) {
+        val trip = checkedTrips.singleOrNull()
+        val stem = if (trip == null) {
+            "Timeline_trips_${checkedTrips.size}"
+        } else {
+            val z = ZoneId.systemDefault()
+            val from = localDate(trip.start, trip.startOffsetMinutes, z)
+            val to = localDate(trip.end, trip.endOffsetMinutes, z)
+            "Timeline_trip_${from}_$to"
+        }
+        return "$stem.${exporter.fileExtension}"
+    }
     val stem = when (kind) {
         ContentKind.TRACK -> "Timeline"
         ContentKind.TRIPS -> "Timeline_trips"

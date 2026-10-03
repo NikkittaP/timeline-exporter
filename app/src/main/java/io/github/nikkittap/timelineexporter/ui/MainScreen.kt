@@ -715,8 +715,10 @@ fun MainScreen(
         }
     }
 
+    // Named apart from "every trip" only when the ticks pick some out.
+    val checkedTrips = if (anyTripChecked) tripExports.map { it.trip } else emptyList()
     val launchSave: (Exporter) -> Unit = { exporter ->
-        val name = suggestFilename(filter, exporter, contentKind)
+        val name = suggestFilename(filter, exporter, contentKind, checkedTrips)
         when (exporter) {
             GpxExporter -> gpxLauncher.launch(name)
             KmlExporter -> kmlLauncher.launch(name)
@@ -731,7 +733,7 @@ fun MainScreen(
                 exporter = exporter,
                 content = exportContent,
                 name = contentName,
-                filename = suggestFilename(filter, exporter, contentKind),
+                filename = suggestFilename(filter, exporter, contentKind, checkedTrips),
                 cacheDir = context.cacheDir,
             )
         } else {
