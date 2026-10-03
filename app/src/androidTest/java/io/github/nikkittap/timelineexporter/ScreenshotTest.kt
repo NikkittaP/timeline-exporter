@@ -73,9 +73,11 @@ import java.util.Locale
  * 05_formats is taken while Track is still selected and the switch is put back
  * before the fullscreen map, which would otherwise open on the places dots.
  * 10_days narrows the dates, so it comes after everything that wants them all.
- * The Trips shots come after the fullscreen map: a Track map that has shown
- * a trip keeps that trip's framing when the switch goes back to Track, and
- * the hero shot would open on Norway instead of the whole history.
+ * The Trips shots come after the fullscreen map, so the hero never depends on
+ * getting back from them. Closing the full trips list leaves the page scrolled
+ * past step 3's switch, and a tap on Track there without performScrollTo()
+ * lands on nothing: the map stays on the trip, and a hero taken next opens on
+ * Norway. Once the tap lands the app re-frames the whole history by itself.
  *
  * These are raw captures, not the store art: tools/store_shots renders the
  * framed, captioned images from them. See tools/store_shots/README.md.
