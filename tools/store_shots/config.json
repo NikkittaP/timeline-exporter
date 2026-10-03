@@ -37,15 +37,15 @@
 
   "featureGraphic": { "w": 1024, "h": 500, "enabled": true, "source": "03_map_fullscreen" },
 
-  "$frames": "Play shows the first three without scrolling and takes at most eight. The newest feature goes second, right after the hero: Color by day (1.8.0), then Places (1.7.0). The calendar made way for it: the date presets are already on the overview, and the picker itself is a stock Material dialog.",
+  "$frames": "Play shows the first three without scrolling and takes at most eight. The newest feature goes right after the hero: Trips (1.9.0), one holiday picked and then the whole list by year, then Color by day (1.8.0) and Places (1.7.0). Time of day and the movement breakdown made way for Trips; their raw shots (09_time_of_day, 07_movement) are still captured, so either can come back by editing this list and running decorate_screens.",
   "frames": [
     { "out": "01_map",       "src": "03_map_fullscreen", "key": "map"       },
-    { "out": "02_days",      "src": "10_days",           "key": "days"      },
-    { "out": "03_places",    "src": "08_places",         "key": "places"    },
-    { "out": "04_overview",  "src": "02_overview",       "key": "overview"  },
-    { "out": "05_timeofday", "src": "09_time_of_day",    "key": "timeofday" },
-    { "out": "06_formats",   "src": "05_formats",        "key": "formats"   },
-    { "out": "07_movement",  "src": "07_movement",       "key": "movement"  },
+    { "out": "02_trip",      "src": "11_trip",           "key": "trip"      },
+    { "out": "03_trips",     "src": "12_trips",          "key": "trips"     },
+    { "out": "04_days",      "src": "10_days",           "key": "days"      },
+    { "out": "05_places",    "src": "08_places",         "key": "places"    },
+    { "out": "06_overview",  "src": "02_overview",       "key": "overview"  },
+    { "out": "07_formats",   "src": "05_formats",        "key": "formats"   },
     { "out": "08_privacy",   "src": "06_start_empty",    "key": "privacy"   }
   ],
 

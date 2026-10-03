@@ -4,6 +4,16 @@
     "title": "La tua cronologia, {su una mappa}",
     "sub": "Anni di Google Maps Timeline in un colpo d'occhio"
   },
+  "trip": {
+    "eyebrow": "Novità: Viaggi",
+    "title": "Ogni {viaggio}, trovato per te",
+    "sub": "Vacanze e gite in giornata: date, distanza e luoghi"
+  },
+  "trips": {
+    "eyebrow": "Anno per anno",
+    "title": "Tutti i tuoi {viaggi} in un elenco",
+    "sub": "Seleziona quelli che vuoi ed esporta solo quelli"
+  },
   "days": {
     "eyebrow": "Colore per giorno",
     "title": "Ogni giorno {col suo colore}",
@@ -16,7 +26,7 @@
   },
   "overview": {
     "eyebrow": "Due tocchi",
-    "title": "Ogni viaggio, {pronto da esportare}",
+    "title": "La tua cronologia, {pronta da esportare}",
     "sub": "Legge il tuo file Google Takeout, senza account"
   },
   "timeofday": {

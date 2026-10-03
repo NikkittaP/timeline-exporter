@@ -4,6 +4,16 @@
     "title": "Tüm geçmişin {tek haritada}",
     "sub": "Yılların Google Haritalar Zaman Tüneli tek ekranda"
   },
+  "trip": {
+    "eyebrow": "Yeni: Seyahatler",
+    "title": "Her {seyahat} sizin için bulunur",
+    "sub": "Tatiller ve günübirlik geziler: tarih, mesafe ve yerler"
+  },
+  "trips": {
+    "eyebrow": "Yıl yıl",
+    "title": "Tüm {seyahatleriniz} tek listede",
+    "sub": "İstediklerinizi işaretleyin, yalnızca onları dışa aktarın"
+  },
   "days": {
     "eyebrow": "Güne göre renk",
     "title": "Her gün {kendi renginde}",
@@ -16,7 +26,7 @@
   },
   "overview": {
     "eyebrow": "İki dokunuş",
-    "title": "Her yolculuk {dışa aktarmaya hazır}",
+    "title": "Zaman Çizelgeniz {dışa aktarmaya hazır}",
     "sub": "Google Takeout dosyanı okur — hesap gerekmez"
   },
   "timeofday": {

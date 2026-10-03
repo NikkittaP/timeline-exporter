@@ -4,6 +4,16 @@
     "title": "Hela historiken {på en karta}",
     "sub": "År av Google Maps tidslinje på en gång"
   },
+  "trip": {
+    "eyebrow": "Nytt: Resor",
+    "title": "Varje {resa} hittas åt dig",
+    "sub": "Semestrar och dagsutflykter – datum, avstånd och platser"
+  },
+  "trips": {
+    "eyebrow": "År för år",
+    "title": "Alla dina {resor} i en lista",
+    "sub": "Bocka för de du vill ha och exportera bara dem"
+  },
   "days": {
     "eyebrow": "Färg per dag",
     "title": "Varje dag {i egen färg}",
@@ -16,7 +26,7 @@
   },
   "overview": {
     "eyebrow": "Två tryck",
-    "title": "Varje resa {redo att exporteras}",
+    "title": "Din tidslinje, {redo att exporteras}",
     "sub": "Läser din Google Takeout-fil – utan konto"
   },
   "timeofday": {

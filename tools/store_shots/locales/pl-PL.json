@@ -4,6 +4,16 @@
     "title": "Twoja historia {na jednej mapie}",
     "sub": "Lata Osi czasu Google Maps na jednym ekranie"
   },
+  "trip": {
+    "eyebrow": "Nowość: Podróże",
+    "title": "Każda {podróż} znaleziona sama",
+    "sub": "Urlopy i wycieczki jednodniowe: daty, dystans i miejsca"
+  },
+  "trips": {
+    "eyebrow": "Rok po roku",
+    "title": "Wszystkie {podróże} na jednej liście",
+    "sub": "Zaznacz wybrane i eksportuj tylko je"
+  },
   "days": {
     "eyebrow": "Kolor według dnia",
     "title": "Każdy dzień {w innym kolorze}",
@@ -16,7 +26,7 @@
   },
   "overview": {
     "eyebrow": "Dwa dotknięcia",
-    "title": "Każda podróż {gotowa do eksportu}",
+    "title": "Twoja oś czasu {gotowa do eksportu}",
     "sub": "Czyta plik Google Takeout — bez konta"
   },
   "timeofday": {

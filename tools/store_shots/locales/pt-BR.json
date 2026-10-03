@@ -4,6 +4,16 @@
     "title": "Seu histórico {em um mapa}",
     "sub": "Anos da Linha do tempo do Google Maps de uma vez"
   },
+  "trip": {
+    "eyebrow": "Novo: Viagens",
+    "title": "Cada {viagem} encontrada para você",
+    "sub": "Férias e passeios de um dia: datas, distância e lugares"
+  },
+  "trips": {
+    "eyebrow": "Ano a ano",
+    "title": "Todas as suas {viagens} em uma lista",
+    "sub": "Marque as que quiser e exporte só essas"
+  },
   "days": {
     "eyebrow": "Cor por dia",
     "title": "Cada dia {com sua cor}",
@@ -16,7 +26,7 @@
   },
   "overview": {
     "eyebrow": "Dois toques",
-    "title": "Cada viagem {pronta para exportar}",
+    "title": "Sua linha do tempo, {pronta para exportar}",
     "sub": "Lê seu arquivo do Google Takeout, sem conta"
   },
   "timeofday": {

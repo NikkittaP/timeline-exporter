@@ -20,6 +20,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.core.content.FileProvider
+import io.github.nikkittap.timelineexporter.parser.parseTimeline
+import io.github.nikkittap.timelineexporter.trips.TripDetection
+import io.github.nikkittap.timelineexporter.trips.detectTrips
+import io.github.nikkittap.timelineexporter.ui.formatLocalDayRange
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -59,12 +63,19 @@ import java.util.Locale
  *                    sized by its visit count, over the list that names them
  *   09_time_of_day   the time-of-day window dialog, a preset chosen
  *   10_days          the last seven days, expanded and coloured by day
+ *   11_trip          step 3 switched to Trips, the Norway holiday picked and
+ *                    ticked for export: the trip on the map, its card, and
+ *                    the newest trips listed under it
+ *   12_trips         the full trips list, grouped under year headers
  *
  * The order of the captures inside captureLoadedFlow is not cosmetic. The
  * Track / Places switch in step 3 decides what step 4 says it will export, so
  * 05_formats is taken while Track is still selected and the switch is put back
  * before the fullscreen map, which would otherwise open on the places dots.
  * 10_days narrows the dates, so it comes after everything that wants them all.
+ * The Trips shots come after the fullscreen map: a Track map that has shown
+ * a trip keeps that trip's framing when the switch goes back to Track, and
+ * the hero shot would open on Norway instead of the whole history.
  *
  * These are raw captures, not the store art: tools/store_shots renders the
  * framed, captioned images from them. See tools/store_shots/README.md.
@@ -179,6 +190,17 @@ class ScreenshotTest {
         Thread.sleep(LOCALE_SETTLE_MS)
     }
 
+    /**
+     * Forget the filters, Color by day and Save / Send the app remembers
+     * between sessions. Every pass ends on 10_days, which leaves the "7 days"
+     * range and Color by day on; remembered, they would open the next
+     * language's overview on one week of coloured roads.
+     */
+    @Before
+    fun forgetRememberedSettings() {
+        appCtx.getSharedPreferences(REMEMBERED_SETTINGS_PREFS, Context.MODE_PRIVATE).edit().clear().commit()
+    }
+
     /** The tags in `@xml/locales_config` — the same list the picker offers. */
     private fun shippedLanguageTags(): List<String> {
         val tags = mutableListOf<String>()
@@ -221,6 +243,15 @@ class ScreenshotTest {
         // Moves with END_DATE / alps_road_trip_segments in
         // tools/generate_demo_timeline.py.
         val FOCUS_DAY: LocalDate = LocalDate.of(2026, 6, 28)
+
+        // The trip 11_trip picks: the twelve days round southern Norway in
+        // tools/generate_demo_timeline.py (VACATIONS, "Norway"). Found in the
+        // list by its dates, formatted the way the row formats them.
+        val FOCUS_TRIP_FIRST: LocalDate = LocalDate.of(2026, 5, 12)
+        val FOCUS_TRIP_LAST: LocalDate = LocalDate.of(2026, 5, 23)
+
+        // RememberedSettings.kt's SETTINGS_PREFS.
+        const val REMEMBERED_SETTINGS_PREFS = "remembered_settings"
 
         // The locale of the current pass, as screengrab passes it to the
         // runner: `-e testLocale en_US`.
@@ -357,6 +388,56 @@ class ScreenshotTest {
         composeRule.onNodeWithContentDescription(str(R.string.map_exit_fullscreen)).performClick()
         composeRule.waitForIdle()
 
+        // 11 — Trips, with one holiday picked: the map frames that trip, its
+        // card sits under the map, and the newest trips follow. Ticked from
+        // the card, so the shot also says that ticked trips are what step 4
+        // writes. onFirst() for the same reason as Places: step 4's plaque
+        // repeats the word.
+        composeRule.onAllNodesWithText(str(R.string.content_trips)).onFirst()
+            .performScrollTo().performClick()
+        composeRule.waitForIdle()
+        val tripLabel = formatLocalDayRange(localizedCtx, FOCUS_TRIP_FIRST, FOCUS_TRIP_LAST)
+        composeRule.waitUntil(timeoutMillis = 10_000) {
+            composeRule.onAllNodesWithText(tripLabel).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onAllNodesWithText(tripLabel).onFirst().performScrollTo().performClick()
+        composeRule.waitForIdle()
+        // The card is above the list, so its box is the first one.
+        composeRule.onAllNodesWithContentDescription(str(R.string.trip_export_checkbox)).onFirst()
+            .performClick()
+        settle(MAP_TILE_WAIT_MS)
+        // Picking scrolls the map and card into view; frame from the switch
+        // instead, so the shot shows which view this is.
+        composeRule.onAllNodesWithText(str(R.string.content_trips)).onFirst().performScrollTo()
+        // On the 7" tablet in landscape the switch, the map and the card do
+        // not all fit: bring the card's last line up from below the fold.
+        // Where it is already on screen this does not scroll at all.
+        composeRule.onNodeWithText(str(R.string.trip_show_checked_on_map)).performScrollTo()
+        settle(750)
+        shoot("11_trip")
+
+        // 12 — every trip, by year. Let go of the picked trip first: the full
+        // list opens on the trip the map shows, and without one it opens at
+        // the top, under this year's header. The ticked trip stays ticked.
+        // Scrolled to first: a click below the fold lands on nothing.
+        composeRule.onNodeWithText(str(R.string.trip_show_checked_on_map)).performScrollTo().performClick()
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText(
+            localizedCtx.getString(R.string.places_show_all, "%,d".format(demoTripCount()))
+        ).performScrollTo().performClick()
+        waitForText(R.string.preview_close, timeoutMs = 10_000)
+        settle(1_500)
+        shoot("12_trips")
+        composeRule.onAllNodesWithText(str(R.string.preview_close)).onFirst().performClick()
+        composeRule.waitForIdle()
+
+        // Back to Track for 10_days, which wants the track's days.
+        composeRule.onAllNodesWithText(str(R.string.content_track)).onFirst()
+            .performScrollTo().performClick()
+        composeRule.waitForIdle()
+        settle(MAP_TILE_WAIT_MS)
+
+
         // 10 — the last week, one colour per day. The demo file ends on a
         // seven-day road trip that takes a road of its own every day, so the
         // "7 days" preset in step 2 leaves exactly that week on the map.
@@ -403,6 +484,16 @@ class ScreenshotTest {
             out,
         )
     }
+
+    /**
+     * How many trips the app finds in the demo file, for the "Show all N"
+     * button's label: found by the same code, so it cannot drift from the
+     * file when the file is regenerated.
+     */
+    private fun demoTripCount(): Int =
+        testCtx.assets.open(DEMO_ASSET).use { input ->
+            (detectTrips(parseTimeline(input)) as TripDetection.Found).trips.size
+        }
 
     /**
      * [Screengrab.screenshot], tried again when the capture fails.

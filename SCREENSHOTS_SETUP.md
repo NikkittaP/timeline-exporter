@@ -29,6 +29,8 @@ The raw shots the test captures (per language):
 | `08_places.png`         | Step 3 on the Places side: the map of visited places above the list that names them |
 | `09_time_of_day.png`    | The time-of-day window dialog, a preset chosen     |
 | `10_days.png`           | Expanded map, "7 days" preset, Color by day on, one day of the Alps road trip picked from the day list |
+| `11_trip.png`           | Step 3 on the Trips side: the Norway holiday picked and ticked, on the map, its card, the newest trips under it |
+| `12_trips.png`          | The full trips list, under year headers, the Norway trip still ticked |
 
 Those are **not** what Play gets. A second stage ("Aurora", `tools/store_shots/`)
 renders each raw shot into framed store art — gradient background, device frame,
@@ -37,20 +39,28 @@ localized headline — and that is what lands in `fastlane/metadata/`:
 | Store file         | Built from              |
 |--------------------|-------------------------|
 | `01_map.png`       | `03_map_fullscreen.png` |
-| `02_days.png`      | `10_days.png`           |
-| `03_places.png`    | `08_places.png`         |
-| `04_overview.png`  | `02_overview.png`       |
-| `05_timeofday.png` | `09_time_of_day.png`    |
-| `06_formats.png`   | `05_formats.png`        |
-| `07_movement.png`  | `07_movement.png`       |
+| `02_trip.png`      | `11_trip.png`           |
+| `03_trips.png`     | `12_trips.png`          |
+| `04_days.png`      | `10_days.png`           |
+| `05_places.png`    | `08_places.png`         |
+| `06_overview.png`  | `02_overview.png`       |
+| `07_formats.png`   | `05_formats.png`        |
 | `08_privacy.png`   | `06_start_empty.png`    |
 | feature graphic (1024x500) | `03_map_fullscreen.png` |
 
 Play orders screenshots by file name, shows the first three without scrolling
-and takes at most eight. That is the whole budget. The newest features go right
-after the hero: Color by day (1.8.0), then Places (1.7.0). The date-range
-calendar made way for Color by day — the date presets are already on the
+and takes at most eight. That is the whole budget. The newest feature goes right
+after the hero: Trips (1.9.0), as two shots, one holiday picked and then the
+whole list by year. Color by day (1.8.0) and Places (1.7.0) follow. Time of day
+and the movement breakdown made way for Trips; their raw shots are still
+captured, so either can come back by editing `frames` in
+`tools/store_shots/config.json` and running `decorate_screens`. The date-range
+calendar made way for Color by day earlier — the date presets are already on the
 overview, and the picker itself is a stock Material dialog.
+
+The test clears the settings the app remembers between sessions (filters,
+Color by day) before every capture: each pass ends on `10_days` with the
+"7 days" range on, and remembered it would open the next language on one week.
 
 ### The status bar is ours, not the emulator's
 
@@ -152,9 +162,15 @@ The demo data is **synthetic** — two years of an ordinary life based in Malmö
 Sweden: weekday commutes (by bike, on foot, by bus or by car — the office is
 1.7 km away, so a car every day would be the odd choice, and a Timeline with
 one movement type in it cannot show what the movement filter is for), lazy or
-errand-y weekends, day trips over the bridge to Copenhagen by train, and about
-a dozen real vacations spread out every couple of months (Stockholm, New York, Gothenburg, Rome, Prague, Dubai,
-Barcelona, Tokyo, Lisbon, Vienna, Krakow). The last 7 days are a car road trip
+errand-y weekends, day trips over the bridge to Copenhagen by train or up the
+coast to Helsingborg, and about a dozen real holidays spread out every couple of
+months (Stockholm by train, New York, Gothenburg by car, Rome, Prague, Dubai,
+Barcelona, Tokyo, Lisbon, Krakow, Vienna) — each a run of calendar days with a
+hotel, nights and a few sights a day, so the Trips view lists them the way it
+would a real file. In May comes twelve days round southern Norway by car
+(Oslo, Lom, Geiranger, Trollstigen, Ålesund, Bergen, Hardanger, Stavanger,
+Kristiansand and the ferry to Denmark), along real roads: that is the trip
+`11_trip` picks. The last 7 days are a car road trip
 through the Alps (Malmö → Hamburg → Zurich → Lucerne → Interlaken → Grimsel and
 Oberalp passes → Innsbruck → Timmelsjoch → Bolzano/Dolomites → Brenner → Munich
 → Rostock, ferry to Trelleborg → home), one stretch per calendar day and a road
@@ -175,8 +191,14 @@ command above needs no network. Only after changing `ROAD_LEGS` re-route them:
 python tools/generate_demo_timeline.py --refresh-routes
 ```
 
-`ScreenshotTest.FOCUS_DAY` names the trip day `10_days` picks; move it if the
-trip's dates move.
+`ScreenshotTest.FOCUS_DAY` names the trip day `10_days` picks, and
+`FOCUS_TRIP_FIRST` / `FOCUS_TRIP_LAST` the Norway dates `11_trip` looks for in
+the list; move them if those dates move. After adding a road leg, route only
+the new ones (the cached roads stay as they are):
+
+```bash
+python tools/generate_demo_timeline.py --route-missing
+```
 
 ---
 

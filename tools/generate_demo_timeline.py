@@ -78,10 +78,16 @@ COMMUTE_MODES = [
 
 # Real vacations over the two years, spaced out so most of life is at home.
 # "offset" = days before the dataset's end date that the trip STARTS.
-# "mode": "flight" (far away, shows up as a dashed line) or "drive" (a solid
-# line road trip, like the weekend hop to Gothenburg).
+# "days" = calendar days, leaving home on the first and back on the last, with
+# a hotel night in between: that is how the app's Trips view counts them.
+# "mode": "flight" (far away, shows up as a dashed line), "drive" (a solid
+# line, like the weekend hop to Gothenburg), "train" (a solid line along the
+# rail corridor in "via"), or "norway" (the routed road trip, see
+# norway_road_trip_segments).
 VACATIONS = [
-    {"name": "Stockholm",  "lat": 59.3293, "lon": 18.0686,  "offset": 705, "days": 3, "mode": "flight"},
+    {"name": "Stockholm",  "lat": 59.3293, "lon": 18.0686,  "offset": 705, "days": 3, "mode": "train",
+     "via": [(56.1589, 13.7668), (56.8990, 14.5560), (57.6530, 14.6968), (58.4108, 15.6214),
+             (58.5877, 16.1924), (59.1955, 17.6253)]},  # Hassleholm, Alvesta, Nassjo, Linkoping, Norrkoping, Sodertalje
     {"name": "New York",   "lat": 40.7128, "lon": -74.0060, "offset": 655, "days": 5, "mode": "flight"},
     {"name": "Gothenburg", "lat": 57.7089, "lon": 11.9746,  "offset": 600, "days": 2, "mode": "drive"},
     {"name": "Rome",       "lat": 41.9028, "lon": 12.4964,  "offset": 545, "days": 6, "mode": "flight"},
@@ -90,8 +96,11 @@ VACATIONS = [
     {"name": "Barcelona",  "lat": 41.3851, "lon": 2.1734,   "offset": 330, "days": 5, "mode": "flight"},
     {"name": "Tokyo",      "lat": 35.6762, "lon": 139.6503, "offset": 245, "days": 8, "mode": "flight"},
     {"name": "Lisbon",     "lat": 38.7223, "lon": -9.1393,  "offset": 155, "days": 4, "mode": "flight"},
+    {"name": "Krakow",     "lat": 50.0647, "lon": 19.9450,  "offset": 120, "days": 3, "mode": "flight"},
     {"name": "Vienna",     "lat": 48.2082, "lon": 16.3738,  "offset": 85,  "days": 4, "mode": "flight"},
-    {"name": "Krakow",     "lat": 50.0647, "lon": 19.9450,  "offset": 35,  "days": 3, "mode": "flight"},
+    # Twelve days round southern Norway: the holiday the Trips screenshot
+    # picks. Recent, so it is near the top of the newest-first list.
+    {"name": "Norway",     "lat": 61.8380, "lon": 8.5677,   "offset": 50,  "days": 12, "mode": "norway"},
 ]
 
 # ---------------------------------------------------------------------------
@@ -123,6 +132,22 @@ MUNICH = (48.1351, 11.5820)
 ROSTOCK_FERRY = (54.1530, 12.1000)     # Rostock Seehafen
 TRELLEBORG_FERRY = (55.3690, 13.1480)
 
+# The Norway holiday: up to Oslo, over the mountains to the fjords, down the
+# west coast, and the ferry from Kristiansand to Denmark to close the loop.
+NORWAY_STOPS = {
+    "malmo":        HOME_LATLON,
+    "oslo":         (59.9139, 10.7522),
+    "lom":          (61.8380, 8.5677),
+    "geiranger":    (62.1008, 7.2059),
+    "andalsnes":    (62.5675, 7.6870),
+    "alesund":      (62.4722, 6.1495),
+    "bergen":       (60.3913, 5.3221),
+    "odda":         (60.0690, 6.5460),
+    "stavanger":    (58.9700, 5.7331),
+    "kristiansand": (58.1467, 7.9956),
+    "hirtshals":    (57.5880, 9.9650),
+}
+
 # Every day of the trip takes a road the others do not, so that coloured by
 # day no line is painted over by another: over the passes to Innsbruck rather
 # than back past Zurich, the Timmelsjoch into Italy and the Brenner out of it,
@@ -140,6 +165,18 @@ ROAD_LEGS = {
     "bolzano-munich":       [BOLZANO, MUNICH],
     "munich-rostock":       [MUNICH, ROSTOCK_FERRY],
     "trelleborg-malmo":     [TRELLEBORG_FERRY, HOME_LATLON],
+    **{f"norway-{a}-{b}": [NORWAY_STOPS[a], *via, NORWAY_STOPS[b]] for a, b, via in (
+        ("malmo", "oslo", []),
+        ("oslo", "lom", []),
+        ("lom", "geiranger", []),
+        ("geiranger", "andalsnes", [(62.4567, 7.6656)]),      # Trollstigen
+        ("andalsnes", "alesund", []),
+        ("alesund", "bergen", []),
+        ("bergen", "odda", [(60.2990, 6.0150)]),              # Hardangerfjord, via Norheimsund
+        ("odda", "stavanger", [(58.9928, 6.1386)]),           # Preikestolen car park
+        ("stavanger", "kristiansand", []),
+        ("hirtshals", "malmo", []),
+    )},
 }
 
 ROUTES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "demo_routes.json")
@@ -228,10 +265,21 @@ def resample(line, step_km):
     return out
 
 
-def fetch_road_legs():
-    """Route every leg in ROAD_LEGS with OSRM and write tools/demo_routes.json."""
+def fetch_road_legs(only_missing=False):
+    """Route the legs in ROAD_LEGS with OSRM and write tools/demo_routes.json.
+
+    only_missing routes just the legs the cache has no road for and keeps the
+    rest as they are, so adding a leg does not re-route (and shift) the others.
+    """
+    cached = {}
+    if only_missing and os.path.exists(ROUTES_PATH):
+        with open(ROUTES_PATH, encoding="utf-8") as f:
+            cached = json.load(f)["legs"]
     legs = {}
     for name, waypoints in ROAD_LEGS.items():
+        if name in cached:
+            legs[name] = [tuple(p) for p in cached[name]]
+            continue
         coords = ";".join(f"{lon},{lat}" for lat, lon in waypoints)
         request = urllib.request.Request(
             OSRM_ROUTE_URL.format(coords=coords),
@@ -250,7 +298,7 @@ def fetch_road_legs():
             for name, points in legs.items()]
     with open(ROUTES_PATH, "w", encoding="utf-8") as f:
         f.write("{\n")
-        f.write('  "$comment": "Road geometry for the demo Alps road trip, one vertex per km. '
+        f.write('  "$comment": "Road geometry for the demo road trips (Alps, Norway), one vertex per km. '
                 'Routed by tools/generate_demo_timeline.py --refresh-routes with the OSRM demo server. '
                 'Map data (c) OpenStreetMap contributors, ODbL.",\n')
         f.write('  "legs": {\n')
@@ -266,7 +314,7 @@ def load_road_legs():
         legs = json.load(f)["legs"]
     missing = sorted(set(ROAD_LEGS) - set(legs))
     if missing:
-        raise SystemExit(f"{ROUTES_PATH} has no route for {', '.join(missing)}; run with --refresh-routes")
+        raise SystemExit(f"{ROUTES_PATH} has no route for {', '.join(missing)}; run with --route-missing")
     return {name: [tuple(p) for p in points] for name, points in legs.items()}
 
 
@@ -464,49 +512,147 @@ def weekend_segments(day_start):
     return segments
 
 
+def sights_near(name, lat, lon, count):
+    """Made-up sights a short walk from the hotel, the same ones every run."""
+    rng = random.Random(name)
+    return [(round(lat + rng.uniform(-0.02, 0.02), 5),
+             round(lon + rng.uniform(-0.03, 0.03), 5),
+             f"{name.lower().replace(' ', '_')}_sight{k}") for k in range(count)]
+
+
+def sightseeing(lat, lon, sights, t0, until):
+    """A day out from the hotel at (lat, lon): a walk to each sight in turn, a
+    visit at each, and the walk back. Skips the sights there is no time left
+    for rather than run past until."""
+    segments = []
+    cursor = t0
+    for s_lat, s_lon, place_id in sights:
+        walk = wander_track(s_lat, s_lon, cursor, minutes=random.uniform(30, 70))
+        if walk[-1][2] > until:
+            break
+        segments.append(path_segment(walk))
+        segments.append(activity(walk[0][2], walk[-1][2], track_km(walk) * 1000, "WALKING", 0.9))
+        stay_end = walk[-1][2] + timedelta(minutes=random.uniform(45, 120))
+        segments.append(visit(s_lat, s_lon, walk[-1][2], stay_end, place_id, "INFERRED_POINT_OF_INTEREST", 0.85))
+        cursor = stay_end + timedelta(minutes=random.uniform(5, 15))
+    back = wander_track(lat, lon, cursor, minutes=random.uniform(25, 50))
+    segments.append(path_segment(back))
+    segments.append(activity(back[0][2], back[-1][2], track_km(back) * 1000, "WALKING", 0.9))
+    return segments, back[-1][2]
+
+
+def hotel_stay(place, lat, lon, arrive_t, day_start, first_day_sights, nights):
+    """Check in at (lat, lon), and for each night a day of sights and a night
+    at the hotel; the first day has first_day_sights, a whole day in town three.
+    Returns (segments, the morning after the last night)."""
+    hotel = f"{place}_hotel"
+    s = []
+    checkin = arrive_t + timedelta(minutes=random.uniform(15, 30))
+    s.append(visit(lat, lon, arrive_t, checkin, hotel, "INFERRED_POINT_OF_INTEREST", 0.9))
+    cursor = checkin + timedelta(minutes=random.uniform(20, 45))
+    for n in range(nights):
+        today = day_start + timedelta(days=n)
+        sights = sights_near(f"{place} {n}", lat, lon, first_day_sights if n == 0 else 3)
+        out, cursor = sightseeing(lat, lon, sights, cursor, today + timedelta(hours=21))
+        s.extend(out)
+        morning = today + timedelta(days=1, hours=random.uniform(8, 9.5))
+        s.append(visit(lat, lon, cursor, morning, hotel, "INFERRED_POINT_OF_INTEREST", 0.9))
+        cursor = morning
+    return s, cursor
+
+
 def vacation_segments(v, t_start):
+    """A holiday of v["days"] calendar days: out on the first morning, a hotel
+    night between every two days, sights every day, and home on the evening of
+    the last."""
     name, lat, lon, days, mode = v["name"], v["lat"], v["lon"], v["days"], v["mode"]
     dest = (lat, lon)
+    place = name.lower().replace(" ", "_")
     segments = []
 
     depart = t_start + timedelta(hours=random.uniform(5, 8))
     segments.append(visit(*HOME_LATLON, t_start, depart, "home_malmo", "INFERRED_HOME", 0.95))
 
-    if mode == "flight":
-        arrive = depart + timedelta(hours=random.uniform(1.5, 4.5)) + timedelta(hours=random.uniform(1.5, 11))
-        segments.append(activity(depart, arrive, haversine_km(HOME_LATLON, dest) * 1000, "FLYING", 0.97))
-        cursor = arrive
-    else:
-        wp = [("Malmo",) + HOME_LATLON, (name, lat, lon)]
-        drive = dense_path(wp, depart, step_km=20, speed_kmh=88)
-        segments.append(path_segment(drive))
-        segments.append(activity(drive[0][2], drive[-1][2],
-                                  haversine_km(HOME_LATLON, dest) * 1000, "IN_PASSENGER_VEHICLE", 0.95))
-        cursor = drive[-1][2]
+    def travel(a_name, a, b_name, b, t0):
+        """There or back, by this holiday's mode; returns (segments, arrival)."""
+        if mode == "flight":
+            arrive = t0 + timedelta(hours=random.uniform(1.5, 4.5)) + timedelta(hours=random.uniform(1.5, 11))
+            return [activity(t0, arrive, haversine_km(a, b) * 1000, "FLYING", 0.97)], arrive
+        via = [("",) + tuple(p) for p in v.get("via", [])]
+        if a != HOME_LATLON:
+            via = via[::-1]
+        kind, speed = ("IN_TRAIN", 120) if mode == "train" else ("IN_PASSENGER_VEHICLE", 88)
+        path = dense_path([(a_name,) + a, *via, (b_name,) + b], t0,
+                          step_km=12 if mode == "train" else 20, speed_kmh=speed,
+                          jitter_km=0.4 if mode == "train" else 1.2)
+        return [path_segment(path), activity(path[0][2], path[-1][2], track_km(path) * 1000, kind, 0.95)], path[-1][2]
 
-    for _day_i in range(days):
-        hotel_in = cursor + timedelta(minutes=random.uniform(15, 40))
-        segments.append(visit(lat, lon, cursor, hotel_in, f"{name.lower()}_stay", "INFERRED_POINT_OF_INTEREST", 0.85))
-        wander_start = hotel_in + timedelta(minutes=random.uniform(20, 60))
-        wander = wander_track(lat, lon, wander_start, minutes=random.uniform(140, 280))
-        segments.append(path_segment(wander))
-        segments.append(activity(wander[0][2], wander[-1][2],
-                                  track_km(wander) * 1000, "WALKING", 0.9))
-        cursor = wander[-1][2] + timedelta(minutes=random.uniform(20, 60))
+    legs, cursor = travel("Malmo", HOME_LATLON, name, dest, depart)
+    segments.extend(legs)
 
-    if mode == "flight":
-        depart2 = cursor + timedelta(hours=random.uniform(1, 4))
-        arrive2 = depart2 + timedelta(hours=random.uniform(1.5, 11))
-        segments.append(activity(depart2, arrive2, haversine_km(dest, HOME_LATLON) * 1000, "FLYING", 0.97))
-        cursor = arrive2
-    else:
-        wp2 = [(name, lat, lon), ("Malmo",) + HOME_LATLON]
-        drive2 = dense_path(wp2, cursor + timedelta(hours=random.uniform(0.5, 2)), step_km=20, speed_kmh=88)
-        segments.append(path_segment(drive2))
-        segments.append(activity(drive2[0][2], drive2[-1][2],
-                                  haversine_km(dest, HOME_LATLON) * 1000, "IN_PASSENGER_VEHICLE", 0.95))
-        cursor = drive2[-1][2]
+    stay, cursor = hotel_stay(place, lat, lon, cursor, t_start, 2, days - 1)
+    segments.extend(stay)
 
+    # The last day: one more sight in the morning, then home.
+    last_day = t_start + timedelta(days=days - 1)
+    out, cursor = sightseeing(lat, lon, sights_near(f"{place} last", lat, lon, 1), cursor,
+                              last_day + timedelta(hours=14))
+    segments.extend(out)
+    checkout = cursor + timedelta(minutes=random.uniform(20, 60))
+    segments.append(visit(lat, lon, cursor, checkout, f"{place}_hotel", "INFERRED_POINT_OF_INTEREST", 0.9))
+    legs, cursor = travel(name, dest, "Malmo", HOME_LATLON, checkout + timedelta(hours=random.uniform(0.5, 2)))
+    segments.extend(legs)
+
+    next_midnight = datetime(cursor.year, cursor.month, cursor.day, tzinfo=timezone.utc) + timedelta(days=1)
+    segments.append(visit(*HOME_LATLON, cursor, next_midnight, "home_malmo", "INFERRED_HOME", 0.95))
+    return segments, next_midnight
+
+
+def norway_road_trip_segments(t_start, routes):
+    """Twelve days round southern Norway along routed roads: Oslo, over the
+    mountains to Lom and Geiranger, Trollstigen, Alesund, down the coast to
+    Bergen, Hardanger and Stavanger, then Kristiansand and the morning ferry
+    across to Hirtshals for the drive home through Denmark. Every stop gets
+    its hotel and a sight or two, so the trip has the places a real one has.
+    It is the trip the store's Trips screenshot picks."""
+    segments = []
+    stops = NORWAY_STOPS
+
+    def drive(a, b, depart_t, speed_kmh):
+        d = road_path(routes[f"norway-{a}-{b}"], depart_t, speed_kmh)
+        return [path_segment(d), activity(d[0][2], d[-1][2], track_km(d) * 1000, "IN_PASSENGER_VEHICLE", 0.96)], d[-1][2]
+
+    depart = t_start + timedelta(hours=6.5)
+    segments.append(visit(*HOME_LATLON, t_start, depart, "home_malmo", "INFERRED_HOME", 0.95))
+    cursor = depart
+    # (from, to, km/h, sights on arrival, nights there): 11 nights, 12 days.
+    plan = [
+        ("malmo", "oslo", 92, 1, 2),
+        ("oslo", "lom", 74, 1, 1),
+        ("lom", "geiranger", 50, 2, 1),
+        ("geiranger", "andalsnes", 42, 1, 1),
+        ("andalsnes", "alesund", 64, 2, 1),
+        ("alesund", "bergen", 62, 1, 2),
+        ("bergen", "odda", 58, 1, 1),
+        ("odda", "stavanger", 56, 2, 1),
+        ("stavanger", "kristiansand", 72, 1, 1),
+    ]
+    day = 0
+    for a, b, speed, first_day_sights, nights in plan:
+        legs, cursor = drive(a, b, cursor, speed)
+        segments.extend(legs)
+        stay, cursor = hotel_stay(b, *stops[b], cursor, t_start + timedelta(days=day), first_day_sights, nights)
+        segments.extend(stay)
+        day += nights
+
+    board = cursor + timedelta(minutes=random.uniform(20, 40))
+    # Like the Rostock ferry: no road to route, a straight line over the sea.
+    ferry = dense_path([("Kristiansand",) + stops["kristiansand"], ("Hirtshals",) + stops["hirtshals"]], board,
+                       step_km=3, speed_kmh=55, jitter_km=0.1)
+    segments.append(path_segment(ferry))
+    segments.append(activity(ferry[0][2], ferry[-1][2], track_km(ferry) * 1000, "IN_FERRY", 0.9))
+    legs, cursor = drive("hirtshals", "malmo", ferry[-1][2] + timedelta(minutes=random.uniform(10, 20)), 96)
+    segments.extend(legs)
     next_midnight = datetime(cursor.year, cursor.month, cursor.day, tzinfo=timezone.utc) + timedelta(days=1)
     segments.append(visit(*HOME_LATLON, cursor, next_midnight, "home_malmo", "INFERRED_HOME", 0.95))
     return segments, next_midnight
@@ -627,9 +773,11 @@ def main():
     parser = argparse.ArgumentParser(description="Generate the synthetic Timeline used for store screenshots.")
     parser.add_argument("--refresh-routes", action="store_true",
                         help="re-route the Alps road trip with OSRM (network) before generating")
+    parser.add_argument("--route-missing", action="store_true",
+                        help="route only the legs tools/demo_routes.json has no road for (network)")
     args = parser.parse_args()
-    if args.refresh_routes:
-        fetch_road_legs()
+    if args.refresh_routes or args.route_missing:
+        fetch_road_legs(only_missing=not args.refresh_routes)
     routes = load_road_legs()
 
     segments = []
@@ -643,7 +791,11 @@ def main():
     while current.date() < TRIP_START.date():
         d = current.date()
         if d in vacation_by_date:
-            segs, current = vacation_segments(vacation_by_date[d], current)
+            v = vacation_by_date[d]
+            if v["mode"] == "norway":
+                segs, current = norway_road_trip_segments(current, routes)
+            else:
+                segs, current = vacation_segments(v, current)
             segments.extend(segs)
             continue
         if current.weekday() < 5:

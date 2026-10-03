@@ -4,6 +4,16 @@
     "title": "Your history, {on one map}",
     "sub": "Years of Google Maps Timeline in one view"
   },
+  "trip": {
+    "eyebrow": "New: Trips",
+    "title": "Every {trip}, found for you",
+    "sub": "Holidays and day trips — dates, distance and places"
+  },
+  "trips": {
+    "eyebrow": "Year by year",
+    "title": "All your {travels} in one list",
+    "sub": "Tick the trips you need and export just those"
+  },
   "days": {
     "eyebrow": "Color by day",
     "title": "Every day {in its own color}",
@@ -16,7 +26,7 @@
   },
   "overview": {
     "eyebrow": "Two taps",
-    "title": "Every trip, {ready to export}",
+    "title": "Your Timeline, {ready to export}",
     "sub": "Reads your Google Takeout file — no account needed"
   },
   "timeofday": {

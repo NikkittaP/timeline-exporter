@@ -4,6 +4,16 @@
     "title": "Je geschiedenis, {op één kaart}",
     "sub": "Jaren Google Maps Timeline in één oogopslag"
   },
+  "trip": {
+    "eyebrow": "Nieuw: Reizen",
+    "title": "Elke {reis} vanzelf gevonden",
+    "sub": "Vakanties en dagtrips: data, afstand en plaatsen"
+  },
+  "trips": {
+    "eyebrow": "Jaar na jaar",
+    "title": "Al je {reizen} in één lijst",
+    "sub": "Vink aan wat je wilt en exporteer alleen dat"
+  },
   "days": {
     "eyebrow": "Kleur per dag",
     "title": "Elke dag {in een eigen kleur}",
@@ -16,7 +26,7 @@
   },
   "overview": {
     "eyebrow": "Twee tikken",
-    "title": "Elke rit, {klaar om te exporteren}",
+    "title": "Je tijdlijn, {klaar om te exporteren}",
     "sub": "Leest je Google Takeout-bestand, zonder account"
   },
   "timeofday": {

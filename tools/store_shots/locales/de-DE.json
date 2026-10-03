@@ -4,6 +4,16 @@
     "title": "Deine Historie, {auf einer Karte}",
     "sub": "Jahre Google Maps Timeline auf einen Blick"
   },
+  "trip": {
+    "eyebrow": "Neu: Reisen",
+    "title": "Jede {Reise} automatisch erkannt",
+    "sub": "Urlaube und Tagesausflüge – mit Daten, Strecke und Orten"
+  },
+  "trips": {
+    "eyebrow": "Jahr für Jahr",
+    "title": "Alle {Reisen} in einer Liste",
+    "sub": "Hake die gewünschten Reisen an und exportiere nur diese"
+  },
   "days": {
     "eyebrow": "Farbe nach Tag",
     "title": "Jeder Tag {in eigener Farbe}",
@@ -16,7 +26,7 @@
   },
   "overview": {
     "eyebrow": "Zwei Tipps",
-    "title": "Jede Reise, {exportbereit}",
+    "title": "Deine Zeitachse, {exportbereit}",
     "sub": "Liest deine Google-Takeout-Datei – ohne Konto"
   },
   "timeofday": {
