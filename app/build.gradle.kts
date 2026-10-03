@@ -413,9 +413,11 @@ android {
         //       1.8.4, ja-JP). GPX and CSV unchanged. Patch: a new output of
         //       an existing switch. changelogs/23.txt describes this alone.
         //   versionCode=23, versionName="1.8.5" is live on Play.
-        //   versionCode=24, versionName="1.9.0" -> filters and export
-        //       choices remembered between sessions, AndroidX bump. Minor:
-        //       1.9.0 is the Trips release, and this is its first part.
+        //   versionCode=24, versionName="1.9.0" -> Trips (a third view in
+        //       step 3, export of ticked trips), filters and export choices
+        //       remembered between sessions, double-counted activities fixed,
+        //       the second-file map crash fixed, AndroidX bump. Minor: a new
+        //       feature. changelogs/24.txt covers everything since 23.
         versionCode = 24
         versionName = "1.9.0"
 

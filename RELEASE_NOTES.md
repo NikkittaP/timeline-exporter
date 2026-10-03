@@ -24,9 +24,10 @@ Where things go at release time:
 
 # Unreleased — everything since v1.8.5
 
-## 1.9.0 — filters remembered between sessions (versionCode 24, in progress)
+## 1.9.0 — Trips, and filters remembered between sessions (versionCode 24)
 
-1.9.0 is planned around Trips. These changes come first.
+Store text cut 2026-10-03: `fastlane/metadata/android/<locale>/changelogs/24.txt`
+(Trips, remembered filters, the double-count fix, the second-file crash fix).
 
 - **Trips.** Step 3's switch is now Track / Trips / Places. A trip is time
   spent more than 50 km from home: a two-week holiday is one trip, not forty
