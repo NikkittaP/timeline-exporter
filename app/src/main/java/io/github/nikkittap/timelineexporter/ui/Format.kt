@@ -71,8 +71,10 @@ fun formatLocalDayRange(context: Context, first: LocalDate, last: LocalDate): St
     // Each date stays whole on its line. German spells the month out, and on a
     // narrow phone "9. Juni 2025 – 29. Juni 2026" broke as "… – 29." over
     // "Juni 2026". Every space becomes a non-breaking one except the one in
-    // front of the dash, which is where the line may turn.
-    return range.replace(' ', NBSP).replace("$NBSP–", " –")
+    // front of the dash, which is where the line may turn. Korean joins the
+    // two dates with a tilde instead, and with no space left to break at it
+    // split "1일" between its digit and its syllable.
+    return range.replace(' ', NBSP).replace("$NBSP–", " –").replace("$NBSP~", " ~")
 }
 
 private const val NBSP = ' '

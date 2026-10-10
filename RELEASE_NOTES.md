@@ -22,9 +22,45 @@ Where things go at release time:
 
 ---
 
-# Unreleased — everything since v1.8.5
+# Unreleased — everything since v1.9.0
 
-## 1.9.0 — Trips, and filters remembered between sessions (versionCode 24)
+## 1.9.1 — dates can be typed (versionCode 25)
+
+Feedback from 1.9.0 (de-DE, Pixel 8 Pro): "Das Datum mit der Tastatur
+eingeben".
+
+- **Typed dates.** A pencil in the date dialog's summary panel switches the
+  calendar to two text fields, Start date and End date, in the locale's own
+  format (TT.MM.JJJJ in German, 2024/07/01 in Japanese, Arabic-Indic digits
+  in Arabic) with the numeric keyboard; a calendar icon switches back. It is
+  Material 3's own input mode, which the dialog had switched off along with
+  the stock header. Both modes share one state: the panel's range, days and
+  points follow what is typed, and the calendar opens on the typed range.
+  A date outside the file gets the picker's localized error and Apply stays
+  disabled.
+- The toggle ends the panel's second line. In the top bar it cut German's
+  title to "Nach Datum fil…"; beside the range it wrapped the default
+  two-year range in Portuguese and Korean.
+- Date ranges in Korean break before the "~" between the two dates. With
+  every space non-breaking, a range too long for its line split "1일"
+  between the digit and the syllable.
+- Checked in all 18 languages on the Pixel_7 AVD, both modes, and in German
+  at 360 dp.
+
+Store text: `fastlane/metadata/android/<locale>/changelogs/25.txt` (this
+change only, 18 locales) and `F:\Timeline\Whats_New_v1.9.1_tagged.txt`.
+
+---
+
+# Released
+
+## v1.9.0 (versionCode 24) — released by 10 October 2026
+
+The *Unreleased* section from v1.8.5 up to this upload, moved here
+unchanged (headings demoted one level). Store text:
+`fastlane/metadata/android/<locale>/changelogs/24.txt`.
+
+### 1.9.0 — Trips, and filters remembered between sessions (versionCode 24)
 
 Store text cut 2026-10-03: `fastlane/metadata/android/<locale>/changelogs/24.txt`
 (Trips, remembered filters, the double-count fix, the second-file crash fix).
@@ -189,10 +225,6 @@ Store text cut 2026-10-03: `fastlane/metadata/android/<locale>/changelogs/24.txt
   swap 26 MB, and it stays there in the background. That is roughly 1/15 of
   the foreground limit, so no work is needed. GPU memory is not counted on
   the emulator.
-
----
-
-# Released
 
 ## v1.8.5 (versionCode 23) — released by 1 October 2026
 

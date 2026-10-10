@@ -418,8 +418,13 @@ android {
         //       remembered between sessions, double-counted activities fixed,
         //       the second-file map crash fixed, AndroidX bump. Minor: a new
         //       feature. changelogs/24.txt covers everything since 23.
-        versionCode = 24
-        versionName = "1.9.0"
+        //   versionCode=24, versionName="1.9.0" is live on Play.
+        //   versionCode=25, versionName="1.9.1" -> dates in the date filter
+        //       can be typed as well as tapped (feedback from 1.9.0, de-DE).
+        //       Patch: a small addition to an existing dialog.
+        //       changelogs/25.txt describes this alone.
+        versionCode = 25
+        versionName = "1.9.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

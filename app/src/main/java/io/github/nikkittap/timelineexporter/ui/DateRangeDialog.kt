@@ -1,14 +1,17 @@
 package io.github.nikkittap.timelineexporter.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
@@ -66,8 +69,8 @@ import java.time.temporal.ChronoUnit
  *
  * Dates can also be typed: a pencil in the bar swaps the calendar for the
  * picker's own two text fields, in the locale's date format, and a calendar
- * icon swaps it back. The toggle sits at the end of the summary panel, where
- * the stock header we dropped kept it; the top bar has no room for it, German
+ * icon swaps it back. The toggle sits in the summary panel, near where the
+ * stock header we dropped kept it; the top bar has no room for it, German
  * lost the end of its title. Both modes share one state, so the panel follows
  * whatever was typed as soon as it parses.
  *
@@ -231,8 +234,9 @@ fun DateRangeDialog(
 
 /**
  * The panel above the calendar: the selection, what is in it, and the switch
- * between tapping days and typing them. The switch is centred on both lines,
- * which together are about as tall as it is, so it adds no height.
+ * between tapping days and typing them. The switch ends the second line, not
+ * the panel: beside the range it took 48 dp from the one line that is long,
+ * and Portuguese and Korean wrapped the default two-year range.
  *
  * Both lines are always there. Mid-selection, after the first tap and before
  * the second, the second line holds a non-breaking space rather than nothing,
@@ -257,50 +261,56 @@ private fun SelectionSummary(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier.fillMaxWidth(),
     ) {
-        Row(
-            modifier = Modifier.padding(start = 16.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                Text(
-                    text = when {
-                        first == null -> "—"
-                        last == null -> stringResource(
-                            R.string.date_range_value,
-                            formatLocalDayRange(context, first, first),
-                            "…",
-                        )
-                        else -> formatLocalDayRange(context, first, last)
-                    },
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                val details = if (first != null && last != null) {
-                    val days = (ChronoUnit.DAYS.between(first, last) + 1).toInt()
-                    val daysText = pluralStringResource(R.plurals.map_day_count, days, days)
-                    if (pointCount != null) {
-                        "$daysText · " + stringResource(R.string.points_count, "%,d".format(pointCount))
-                    } else {
-                        daysText
-                    }
+            Text(
+                text = when {
+                    first == null -> "—"
+                    last == null -> stringResource(
+                        R.string.date_range_value,
+                        formatLocalDayRange(context, first, first),
+                        "…",
+                    )
+                    else -> formatLocalDayRange(context, first, last)
+                },
+                style = MaterialTheme.typography.titleLarge,
+            )
+            val details = if (first != null && last != null) {
+                val days = (ChronoUnit.DAYS.between(first, last) + 1).toInt()
+                val daysText = pluralStringResource(R.plurals.map_day_count, days, days)
+                if (pointCount != null) {
+                    "$daysText · " + stringResource(R.string.points_count, "%,d".format(pointCount))
                 } else {
-                    " "
+                    daysText
                 }
+            } else {
+                " "
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = details,
                     style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
                 )
-            }
-            IconButton(onClick = onToggleTyping) {
-                Icon(
-                    painter = painterResource(if (typing) R.drawable.ic_calendar else R.drawable.ic_edit),
-                    contentDescription = stringResource(
-                        if (typing) R.string.date_dialog_pick_dates else R.string.date_dialog_type_dates,
-                    ),
-                )
+                // Laid out as an icon on a line of text, its button overhanging
+                // the line, so the panel stays two lines tall.
+                Box(
+                    modifier = Modifier
+                        .size(width = 24.dp, height = 20.dp)
+                        .wrapContentSize(unbounded = true),
+                ) {
+                    IconButton(onClick = onToggleTyping) {
+                        Icon(
+                            painter = painterResource(if (typing) R.drawable.ic_calendar else R.drawable.ic_edit),
+                            contentDescription = stringResource(
+                                if (typing) R.string.date_dialog_pick_dates else R.string.date_dialog_type_dates,
+                            ),
+                        )
+                    }
+                }
             }
         }
     }
