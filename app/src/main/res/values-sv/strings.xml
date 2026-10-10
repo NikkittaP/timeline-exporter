@@ -63,6 +63,8 @@
     <string name="date_dialog_title">Filtrera efter datum</string>
     <string name="date_dialog_cancel">Avbryt</string>
     <string name="date_dialog_apply">Tillämpa</string>
+    <string name="date_dialog_type_dates">Skriv datum</string>
+    <string name="date_dialog_pick_dates">Välj i kalendern</string>
 
     <string name="preview_title">Förhandsvisning</string>
     <string name="preview_no_points">Inga punkter matchar det aktuella filtret — inget att visa.</string>

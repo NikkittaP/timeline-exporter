@@ -64,6 +64,8 @@
     <string name="date_dialog_title">Filtrar por data</string>
     <string name="date_dialog_cancel">Cancelar</string>
     <string name="date_dialog_apply">Aplicar</string>
+    <string name="date_dialog_type_dates">Digitar as datas</string>
+    <string name="date_dialog_pick_dates">Escolher no calendário</string>
 
     <string name="preview_title">Pré-visualização</string>
     <string name="preview_no_points">Nenhum ponto corresponde ao filtro atual — nada para mostrar.</string>

@@ -87,6 +87,8 @@
     <string name="date_dialog_title">Filter by date</string>
     <string name="date_dialog_cancel">Cancel</string>
     <string name="date_dialog_apply">Apply</string>
+    <string name="date_dialog_type_dates">Type the dates</string>
+    <string name="date_dialog_pick_dates">Pick on the calendar</string>
 
     <!-- Preview section -->
     <string name="preview_title">Preview</string>

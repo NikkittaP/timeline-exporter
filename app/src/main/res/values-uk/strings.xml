@@ -65,6 +65,8 @@
     <string name="date_dialog_title">Фільтр за датою</string>
     <string name="date_dialog_cancel">Скасувати</string>
     <string name="date_dialog_apply">Застосувати</string>
+    <string name="date_dialog_type_dates">Ввести дати</string>
+    <string name="date_dialog_pick_dates">Вибрати в календарі</string>
 
     <string name="preview_title">Перегляд</string>
     <string name="preview_no_points">Немає точок за поточним фільтром — нічого показати.</string>

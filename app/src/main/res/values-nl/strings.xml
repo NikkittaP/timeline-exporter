@@ -63,6 +63,8 @@
     <string name="date_dialog_title">Op datum filteren</string>
     <string name="date_dialog_cancel">Annuleren</string>
     <string name="date_dialog_apply">Toepassen</string>
+    <string name="date_dialog_type_dates">Datums typen</string>
+    <string name="date_dialog_pick_dates">Kiezen in de kalender</string>
 
     <string name="preview_title">Voorbeeld</string>
     <string name="preview_no_points">Geen punten voor het huidige filter — niets te tonen.</string>

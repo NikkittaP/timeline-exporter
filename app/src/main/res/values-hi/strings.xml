@@ -63,6 +63,8 @@
     <string name="date_dialog_title">तारीख़ से फ़िल्टर करें</string>
     <string name="date_dialog_cancel">रद्द करें</string>
     <string name="date_dialog_apply">लागू करें</string>
+    <string name="date_dialog_type_dates">तारीख़ें टाइप करें</string>
+    <string name="date_dialog_pick_dates">कैलेंडर में चुनें</string>
 
     <string name="preview_title">पूर्वावलोकन</string>
     <string name="preview_no_points">मौजूदा फ़िल्टर से कोई पॉइंट मेल नहीं खाता — दिखाने के लिए कुछ नहीं।</string>

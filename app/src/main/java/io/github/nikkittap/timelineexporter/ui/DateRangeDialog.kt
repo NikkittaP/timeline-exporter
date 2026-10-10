@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -62,6 +63,13 @@ import java.time.temporal.ChronoUnit
  * days and of points. The point count runs the same filter step 2 runs with
  * only the dates swapped (see [countPoints]), so it is the figure step 2 will
  * show after Apply rather than a second, disagreeing one.
+ *
+ * Dates can also be typed: a pencil in the bar swaps the calendar for the
+ * picker's own two text fields, in the locale's date format, and a calendar
+ * icon swaps it back. The toggle sits at the end of the summary panel, where
+ * the stock header we dropped kept it; the top bar has no room for it, German
+ * lost the end of its title. Both modes share one state, so the panel follows
+ * whatever was typed as soon as it parses.
  *
  * Days outside the file cannot be picked: an export that ends on June 29 has
  * nothing to say about June 30, and letting someone select it only produced an
@@ -195,6 +203,14 @@ fun DateRangeDialog(
                     startMillis = start,
                     endMillis = end,
                     pointCount = selectedPoints,
+                    typing = pickerState.displayMode == DisplayMode.Input,
+                    onToggleTyping = {
+                        pickerState.displayMode = if (pickerState.displayMode == DisplayMode.Input) {
+                            DisplayMode.Picker
+                        } else {
+                            DisplayMode.Input
+                        }
+                    },
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 )
 
@@ -214,7 +230,9 @@ fun DateRangeDialog(
 }
 
 /**
- * The panel above the calendar: the selection, and what is in it.
+ * The panel above the calendar: the selection, what is in it, and the switch
+ * between tapping days and typing them. The switch is centred on both lines,
+ * which together are about as tall as it is, so it adds no height.
  *
  * Both lines are always there. Mid-selection, after the first tap and before
  * the second, the second line holds a non-breaking space rather than nothing,
@@ -226,6 +244,8 @@ private fun SelectionSummary(
     startMillis: Long?,
     endMillis: Long?,
     pointCount: Int?,
+    typing: Boolean,
+    onToggleTyping: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -237,38 +257,51 @@ private fun SelectionSummary(
         shape = MaterialTheme.shapes.medium,
         modifier = modifier.fillMaxWidth(),
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+        Row(
+            modifier = Modifier.padding(start = 16.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = when {
-                    first == null -> "—"
-                    last == null -> stringResource(
-                        R.string.date_range_value,
-                        formatLocalDayRange(context, first, first),
-                        "…",
-                    )
-                    else -> formatLocalDayRange(context, first, last)
-                },
-                style = MaterialTheme.typography.titleLarge,
-            )
-            val details = if (first != null && last != null) {
-                val days = (ChronoUnit.DAYS.between(first, last) + 1).toInt()
-                val daysText = pluralStringResource(R.plurals.map_day_count, days, days)
-                if (pointCount != null) {
-                    "$daysText · " + stringResource(R.string.points_count, "%,d".format(pointCount))
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Text(
+                    text = when {
+                        first == null -> "—"
+                        last == null -> stringResource(
+                            R.string.date_range_value,
+                            formatLocalDayRange(context, first, first),
+                            "…",
+                        )
+                        else -> formatLocalDayRange(context, first, last)
+                    },
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                val details = if (first != null && last != null) {
+                    val days = (ChronoUnit.DAYS.between(first, last) + 1).toInt()
+                    val daysText = pluralStringResource(R.plurals.map_day_count, days, days)
+                    if (pointCount != null) {
+                        "$daysText · " + stringResource(R.string.points_count, "%,d".format(pointCount))
+                    } else {
+                        daysText
+                    }
                 } else {
-                    daysText
+                    " "
                 }
-            } else {
-                " "
+                Text(
+                    text = details,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
-            Text(
-                text = details,
-                style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            IconButton(onClick = onToggleTyping) {
+                Icon(
+                    painter = painterResource(if (typing) R.drawable.ic_calendar else R.drawable.ic_edit),
+                    contentDescription = stringResource(
+                        if (typing) R.string.date_dialog_pick_dates else R.string.date_dialog_type_dates,
+                    ),
+                )
+            }
         }
     }
 }

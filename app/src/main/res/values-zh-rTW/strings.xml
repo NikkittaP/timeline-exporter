@@ -62,6 +62,8 @@
     <string name="date_dialog_title">依日期篩選</string>
     <string name="date_dialog_cancel">取消</string>
     <string name="date_dialog_apply">套用</string>
+    <string name="date_dialog_type_dates">輸入日期</string>
+    <string name="date_dialog_pick_dates">在日曆中選擇</string>
 
     <string name="preview_title">預覽</string>
     <string name="preview_no_points">沒有符合目前篩選條件的點 — 無可預覽內容。</string>

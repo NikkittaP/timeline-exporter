@@ -63,6 +63,8 @@
     <string name="date_dialog_title">Tarihe göre filtrele</string>
     <string name="date_dialog_cancel">İptal</string>
     <string name="date_dialog_apply">Uygula</string>
+    <string name="date_dialog_type_dates">Tarihleri yaz</string>
+    <string name="date_dialog_pick_dates">Takvimden seç</string>
 
     <string name="preview_title">Önizleme</string>
     <string name="preview_no_points">Geçerli filtreyle eşleşen nokta yok — gösterilecek bir şey yok.</string>

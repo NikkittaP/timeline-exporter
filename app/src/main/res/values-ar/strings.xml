@@ -67,6 +67,8 @@
     <string name="date_dialog_title">التصفية حسب التاريخ</string>
     <string name="date_dialog_cancel">إلغاء</string>
     <string name="date_dialog_apply">تطبيق</string>
+    <string name="date_dialog_type_dates">كتابة التواريخ</string>
+    <string name="date_dialog_pick_dates">الاختيار من التقويم</string>
 
     <string name="preview_title">معاينة</string>
     <string name="preview_no_points">لا توجد نقاط تطابق التصفية الحالية — لا شيء للعرض.</string>
