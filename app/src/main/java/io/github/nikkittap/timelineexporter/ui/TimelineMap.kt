@@ -1171,21 +1171,24 @@ fun TimelineMap(
     LaunchedEffect(subject, colorByDay, selectedEpochDay, fullscreen) { cancelMotion() }
     Box(modifier = modifier) {
         AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
-        val plane = motionPosition
         val motionColor = MaterialTheme.colorScheme.primary
-        if (plane != null && loadedMap != null && !destroyed.get()) {
-            val screen = runCatching { loadedMap!!.projection.toScreenLocation(LatLng(plane.latitude, plane.longitude)) }.getOrNull()
-            if (screen != null) Canvas(Modifier.fillMaxSize()) {
-                if (motionFinished) {
-                    val heart = androidx.compose.ui.graphics.Path().apply {
-                        val x = screen.x; val y = screen.y; val unit = 7.dp.toPx()
-                        moveTo(x, y + unit); cubicTo(x - 2 * unit, y - unit, x - unit, y - 2 * unit, x, y - unit)
-                        cubicTo(x + unit, y - 2 * unit, x + 2 * unit, y - unit, x, y + unit); close()
-                    }
-                    drawPath(heart, motionColor)
-                } else {
-                    drawPlane(Offset(screen.x, screen.y), 28.dp.toPx(), motionColor, (plane.bearing - loadedMap!!.cameraPosition.bearing).toFloat(), plane.alpha)
+        // The position is read in the draw phase only: reading it here would
+        // recompose the whole map composable on every animation frame.
+        if (motionJob != null) Canvas(Modifier.fillMaxSize()) {
+            val plane = motionPosition ?: return@Canvas
+            val map = loadedMap ?: return@Canvas
+            if (destroyed.get()) return@Canvas
+            val screen = runCatching { map.projection.toScreenLocation(LatLng(plane.latitude, plane.longitude)) }.getOrNull()
+                ?: return@Canvas
+            if (motionFinished) {
+                val heart = androidx.compose.ui.graphics.Path().apply {
+                    val x = screen.x; val y = screen.y; val unit = 7.dp.toPx()
+                    moveTo(x, y + unit); cubicTo(x - 2 * unit, y - unit, x - unit, y - 2 * unit, x, y - unit)
+                    cubicTo(x + unit, y - 2 * unit, x + 2 * unit, y - unit, x, y + unit); close()
                 }
+                drawPath(heart, motionColor)
+            } else {
+                drawPlane(Offset(screen.x, screen.y), 28.dp.toPx(), motionColor, (plane.bearing - map.cameraPosition.bearing).toFloat(), plane.alpha)
             }
         }
 
