@@ -16,6 +16,13 @@ and the version list the app reads:
 
 Those generated files are the source of truth for the app; the tagged files
 outside the repo may be deleted afterwards.
+
+Only releases that reach production belong here. A build that stayed on a
+testing track has no entry: its changes reach users in the next production
+release, whose store text covers the whole span. (The history was cut that
+way: 1.5.0, 1.6.3, 1.7.0, 1.8.0 and 1.8.1 never reached production; 1.5.0's
+notes are under 1.5.1, and 1.7.0's, which 1.8.3's store text left out, are
+appended to 1.8.3.)
 """
 
 import pathlib
