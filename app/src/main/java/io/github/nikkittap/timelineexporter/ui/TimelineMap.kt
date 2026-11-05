@@ -643,7 +643,7 @@ fun TimelineMap(
         // render thread is still running, and the native renderer is then
         // destroyed a second time by its finalizer: SIGABRT "Scudo ERROR:
         // invalid chunk state" in ~MapRenderer on FinalizerDaemon, every time
-        // a second file was loaded on a Galaxy S25 Edge (maplibre-native#4622,
+        // a second file was loaded on a Galaxy S25+ (maplibre-native#4622,
         // still open in 13.x). The texture renderer has no reset on detach
         // and stops its thread in onDestroy.
         MapView(context, MapLibreMapOptions.createFromAttributes(context).textureMode(true)).apply {

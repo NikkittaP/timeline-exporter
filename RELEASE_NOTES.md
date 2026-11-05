@@ -22,9 +22,13 @@ Where things go at release time:
 
 ---
 
-# Unreleased — everything since v1.9.0
+# Unreleased — everything since v1.9.1
 
-## Android 8 and 9 supported (no versionCode yet)
+To ship as **1.9.2 (versionCode 26)**. No store changelog planned:
+nothing changes for people who already have the app; the only visible
+difference is that Android 8.0–9 phones can now install it.
+
+## Android 8 and 9 supported (versionCode 26)
 
 - **minSdk 26** (from 29), so Play offers the app on Android 8.0–9 too.
   29 came from the Android Studio template; nothing in the code needed it.
@@ -37,7 +41,7 @@ Where things go at release time:
   crashes. That phone is also what showed MapLibre 13 failing to draw the
   track, see below.
 
-## Libraries brought up to date (no versionCode yet)
+## Libraries brought up to date (versionCode 26)
 
 Nothing a user sees should change; this is upkeep ahead of the next
 feature release.
@@ -66,14 +70,24 @@ minSdk 26 build): track drawn in dark theme; three rounds of the
 fullscreen map opened from each tab, the file reopened while the map was
 on screen and a trip to the background, all in one process with an empty
 crash buffer; the four export formats match the OnePlus files apart from
-the localized track name. Still to do before release: the map on the
-Galaxy S25 Edge, the phone that showed the MapLibre teardown crash.
+the localized track name. This is the phone that showed the MapLibre
+teardown crash (#4622), so that check is done.
 The 13.7.1 build was also run through on a OnePlus 7 Pro (Android 12)
 before the rollback: filters, all three map tabs, color by day,
 fullscreen, reopening the file and the four export formats, with no
 crashes.
 
-## 1.9.1 — dates can be typed (versionCode 25)
+---
+
+# Released
+
+## v1.9.1 (versionCode 25) — uploaded to Play by 5 November 2026
+
+The *Unreleased* section for 1.9.1, moved here unchanged (headings
+demoted one level). Store text:
+`fastlane/metadata/android/<locale>/changelogs/25.txt`.
+
+### 1.9.1 — dates can be typed (versionCode 25)
 
 Feedback from 1.9.0 (de-DE, Pixel 8 Pro): "Das Datum mit der Tastatur
 eingeben".
@@ -98,10 +112,6 @@ eingeben".
 
 Store text: `fastlane/metadata/android/<locale>/changelogs/25.txt` (this
 change only, 18 locales) and `F:\Timeline\Whats_New_v1.9.1_tagged.txt`.
-
----
-
-# Released
 
 ## v1.9.0 (versionCode 24) — released by 10 October 2026
 
@@ -248,7 +258,7 @@ Store text cut 2026-10-03: `fastlane/metadata/android/<locale>/changelogs/24.txt
   still opens on Track.
 - Re-ticking every movement group this file has now clears the movement
   filter even when the remembered selection names groups this file lacks.
-- **Crash fix: loading a second file.** On a Galaxy S25 Edge (Android 16)
+- **Crash fix: loading a second file.** On a Galaxy S25+ (Android 16)
   the app died every time a second file was opened after the first had been
   looked at: SIGABRT "Scudo ERROR: invalid chunk state" in
   `mbgl::android::MapRenderer::~MapRenderer()` on the FinalizerDaemon

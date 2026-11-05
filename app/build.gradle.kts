@@ -421,8 +421,14 @@ android {
         //       can be typed as well as tapped (feedback from 1.9.0, de-DE).
         //       Patch: a small addition to an existing dialog.
         //       changelogs/25.txt describes this alone.
-        versionCode = 25
-        versionName = "1.9.1"
+        //   versionCode=25, versionName="1.9.1" is uploaded to Play.
+        //   versionCode=26, versionName="1.9.2" -> upkeep: compileSdk 37,
+        //       AGP 9.5 / Kotlin 2.4.21, Compose BOM 2026.09.00 and the other
+        //       libraries brought up to date (MapLibre stays 11.8.0, see
+        //       README), and minSdk 26, so Android 8.0-9 can install it.
+        //       Nothing changes for existing users.
+        versionCode = 26
+        versionName = "1.9.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
