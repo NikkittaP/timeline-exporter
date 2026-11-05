@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -111,10 +112,11 @@ fun formatCoordinates(latitude: Double, longitude: Double): String =
 @Composable
 fun formatPlaceDuration(totalSeconds: Long): String {
     val hours = totalSeconds / 3600.0
+    val locale = LocalLocale.current.platformLocale
     return if (hours < 48) {
-        stringResource(R.string.place_duration_hours, String.format(Locale.getDefault(), "%.1f", hours))
+        stringResource(R.string.place_duration_hours, String.format(locale, "%.1f", hours))
     } else {
-        stringResource(R.string.place_duration_days, String.format(Locale.getDefault(), "%,.0f", hours / 24))
+        stringResource(R.string.place_duration_days, String.format(locale, "%,.0f", hours / 24))
     }
 }
 

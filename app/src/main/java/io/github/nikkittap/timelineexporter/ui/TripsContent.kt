@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -556,7 +557,7 @@ private fun tripDates(trip: Trip): String {
 private fun formatTripLength(trip: Trip): String {
     if (trip.isDayTrip) {
         val hours = trip.durationSeconds / 3600.0
-        return stringResource(R.string.place_duration_hours, String.format(Locale.getDefault(), "%.0f", hours))
+        return stringResource(R.string.place_duration_hours, String.format(LocalLocale.current.platformLocale, "%.0f", hours))
     }
     val zone = ZoneId.systemDefault()
     val days = (

@@ -96,6 +96,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -2523,7 +2524,7 @@ private fun buildContentName(
     val range = filter.dateRange
     val rangePart = if (kind == ContentKind.TRIPS && checkedTrips.isNotEmpty()) {
         val zone = ZoneId.systemDefault()
-        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault())
+        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(LocalLocale.current.platformLocale)
         val first = checkedTrips.minBy { it.start }
         val last = checkedTrips.maxBy { it.end }
         stringResource(

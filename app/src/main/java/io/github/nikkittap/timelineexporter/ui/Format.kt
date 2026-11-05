@@ -1,8 +1,11 @@
 package io.github.nikkittap.timelineexporter.ui
 
 import android.content.Context
-import android.text.format.DateUtils
+import android.icu.text.DateIntervalFormat
+import android.icu.util.DateInterval
+import android.icu.util.TimeZone
 import io.github.nikkittap.timelineexporter.parser.MINUTES_PER_DAY
+import java.text.FieldPosition
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -49,7 +52,7 @@ fun formatLocalDate(instant: Instant): String {
  *
  * Two [formatLocalDate] calls joined by a dash repeat the year on both ends,
  * which is what made "Jun 9, 2025 – Jun 29, 2026" wrap mid-date in the stock
- * calendar header. DateUtils knows each locale's own range pattern.
+ * calendar header. ICU knows each locale's own range pattern.
  */
 fun formatLocalDayRange(context: Context, start: Instant, endInclusive: Instant): String {
     val zone = ZoneId.systemDefault()
@@ -58,16 +61,17 @@ fun formatLocalDayRange(context: Context, start: Instant, endInclusive: Instant)
 
 fun formatLocalDayRange(context: Context, first: LocalDate, last: LocalDate): String {
     val startMillis = first.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-    // Noon, not midnight: DateUtils reads an end that falls exactly on midnight
-    // as "up to but not including that day" and would print the day before.
+    // Noon, not midnight: DateUtils read an end that falls exactly on midnight
+    // as "up to but not including that day" and printed the day before;
+    // noon keeps the last day safely inside the interval either way.
     val endMillis = last.atTime(12, 0).toInstant(ZoneOffset.UTC).toEpochMilli()
-    val range = DateUtils.formatDateRange(
-        context,
-        startMillis,
-        endMillis,
-        DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or
-            DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_UTC,
-    )
+    // ICU directly, with the skeleton DateUtils.formatDateRange built from
+    // SHOW_DATE | SHOW_YEAR | ABBREV_MONTH. API 37 deprecated its FORMAT_UTC
+    // flag; the zone is now set on the formatter instead. Locale.getDefault()
+    // is what DateUtils read too, and it follows the per-app language.
+    val format = DateIntervalFormat.getInstance("yMMMd", Locale.getDefault())
+    format.timeZone = TimeZone.GMT_ZONE
+    val range = format.format(DateInterval(startMillis, endMillis), StringBuffer(), FieldPosition(0)).toString()
     // Each date stays whole on its line. German spells the month out, and on a
     // narrow phone "9. Juni 2025 – 29. Juni 2026" broke as "… – 29." over
     // "Juni 2026". Every space becomes a non-breaking one except the one in
