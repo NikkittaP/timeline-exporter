@@ -24,6 +24,31 @@ Where things go at release time:
 
 # Unreleased — everything since v1.9.0
 
+## Libraries brought up to date (no versionCode yet)
+
+Nothing a user sees should change; this is upkeep ahead of the next
+feature release.
+
+- **compileSdk 37** (targetSdk stays 36; Play asks for 37 from August
+  2027). It unblocked core-ktx 1.19.1 and lifecycle 2.11.0, which 1.9.0
+  had to stop short of.
+- **Compose BOM 2026.09.00.** Its new lint check NonObservableLocale
+  failed the build on four composables reading `Locale.getDefault()`;
+  they read `LocalLocale.current.platformLocale` now. Instrumented tests
+  moved to the v2 compose test rules.
+- **AGP 9.5.0, Kotlin 2.4.21, Gradle 9.8.2** (AGP 9.5 needs Gradle 9.6+).
+- **MapLibre 13.7.1** (from 11.8.0). `textureMode(true)` stays. The AAB
+  grows from 20.5 to 23.8 MB, almost all native map library.
+- jackson-core 2.22.4, kotlinx-serialization 1.12.0 (tests), ext-junit
+  1.3.0, espresso 3.7.0.
+- `formatLocalDayRange` calls ICU's DateIntervalFormat directly, since
+  API 37 deprecates `DateUtils.FORMAT_UTC`; identical output in all 18
+  locales over five kinds of range.
+
+Checked: 297 unit tests, 12 instrumented tests on the Pixel_7 AVD, lint
+0 errors, bundleRelease. Still to do before release: the map on the
+Galaxy S25 Edge, the phone that showed the MapLibre teardown crash.
+
 ## 1.9.1 — dates can be typed (versionCode 25)
 
 Feedback from 1.9.0 (de-DE, Pixel 8 Pro): "Das Datum mit der Tastatur
