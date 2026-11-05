@@ -314,6 +314,42 @@
     <string name="track_name_time_window" translatable="false">%1$s, %2$s–%3$s</string>
     <string name="map_color_by_day">Color by day</string>
 
+    <!-- Map image export (PNG): the map control, the step 4 entry and the
+         export screen. The stat labels are captions under a number in the
+         image, so they are column headings, not counted nouns. -->
+    <string name="map_export_image">Export image</string>
+    <string name="map_image_title">Map image</string>
+    <string name="map_image_export_entry">Map image</string>
+    <string name="map_image_size">%1$d × %2$d · %3$s</string>
+    <string name="map_image_show_stats">Show statistics</string>
+    <string name="map_image_show_endpoints">Show start/end markers</string>
+    <string name="map_image_save">Save image</string>
+    <string name="map_image_share">Share image</string>
+    <string name="map_image_rendering">Rendering map…</string>
+    <string name="map_image_saving">Saving…</string>
+    <string name="map_image_saved">Image saved</string>
+    <string name="map_image_save_error">Couldn\'t save the image.</string>
+    <string name="map_image_share_error">Couldn\'t share the image.</string>
+    <string name="map_image_error">Couldn\'t render the map. Check your connection and try again.</string>
+    <string name="map_image_empty">Nothing to draw: the current filters leave no route.</string>
+    <string name="map_image_preview_description">Preview of the exported map image</string>
+    <string name="map_image_aspect">Aspect ratio</string>
+    <string name="map_image_aspect_portrait">Portrait</string>
+    <string name="map_image_aspect_post">Post</string>
+    <string name="map_image_aspect_square">Square</string>
+    <string name="map_image_aspect_landscape">Landscape</string>
+    <string name="map_image_format">Format</string>
+    <string name="map_image_resolution">Resolution</string>
+    <string name="map_image_res_standard">Standard</string>
+    <string name="map_image_res_high">High (2×)</string>
+    <string name="map_image_high_gpu">High resolution isn\'t available for this shape: it is larger than this device\'s graphics can render.</string>
+    <string name="map_image_high_memory">High resolution isn\'t available right now: not enough free memory.</string>
+    <string name="map_image_rendering_high">Rendering high resolution…</string>
+    <string name="map_image_high_error">Couldn\'t render the high-resolution image. Nothing was saved; try Standard.</string>
+    <string name="map_image_stat_distance">Tracked distance</string>
+    <string name="map_image_stat_days">Days</string>
+    <string name="map_image_stat_places">Places</string>
+
     <!-- Map full screen control, placed as a map control above "Show the whole
          track" rather than as a text button on the Preview card, so it is
          obviously a property of the map rather than of the whole step. -->

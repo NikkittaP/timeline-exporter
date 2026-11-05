@@ -145,6 +145,8 @@ import org.maplibre.android.style.layers.PropertyFactory.textOffset
 import org.maplibre.android.style.layers.PropertyFactory.textSize
 import org.maplibre.android.style.layers.SymbolLayer
 import org.maplibre.android.style.sources.GeoJsonSource
+import org.maplibre.android.style.sources.Source
+import org.json.JSONObject
 import org.maplibre.geojson.Feature
 import org.maplibre.geojson.FeatureCollection
 import org.maplibre.geojson.LineString
@@ -513,6 +515,11 @@ fun TimelineMap(
      * day in the same colours - and by the map itself otherwise.
      */
     colorByDayState: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
+    /**
+     * A tap on the "Export image" control, or `null` to not draw one. Only
+     * offered while there is a track line to put in the picture.
+     */
+    onExportImage: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val motionScope = rememberCoroutineScope()
@@ -1374,6 +1381,20 @@ fun TimelineMap(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
         ) {
+            if (onExportImage != null && hasTrack) {
+                SmallFloatingActionButton(
+                    onClick = { cancelMotion(); onExportImage() },
+                    shape = MaterialTheme.shapes.small,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_image),
+                        contentDescription = stringResource(R.string.map_export_image),
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            }
             if (onToggleFullscreen != null) {
                 SmallFloatingActionButton(
                     onClick = onToggleFullscreen,
@@ -1704,9 +1725,10 @@ private fun planRender(
         is MapSubject.Track -> subject.points
     }
     if (points.isEmpty()) return RenderPlan.Full(MapOverlay.Empty, geometry = null, level = 0)
+    val runs = subject.motionRuns
 
-    val geometry = geometryCache.get()?.takeIf { it.isFor(points, colorByDay, fallbackZone) }
-        ?: prepareTrackGeometry(points, colorByDay, fallbackZone).also(geometryCache::set)
+    val geometry = geometryCache.get()?.takeIf { it.isFor(points, runs, colorByDay, fallbackZone) }
+        ?: prepareTrackGeometry(points, runs, colorByDay, fallbackZone).also(geometryCache::set)
     val drawn = onScreen?.takeIf { it.geometry === geometry }
     val level = nextDrawLevel(drawn?.level, cameraLevel, pointBudget, geometry::pointsAt)
     if (drawn != null && drawn.level == level) return RenderPlan.Keep
@@ -1757,7 +1779,7 @@ private fun renderSubject(
     clearOverlays(style)
 
     when (overlay) {
-        is MapOverlay.Track -> renderTrack(style, overlay, palette, density, colorByDay)
+        is MapOverlay.Track -> renderTrack(StyleSink(style), overlay, palette, density, colorByDay)
         is MapOverlay.Places -> renderPlaces(style, overlay.geoJson, palette)
         MapOverlay.Empty -> Unit
     }
@@ -1800,6 +1822,7 @@ private class TrackPiece(
  */
 private class TrackGeometry(
     val points: List<PathPoint>,
+    val runs: List<List<PathPoint>>,
     val colorByDay: Boolean,
     val zone: ZoneId,
     private val pieces: List<TrackPiece>,
@@ -1813,8 +1836,8 @@ private class TrackGeometry(
         pieces.sumOf { countRanked(it.rank, tolerance) }
     }
 
-    fun isFor(points: List<PathPoint>, colorByDay: Boolean, zone: ZoneId): Boolean =
-        this.points === points && this.colorByDay == colorByDay && this.zone == zone
+    fun isFor(points: List<PathPoint>, runs: List<List<PathPoint>>, colorByDay: Boolean, zone: ZoneId): Boolean =
+        this.points === points && sameJourneys(this.runs, runs) && this.colorByDay == colorByDay && this.zone == zone
 
     fun toleranceAt(level: Int): Double = levelToleranceMeters(level, latitude)
 
@@ -1869,33 +1892,52 @@ private class TrackGeometry(
     )
 }
 
-/** Split and rank a non-empty track; see [TrackGeometry]. */
+/**
+ * Same journeys by identity, not by content: comparing a year of samples
+ * point by point on every camera idle is the cost this cache exists to avoid.
+ */
+private fun sameJourneys(a: List<List<PathPoint>>, b: List<List<PathPoint>>): Boolean =
+    a === b || (a.size == b.size && a.indices.all { a[it] === b[it] })
+
+/**
+ * Split and rank a non-empty track; see [TrackGeometry].
+ *
+ * [journeys] are the separate journeys the track is made of - every trip on
+ * its own in the Trips view, the whole track otherwise (see
+ * [MapSubject.Track.motionRuns]). Nothing is ever drawn from the end of one
+ * journey to the start of the next: two trips that both leave from home are
+ * two lines, not one line with a stroke across the front door.
+ */
 private fun prepareTrackGeometry(
     points: List<PathPoint>,
+    journeys: List<List<PathPoint>>,
     colorByDay: Boolean,
     fallbackZone: ZoneId,
 ): TrackGeometry {
-    // Split the ordered points into continuous runs, breaking wherever two
+    // Split each journey into continuous runs, breaking wherever two
     // consecutive samples are too far apart to be a real travelled segment
     // (a flight, or a stretch with location services off). Each break is also
     // recorded as a "gap" connector so we can hint at it with a faint dash.
     val runs = mutableListOf<MutableList<PathPoint>>()
     val gaps = mutableListOf<List<Point>>()
-    var current = mutableListOf(points.first())
-    for (i in 1 until points.size) {
-        val prev = points[i - 1]
-        val cur = points[i]
-        if (haversineMeters(prev, cur) > GAP_DISTANCE_METERS) {
-            // Close the current run and remember the jump between the two
-            // endpoints, then start a fresh run at the far side.
-            runs += current
-            gaps += listOf(prev.toPoint(), cur.toPoint())
-            current = mutableListOf(cur)
-        } else {
-            current += cur
+    for (journey in journeys) {
+        if (journey.isEmpty()) continue
+        var current = mutableListOf(journey.first())
+        for (i in 1 until journey.size) {
+            val prev = journey[i - 1]
+            val cur = journey[i]
+            if (haversineMeters(prev, cur) > GAP_DISTANCE_METERS) {
+                // Close the current run and remember the jump between the two
+                // endpoints, then start a fresh run at the far side.
+                runs += current
+                gaps += listOf(prev.toPoint(), cur.toPoint())
+                current = mutableListOf(cur)
+            } else {
+                current += cur
+            }
         }
+        runs += current
     }
-    runs += current
 
     // Thin each run separately, and in the coloured mode each day inside it,
     // so a gap connector and a day boundary keep the endpoints they are drawn
@@ -1911,6 +1953,7 @@ private fun prepareTrackGeometry(
 
     return TrackGeometry(
         points = points,
+        runs = journeys,
         colorByDay = colorByDay,
         zone = fallbackZone,
         pieces = pieces,
@@ -1925,32 +1968,186 @@ private fun prepareTrackGeometry(
     )
 }
 
+/**
+ * Where the track's sources, layers and sprite go: the live map's [Style], or
+ * the [Style.Builder] an offscreen snapshot is rendered from (see
+ * MapImageRenderer.kt). One [renderTrack] writes to both, which is what keeps
+ * the exported PNG from quietly drifting away from the preview it came from.
+ */
+internal interface OverlaySink {
+    /** The basemap's first label layer, which everything of ours goes under. */
+    val firstLabelLayerId: String?
+    fun addSource(source: Source)
+    fun addLayer(layer: Layer)
+    fun addLayerBelow(layer: Layer, below: String)
+    fun addImage(id: String, bitmap: Bitmap)
+}
+
+private class StyleSink(private val style: Style) : OverlaySink {
+    override val firstLabelLayerId: String? = style.layers.firstOrNull { it is SymbolLayer }?.id
+    override fun addSource(source: Source) = style.addSource(source)
+    override fun addLayer(layer: Layer) = style.addLayer(layer)
+    override fun addLayerBelow(layer: Layer, below: String) = style.addLayerBelow(layer, below)
+    override fun addImage(id: String, bitmap: Bitmap) = style.addImage(id, bitmap)
+}
+
+/**
+ * A style that does not exist yet. The builder replays these in order once
+ * the snapshotter has loaded the basemap JSON, so "below the first label
+ * layer" stacks exactly as it does on a live [Style].
+ */
+private class BuilderSink(
+    private val builder: Style.Builder,
+    override val firstLabelLayerId: String?,
+) : OverlaySink {
+    override fun addSource(source: Source) { builder.withSource(source) }
+    override fun addLayer(layer: Layer) { builder.withLayer(layer) }
+    override fun addLayerBelow(layer: Layer, below: String) { builder.withLayerBelow(layer, below) }
+    override fun addImage(id: String, bitmap: Bitmap) { builder.withImage(id, bitmap) }
+}
+
+/**
+ * The basemap and the track the map image is rendered from: the light Clean
+ * Map style with the track drawn through the same [prepareTrackGeometry] and
+ * [renderTrack] the on-screen map uses.
+ *
+ * The differences are deliberate and limited to what a still image needs: a
+ * light halo under the line so it holds up over roads and water, and no
+ * endpoint dots, because the image draws its own lettered S/E markers on top.
+ * [zoom] is the camera the image will be taken at, which picks the detail
+ * level the same way a settled camera does on screen.
+ */
+internal class MapImageStyle private constructor(
+    private val styleUri: String,
+    private val firstLabelLayerId: String?,
+    private val overlay: MapOverlay.Track?,
+    private val colorByDay: Boolean,
+) {
+    /**
+     * The snapshotter's style. Main thread only: MapLibre's sources and
+     * layers are native objects that must be created where the map lives.
+     */
+    fun builder(pixelRatio: Float): Style.Builder {
+        // By URI, not fromJson: an inline style finishes loading inside
+        // MapSnapshotter's native constructor, before the snapshotter has a
+        // native peer, and adding our sources there throws "invalid native
+        // peer" (MapLibre 11.8). An asset URI loads a moment later, when the
+        // snapshotter exists.
+        val builder = Style.Builder().fromUri(styleUri)
+        if (overlay != null) {
+            renderTrack(
+                BuilderSink(builder, firstLabelLayerId),
+                overlay, LightPalette, pixelRatio, colorByDay,
+                casing = true,
+                endpoints = false,
+            )
+        }
+        return builder
+    }
+
+    companion object {
+        /** The start and end colours the live map uses for its endpoint dots. */
+        val startColor: String get() = LightPalette.startFill
+        val endColor: String get() = LightPalette.endFill
+
+        /**
+         * Everything that costs time in proportion to the track - reading
+         * the style, splitting, ranking and thinning every sample - and none
+         * of it MapLibre. Safe, and meant, to run off the main thread.
+         */
+        fun prepare(
+            context: Context,
+            points: List<PathPoint>,
+            runs: List<List<PathPoint>>,
+            colorByDay: Boolean,
+            fallbackZone: ZoneId,
+            zoom: Double,
+        ): MapImageStyle {
+            val palette = LightPalette
+            val json = context.readAsset(palette.styleAsset)
+            val overlay = if (points.isEmpty()) null else {
+                val geometry = prepareTrackGeometry(points, runs, colorByDay, fallbackZone)
+                val level = nextDrawLevel(null, trackDetailLevel(zoom), devicePointBudget(context), geometry::pointsAt)
+                geometry.overlay(geometry.lines(level, palette))
+            }
+            return MapImageStyle("asset://${palette.styleAsset}", firstSymbolLayerId(json), overlay, colorByDay)
+        }
+    }
+}
+
+/** The id of the first `symbol` layer in a style document, read without a live map. */
+private fun firstSymbolLayerId(styleJson: String): String? {
+    val layers = JSONObject(styleJson).optJSONArray("layers") ?: return null
+    for (i in 0 until layers.length()) {
+        val layer = layers.optJSONObject(i) ?: continue
+        if (layer.optString("type") == "symbol") return layer.optString("id").takeIf { it.isNotEmpty() }
+    }
+    return null
+}
+
+/** Light ring drawn under the exported track so it reads over any ground. */
+private const val LAYER_TRACK_CASING = "track-casing"
+private const val EXPORT_MIN_LINE_WIDTH = 2.2f
+private const val EXPORT_MIN_LINE_OPACITY = 0.85f
+private const val EXPORT_GAP_WIDTH = 1.6f
+private const val EXPORT_GAP_OPACITY = 0.6f
+private const val CASING_COLOR = "#FFFFFF"
+private const val CASING_EXTRA_WIDTH = 3.2f
+
 /** Attach the prepared track to the style: one source, four layers of paint. */
 private fun renderTrack(
-    style: Style,
+    sink: OverlaySink,
     overlay: MapOverlay.Track,
     palette: MapPalette,
     density: Float,
     colorByDay: Boolean,
+    /** A light halo under the line, for the exported image. */
+    casing: Boolean = false,
+    /** The start/end dots; the exported image draws lettered markers instead. */
+    endpoints: Boolean = true,
 ) {
     // Everything we draw goes underneath the basemap's own labels, so place
     // names stay readable through a dense track. Layers inserted below the
     // same reference stack in insertion order, so this call sequence is also
     // the bottom-to-top paint order.
-    val firstLabelLayer = style.layers.firstOrNull { it is SymbolLayer }?.id
+    val firstLabelLayer = sink.firstLabelLayerId
     fun addBelowLabels(layer: Layer) {
-        if (firstLabelLayer != null) style.addLayerBelow(layer, firstLabelLayer)
-        else style.addLayer(layer)
+        if (firstLabelLayer != null) sink.addLayerBelow(layer, firstLabelLayer)
+        else sink.addLayer(layer)
     }
 
     val weights = heatWeightsFor(overlay.pointCount)
+    val coreWidth = if (colorByDay) weights.coreWidth * COLOR_WIDTH_LIFT else weights.coreWidth
+    val coreOpacity =
+        if (colorByDay) minOf(weights.coreOpacity * COLOR_OPACITY_LIFT, COLOR_OPACITY_MAX)
+        else weights.coreOpacity
+    // The exported image is looked at whole, usually zoomed out to a country
+    // or a continent, where a heat-map hairline all but vanishes; a single
+    // pass must still read. The floors only touch the low-zoom stops, so a
+    // city-scale image keeps its accumulation.
+    val exportWidthFloor = if (casing) EXPORT_MIN_LINE_WIDTH else 0f
+    val exportOpacityFloor = if (casing) EXPORT_MIN_LINE_OPACITY else 0f
 
     if (overlay.lines != null) {
         // Attached first and filled second, through the one setter whose
         // behaviour is documented; the source keeps the collection and tiles
         // it on its own workers, so this call returns immediately even for a
         // year of history.
-        style.addSource(GeoJsonSource(SOURCE_TRACK).apply { setGeoJson(overlay.lines) })
+        sink.addSource(GeoJsonSource(SOURCE_TRACK).apply { setGeoJson(overlay.lines) })
+
+        // 0. Casing, export only: a pale band a little wider than the line,
+        //    at the line's own strength so a faint heat map stays faint.
+        if (casing) {
+            addBelowLabels(
+                LineLayer(LAYER_TRACK_CASING, SOURCE_TRACK).withProperties(
+                    lineColor(CASING_COLOR),
+                    lineWidth(zoomScaledWidth(coreWidth + CASING_EXTRA_WIDTH, exportWidthFloor + CASING_EXTRA_WIDTH)),
+                    lineOpacity(zoomScaledOpacity(minOf(coreOpacity * 1.1f, 0.9f), exportOpacityFloor)),
+                    lineCap(Property.LINE_CAP_ROUND),
+                    lineJoin(Property.LINE_JOIN_ROUND),
+                )
+            )
+        }
 
         // 1. Glow. Wide, blurred and almost invisible on its own; where many
         //    traces overlap the alpha stacks up and the corridor blooms.
@@ -1969,12 +2166,15 @@ private fun renderTrack(
     // 2. Gap connectors: faint dashes across discontinuities, under the
     //    solid track so the two meet cleanly at shared endpoints.
     if (overlay.gaps != null) {
-        style.addSource(GeoJsonSource(SOURCE_GAPS, overlay.gaps))
+        sink.addSource(GeoJsonSource(SOURCE_GAPS, overlay.gaps))
         addBelowLabels(
             LineLayer(LAYER_GAPS, SOURCE_GAPS).withProperties(
                 lineColor(palette.gap),
-                lineWidth(1.2f),
-                lineOpacity(0.35f),
+                // The exported image is read without a finger to zoom in,
+                // so its connectors are a touch stronger - still a thin
+                // broken line, never mistaken for a recorded one.
+                lineWidth(if (casing) EXPORT_GAP_WIDTH else 1.2f),
+                lineOpacity(if (casing) EXPORT_GAP_OPACITY else 0.35f),
                 lineDasharray(arrayOf(1.5f, 3f)),
                 lineCap(Property.LINE_CAP_BUTT),
             )
@@ -1991,16 +2191,14 @@ private fun renderTrack(
     //    cannot be drawn at the same weight, and that stays true in colour:
     //    pinning every track to a fat, near-opaque line turns a year of city
     //    driving into one solid slab in which no day is visible at all.
-    val coreWidth = if (colorByDay) weights.coreWidth * COLOR_WIDTH_LIFT else weights.coreWidth
-    val coreOpacity =
-        if (colorByDay) minOf(weights.coreOpacity * COLOR_OPACITY_LIFT, COLOR_OPACITY_MAX)
-        else weights.coreOpacity
+    //    (coreWidth and coreOpacity are worked out at the top, where the
+    //    export's casing needs them too.)
     if (overlay.lines != null) {
         addBelowLabels(
             LineLayer(LAYER_TRACK, SOURCE_TRACK).withProperties(
                 lineColor(Expression.toColor(Expression.get(PROPERTY_CORE_COLOR))),
-                lineWidth(zoomScaledWidth(coreWidth)),
-                lineOpacity(zoomScaledOpacity(coreOpacity)),
+                lineWidth(zoomScaledWidth(coreWidth, exportWidthFloor)),
+                lineOpacity(zoomScaledOpacity(coreOpacity, exportOpacityFloor)),
                 lineCap(Property.LINE_CAP_ROUND),
                 lineJoin(Property.LINE_JOIN_ROUND),
             )
@@ -2014,7 +2212,7 @@ private fun renderTrack(
         //     nothing. A year of history has no direction to show, and a
         //     country-wide view has no room to show one.
         if (overlay.pointCount <= ROUTE_MODE_MAX_POINTS) {
-            style.addImage(IMAGE_TRACK_ARROW, chevronBitmap(if (colorByDay) "#FFFFFF" else palette.trackCore, density))
+            sink.addImage(IMAGE_TRACK_ARROW, chevronBitmap(if (colorByDay) "#FFFFFF" else palette.trackCore, density))
             addBelowLabels(
                 SymbolLayer(LAYER_TRACK_ARROWS, SOURCE_TRACK).withProperties(
                     symbolPlacement(Property.SYMBOL_PLACEMENT_LINE),
@@ -2039,12 +2237,13 @@ private fun renderTrack(
 
     // 4. Endpoints, on top of everything including labels — they are the one
     //    thing the user looks for by eye.
-    style.addSource(GeoJsonSource(SOURCE_START, overlay.start))
-    style.addLayer(endpointHalo(LAYER_START_HALO, SOURCE_START, palette.startFill))
-    style.addLayer(endpointDot(LAYER_START, SOURCE_START, palette.startFill, palette.markerStroke))
-    style.addSource(GeoJsonSource(SOURCE_END, overlay.end))
-    style.addLayer(endpointHalo(LAYER_END_HALO, SOURCE_END, palette.endFill))
-    style.addLayer(endpointDot(LAYER_END, SOURCE_END, palette.endFill, palette.markerStroke))
+    if (!endpoints) return
+    sink.addSource(GeoJsonSource(SOURCE_START, overlay.start))
+    sink.addLayer(endpointHalo(LAYER_START_HALO, SOURCE_START, palette.startFill))
+    sink.addLayer(endpointDot(LAYER_START, SOURCE_START, palette.startFill, palette.markerStroke))
+    sink.addSource(GeoJsonSource(SOURCE_END, overlay.end))
+    sink.addLayer(endpointHalo(LAYER_END_HALO, SOURCE_END, palette.endFill))
+    sink.addLayer(endpointDot(LAYER_END, SOURCE_END, palette.endFill, palette.markerStroke))
 }
 
 /**
@@ -2489,10 +2688,10 @@ private fun lerp(a: Float, b: Float, t: Float): Float = a + (b - a) * t
  * with a floor at the low end, because a sub-pixel line is not "faint", it
  * is gone.
  */
-private fun zoomScaledWidth(base: Float): Expression = Expression.interpolate(
+private fun zoomScaledWidth(base: Float, floor: Float = 0f): Expression = Expression.interpolate(
     Expression.exponential(1.3f), Expression.zoom(),
-    Expression.stop(2, maxOf(base * 0.6f, 0.8f)),
-    Expression.stop(8, maxOf(base * 0.8f, 0.9f)),
+    Expression.stop(2, maxOf(base * 0.6f, 0.8f, floor)),
+    Expression.stop(8, maxOf(base * 0.8f, 0.9f, floor)),
     Expression.stop(12, base),
     Expression.stop(16, base * 1.7f),
     Expression.stop(20, base * 2.8f),
@@ -2509,10 +2708,10 @@ private fun zoomScaledWidth(base: Float): Expression = Expression.interpolate(
  * hundreds of times and the gradient does the work. Past that the map is one
  * street wide, overlap is gone again, and the trace should simply be solid.
  */
-private fun zoomScaledOpacity(base: Float): Expression = Expression.interpolate(
+private fun zoomScaledOpacity(base: Float, floor: Float = 0f): Expression = Expression.interpolate(
     Expression.linear(), Expression.zoom(),
-    Expression.stop(2, alpha(maxOf(base, 0.45f))),
-    Expression.stop(6, alpha(maxOf(base, 0.35f))),
+    Expression.stop(2, alpha(maxOf(base, 0.45f, floor))),
+    Expression.stop(6, alpha(maxOf(base, 0.35f, floor))),
     Expression.stop(10, alpha(base * 1.15f)),
     Expression.stop(13, alpha(base)),
     Expression.stop(16, alpha(base * 1.8f)),

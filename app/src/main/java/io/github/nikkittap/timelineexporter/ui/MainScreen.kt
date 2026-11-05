@@ -57,6 +57,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -406,6 +407,8 @@ fun MainScreen(
     // remembers it for the next session along with the filters.
     val shareInstead by viewModel.shareInstead.collectAsStateWithLifecycle()
     var mapFullscreen by remember { mutableStateOf(false) }
+    // The map image export screen, opened from the map or from step 4.
+    var mapImageOpen by rememberSaveable { mutableStateOf(false) }
     var placesFullscreen by remember { mutableStateOf(false) }
     var tripsFullscreen by remember { mutableStateOf(false) }
     // The trip the map shows alone, by its start. A key rather than the trip,
@@ -657,6 +660,7 @@ fun MainScreen(
                 onPlaceSelected = currentPlacePicked,
                 onInteractionChange = { mapInteracting = it },
                 colorByDayState = colorByDayState,
+                onExportImage = { mapImageOpen = true },
                 modifier = m,
             )
         }
@@ -970,6 +974,7 @@ fun MainScreen(
                         onPickFormat = onPickFormat,
                         onFeedbackClick = onFeedbackClick,
                         postExportAsk = postExportAsk,
+                        onMapImage = if (contentKind == ContentKind.PLACES) null else ({ mapImageOpen = true }),
                     )
                 }
             }
@@ -1010,6 +1015,20 @@ fun MainScreen(
                 onClose = { placesFullscreen = false },
             )
         }
+    }
+
+    if (mapImageOpen) {
+        // Exactly what the map is drawing: the filtered track, or the trips
+        // the Trips view shows, each its own journey. Places are counted only
+        // in the Track view, where the place list covers the same filter; the
+        // trips' own places are not known per trip.
+        val track = mapSubject as? MapSubject.Track
+        MapImageExportDialog(
+            points = track?.points.orEmpty(),
+            journeys = track?.motionRuns.orEmpty(),
+            placeCount = if (contentKind == ContentKind.TRACK) places.size else null,
+            onDismiss = { mapImageOpen = false },
+        )
     }
 
     placeBeingNamed?.let { entry ->
@@ -2038,6 +2057,8 @@ private fun ExportStep(
     onPickFormat: (Exporter) -> Unit,
     onFeedbackClick: () -> Unit = {},
     postExportAsk: PostExportAsk = PostExportAsk.Feedback,
+    /** Opens the map image export, or null where there is no route to draw (Places). */
+    onMapImage: (() -> Unit)? = null,
 ) {
     val enabled = canSave && exportState !is ExportState.Working
 
@@ -2082,6 +2103,26 @@ private fun ExportStep(
                     autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = style.fontSize),
                 )
             }
+        }
+    }
+
+    // The picture of the route sits apart from the four data formats: it is
+    // not a file another app reads back, and it has its own screen with its
+    // own Save and Share, so the switch above does not apply to it.
+    if (onMapImage != null) {
+        OutlinedButton(
+            onClick = onMapImage,
+            enabled = canSave,
+            shape = MaterialTheme.shapes.small,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_image),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.map_image_export_entry))
         }
     }
 
@@ -2600,24 +2641,11 @@ internal fun exportKindLabel(kind: ContentKind, count: Int): Int = when (kind) {
 
 // ---------- shared shapes / formatting helpers ----------
 
-private fun formatGrouped(n: Int): String = "%,d".format(n)
+// formatGrouped and formatKm live in Format.kt; the map image uses them too.
 
 // Decimal megabytes (1 MB = 1,000,000 bytes) to match the size Android's
 // own file picker reports for the same file.
 private fun formatMb(bytes: Long): String = "%.1f MB".format(bytes / 1_000_000.0)
-
-/**
- * Distance for the movement breakdown.
- *
- * Whole kilometres once past 10 km — nobody reads the decimal on a 3 224 km
- * total — and one decimal below that, so a 400-metre walk does not display as
- * "0 km". Metres are never shown: the underlying figures are Google's own
- * estimates, and metre precision would imply an accuracy they do not have.
- */
-private fun formatKm(meters: Double): String {
-    val km = meters / 1000.0
-    return if (km >= 10) "%,.0f km".format(km) else "%.1f km".format(km)
-}
 
 /**
  * "Last N days" as a real local-day [ClosedRange] of [Instant]s, anchored at

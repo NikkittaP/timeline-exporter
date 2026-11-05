@@ -83,6 +83,22 @@ fun formatLocalDayRange(context: Context, first: LocalDate, last: LocalDate): St
 
 private const val NBSP = ' '
 
+/** A count with the locale's thousands separator: "15,240". */
+internal fun formatGrouped(n: Int): String = "%,d".format(n)
+
+/**
+ * Distance for the movement breakdown and the map image.
+ *
+ * Whole kilometres once past 10 km — nobody reads the decimal on a 3 224 km
+ * total — and one decimal below that, so a 400-metre walk does not display as
+ * "0 km". Metres are never shown: the underlying figures are Google's own
+ * estimates, and metre precision would imply an accuracy they do not have.
+ */
+internal fun formatKm(meters: Double): String {
+    val km = meters / 1000.0
+    return if (km >= 10) "%,.0f km".format(km) else "%.1f km".format(km)
+}
+
 /**
  * A time of day given as minutes past local midnight, on whatever clock the
  * reader's locale uses — 24-hour in most of the world, AM/PM in some of it.

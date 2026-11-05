@@ -31,6 +31,28 @@ phones can now install it. A short store text says just that, plus
 and `F:\Timeline\Whats_New_v1.9.2_tagged.txt`, 18 locales, at most 125
 characters each.
 
+## Map image export (not yet in a planned build)
+
+A new feature, so it changes what the 1.9.2 store text promises; decide
+before uploading whether it ships in 26 or waits for the next feature
+release.
+
+- **"Export image"** on the route preview: renders the selected route over
+  the map as a shareable picture, with the Timeline Exporter badge, a
+  stats card (date range, tracked distance, days, places) and the OSM
+  attribution. Save goes through the system file picker; Share writes a
+  temporary copy that is cleaned up after an hour.
+- Four shapes: Portrait 9:16 (1080×1920), Post 4:5 (1080×1350), Square
+  (1600×1600) and Landscape 16:9 (1920×1080), each with its own layout.
+  PNG or JPEG (quality 93). High (2×) keeps the same framing at twice
+  the pixels and is offered only where the GPU and free memory allow it.
+- Switches for the stats, the start/end markers and color by day.
+- Dates on the image and in its filename follow the phone's time zone,
+  like the rest of the app; the day count is the file card's own figure.
+- Dashed gap connectors on exported images are slightly stronger.
+- Strings in all 18 locales; checked visually in Arabic (RTL) on the
+  Pixel_7 AVD, including a saved image.
+
 ## Android 8 and 9 supported (versionCode 26)
 
 - **minSdk 26** (from 29), so Play offers the app on Android 8.0–9 too.
