@@ -24,6 +24,19 @@ Where things go at release time:
 
 # Unreleased — everything since v1.9.0
 
+## Android 8 and 9 supported (no versionCode yet)
+
+- **minSdk 26** (from 29), so Play offers the app on Android 8.0–9 too.
+  29 came from the Android Studio template; nothing in the code needed it.
+  Lint's NewApi is clean at 26; only `enableOnBackInvokedCallback` and
+  `localeConfig` warn as unused attributes, and both are simply ignored
+  below API 33. Older phones take the same SharedPreferences language
+  path that API 29–32 already used.
+- Run through on a Xiaomi Mi 5s (Android 8.0): file loading, filters, the
+  map with and without color by day, Trips/Places and export, with no
+  crashes. That phone is also what showed MapLibre 13 failing to draw the
+  track, see below.
+
 ## Libraries brought up to date (no versionCode yet)
 
 Nothing a user sees should change; this is upkeep ahead of the next

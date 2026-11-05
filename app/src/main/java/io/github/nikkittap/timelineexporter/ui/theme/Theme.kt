@@ -80,7 +80,7 @@ private val DarkColorScheme = darkColorScheme(
  * Dynamic colour is deliberately off. With it on, the interface took its hue
  * from the wallpaper while the logo, the launcher icon and the Play screenshots
  * stayed blue, so the app looked different on every phone and never quite
- * matched its own icon. It also never applied on Android 10 and 11 (minSdk is
+ * matched its own icon. It also never applied below Android 12 (minSdk was
  * 29, dynamic colour starts at 31), where the app fell back to the purple
  * scheme left over from the project template.
  *

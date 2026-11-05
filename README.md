@@ -23,7 +23,7 @@ slice that data by date and feed it to anything that reads GPS tracks
 
 ## Requirements
 
-- Android 10 (API 29) or later
+- Android 8.0 (API 26) or later
 - A `Timeline.json` exported from Google Maps. In Android Settings:
   **Location → Location services → Timeline → Export Timeline data**.
   The app's in-screen Help dialog also walks you through this.
@@ -41,7 +41,7 @@ slice that data by date and feed it to anything that reads GPS tracks
 - **kotlinx.serialization** for the JSON parser
 - **MapLibre Native Android 11.8** for the map preview, with vector tiles
   from [OpenFreeMap](https://openfreemap.org) (Liberty style)
-- Targets API 36 (Android 16), min API 29 (Android 10)
+- Targets API 36 (Android 16), min API 26 (Android 8.0)
 
 ## Architecture
 

@@ -20,7 +20,7 @@ import java.util.Locale
  *    One UI, less so on stock emulator images). The declared
  *    `@xml/locales_config` is what lets this list show in Settings too.
  *
- *  - **API 29–32:** no per-app locale service, so we persist the BCP-47 tag in
+ *  - **API 26–32:** no per-app locale service, so we persist the BCP-47 tag in
  *    SharedPreferences and apply it by wrapping the Activity base context.
  *
  * In both cases the chosen tag is mirrored into SharedPreferences so the
@@ -61,7 +61,7 @@ object LocaleManager {
     }
 
     /**
-     * Wrap [base] so its resources resolve in the chosen language on API 29–32.
+     * Wrap [base] so its resources resolve in the chosen language on API 26–32.
      * On API 33+ the platform applies the per-app locale itself, so we return
      * [base] unchanged. Call from Activity.attachBaseContext.
      */

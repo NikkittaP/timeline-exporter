@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId = "io.github.nikkittap.timelineexporter"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 36
 
         // Bump versionCode by 1 for every AAB uploaded to Play Console
@@ -472,7 +472,7 @@ android {
         // levels compile fine but throw NoSuchMethodError on older devices —
         // exactly how LocalDate.ofInstant (API 34) crashed 1.6.1 on Android
         // 10-13. Desugaring makes the whole java.time surface safe at
-        // minSdk 29; the lint config below is the second line of defence.
+        // minSdk 26; the lint config below is the second line of defence.
         isCoreLibraryDesugaringEnabled = true
     }
 

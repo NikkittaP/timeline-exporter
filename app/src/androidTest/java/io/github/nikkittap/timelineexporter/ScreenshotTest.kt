@@ -169,7 +169,7 @@ class ScreenshotTest {
      * 13+ a per-app locale wins over the system one. So the device switch never
      * reached the UI and every locale came out in whatever the app was last
      * left in — English. Setting the same override the in-app language picker
-     * sets makes the two agree; on API 29-32, where the override lives in
+     * sets makes the two agree; on API 26-32, where the override lives in
      * SharedPreferences, it is applied by MainActivity.attachBaseContext.
      */
     @Before
