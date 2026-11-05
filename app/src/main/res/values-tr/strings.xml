@@ -270,4 +270,8 @@
     <string name="metric_distance">Mesafe</string>
     <string name="filter_movement_title">Hareket</string>
     <string name="date_preset_all_short">Tümü</string>
+    <string name="journey_distance">Eşdeğer mesafe: %1$s × Dünya’nın çevresi.</string>
+    <string name="journey_traveler">Dolaşan herkes kaybolmuş değildir. Bazıları sadece acele etmez.</string>
+    <string name="journey_postcard">Her yolculuk bir hikâye anlatır.</string>
+    <string name="journey_no_route">Henüz uçulacak bir rota yok.</string>
 </resources>

@@ -1,6 +1,7 @@
 package io.github.nikkittap.timelineexporter.ui
 
 import android.app.ActivityManager
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -12,6 +13,21 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.geometry.Offset
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -426,7 +442,7 @@ private val HEAT_ANCHORS = listOf(
  * twice.
  */
 sealed interface MapSubject {
-    data class Track(val points: List<PathPoint>) : MapSubject
+    data class Track(val points: List<PathPoint>, val motionRuns: List<List<PathPoint>> = listOf(points)) : MapSubject
     data class Places(val entries: List<PlaceEntry>) : MapSubject
 
     val isEmpty: Boolean
@@ -461,7 +477,7 @@ private fun MapSubject.firstCoordinate(): LatLng? = when (this) {
     is MapSubject.Places -> entries.firstOrNull()?.let { LatLng(it.latitude, it.longitude) }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun TimelineMap(
     subject: MapSubject,
@@ -499,6 +515,12 @@ fun TimelineMap(
     colorByDayState: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) },
 ) {
     val context = LocalContext.current
+    val motionScope = rememberCoroutineScope()
+    var motionJob by remember { mutableStateOf<Job?>(null) }
+    var motionPosition by remember { mutableStateOf<RouteMotion.Position?>(null) }
+    var motionFinished by remember { mutableStateOf(false) }
+    val noRouteMessage = stringResource(R.string.journey_no_route)
+    val cancelMotion by rememberUpdatedState { motionJob?.cancel(); motionJob = null; motionPosition = null; motionFinished = false }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val darkTheme = isSystemInDarkTheme()
     val palette = if (darkTheme) DarkPalette else LightPalette
@@ -654,8 +676,10 @@ fun TimelineMap(
             // MapView's own onTouchEvent" — pan/zoom still work normally.
             setOnTouchListener { _, event ->
                 when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN ->
+                    MotionEvent.ACTION_DOWN -> {
+                        cancelMotion()
                         latestInteractionCallback(true)
+                    }
                     MotionEvent.ACTION_UP,
                     MotionEvent.ACTION_CANCEL ->
                         latestInteractionCallback(false)
@@ -749,7 +773,7 @@ fun TimelineMap(
                 when (event) {
                     Lifecycle.Event.ON_START -> mapView.onStart()
                     Lifecycle.Event.ON_RESUME -> mapView.onResume()
-                    Lifecycle.Event.ON_PAUSE -> mapView.onPause()
+                    Lifecycle.Event.ON_PAUSE -> { cancelMotion(); mapView.onPause() }
                     Lifecycle.Event.ON_STOP -> mapView.onStop()
                     else -> {}
                 }
@@ -758,6 +782,7 @@ fun TimelineMap(
         lifecycle.addObserver(observer)
         onDispose {
             lifecycle.removeObserver(observer)
+            cancelMotion()
             if (destroyed.getAndSet(true)) return@onDispose
 
             mapView.setOnTouchListener(null)
@@ -1143,8 +1168,26 @@ fun TimelineMap(
             .onFailure { Log.w(TAG, "Compass margins failed", it) }
     }
 
+    LaunchedEffect(subject, colorByDay, selectedEpochDay, fullscreen) { cancelMotion() }
     Box(modifier = modifier) {
         AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+        val plane = motionPosition
+        val motionColor = MaterialTheme.colorScheme.primary
+        if (plane != null && loadedMap != null && !destroyed.get()) {
+            val screen = runCatching { loadedMap!!.projection.toScreenLocation(LatLng(plane.latitude, plane.longitude)) }.getOrNull()
+            if (screen != null) Canvas(Modifier.fillMaxSize()) {
+                if (motionFinished) {
+                    val heart = androidx.compose.ui.graphics.Path().apply {
+                        val x = screen.x; val y = screen.y; val unit = 7.dp.toPx()
+                        moveTo(x, y + unit); cubicTo(x - 2 * unit, y - unit, x - unit, y - 2 * unit, x, y - unit)
+                        cubicTo(x + unit, y - 2 * unit, x + 2 * unit, y - unit, x, y + unit); close()
+                    }
+                    drawPath(heart, motionColor)
+                } else {
+                    drawPlane(Offset(screen.x, screen.y), 28.dp.toPx(), motionColor, (plane.bearing - loadedMap!!.cameraPosition.bearing).toFloat(), plane.alpha)
+                }
+            }
+        }
 
         // This card is now only about colouring the track — exiting fullscreen
         // moved to its own control below, always in the same spot regardless
@@ -1343,31 +1386,89 @@ fun TimelineMap(
                 }
             }
             if (scale?.adrift == true) {
-                SmallFloatingActionButton(
-                    onClick = {
-                        val map = loadedMap
-                        val bounds = dataBounds
-                        if (map != null && bounds != null && !destroyed.get()) {
-                            // Same padding path as focusing one day, so the
-                            // two never disagree about where the edges of a
-                            // usable view are. No zoom ceiling: framing all of
-                            // the data means whatever the data needs.
-                            runCatching {
-                                map.animateCamera(boundsCameraUpdate(map, bounds, insets, maxZoom = null))
-                            }.onFailure { Log.w(TAG, "Fit to data camera failed", it) }
-                        }
-                    },
-                    // Deliberately not the primary container colour: this is a
-                    // way back, not the thing to do on this screen.
+                val recenterDescription = stringResource(R.string.map_recenter)
+                Surface(
                     shape = MaterialTheme.shapes.small,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.surface,
+                    shadowElevation = 6.dp,
+                    modifier = Modifier.size(40.dp).combinedClickable(
+                        onClick = {
+                            cancelMotion()
+                            val map = loadedMap
+                            val bounds = dataBounds
+                            if (map != null && bounds != null && !destroyed.get()) {
+                                runCatching { map.animateCamera(boundsCameraUpdate(map, bounds, insets, maxZoom = null)) }
+                                    .onFailure { Log.w(TAG, "Fit to data camera failed", it) }
+                            }
+                        },
+                        onLongClick = {
+                            cancelMotion()
+                            val map = loadedMap
+                            val bounds = dataBounds
+                            val track = subject as? MapSubject.Track
+                            if (map == null || bounds == null || track == null || destroyed.get()) {
+                                Toast.makeText(context, noRouteMessage, Toast.LENGTH_SHORT).show()
+                            } else {
+                                motionJob = motionScope.launch {
+                                    try {
+                                        val route = withContext(Dispatchers.Default) {
+                                            val job = currentCoroutineContext()[Job]
+                                            RouteMotion.prepare(track.motionRuns) { job?.isActive != false }
+                                        }
+                                        if (route == null) {
+                                            Toast.makeText(context, noRouteMessage, Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            val fitted = if (!ValueAnimator.areAnimatorsEnabled()) {
+                                                map.moveCamera(boundsCameraUpdate(map, bounds, insets, maxZoom = null))
+                                                true
+                                            } else suspendCancellableCoroutine<Boolean> { continuation ->
+                                                map.animateCamera(boundsCameraUpdate(map, bounds, insets, maxZoom = null), 1000,
+                                                    object : MapLibreMap.CancelableCallback {
+                                                        override fun onFinish() { if (continuation.isActive) continuation.resume(true) }
+                                                        override fun onCancel() { if (continuation.isActive) continuation.resume(false) }
+                                                    })
+                                                continuation.invokeOnCancellation { if (!destroyed.get()) map.cancelTransitions() }
+                                            }
+                                            var ready = fitted
+                                            // The normal fit happens first. For very large histories,
+                                            // frame the selected continuous section before flight.
+                                            val focusBounds = withContext(Dispatchers.Default) { route.focusPoints?.let { subjectBounds(MapSubject.Track(it)) } }
+                                            if (ready && focusBounds != null && !destroyed.get()) {
+                                                val update = boundsCameraUpdate(map, focusBounds, insets, maxZoom = 14.0)
+                                                ready = if (!ValueAnimator.areAnimatorsEnabled()) {
+                                                    map.moveCamera(update); true
+                                                } else suspendCancellableCoroutine { continuation ->
+                                                    map.animateCamera(update, 1000, object : MapLibreMap.CancelableCallback {
+                                                        override fun onFinish() { if (continuation.isActive) continuation.resume(true) }
+                                                        override fun onCancel() { if (continuation.isActive) continuation.resume(false) }
+                                                    })
+                                                    continuation.invokeOnCancellation { if (!destroyed.get()) map.cancelTransitions() }
+                                                }
+                                            }
+                                            if (ready && !destroyed.get()) {
+                                                if (ValueAnimator.areAnimatorsEnabled()) {
+                                                    val progress = Animatable(0f)
+                                                    progress.animateTo(1f, tween(6000, easing = LinearEasing)) {
+                                                        motionPosition = route.position(value.toDouble())
+                                                    }
+                                                } else motionPosition = route.position(1.0)
+                                                motionFinished = true
+                                                delay(700)
+                                            }
+                                        }
+                                    } catch (e: kotlinx.coroutines.CancellationException) {
+                                        throw e
+                                    } catch (e: Exception) {
+                                        Log.w(TAG, "Route motion failed", e)
+                                    } finally { motionPosition = null; motionFinished = false }
+                                }
+                            }
+                        },
+                    ).semantics { contentDescription = recenterDescription },
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_route),
-                        contentDescription = stringResource(R.string.map_recenter),
-                        modifier = Modifier.size(20.dp),
-                    )
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(painter = painterResource(R.drawable.ic_route), contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.onSurface)
+                    }
                 }
             }
         }

@@ -266,4 +266,8 @@
     <string name="metric_distance">距离</string>
     <string name="filter_movement_title">出行方式</string>
     <string name="date_preset_all_short">全部</string>
+    <string name="journey_distance">等效距离：地球周长 × %1$s</string>
+    <string name="journey_traveler">漫游的人不一定迷了路，有些人只是慢慢前行。</string>
+    <string name="journey_postcard">每段旅程都有一个故事。</string>
+    <string name="journey_no_route">暂时没有可飞行的路线。</string>
 </resources>

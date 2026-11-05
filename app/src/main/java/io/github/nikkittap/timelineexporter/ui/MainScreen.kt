@@ -9,6 +9,8 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -151,6 +153,8 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimelineExporterApp() {
+    var journeyScene by remember { mutableStateOf<JourneyScene?>(null) }
+    val titleTaps = remember { TapSequence(7, 4000) }
     var helpDialogOpen by remember { mutableStateOf(false) }
     var tipJarDialogOpen by remember { mutableStateOf(false) }
     var languageDialogOpen by remember { mutableStateOf(false) }
@@ -248,13 +252,14 @@ fun TimelineExporterApp() {
                         modifier = Modifier
                             .padding(start = 12.dp)
                             .size(32.dp)
-                            .clip(RoundedCornerShape(8.dp)),
+                            .clip(RoundedCornerShape(8.dp))
+                            .pointerInput(Unit) { detectTapGestures(onLongPress = { journeyScene = JourneyScene.TRAVELER }) },
                     )
                 },
                 title = {
                     Text(
                         text = stringResource(R.string.app_name),
-                        modifier = Modifier.padding(start = 8.dp),
+                        modifier = Modifier.padding(start = 8.dp).pointerInput(Unit) { detectTapGestures(onTap = { if (titleTaps.tap()) journeyScene = JourneyScene.POSTCARD }) },
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -329,6 +334,8 @@ fun TimelineExporterApp() {
             tipPrompt = tipPrompt,
         )
     }
+
+    journeyScene?.let { scene -> JourneyDialog(scene, onDismiss = { journeyScene = null }) }
 
     if (helpDialogOpen) {
         HelpDialog(
@@ -617,12 +624,12 @@ fun MainScreen(
     // track. Remembered so the instance is stable across recompositions: the
     // map re-frames its camera when the subject changes, and a new wrapper
     // every frame would re-frame every frame.
-    val mapSubject = remember(contentKind, filteredPoints, places, tripPoints) {
+    val mapSubject = remember(contentKind, filteredPoints, places, tripPoints, selectedTripExport, tripExports) {
         when (contentKind) {
             ContentKind.TRACK -> MapSubject.Track(filteredPoints)
             // The trips' own points, or the selected trip's alone: a new
             // subject re-frames the camera, which is what takes the map to it.
-            ContentKind.TRIPS -> MapSubject.Track(tripPoints)
+            ContentKind.TRIPS -> MapSubject.Track(tripPoints, selectedTripExport?.let { listOf(it.points) } ?: tripExports.map { it.points })
             ContentKind.PLACES -> MapSubject.Places(places)
         }
     }
@@ -1134,6 +1141,8 @@ private fun PickFileButton(onClick: () -> Unit) {
  */
 @Composable
 private fun LoadedSummary(result: ParsedTimeline, fileName: String?, onChangeFile: () -> Unit) {
+    var showDistance by remember(result) { mutableStateOf(false) }
+    val distanceTaps = remember(result) { TapSequence(5, 3000) }
     val formatName = formatLabel(result.format)
     val context = LocalContext.current
     val span = result.pathPoints.takeIf { it.isNotEmpty() }?.let {
@@ -1144,6 +1153,7 @@ private fun LoadedSummary(result: ParsedTimeline, fileName: String?, onChangeFil
     // counted the way the map's day legend counts them, so "373" here and
     // "373 days" on the map can never disagree.
     val extras by produceState<Pair<Int, Double>?>(initialValue = null, result) {
+        value = null
         value = withContext(Dispatchers.Default) {
             drawnTrackDays(result.pathPoints, ZoneId.systemDefault()).size to
                 result.movementBreakdown().sumOf { it.distanceMeters }
@@ -1212,10 +1222,14 @@ private fun LoadedSummary(result: ParsedTimeline, fileName: String?, onChangeFil
                 StatCell(
                     value = formatKm(meters),
                     label = stringResource(R.string.metric_distance),
-                    modifier = Modifier.weight(1.2f),
+                    modifier = Modifier.weight(1.2f).pointerInput(result) { detectTapGestures(onTap = { if (distanceTaps.tap()) showDistance = true }) },
                 )
             }
         }
+    }
+
+    if (showDistance && extras?.second?.isFinite() == true && (extras?.second ?: 0.0) > 0.0) {
+        JourneyDialog(JourneyScene.DISTANCE, extras!!.second, onDismiss = { showDistance = false })
     }
 
     // Pulled left by its own inner padding so the icon lines up with the file

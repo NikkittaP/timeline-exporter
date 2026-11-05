@@ -270,4 +270,8 @@
     <string name="metric_distance">Strecke</string>
     <string name="filter_movement_title">Fortbewegung</string>
     <string name="date_preset_all_short">Alle</string>
+    <string name="journey_distance">Entsprechende Entfernung: %1$s × Erdumfang.</string>
+    <string name="journey_traveler">Nicht alle Wandernden sind verloren. Manche lassen sich einfach Zeit.</string>
+    <string name="journey_postcard">Jede Reise erzählt eine Geschichte.</string>
+    <string name="journey_no_route">Noch keine Route zum Fliegen vorhanden.</string>
 </resources>

@@ -356,4 +356,8 @@
     <string name="filter_movement_title">Movement</string>
     <string name="date_preset_all_short">All</string>
     <string name="date_range_value" translatable="false">%1$s – %2$s</string>
+    <string name="journey_distance">Equivalent distance: %1$s × the Earth’s circumference.</string>
+    <string name="journey_traveler">Not all who wander are lost. Some are just taking their time.</string>
+    <string name="journey_postcard">Every journey tells a story.</string>
+    <string name="journey_no_route">No route to fly along yet.</string>
 </resources>

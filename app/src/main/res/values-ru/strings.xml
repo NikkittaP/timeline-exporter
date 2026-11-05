@@ -278,4 +278,8 @@
     <string name="metric_distance">Расстояние</string>
     <string name="filter_movement_title">Передвижение</string>
     <string name="date_preset_all_short">Все</string>
+    <string name="journey_distance">Эквивалентное расстояние: %1$s × длина экватора Земли.</string>
+    <string name="journey_traveler">Не все странники потерялись. Некоторые просто не спешат.</string>
+    <string name="journey_postcard">У каждого путешествия есть своя история.</string>
+    <string name="journey_no_route">Пока нет маршрута для полёта.</string>
 </resources>

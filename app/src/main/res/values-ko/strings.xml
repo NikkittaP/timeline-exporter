@@ -266,4 +266,8 @@
     <string name="metric_distance">거리</string>
     <string name="filter_movement_title">이동 수단</string>
     <string name="date_preset_all_short">전체</string>
+    <string name="journey_distance">환산 거리: 지구 둘레 × %1$s</string>
+    <string name="journey_traveler">떠도는 이들이 모두 길을 잃은 것은 아니에요. 천천히 가는 이들도 있죠.</string>
+    <string name="journey_postcard">모든 여행에는 이야기가 있어요.</string>
+    <string name="journey_no_route">아직 비행할 경로가 없어요.</string>
 </resources>

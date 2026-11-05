@@ -272,4 +272,8 @@
     <string name="metric_distance">Distância</string>
     <string name="filter_movement_title">Deslocamentos</string>
     <string name="date_preset_all_short">Tudo</string>
+    <string name="journey_distance">Distância equivalente: %1$s × a circunferência da Terra.</string>
+    <string name="journey_traveler">Nem todos que vagueiam estão perdidos. Alguns apenas seguem sem pressa.</string>
+    <string name="journey_postcard">Toda viagem conta uma história.</string>
+    <string name="journey_no_route">Ainda não há uma rota para voar.</string>
 </resources>

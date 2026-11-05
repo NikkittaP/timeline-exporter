@@ -278,4 +278,8 @@
     <string name="metric_distance">Dystans</string>
     <string name="filter_movement_title">Przemieszczanie</string>
     <string name="date_preset_all_short">Wszystko</string>
+    <string name="journey_distance">Równoważna odległość: %1$s × obwód Ziemi.</string>
+    <string name="journey_traveler">Nie wszyscy wędrowcy są zagubieni. Niektórzy po prostu się nie spieszą.</string>
+    <string name="journey_postcard">Każda podróż opowiada historię.</string>
+    <string name="journey_no_route">Nie ma jeszcze trasy do przelotu.</string>
 </resources>

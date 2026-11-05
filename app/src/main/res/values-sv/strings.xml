@@ -270,4 +270,8 @@
     <string name="metric_distance">Sträcka</string>
     <string name="filter_movement_title">Färdsätt</string>
     <string name="date_preset_all_short">Alla</string>
+    <string name="journey_distance">Motsvarande sträcka: %1$s × jordens omkrets.</string>
+    <string name="journey_traveler">Alla som vandrar är inte vilse. En del tar bara god tid på sig.</string>
+    <string name="journey_postcard">Varje resa berättar en historia.</string>
+    <string name="journey_no_route">Det finns ingen rutt att flyga längs ännu.</string>
 </resources>

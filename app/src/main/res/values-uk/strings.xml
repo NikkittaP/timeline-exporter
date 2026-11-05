@@ -278,4 +278,8 @@
     <string name="metric_distance">Відстань</string>
     <string name="filter_movement_title">Пересування</string>
     <string name="date_preset_all_short">Усі</string>
+    <string name="journey_distance">Еквівалентна відстань: %1$s × довжина екватора Землі.</string>
+    <string name="journey_traveler">Не всі мандрівники заблукали. Дехто просто не поспішає.</string>
+    <string name="journey_postcard">Кожна подорож розповідає історію.</string>
+    <string name="journey_no_route">Поки немає маршруту для польоту.</string>
 </resources>
