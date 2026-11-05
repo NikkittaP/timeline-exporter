@@ -61,7 +61,12 @@ feature release.
   locales over five kinds of range.
 
 Checked: 297 unit tests, 12 instrumented tests on the Pixel_7 AVD, lint
-0 errors, bundleRelease. Still to do before release: the map on the
+0 errors, bundleRelease. Galaxy S25+ (Android 16, MapLibre 11.8.0,
+minSdk 26 build): track drawn in dark theme; three rounds of the
+fullscreen map opened from each tab, the file reopened while the map was
+on screen and a trip to the background, all in one process with an empty
+crash buffer; the four export formats match the OnePlus files apart from
+the localized track name. Still to do before release: the map on the
 Galaxy S25 Edge, the phone that showed the MapLibre teardown crash.
 The 13.7.1 build was also run through on a OnePlus 7 Pro (Android 12)
 before the rollback: filters, all three map tabs, color by day,
