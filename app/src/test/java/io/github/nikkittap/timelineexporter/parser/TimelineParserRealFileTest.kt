@@ -77,7 +77,7 @@ class TimelineParserRealFileTest {
             offsets.firstContentKeyOffset!! < offsets.rawSignalsOffset!!,
         )
         val fileSize = Files.size(realFile)
-        val splitFraction = offsets.rawSignalsOffset!!.toDouble() / fileSize
+        val splitFraction = offsets.rawSignalsOffset.toDouble() / fileSize
         // Reported as "slow for the first 5-6 MB of 62 MB" - roughly 8-10%.
         assertTrue("split at $splitFraction of the file", splitFraction in 0.03..0.20)
     }
