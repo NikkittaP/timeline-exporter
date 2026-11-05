@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_10_0">New: Map image. Turn your route into a picture to save or share — portrait, post, square or landscape, with your dates, distance and places on it. Find it on the map or in step 4.\nAfter an update the app now shows what\'s new. Tap the version number at the bottom to see every earlier change.</string>
     <string name="whats_new_1_9_2">The app now runs on Android 8 and 9 too.\nUnder-the-hood updates for newer Android versions.</string>
     <string name="whats_new_1_9_1">Dates can now be typed. Open Date range in step 2 and tap the pencil to enter them with the keyboard; the calendar icon takes you back to the calendar.</string>
     <string name="whats_new_1_9_0">New: Trips. Step 3 now has a Trips tab listing every trip more than 50 km from home, door to door, with dates, distance and how you travelled. Tap a trip to see it on the map; tick trips to export just those.\nFilters and export choices are now remembered for the next file.\nDistance totals no longer count activities twice in merged files.\nFixed a crash when opening a second file on some phones.</string>

@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_10_0">Yeni: Harita görüntüsü. Rotanızı kaydetmek veya paylaşmak için bir resme dönüştürün: dikey, gönderi, kare veya yatay; tarihleriniz, mesafeniz ve yerlerinizle. Haritada ve 4. adımda bulunur.\nGüncellemeden sonra uygulama artık yenilikleri gösteriyor. Önceki tüm değişiklikleri görmek için alttaki sürüm numarasına dokunun.</string>
     <string name="whats_new_1_9_2">Uygulama artık Android 8 ve 9\'da da çalışıyor.\nYeni Android sürümleri için iç güncellemeler.</string>
     <string name="whats_new_1_9_1">Tarihler artık yazılabiliyor. 2. adımda \"Tarih aralığı\"nı açın ve klavyeyle girmek için kaleme dokunun; takvim simgesi sizi takvime geri götürür.</string>
     <string name="whats_new_1_9_0">Yeni: Seyahatler. 3. adımda evden 50 km\'den uzak her seyahati kapıdan kapıya; tarihleri, mesafesi ve ulaşım şekliyle listeleyen bir \"Seyahatler\" sekmesi var. Haritada görmek için bir seyahate dokunun; yalnızca bunları dışa aktarmak için işaretleyin.\nFiltreler ve dışa aktarma seçimleri artık sonraki dosya için hatırlanıyor.\nToplam mesafeler birleştirilmiş dosyalardaki etkinlikleri artık iki kez saymıyor.\nBazı telefonlarda ikinci bir dosya açılırken oluşan çökme giderildi.</string>

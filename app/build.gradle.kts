@@ -427,8 +427,14 @@ android {
         //       libraries brought up to date (MapLibre stays 11.8.0, see
         //       README), and minSdk 26, so Android 8.0-9 can install it.
         //       Nothing changes for existing users.
-        versionCode = 26
-        versionName = "1.9.2"
+        //   versionCode=26, versionName="1.9.2" is released.
+        //   versionCode=27, versionName="1.10.0" -> Map image (the route as a
+        //       picture to save or share, from the map or step 4) and the
+        //       What's new popup with the version history behind the footer.
+        //       Minor: new features. changelogs/27.txt covers everything
+        //       since 26.
+        versionCode = 27
+        versionName = "1.10.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
