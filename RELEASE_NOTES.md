@@ -24,9 +24,12 @@ Where things go at release time:
 
 # Unreleased — everything since v1.9.1
 
-To ship as **1.9.2 (versionCode 26)**. No store changelog planned:
-nothing changes for people who already have the app; the only visible
-difference is that Android 8.0–9 phones can now install it.
+To ship as **1.9.2 (versionCode 26)**. Nothing changes for people who
+already have the app; the only visible difference is that Android 8.0–9
+phones can now install it. A short store text says just that, plus
+"under-the-hood updates": `fastlane/metadata/android/<locale>/changelogs/26.txt`
+and `F:\Timeline\Whats_New_v1.9.2_tagged.txt`, 18 locales, at most 125
+characters each.
 
 ## Android 8 and 9 supported (versionCode 26)
 
