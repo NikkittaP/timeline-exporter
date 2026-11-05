@@ -396,4 +396,10 @@
     <string name="journey_traveler">Not all who wander are lost. Some are just taking their time.</string>
     <string name="journey_postcard">Every journey tells a story.</string>
     <string name="journey_no_route">No route to fly along yet.</string>
+
+    <!-- What's new popup after an update, and the version history behind the footer -->
+    <string name="whats_new_title">What\'s new</string>
+    <string name="whats_new_history_title">Version history</string>
+    <string name="whats_new_close">Close</string>
+    <string name="whats_new_open_history">Show version history</string>
 </resources>

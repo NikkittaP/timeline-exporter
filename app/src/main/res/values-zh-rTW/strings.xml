@@ -302,4 +302,8 @@
     <string name="journey_traveler">漫遊的人不一定迷了路，有些人只是慢慢前行。</string>
     <string name="journey_postcard">每段旅程都有一個故事。</string>
     <string name="journey_no_route">暫時沒有可飛行的路線。</string>
+    <string name="whats_new_title">新功能</string>
+    <string name="whats_new_history_title">版本歷史</string>
+    <string name="whats_new_close">關閉</string>
+    <string name="whats_new_open_history">查看版本歷史</string>
 </resources>

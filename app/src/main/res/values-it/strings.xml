@@ -308,4 +308,8 @@
     <string name="journey_traveler">Non tutti quelli che vagano si sono persi. Alcuni si prendono il loro tempo.</string>
     <string name="journey_postcard">Ogni viaggio racconta una storia.</string>
     <string name="journey_no_route">Non c’è ancora un percorso da sorvolare.</string>
+    <string name="whats_new_title">Novità</string>
+    <string name="whats_new_history_title">Cronologia versioni</string>
+    <string name="whats_new_close">Chiudi</string>
+    <string name="whats_new_open_history">Mostra cronologia versioni</string>
 </resources>

@@ -23,6 +23,7 @@ import androidx.core.content.FileProvider
 import io.github.nikkittap.timelineexporter.parser.parseTimeline
 import io.github.nikkittap.timelineexporter.trips.TripDetection
 import io.github.nikkittap.timelineexporter.trips.detectTrips
+import io.github.nikkittap.timelineexporter.ui.WhatsNewState
 import io.github.nikkittap.timelineexporter.ui.formatLocalDayRange
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -201,6 +202,17 @@ class ScreenshotTest {
     @Before
     fun forgetRememberedSettings() {
         appCtx.getSharedPreferences(REMEMBERED_SETTINGS_PREFS, Context.MODE_PRIVATE).edit().clear().commit()
+    }
+
+    /**
+     * Mark this version's "What's new" as seen. The test APK is installed over
+     * the previous one, which the app reads as an update, and the popup would
+     * otherwise sit on top of the first shot of every pass.
+     */
+    @Before
+    fun skipWhatsNew() {
+        appCtx.getSharedPreferences(WhatsNewState.PREFS, Context.MODE_PRIVATE).edit()
+            .putString(WhatsNewState.KEY_SEEN, BuildConfig.VERSION_NAME).commit()
     }
 
     /** The tags in `@xml/locales_config` — the same list the picker offers. */

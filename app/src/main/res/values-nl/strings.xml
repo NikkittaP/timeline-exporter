@@ -306,4 +306,8 @@
     <string name="journey_traveler">Niet iedereen die rondreist is verdwaald. Sommigen nemen gewoon hun tijd.</string>
     <string name="journey_postcard">Elke reis vertelt een verhaal.</string>
     <string name="journey_no_route">Er is nog geen route om te vliegen.</string>
+    <string name="whats_new_title">Wat is er nieuw</string>
+    <string name="whats_new_history_title">Versiegeschiedenis</string>
+    <string name="whats_new_close">Sluiten</string>
+    <string name="whats_new_open_history">Versiegeschiedenis tonen</string>
 </resources>

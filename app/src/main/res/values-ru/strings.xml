@@ -314,4 +314,8 @@
     <string name="journey_traveler">Не все странники потерялись. Некоторые просто не спешат.</string>
     <string name="journey_postcard">У каждого путешествия есть своя история.</string>
     <string name="journey_no_route">Пока нет маршрута для полёта.</string>
+    <string name="whats_new_title">Что нового</string>
+    <string name="whats_new_history_title">История версий</string>
+    <string name="whats_new_close">Закрыть</string>
+    <string name="whats_new_open_history">Показать историю версий</string>
 </resources>

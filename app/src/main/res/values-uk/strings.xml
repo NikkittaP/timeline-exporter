@@ -314,4 +314,8 @@
     <string name="journey_traveler">Не всі мандрівники заблукали. Дехто просто не поспішає.</string>
     <string name="journey_postcard">Кожна подорож розповідає історію.</string>
     <string name="journey_no_route">Поки немає маршруту для польоту.</string>
+    <string name="whats_new_title">Що нового</string>
+    <string name="whats_new_history_title">Історія версій</string>
+    <string name="whats_new_close">Закрити</string>
+    <string name="whats_new_open_history">Показати історію версій</string>
 </resources>

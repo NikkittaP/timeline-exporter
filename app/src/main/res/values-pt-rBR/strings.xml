@@ -308,4 +308,8 @@
     <string name="journey_traveler">Nem todos que vagueiam estão perdidos. Alguns apenas seguem sem pressa.</string>
     <string name="journey_postcard">Toda viagem conta uma história.</string>
     <string name="journey_no_route">Ainda não há uma rota para voar.</string>
+    <string name="whats_new_title">Novidades</string>
+    <string name="whats_new_history_title">Histórico de versões</string>
+    <string name="whats_new_close">Fechar</string>
+    <string name="whats_new_open_history">Ver histórico de versões</string>
 </resources>

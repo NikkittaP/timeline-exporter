@@ -306,4 +306,8 @@
     <string name="journey_traveler">Dolaşan herkes kaybolmuş değildir. Bazıları sadece acele etmez.</string>
     <string name="journey_postcard">Her yolculuk bir hikâye anlatır.</string>
     <string name="journey_no_route">Henüz uçulacak bir rota yok.</string>
+    <string name="whats_new_title">Yenilikler</string>
+    <string name="whats_new_history_title">Sürüm geçmişi</string>
+    <string name="whats_new_close">Kapat</string>
+    <string name="whats_new_open_history">Sürüm geçmişini göster</string>
 </resources>

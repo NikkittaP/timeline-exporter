@@ -314,4 +314,8 @@
     <string name="journey_traveler">Nie wszyscy wędrowcy są zagubieni. Niektórzy po prostu się nie spieszą.</string>
     <string name="journey_postcard">Każda podróż opowiada historię.</string>
     <string name="journey_no_route">Nie ma jeszcze trasy do przelotu.</string>
+    <string name="whats_new_title">Co nowego</string>
+    <string name="whats_new_history_title">Historia wersji</string>
+    <string name="whats_new_close">Zamknij</string>
+    <string name="whats_new_open_history">Pokaż historię wersji</string>
 </resources>

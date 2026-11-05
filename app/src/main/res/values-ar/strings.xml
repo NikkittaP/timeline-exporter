@@ -322,4 +322,8 @@
     <string name="journey_traveler">ليس كل من يتجول تائهاً. بعضهم يتمهل فقط.</string>
     <string name="journey_postcard">كل رحلة تروي حكاية.</string>
     <string name="journey_no_route">لا يوجد مسار للطيران بعد.</string>
+    <string name="whats_new_title">ما الجديد</string>
+    <string name="whats_new_history_title">سجل الإصدارات</string>
+    <string name="whats_new_close">إغلاق</string>
+    <string name="whats_new_open_history">عرض سجل الإصدارات</string>
 </resources>

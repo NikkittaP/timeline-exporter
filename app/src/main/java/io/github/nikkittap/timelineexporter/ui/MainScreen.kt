@@ -160,6 +160,9 @@ fun TimelineExporterApp() {
     var tipJarDialogOpen by remember { mutableStateOf(false) }
     var languageDialogOpen by remember { mutableStateOf(false) }
     var feedbackDialogOpen by remember { mutableStateOf(false) }
+    var versionHistoryOpen by remember { mutableStateOf(false) }
+    // Once after an update: what changed since the version last seen.
+    val whatsNew = rememberWhatsNew()
     var overflowMenuOpen by remember { mutableStateOf(false) }
 
     // How many exports this user has finished, and when they last declined or
@@ -331,8 +334,24 @@ fun TimelineExporterApp() {
             modifier = Modifier.padding(innerPadding),
             onHelpClick = { helpDialogOpen = true },
             onFeedbackClick = { feedbackDialogOpen = true },
+            onVersionClick = { versionHistoryOpen = true },
             viewModel = viewModel,
             tipPrompt = tipPrompt,
+        )
+    }
+
+    if (whatsNew.pending.isNotEmpty()) {
+        WhatsNewDialog(
+            title = stringResource(R.string.whats_new_title),
+            entries = whatsNew.pending,
+            onDismiss = whatsNew::dismiss,
+        )
+    }
+    if (versionHistoryOpen) {
+        WhatsNewDialog(
+            title = stringResource(R.string.whats_new_history_title),
+            entries = WhatsNew.history(WHATS_NEW_NOTES, BuildConfig.VERSION_NAME),
+            onDismiss = { versionHistoryOpen = false },
         )
     }
 
@@ -382,6 +401,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     onHelpClick: () -> Unit = {},
     onFeedbackClick: () -> Unit = {},
+    onVersionClick: () -> Unit = {},
     viewModel: TimelineViewModel = viewModel(factory = TimelineViewModelFactory),
     tipPrompt: TipPromptState = rememberTipPrompt(),
 ) {
@@ -979,7 +999,10 @@ fun MainScreen(
                 }
             }
 
-            VersionFooter(modifier = Modifier.align(Alignment.CenterHorizontally))
+            VersionFooter(
+                onClick = onVersionClick,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+            )
         }
 
         if (mapFullscreen && loadedResult != null) {
@@ -2543,15 +2566,25 @@ internal fun ExpandedMap(
 /**
  * Small, muted app-version line shown at the very bottom of the screen.
  * Reads [BuildConfig.VERSION_NAME] so it always matches the published build.
+ * Tapping it opens the notes of this and every earlier version.
  */
 @Composable
-private fun VersionFooter(modifier: Modifier = Modifier) {
+private fun VersionFooter(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Text(
         text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center,
-        modifier = modifier.padding(top = 8.dp),
+        modifier = modifier
+            .padding(top = 8.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(
+                onClickLabel = stringResource(R.string.whats_new_open_history),
+                role = Role.Button,
+                onClick = onClick,
+            )
+            // A comfortable touch target around a one-line caption.
+            .padding(horizontal = 12.dp, vertical = 8.dp),
     )
 }
 

@@ -302,4 +302,8 @@
     <string name="journey_traveler">旅する人が皆、迷っているわけではありません。ゆっくり進む人もいます。</string>
     <string name="journey_postcard">すべての旅に物語があります。</string>
     <string name="journey_no_route">まだ飛べるルートがありません。</string>
+    <string name="whats_new_title">新機能</string>
+    <string name="whats_new_history_title">バージョン履歴</string>
+    <string name="whats_new_close">閉じる</string>
+    <string name="whats_new_open_history">バージョン履歴を表示</string>
 </resources>

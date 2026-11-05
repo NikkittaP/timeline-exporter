@@ -302,4 +302,8 @@
     <string name="journey_traveler">떠도는 이들이 모두 길을 잃은 것은 아니에요. 천천히 가는 이들도 있죠.</string>
     <string name="journey_postcard">모든 여행에는 이야기가 있어요.</string>
     <string name="journey_no_route">아직 비행할 경로가 없어요.</string>
+    <string name="whats_new_title">새로운 기능</string>
+    <string name="whats_new_history_title">버전 기록</string>
+    <string name="whats_new_close">닫기</string>
+    <string name="whats_new_open_history">버전 기록 보기</string>
 </resources>

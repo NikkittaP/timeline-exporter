@@ -306,4 +306,8 @@
     <string name="journey_traveler">Nicht alle Wandernden sind verloren. Manche lassen sich einfach Zeit.</string>
     <string name="journey_postcard">Jede Reise erzählt eine Geschichte.</string>
     <string name="journey_no_route">Noch keine Route zum Fliegen vorhanden.</string>
+    <string name="whats_new_title">Neuigkeiten</string>
+    <string name="whats_new_history_title">Versionsverlauf</string>
+    <string name="whats_new_close">Schließen</string>
+    <string name="whats_new_open_history">Versionsverlauf anzeigen</string>
 </resources>

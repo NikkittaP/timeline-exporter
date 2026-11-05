@@ -306,4 +306,8 @@
     <string name="journey_traveler">Alla som vandrar är inte vilse. En del tar bara god tid på sig.</string>
     <string name="journey_postcard">Varje resa berättar en historia.</string>
     <string name="journey_no_route">Det finns ingen rutt att flyga längs ännu.</string>
+    <string name="whats_new_title">Nyheter</string>
+    <string name="whats_new_history_title">Versionshistorik</string>
+    <string name="whats_new_close">Stäng</string>
+    <string name="whats_new_open_history">Visa versionshistorik</string>
 </resources>
