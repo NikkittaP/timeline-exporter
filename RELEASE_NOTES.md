@@ -37,8 +37,10 @@ feature release.
   they read `LocalLocale.current.platformLocale` now. Instrumented tests
   moved to the v2 compose test rules.
 - **AGP 9.5.0, Kotlin 2.4.21, Gradle 9.8.2** (AGP 9.5 needs Gradle 9.6+).
-- **MapLibre 13.7.1** (from 11.8.0). `textureMode(true)` stays. The AAB
-  grows from 20.5 to 23.8 MB, almost all native map library.
+- **MapLibre stays on 11.8.0.** 13.7.1 was tried and rolled back: on a
+  Xiaomi Mi 5s (Adreno 530, driver from April 2018) its shaders fail to
+  compile and the track is not drawn at all, only the dashed gap lines.
+  11.8.0 draws it on the same phone with no shader errors.
 - jackson-core 2.22.4, kotlinx-serialization 1.12.0 (tests), ext-junit
   1.3.0, espresso 3.7.0.
 - `formatLocalDayRange` calls ICU's DateIntervalFormat directly, since
@@ -48,6 +50,10 @@ feature release.
 Checked: 297 unit tests, 12 instrumented tests on the Pixel_7 AVD, lint
 0 errors, bundleRelease. Still to do before release: the map on the
 Galaxy S25 Edge, the phone that showed the MapLibre teardown crash.
+The 13.7.1 build was also run through on a OnePlus 7 Pro (Android 12)
+before the rollback: filters, all three map tabs, color by day,
+fullscreen, reopening the file and the four export formats, with no
+crashes.
 
 ## 1.9.1 — dates can be typed (versionCode 25)
 
