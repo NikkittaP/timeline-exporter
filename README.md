@@ -43,6 +43,21 @@ slice that data by date and feed it to anything that reads GPS tracks
   from [OpenFreeMap](https://openfreemap.org) (Liberty style)
 - Targets API 36 (Android 16), min API 26 (Android 8.0)
 
+### Why MapLibre 11.8 and not 13.x
+
+MapLibre 13.7.1 was tried in November 2026 and rolled back. On a Xiaomi
+Mi 5s (Android 8.0, Adreno 530, GPU driver from April 2018), 13.x does not
+draw the track at all. You see only the dashed gap lines and the endpoint
+dots. Logcat shows over a hundred `Adreno: Shader compilation failed`
+lines and no crash. The same phone draws the track with 11.8.0, and newer
+GPUs (OnePlus 7 Pro, Pixel 7 AVD) draw it with either version. Old Adreno
+drivers also shipped on Android 10 phones, and 13.x gave the app nothing
+visible: the map teardown bug maplibre-native#4622 that `textureMode`
+works around is still open there, and the AAB grows by 3.3 MB. So 11.8 is
+pinned in `gradle/libs.versions.toml`. Before bumping it, check the map
+on an old-driver Adreno phone and grep logcat for
+`Shader compilation failed`.
+
 ## Architecture
 
 ```

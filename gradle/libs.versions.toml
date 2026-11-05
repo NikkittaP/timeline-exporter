@@ -9,6 +9,12 @@ activityCompose = "1.13.0"
 kotlin = "2.4.21"
 composeBom = "2026.09.00"
 jackson = "2.22.4"
+# Pinned on purpose. 13.7.1 was tried on 2026-11-05 and rolled back (502d888):
+# on Adreno 5xx GPUs with 2018-era drivers (Xiaomi Mi 5s, Android 8.0) its
+# shaders fail to compile ("Adreno: Shader compilation failed") and the track
+# layer silently draws nothing - no crash, just an empty map. 11.8.0 draws it.
+# Before bumping: run the map on an old-driver Adreno phone and grep logcat
+# for "Shader compilation failed". See README "Why MapLibre 11.8".
 maplibre = "11.8.0"
 splashscreen = "1.2.0"
 billing = "9.1.0"
