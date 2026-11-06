@@ -75,6 +75,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
@@ -261,9 +262,19 @@ fun TimelineExporterApp() {
                     )
                 },
                 title = {
+                    // On narrow screens (OnePlus 7 Pro, Mi 5s, large font
+                    // scale) the full name doesn't fit beside the three action
+                    // icons, so the title steps its size down from the bar's
+                    // normal titleLarge before falling back to an ellipsis.
+                    val titleSize = LocalTextStyle.current.fontSize
                     Text(
                         text = stringResource(R.string.app_name),
                         modifier = Modifier.padding(start = 8.dp).pointerInput(Unit) { detectTapGestures(onTap = { if (titleTaps.tap()) journeyScene = JourneyScene.POSTCARD }) },
+                        autoSize = TextAutoSize.StepBased(
+                            minFontSize = 14.sp,
+                            maxFontSize = titleSize,
+                            stepSize = 0.5.sp,
+                        ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
