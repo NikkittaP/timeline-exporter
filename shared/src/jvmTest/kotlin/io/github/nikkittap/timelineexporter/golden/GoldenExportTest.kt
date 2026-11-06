@@ -7,9 +7,9 @@ import io.github.nikkittap.timelineexporter.export.exportTrips
 import io.github.nikkittap.timelineexporter.parser.ParsedTimeline
 import io.github.nikkittap.timelineexporter.parser.parseTimeline
 import io.github.nikkittap.timelineexporter.parser.placeEntries
+import io.github.nikkittap.timelineexporter.parser.resolvePlaceName
 import io.github.nikkittap.timelineexporter.trips.TripDetection
 import io.github.nikkittap.timelineexporter.trips.detectTrips
-import io.github.nikkittap.timelineexporter.ui.resolvePlaceName
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -87,7 +87,7 @@ class GoldenExportTest {
 
     // Mirrors ui/PlacesContent.kt `exportPlaces`, with the English "Home" and
     // "Work" words and no user labels (what the app shows when nothing is
-    // named). resolvePlaceName is the app's own function.
+    // named). resolvePlaceName lives in parser/PlaceNames.kt.
     private fun places(parsed: ParsedTimeline): List<ExportPlace> =
         parsed.placeEntries(fallbackZone = zone).map { entry ->
             ExportPlace(
@@ -130,7 +130,7 @@ class GoldenExportTest {
 
     @Test
     fun `exports match the golden hashes`() {
-        val file = Path.of("src/test/resources/golden/export-hashes.txt").toAbsolutePath()
+        val file = Path.of("src/jvmTest/resources/golden/export-hashes.txt").toAbsolutePath()
         val all = inputs()
         val produced = all.flatMap { hashesFor(it) }
 

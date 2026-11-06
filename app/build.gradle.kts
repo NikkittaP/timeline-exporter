@@ -524,7 +524,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.jackson.core)
     implementation(libs.maplibre.android.sdk)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.android.billing.ktx)
@@ -552,11 +551,4 @@ dependencies {
     androidTestImplementation("androidx.test:monitor:1.7.2")
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-}
-
-// Pass the golden-hash and benchmark switches from -D on the Gradle command
-// line through to the forked test JVM (Gradle does not forward them itself).
-tasks.withType<Test>().configureEach {
-    systemProperty("golden.record", System.getProperty("golden.record") ?: "false")
-    systemProperty("bench", System.getProperty("bench") ?: "false")
 }

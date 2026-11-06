@@ -112,14 +112,16 @@ fun parseTimeline(input: InputStream, onProgress: (ParserStage) -> Unit = {}): P
  * assume for. A file where rawSignals appears first — or has no content key
  * at all — falls back to plain byte-fraction progress; see
  * TimelineViewModel.weightedProgress.
+ * Public for the app module.
  */
-internal class KeyOffsets(val firstContentKeyOffset: Long?, val rawSignalsOffset: Long?)
+class KeyOffsets(val firstContentKeyOffset: Long?, val rawSignalsOffset: Long?)
 
 private val CONTENT_KEY_NEEDLES = listOf("\"semanticSegments\"", "\"timelineObjects\"", "\"locations\"")
     .map { it.toByteArray(Charsets.US_ASCII) }
 private val RAW_SIGNALS_NEEDLE = "\"rawSignals\"".toByteArray(Charsets.US_ASCII)
 
-internal fun findKeyOffsets(input: InputStream): KeyOffsets {
+/** Public for the app module. */
+fun findKeyOffsets(input: InputStream): KeyOffsets {
     val needles = CONTENT_KEY_NEEDLES + RAW_SIGNALS_NEEDLE
     val found = arrayOfNulls<Long>(needles.size)
     val buffer = ByteArray(64 * 1024)

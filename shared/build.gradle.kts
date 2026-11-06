@@ -25,8 +25,20 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
+        jvmMain.dependencies {
+            implementation(libs.jackson.core)
+        }
         jvmTest.dependencies {
             implementation(libs.junit)
+            // Test-only: an independent JSON parser to validate GeoJsonExporter output.
+            implementation(libs.kotlinx.serialization.json)
         }
     }
+}
+
+// Pass the golden-hash and benchmark switches from -D on the Gradle command
+// line through to the forked test JVM (Gradle does not forward them itself).
+tasks.withType<Test>().configureEach {
+    systemProperty("golden.record", System.getProperty("golden.record") ?: "false")
+    systemProperty("bench", System.getProperty("bench") ?: "false")
 }

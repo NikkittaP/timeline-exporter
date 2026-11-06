@@ -35,8 +35,9 @@ private const val TRACK_DAY_SHADE_AMOUNT = 0.30f
  * date. The hue still turns over weekly - that is what keeps neighbouring
  * days apart, which is what the eye actually needs - but each week shifts to
  * the next shade, so a colour does not come round again for three weeks.
+ * Public for the app module.
  */
-internal fun trackDayColor(date: LocalDate): String {
+fun trackDayColor(date: LocalDate): String {
     val epochDay = date.toEpochDay()
     val hues = TRACK_DAY_COLORS.size.toLong()
     val hue = TRACK_DAY_COLORS[Math.floorMod(epochDay, hues).toInt()]
@@ -65,14 +66,16 @@ private fun String.shiftedToward(target: Int): String {
  * this once per edge of a track that can hold hundreds of thousands of
  * samples, and a ZonedDateTime per sample is a few million short-lived
  * objects for a number we then throw away.
+ * Public for the app module.
  */
-internal fun PathPoint.trackEpochDay(fallbackZone: ZoneId): Long {
+fun PathPoint.trackEpochDay(fallbackZone: ZoneId): Long {
     val offsetSeconds = tzOffsetMinutes?.times(60)
         ?: fallbackZone.rules.getOffset(timeUtc).totalSeconds
     return Math.floorDiv(timeUtc.epochSecond + offsetSeconds, DAY_SECONDS)
 }
 
-internal fun PathPoint.trackDate(fallbackZone: ZoneId): LocalDate =
+/** Public for the app module. */
+fun PathPoint.trackDate(fallbackZone: ZoneId): LocalDate =
     LocalDate.ofEpochDay(trackEpochDay(fallbackZone))
 
 private const val DAY_SECONDS = 86_400L
@@ -83,8 +86,9 @@ private const val DAY_SECONDS = 86_400L
  *
  * Indices rather than a copy of the samples, because the exporters cut a
  * whole file this way and then only walk each stretch once.
+ * Public for the app module.
  */
-internal data class TrackDaySpan(val date: LocalDate, val first: Int, val last: Int)
+data class TrackDaySpan(val date: LocalDate, val first: Int, val last: Int)
 
 /**
  * Cut [points] into one run per local day, in track order. Each edge belongs
@@ -96,8 +100,9 @@ internal data class TrackDaySpan(val date: LocalDate, val first: Int, val last: 
  * A date can come back later in the list - flying west across the date line
  * lands on a local date the track has already left - and it is then a second
  * run with the same date. Callers that want one entry per date group them.
+ * Public for the app module.
  */
-internal fun trackDaySpans(points: List<PathPoint>, fallbackZone: ZoneId): List<TrackDaySpan> {
+fun trackDaySpans(points: List<PathPoint>, fallbackZone: ZoneId): List<TrackDaySpan> {
     if (points.size < 2) return emptyList()
     val result = mutableListOf<TrackDaySpan>()
     // Compare days as longs and build the LocalDate once per run, not once

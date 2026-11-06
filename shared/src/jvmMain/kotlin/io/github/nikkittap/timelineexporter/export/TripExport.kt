@@ -58,7 +58,8 @@ private fun lowerBound(points: List<PathPoint>, time: Instant): Int {
     return lo
 }
 
-internal fun localDate(instant: Instant, offsetMinutes: Int?, zone: ZoneId): LocalDate =
+/** Public for the app module. */
+fun localDate(instant: Instant, offsetMinutes: Int?, zone: ZoneId): LocalDate =
     if (offsetMinutes != null) instant.atOffset(ZoneOffset.ofTotalSeconds(offsetMinutes * 60)).toLocalDate()
     else instant.atZone(zone).toLocalDate()
 
