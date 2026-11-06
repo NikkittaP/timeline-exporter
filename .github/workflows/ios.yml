@@ -46,6 +46,8 @@ on:
       - "shared/src/**"
       # The string catalog is generated from the Android strings.
       - "app/src/main/res/values*/strings.xml"
+      # The map styles are bundled as they are.
+      - "app/src/main/assets/map_style_*.json"
 
 permissions:
   contents: read

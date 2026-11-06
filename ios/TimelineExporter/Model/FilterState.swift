@@ -65,12 +65,62 @@ struct FilterState: Equatable {
     }
 }
 
+/// What the screen shows and step 4 writes: the Track / Trips / Places switch.
+enum ContentKind: String, CaseIterable, Identifiable {
+    case track, trips, places
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .track: L.s("content_track")
+        case .trips: L.s("content_trips")
+        case .places: L.s("content_places")
+        }
+    }
+}
+
+/// The user's own names for places, keyed by the shared PlaceEntry key (the
+/// Google place ID where there is one), so they survive a newer export.
+final class PlaceLabels {
+    private let defaults: UserDefaults
+    private static let key = "place_labels"
+    private(set) var labels: [String: String]
+
+    init(_ defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        labels = defaults.dictionary(forKey: Self.key) as? [String: String] ?? [:]
+    }
+
+    subscript(key: String) -> String? { labels[key] }
+
+    /// Name a place, or forget the name when [label] is nil or blank.
+    func set(_ key: String, _ label: String?) {
+        let trimmed = label?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if trimmed.isEmpty {
+            labels.removeValue(forKey: key)
+        } else {
+            labels[key] = trimmed
+        }
+        defaults.set(labels, forKey: Self.key)
+    }
+
+    /// The label, Google's name, Home / Work, or the coordinates.
+    func displayName(_ p: PlaceItem) -> String {
+        if let label = labels[p.key] { return label }
+        if let name = p.name { return name }
+        if p.isHome { return L.s("place_home") }
+        if p.isWork { return L.s("place_work") }
+        return p.coordinates
+    }
+}
+
 /// Settings remembered between launches: the filter and the export choices.
 /// The keys are those of the Android SharedPreferences, for one vocabulary.
 struct RememberedSettings: Equatable {
     var filter = FilterState()
     var colorByDay = false
     var shareInstead = false
+    var includeContainers = false
 
     /// The filter to start a new file with: a remembered range that misses
     /// the file entirely is dropped, as are a movement set naming every group
@@ -124,6 +174,7 @@ final class UserDefaultsSettingsStore: SettingsStore {
         static let timeTo = "time_to"
         static let shareInstead = "share_instead"
         static let colorByDay = "color_by_day"
+        static let includeContainers = "include_containers"
     }
 
     func load() -> RememberedSettings {
@@ -144,6 +195,7 @@ final class UserDefaultsSettingsStore: SettingsStore {
         }
         s.shareInstead = defaults.bool(forKey: Key.shareInstead)
         s.colorByDay = defaults.bool(forKey: Key.colorByDay)
+        s.includeContainers = defaults.bool(forKey: Key.includeContainers)
         return s
     }
 
@@ -171,6 +223,7 @@ final class UserDefaultsSettingsStore: SettingsStore {
         defaults.set(s.filter.dropRepeated, forKey: Key.dropRepeated)
         defaults.set(s.shareInstead, forKey: Key.shareInstead)
         defaults.set(s.colorByDay, forKey: Key.colorByDay)
+        defaults.set(s.includeContainers, forKey: Key.includeContainers)
     }
 }
 

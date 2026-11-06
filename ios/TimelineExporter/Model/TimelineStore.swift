@@ -19,10 +19,11 @@ final class TimelineStore {
         case idle
         case working
         /// Saved where the user picked; [fileName] is what they named it.
-        case saved(count: Int, fileName: String?)
+        case saved(kind: ContentKind, count: Int, fileName: String?)
         /// Handed to the share sheet; nothing was saved by us.
-        case shared(count: Int, formatName: String)
-        case noPoints
+        case shared(kind: ContentKind, count: Int, formatName: String)
+        /// Nothing to write: no points, no trips or no places.
+        case nothing(ContentKind)
         case failed(formatName: String, detail: String)
     }
 
@@ -31,6 +32,7 @@ final class TimelineStore {
     struct PendingExport: Identifiable, Equatable {
         let url: URL
         let count: Int
+        let kind: ContentKind
         let format: ExportFormatChoice
         let share: Bool
         var id: URL { url }
@@ -50,8 +52,33 @@ final class TimelineStore {
     private(set) var exportState: ExportState = .idle
     var pendingExport: PendingExport?
 
+    // The Track / Trips / Places switch and what it shows.
+    private(set) var contentKind: ContentKind = .track
+    private(set) var tripList = TripListData()
+    private(set) var places: [PlaceItem] = []
+    /// The trip on the map; nil is every trip step 3 writes.
+    private(set) var selectedTrip: Int64?
+    /// Ticked for export; none ticked exports every visible trip.
+    private(set) var checkedTrips: Set<Int64> = []
+    private(set) var selectedPlace: String?
+    /// What the map draws for Track and Trips.
+    private(set) var mapLine = MapLine()
+    /// Bumped when a rename lands, so views showing names refresh.
+    private(set) var labelsVersion = 0
+    let labels: PlaceLabels
+
+    var includeContainers: Bool {
+        didSet {
+            persist { $0.includeContainers = includeContainers }
+            scheduleRecount()
+        }
+    }
+
     var colorByDay: Bool {
-        didSet { persist { $0.colorByDay = colorByDay } }
+        didSet {
+            persist { $0.colorByDay = colorByDay }
+            scheduleRecount()
+        }
     }
 
     var shareInstead: Bool {
@@ -63,12 +90,14 @@ final class TimelineStore {
     private var loadGeneration = 0
     private var countTask: Task<Void, Never>?
 
-    init(settings: SettingsStore = UserDefaultsSettingsStore()) {
+    init(settings: SettingsStore = UserDefaultsSettingsStore(), labels: PlaceLabels = PlaceLabels()) {
         self.settings = settings
+        self.labels = labels
         let r = settings.load()
         remembered = r
         colorByDay = r.colorByDay
         shareInstead = r.shareInstead
+        includeContainers = r.includeContainers
     }
 
     // MARK: Loading
@@ -83,6 +112,7 @@ final class TimelineStore {
         exportState = .idle
         pendingExport = nil
         filter = FilterState()
+        resetContent()
 
         let outcome = await Task.detached(priority: .userInitiated) {
             CoreTimeline.open(url: url) { info in
@@ -97,12 +127,13 @@ final class TimelineStore {
         switch outcome {
         case .opened(let core):
             let summary = await Task.detached(priority: .userInitiated) {
-                (core.dayCount, core.totalDistanceMeters, core.availableMovements())
+                (core.dayCount, core.totalDistanceMeters, core.availableMovements(), core.tripList())
             }.value
             guard generation == loadGeneration else { return }
             dayCount = summary.0
             totalDistance = summary.1
             availableMovements = summary.2
+            tripList = summary.3
             timeline = core
             // The remembered filter goes on before the screen shows the file,
             // so the first count it shows is already the filtered one.
@@ -127,6 +158,16 @@ final class TimelineStore {
         fileName = nil
         exportState = .idle
         pendingExport = nil
+        resetContent()
+    }
+
+    private func resetContent() {
+        tripList = TripListData()
+        places = []
+        selectedTrip = nil
+        checkedTrips = []
+        selectedPlace = nil
+        mapLine = MapLine()
     }
 
     // MARK: Filter
@@ -171,6 +212,10 @@ final class TimelineStore {
         filter = f
         exportState = .idle
         persist { $0.filter = f }
+        scheduleRecount()
+    }
+
+    private func scheduleRecount() {
         countTask?.cancel()
         countTask = Task { await recount() }
     }
@@ -183,16 +228,89 @@ final class TimelineStore {
         settings.save(r)
     }
 
-    /// Recompute what depends on the filter, off the main thread.
+    /// Recompute what depends on the filter and the switch, off the main thread.
     func recount() async {
         guard let core = timeline else { return }
         let f = filter
-        let result = await Task.detached(priority: .userInitiated) {
-            (core.filteredCount(f), core.breakdown(f))
+        let kind = contentKind
+        let color = colorByDay
+        let containers = includeContainers
+        let tripKeys = mapTripKeys
+        let result = await Task.detached(priority: .userInitiated) { () -> (Int, [MovementStat], [PlaceItem], MapLine) in
+            let line: MapLine
+            switch kind {
+            case .track: line = core.mapTrack(f, colorByDay: color)
+            case .trips: line = core.mapTrips(f, keys: tripKeys)
+            case .places: line = MapLine()
+            }
+            return (core.filteredCount(f), core.breakdown(f), core.places(f, includeContainers: containers), line)
         }.value
-        guard !Task.isCancelled, f == filter, core === timeline else { return }
+        guard !Task.isCancelled, f == filter, kind == contentKind, color == colorByDay,
+              containers == includeContainers, tripKeys == mapTripKeys, core === timeline else { return }
         filteredCount = result.0
         breakdown = result.1
+        places = result.2
+        mapLine = result.3
+        if let key = selectedPlace, !places.contains(where: { $0.key == key }) {
+            selectedPlace = nil
+        }
+    }
+
+    // MARK: Trips and places
+
+    func setContentKind(_ kind: ContentKind) {
+        guard kind != contentKind else { return }
+        contentKind = kind
+        exportState = .idle
+        scheduleRecount()
+    }
+
+    /// Trips touching the date range, newest first.
+    var visibleTrips: [TripItem] {
+        let trips = tripList.trips
+        guard let r = filter.range else { return trips.reversed() }
+        return trips.filter { $0.end >= r.lowerBound && $0.start <= r.upperBound }.reversed()
+    }
+
+    /// The ticked trips still visible; empty means every visible trip.
+    var exportTripKeys: [Int64] {
+        visibleTrips.map(\.key).filter { checkedTrips.contains($0) }.sorted()
+    }
+
+    /// The selected trip alone, or what step 3 will write.
+    private var mapTripKeys: [Int64] {
+        if let key = selectedTrip { return [key] }
+        return exportTripKeys
+    }
+
+    func selectTrip(_ key: Int64?) {
+        selectedTrip = key
+        scheduleRecount()
+    }
+
+    func setTrip(_ key: Int64, checked: Bool) {
+        if checked { checkedTrips.insert(key) } else { checkedTrips.remove(key) }
+        exportState = .idle
+        if selectedTrip == nil { scheduleRecount() }
+    }
+
+    func clearCheckedTrips() {
+        checkedTrips = []
+        if selectedTrip == nil { scheduleRecount() }
+    }
+
+    func selectPlace(_ key: String?) {
+        selectedPlace = key
+    }
+
+    func rename(_ key: String, to label: String?) {
+        labels.set(key, label)
+        labelsVersion += 1
+    }
+
+    func displayName(_ p: PlaceItem) -> String {
+        _ = labelsVersion
+        return labels.displayName(p)
     }
 
     // MARK: Export
@@ -200,7 +318,10 @@ final class TimelineStore {
     /// The label written inside the file: "Google Timeline 1 Jun 2025 — 7 Jun 2025, 07:00–19:00".
     var trackName: String {
         let rangePart: String
-        if let r = filter.range {
+        let checked = contentKind == .trips ? visibleTrips.filter { checkedTrips.contains($0.key) } : []
+        if let first = checked.min(by: { $0.start < $1.start }), let last = checked.max(by: { $0.end < $1.end }) {
+            rangePart = L.f("track_name_date_range", Fmt.date(first.startDay), Fmt.date(last.endDay))
+        } else if let r = filter.range {
             rangePart = L.f("track_name_date_range", Fmt.date(r.lowerBound), Fmt.date(r.upperBound))
         } else {
             rangePart = L.s("track_name_full_range")
@@ -211,15 +332,26 @@ final class TimelineStore {
         } else {
             described = rangePart
         }
-        return L.f("track_name", described)
+        switch contentKind {
+        case .track: return L.f("track_name", described)
+        case .trips: return L.f("track_name_trips", described)
+        case .places: return L.f("track_name_places", described)
+        }
     }
 
     /// Write the filtered track in [format] to a temporary file, then hand it
     /// to the save dialog or the share sheet (pendingExport).
     func export(_ format: ExportFormatChoice) async {
         guard let core = timeline else { return }
-        if filteredCount == 0 {
-            exportState = .noPoints
+        let kind = contentKind
+        let empty: Bool
+        switch kind {
+        case .track: empty = filteredCount == 0
+        case .trips: empty = visibleTrips.isEmpty
+        case .places: empty = places.isEmpty
+        }
+        if empty {
+            exportState = .nothing(kind)
             return
         }
         exportState = .working
@@ -227,12 +359,28 @@ final class TimelineStore {
         let name = trackName
         let color = colorByDay
         let share = shareInstead
-        let filename = CoreTimeline.suggestedFilename(f, format: format)
+        let keys = exportTripKeys
+        let containers = includeContainers
+        var names: [String: String] = [:]
+        if kind == .places {
+            for p in places { names[p.key] = labels.displayName(p) }
+        }
+        let filename = filenameFor(kind, format: format, keys: keys)
         let result: Result<(URL, ExportOutcome), Error> = await Task.detached(priority: .userInitiated) {
             do {
                 let dir = try Self.exportDirectory()
                 let url = dir.appendingPathComponent(filename)
-                return .success((url, core.exportTrack(f, format: format, colorByDay: color, name: name, to: url)))
+                let outcome: ExportOutcome
+                switch kind {
+                case .track:
+                    outcome = core.exportTrack(f, format: format, colorByDay: color, name: name, to: url)
+                case .trips:
+                    outcome = core.exportTrips(f, keys: keys, format: format, name: name, to: url)
+                case .places:
+                    outcome = core.exportPlaces(f, includeContainers: containers, names: names,
+                                                format: format, name: name, to: url)
+                }
+                return .success((url, outcome))
             } catch {
                 return .failure(error)
             }
@@ -248,9 +396,9 @@ final class TimelineStore {
                     detail: [outcome.errorClass, outcome.message].compactMap { $0 }.joined(separator: ": ")
                 )
             } else if outcome.count == 0 {
-                exportState = .noPoints
+                exportState = .nothing(kind)
             } else {
-                pendingExport = PendingExport(url: url, count: outcome.count, format: format, share: share)
+                pendingExport = PendingExport(url: url, count: outcome.count, kind: kind, format: format, share: share)
             }
         }
     }
@@ -260,7 +408,7 @@ final class TimelineStore {
     func finishSave(savedAs: String?) {
         guard let pending = pendingExport else { return }
         pendingExport = nil
-        exportState = savedAs.map { .saved(count: pending.count, fileName: $0) } ?? .idle
+        exportState = savedAs.map { .saved(kind: pending.kind, count: pending.count, fileName: $0) } ?? .idle
         try? FileManager.default.removeItem(at: pending.url)
     }
 
@@ -269,7 +417,36 @@ final class TimelineStore {
     func finishShare(completed: Bool) {
         guard let pending = pendingExport else { return }
         pendingExport = nil
-        exportState = completed ? .shared(count: pending.count, formatName: pending.format.displayName) : .idle
+        exportState = completed
+            ? .shared(kind: pending.kind, count: pending.count, formatName: pending.format.displayName)
+            : .idle
+    }
+
+    /// Android's names: Timeline[_dates][_hours].ext for the track,
+    /// Timeline_trips / Timeline_places likewise, and ticked trips by their
+    /// own dates or count.
+    private func filenameFor(_ kind: ContentKind, format: ExportFormatChoice, keys: [Int64]) -> String {
+        let track = CoreTimeline.suggestedFilename(filter, format: format)
+        switch kind {
+        case .track:
+            return track
+        case .places:
+            return track.replacingOccurrences(of: "Timeline", with: "Timeline_places", options: .anchored)
+        case .trips:
+            let checked = visibleTrips.filter { keys.contains($0.key) }
+            if checked.count == 1, let t = checked.first {
+                return "Timeline_trip_\(Self.isoDay(t.startDay))_\(Self.isoDay(t.endDay)).\(format.fileExtension)"
+            }
+            if checked.count > 1 {
+                return "Timeline_trips_\(checked.count).\(format.fileExtension)"
+            }
+            return track.replacingOccurrences(of: "Timeline", with: "Timeline_trips", options: .anchored)
+        }
+    }
+
+    private static func isoDay(_ d: Date) -> String {
+        let c = Calendar.current.dateComponents([.year, .month, .day], from: d)
+        return String(format: "%04d-%02d-%02d", c.year ?? 0, c.month ?? 0, c.day ?? 0)
     }
 
     /// One export pending at a time: the previous one is cleared out first,

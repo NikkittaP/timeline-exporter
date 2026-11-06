@@ -44,7 +44,7 @@ final class TimelineStoreTests: XCTestCase {
         await store.recount()
         XCTAssertEqual(store.filteredCount, 0)
         await store.export(.gpx)
-        XCTAssertEqual(store.exportState, .noPoints)
+        XCTAssertEqual(store.exportState, .nothing(.track))
         XCTAssertNil(store.pendingExport)
     }
 
@@ -60,7 +60,7 @@ final class TimelineStoreTests: XCTestCase {
             let text = try String(contentsOf: pending.url, encoding: .utf8)
             XCTAssertFalse(text.isEmpty)
             store.finishSave(savedAs: "copy.\(format.fileExtension)")
-            XCTAssertEqual(store.exportState, .saved(count: 3, fileName: "copy.\(format.fileExtension)"))
+            XCTAssertEqual(store.exportState, .saved(kind: .track, count: 3, fileName: "copy.\(format.fileExtension)"))
             XCTAssertFalse(FileManager.default.fileExists(atPath: pending.url.path(percentEncoded: false)))
         }
     }
@@ -85,6 +85,60 @@ final class TimelineStoreTests: XCTestCase {
         await store.open(url: sampleURL)
         store.setTimeOfDay(TimeWindow(start: 0, end: 1440))
         XCTAssertNil(store.filter.timeOfDay)
+    }
+
+    func testTheMapLineFollowsTheTrack() async throws {
+        let store = TimelineStore(settings: InMemorySettingsStore())
+        await store.open(url: sampleURL)
+        XCTAssertEqual(store.mapLine.latitudes.count, 3)
+        XCTAssertEqual(store.mapLine.pieces.count, 1)
+        XCTAssertEqual(store.mapLine.pieces.first?.range, 0..<3)
+
+        let day = Date(timeIntervalSince1970: 1_000_000_000)
+        store.setRange(Calendar.current.dayRange(from: day, to: day))
+        await store.recount()
+        XCTAssertTrue(store.mapLine.isEmpty)
+    }
+
+    func testASampleWithoutVisitsHasNoPlacesOrTrips() async throws {
+        let suite = "PlacesTests-\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = TimelineStore(settings: InMemorySettingsStore(), labels: PlaceLabels(defaults))
+        await store.open(url: sampleURL)
+
+        store.setContentKind(.places)
+        await store.recount()
+        XCTAssertTrue(store.places.isEmpty)
+        XCTAssertTrue(store.mapLine.isEmpty)
+        await store.export(.kml)
+        XCTAssertEqual(store.exportState, .nothing(.places))
+
+        store.setContentKind(.trips)
+        await store.recount()
+        XCTAssertTrue(store.visibleTrips.isEmpty)
+        await store.export(.gpx)
+        XCTAssertEqual(store.exportState, .nothing(.trips))
+        XCTAssertNil(store.pendingExport)
+    }
+}
+
+final class PlaceLabelsTests: XCTestCase {
+    func testLabelsPersistAndFallBack() throws {
+        let suite = "PlaceLabelsTests-\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let place = PlaceItem(
+            key: "ChIJ1", placeId: "ChIJ1", latitude: 48.85, longitude: 2.29, name: nil, address: nil,
+            visits: 2, lastVisit: Date(), totalSeconds: 3600, isHome: false, isWork: false,
+            coordinates: "48.85000, 2.29000", mapsURL: nil
+        )
+        let labels = PlaceLabels(defaults)
+        XCTAssertEqual(labels.displayName(place), "48.85000, 2.29000")
+        labels.set("ChIJ1", "  Gym  ")
+        XCTAssertEqual(PlaceLabels(defaults).displayName(place), "Gym")
+        labels.set("ChIJ1", " ")
+        XCTAssertNil(PlaceLabels(defaults)["ChIJ1"])
     }
 }
 

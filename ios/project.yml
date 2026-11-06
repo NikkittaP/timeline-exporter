@@ -16,12 +16,23 @@ settings:
     SWIFT_VERSION: "5.0"
     # Shared.xcframework has an arm64 simulator slice only (Apple silicon).
     "EXCLUDED_ARCHS[sdk=iphonesimulator*]": x86_64
+packages:
+  # The map. Metal-based, so none of the old-Adreno trouble that pins the
+  # Android MapLibre at 11.8.
+  MapLibre:
+    url: https://github.com/maplibre/maplibre-gl-native-distribution
+    exactVersion: 6.31.0
 targets:
   TimelineExporter:
     type: application
     platform: iOS
     sources:
       - path: TimelineExporter
+      # The map styles are the Android app's, used as they are.
+      - path: ../app/src/main/assets/map_style_light.json
+        buildPhase: resources
+      - path: ../app/src/main/assets/map_style_dark.json
+        buildPhase: resources
     # Merged with the generated keys (GENERATE_INFOPLIST_FILE): what has no
     # INFOPLIST_KEY_ build setting. Written by xcodegen, not committed.
     info:
@@ -40,6 +51,7 @@ targets:
       # Static Kotlin/Native framework: linked, not embedded.
       - framework: ../shared/build/XCFrameworks/release/Shared.xcframework
         embed: false
+      - package: MapLibre
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nikitapetrovapps.timelineexporter

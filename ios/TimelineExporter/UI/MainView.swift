@@ -1,8 +1,8 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// The one screen of stage 3: choose a file, filter it, export the track.
-/// The same three steps as the Android MainScreen.
+/// The one screen: choose a file, filter it, preview it on the map as the
+/// track, trips or places, export. The same steps as the Android MainScreen.
 struct MainView: View {
     @Environment(TimelineStore.self) private var store
     @State private var importing = false
@@ -15,6 +15,12 @@ struct MainView: View {
                 FileSection(importing: $importing)
                 if store.phase == .loaded, let core = store.timeline {
                     FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
+                    PreviewSection()
+                    switch store.contentKind {
+                    case .track: EmptyView()
+                    case .trips: TripsSection()
+                    case .places: PlacesSection()
+                    }
                     ExportSection()
                 }
             }
@@ -297,11 +303,21 @@ private struct ExportSection: View {
                 EmptyView()
             }
             .pickerStyle(.segmented)
-            Toggle(L.s("map_color_by_day"), isOn: $store.colorByDay)
+            if store.contentKind == .track {
+                Toggle(L.s("map_color_by_day"), isOn: $store.colorByDay)
+            }
         } header: {
-            Text(L.s("step_export_track"))
+            Text(title)
         } footer: {
             status
+        }
+    }
+
+    private var title: String {
+        switch store.contentKind {
+        case .track: L.s("step_export_track")
+        case .trips: store.exportTripKeys.count == 1 ? L.s("step_export_trip") : L.s("step_export_trips")
+        case .places: L.s("step_export_places")
         }
     }
 
@@ -314,15 +330,25 @@ private struct ExportSection: View {
                 ProgressView()
                 Text(L.s("export_writing"))
             }
-        case .saved(let count, let fileName):
-            Text(L.f("export_success", Fmt.grouped(count), fileName ?? L.s("export_fallback_filename")))
+        case .saved(let kind, let count, let fileName):
+            Text(L.f(Self.key("export_success", kind), Fmt.grouped(count), fileName ?? L.s("export_fallback_filename")))
                 .foregroundStyle(.green)
-        case .shared(let count, let formatName):
-            Text(L.f("export_shared", Fmt.grouped(count), formatName))
-        case .noPoints:
-            Text(L.s("export_error_no_points")).foregroundStyle(.orange)
+        case .shared(let kind, let count, let formatName):
+            Text(L.f(Self.key("export_shared", kind), Fmt.grouped(count), formatName))
+        case .nothing(let kind):
+            Text(L.s(kind == .track ? "export_error_no_points" : Self.key("export_error_no", kind)))
+                .foregroundStyle(.orange)
         case .failed(let formatName, let detail):
             Text(L.f("export_error_generic", formatName, detail)).foregroundStyle(.red)
+        }
+    }
+
+    /// export_success, export_success_trips, export_success_places and the like.
+    private static func key(_ base: String, _ kind: ContentKind) -> String {
+        switch kind {
+        case .track: base
+        case .trips: base + "_trips"
+        case .places: base + "_places"
         }
     }
 }

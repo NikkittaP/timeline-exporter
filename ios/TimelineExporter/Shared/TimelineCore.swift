@@ -202,3 +202,186 @@ final class CoreTimeline: @unchecked Sendable {
         TimelineSessionKt.suggestTrackFilename(spec: spec(f), format: format.core)
     }
 }
+
+// MARK: - Trips, places, map (stage 4)
+
+/// One trip away from home. Days are local midnights in the device calendar,
+/// for formatting only.
+struct TripItem: Identifiable, Equatable {
+    let key: Int64
+    let start: Date
+    let end: Date
+    let startDay: Date
+    let endDay: Date
+    let dayCount: Int
+    let durationSeconds: Int64
+    let isDayTrip: Bool
+    let maxDistanceMeters: Double
+    let travelledMeters: Double
+    let travelledEstimated: Bool
+    let placeCount: Int
+    let openStart: Bool
+    let openEnd: Bool
+    let longAbsence: Bool
+    /// TransportMode names: FLIGHT, CAR, TRAIN, BUS, BOAT, BICYCLE, WALK.
+    let transport: [String]
+    let color: String
+    var id: Int64 { key }
+}
+
+struct TripListData: Equatable {
+    var noHome = false
+    /// Oldest first.
+    var trips: [TripItem] = []
+}
+
+/// One place, as the shared core aggregates it; the display name is the
+/// app's (PlaceLabels).
+struct PlaceItem: Identifiable, Equatable {
+    let key: String
+    let placeId: String?
+    let latitude: Double
+    let longitude: Double
+    let name: String?
+    let address: String?
+    let visits: Int
+    let lastVisit: Date
+    let totalSeconds: Int64
+    let isHome: Bool
+    let isWork: Bool
+    let coordinates: String
+    let mapsURL: URL?
+    var id: String { key }
+}
+
+/// A line for the map: coordinates cut into coloured pieces. A piece with
+/// color "" takes the app's track colour.
+struct MapLine: Equatable {
+    struct Piece: Equatable {
+        let range: Range<Int>
+        let color: String
+    }
+
+    var latitudes: [Double] = []
+    var longitudes: [Double] = []
+    var pieces: [Piece] = []
+    var isEmpty: Bool { latitudes.isEmpty }
+}
+
+extension CoreTimeline {
+    /// Points the map draws at most; thinned evenly above it.
+    static let mapPointBudget: Int32 = 60_000
+
+    /// Every trip. Detection walks the whole file: call off the main thread.
+    func tripList() -> TripListData {
+        let list = session.tripList()
+        return TripListData(noHome: list.noHome, trips: list.trips.map { t in
+            TripItem(
+                key: t.key,
+                start: Self.date(t.startMillis),
+                end: Self.date(t.endMillis),
+                startDay: Self.localDay(t.startEpochDay),
+                endDay: Self.localDay(t.endEpochDay),
+                dayCount: Int(t.dayCount),
+                durationSeconds: t.durationSeconds,
+                isDayTrip: t.isDayTrip,
+                maxDistanceMeters: t.maxDistanceMeters,
+                travelledMeters: t.travelledMeters,
+                travelledEstimated: t.travelledEstimated,
+                placeCount: Int(t.placeCount),
+                openStart: t.openStart,
+                openEnd: t.openEnd,
+                longAbsence: t.longAbsence,
+                transport: t.transport,
+                color: t.color
+            )
+        })
+    }
+
+    func places(_ f: FilterState, includeContainers: Bool) -> [PlaceItem] {
+        session.places(spec: Self.spec(f), includeContainers: includeContainers).map { p in
+            PlaceItem(
+                key: p.key,
+                placeId: p.placeId,
+                latitude: p.latitude,
+                longitude: p.longitude,
+                name: p.name,
+                address: p.address,
+                visits: Int(p.visits),
+                lastVisit: Self.date(p.lastVisitMillis),
+                totalSeconds: p.totalSeconds,
+                isHome: p.isHome,
+                isWork: p.isWork,
+                coordinates: p.coordinates,
+                mapsURL: URL(string: p.mapsUrl)
+            )
+        }
+    }
+
+    func mapTrack(_ f: FilterState, colorByDay: Bool) -> MapLine {
+        Self.line(session.mapTrack(spec: Self.spec(f), colorByDay: colorByDay, budget: Self.mapPointBudget))
+    }
+
+    /// The trips' lines: [keys] picks some, empty is every trip in the range.
+    func mapTrips(_ f: FilterState, keys: [Int64]) -> MapLine {
+        Self.line(session.mapTrips(spec: Self.spec(f), keys: Self.longArray(keys), budget: Self.mapPointBudget))
+    }
+
+    func exportTrips(_ f: FilterState, keys: [Int64], format: ExportFormatChoice, name: String, to url: URL) -> ExportOutcome {
+        let r = session.exportTripsResult(
+            spec: Self.spec(f), keys: Self.longArray(keys), format: format.core, name: name,
+            path: url.path(percentEncoded: false)
+        )
+        return ExportOutcome(count: Int(r.count), errorClass: r.errorClass, message: r.errorMessage)
+    }
+
+    func exportPlaces(_ f: FilterState, includeContainers: Bool, names: [String: String],
+                      format: ExportFormatChoice, name: String, to url: URL) -> ExportOutcome {
+        let r = session.exportPlacesResult(
+            spec: Self.spec(f), includeContainers: includeContainers, names: names, format: format.core,
+            name: name, path: url.path(percentEncoded: false)
+        )
+        return ExportOutcome(count: Int(r.count), errorClass: r.errorClass, message: r.errorMessage)
+    }
+
+    private static func line(_ t: MapTrack) -> MapLine {
+        let n = Int(t.pointCount)
+        var line = MapLine()
+        line.latitudes.reserveCapacity(n)
+        line.longitudes.reserveCapacity(n)
+        for i in 0..<Int32(n) {
+            line.latitudes.append(t.latitudes.get(index: i))
+            line.longitudes.append(t.longitudes.get(index: i))
+        }
+        let pieces = Int(t.pieceCount)
+        for i in 0..<pieces {
+            let from = Int(t.pieceStarts.get(index: Int32(i)))
+            let to = i + 1 < pieces ? Int(t.pieceStarts.get(index: Int32(i + 1))) : n
+            line.pieces.append(MapLine.Piece(range: from..<to, color: t.pieceColors[i]))
+        }
+        return line
+    }
+
+    private static func longArray(_ values: [Int64]) -> KotlinLongArray {
+        let array = KotlinLongArray(size: Int32(values.count))
+        for (i, v) in values.enumerated() {
+            array.set(index: Int32(i), value: v)
+        }
+        return array
+    }
+
+    private static func date(_ millis: Int64) -> Date {
+        Date(timeIntervalSince1970: Double(millis) / 1000)
+    }
+
+    /// LocalDate.toEpochDays() as that date's midnight on this device.
+    static func localDay(_ epochDay: Int64) -> Date {
+        var c = DateComponents()
+        c.year = 1970
+        c.month = 1
+        c.day = 1
+        let cal = Calendar.current
+        let epoch = cal.date(from: c) ?? Date(timeIntervalSince1970: 0)
+        return cal.date(byAdding: .day, value: Int(epochDay), to: epoch) ?? epoch
+    }
+}
