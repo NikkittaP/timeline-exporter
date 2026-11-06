@@ -19,6 +19,22 @@ PAYLOAD = f"Payload/{APP}"
 MIN_OS = "17.0"
 
 
+def _esc(text: str) -> str:
+    """Escape annotation text like tools/ci_annotate.py (the text comes from the .ipa)."""
+    return text.replace("%", "%25").replace("\r", "").replace("\n", "%0A")
+
+
+def icon_names(info: dict) -> set:
+    """CFBundleIconName at the top level (macOS shape) and in the iOS CFBundleIcons dicts."""
+    names = {info.get("CFBundleIconName")}
+    for key in ("CFBundleIcons", "CFBundleIcons~ipad"):
+        icons = info.get(key)
+        primary = icons.get("CFBundlePrimaryIcon") if isinstance(icons, dict) else None
+        if isinstance(primary, dict):
+            names.add(primary.get("CFBundleIconName"))
+    return names
+
+
 def ipa_errors(ipa_path: str, bundle_id: str, version: str, build: str) -> list[str]:
     try:
         zf = zipfile.ZipFile(ipa_path)
@@ -48,7 +64,8 @@ def ipa_errors(ipa_path: str, bundle_id: str, version: str, build: str) -> list[
             expect("CFBundleShortVersionString", version)
             expect("CFBundleVersion", build)
             expect("MinimumOSVersion", MIN_OS)
-            expect("CFBundleIconName", "AppIcon")
+            if "AppIcon" not in icon_names(info):
+                errors.append("Info.plist has no CFBundleIconName 'AppIcon' (top level or in CFBundleIcons)")
             family = info.get("UIDeviceFamily")
             if not isinstance(family, list) or 1 not in family or 2 not in family:
                 errors.append(f"Info.plist UIDeviceFamily is {family!r}, expected iPhone and iPad (1 and 2)")
@@ -80,7 +97,7 @@ def main() -> int:
     errors = ipa_errors(args.ipa, args.bundle_id, args.version, args.build)
     for e in errors:
         print(f"ERROR: {e}")
-        print(f"::error title=IPA check::{e}")
+        print(f"::error title=IPA check::{_esc(e)}")
     if errors:
         return 1
     print("IPA check: all checks passed")

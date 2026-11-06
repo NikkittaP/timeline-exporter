@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Tests for check_ipa.py with synthetic .ipa files."""
 
+import contextlib
+import io
 import os
 import plistlib
 import sys
@@ -24,7 +26,7 @@ def good_info():
         "MinimumOSVersion": "17.0",
         "UIDeviceFamily": [1, 2],
         "ITSAppUsesNonExemptEncryption": False,
-        "CFBundleIconName": "AppIcon",
+        "CFBundleIcons": {"CFBundlePrimaryIcon": {"CFBundleIconName": "AppIcon"}},
     }
 
 
@@ -88,6 +90,53 @@ class CheckIpaTest(unittest.TestCase):
         info = good_info()
         info["UIDeviceFamily"] = [1]
         self.one_error(self.make(info), "UIDeviceFamily")
+
+    def test_top_level_icon_name_accepted(self):
+        info = good_info()
+        del info["CFBundleIcons"]
+        info["CFBundleIconName"] = "AppIcon"
+        self.assertEqual(self.errors(self.make(info)), [])
+
+    def test_ipad_icon_name_accepted(self):
+        info = good_info()
+        info["CFBundleIcons~ipad"] = info.pop("CFBundleIcons")
+        self.assertEqual(self.errors(self.make(info)), [])
+
+    def test_icon_name_missing(self):
+        info = good_info()
+        del info["CFBundleIcons"]
+        self.one_error(self.make(info), "AppIcon")
+
+    def test_icon_name_wrong(self):
+        info = good_info()
+        info["CFBundleIcons"]["CFBundlePrimaryIcon"]["CFBundleIconName"] = "Other"
+        self.one_error(self.make(info), "AppIcon")
+
+    def test_wrong_version_and_min_os(self):
+        info = good_info()
+        info["CFBundleShortVersionString"] = "2.0"
+        self.one_error(self.make(info), "CFBundleShortVersionString")
+        info = good_info()
+        info["MinimumOSVersion"] = "16.0"
+        self.one_error(self.make(info), "MinimumOSVersion")
+
+    def test_empty_profile_and_non_zip(self):
+        self.one_error(self.make(extra={f"{APP}/embedded.mobileprovision": b""}), "empty")
+        bad = os.path.join(self.tmp.name, "bad.ipa")
+        with open(bad, "wb") as f:
+            f.write(b"nope")
+        self.one_error(bad, "zip")
+
+    def test_annotation_is_escaped(self):
+        path = self.make(app="Payload/100%" + chr(10) + "::error::x.app")
+        argv = ["check_ipa.py", path, "--bundle-id", BUNDLE, "--version", VERSION, "--build", BUILD]
+        out = io.StringIO()
+        with mock.patch.object(sys, "argv", argv), contextlib.redirect_stdout(out):
+            self.assertEqual(check_ipa.main(), 1)
+        ann = [l for l in out.getvalue().splitlines() if l.startswith("::error title=IPA check::")]
+        self.assertEqual(len(ann), 1)
+        self.assertIn("100%25%0A::error::x.app", ann[0])
+        self.assertNotIn(chr(10), ann[0])
 
     def test_wrong_app_name(self):
         self.one_error(self.make(app="Payload/Other.app"), "exactly one")

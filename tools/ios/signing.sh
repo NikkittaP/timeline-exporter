@@ -22,7 +22,15 @@
 # removes the keychain and profile at the end of the job.
 set -euo pipefail
 
-fail() { echo "ERROR: $*"; echo "::error title=Signing::$*"; exit 1; }
+# Messages must be fixed text: they go into an annotation unescaped except for % and newlines.
+fail() {
+  local msg="$*"
+  echo "ERROR: $msg"
+  msg="${msg//'%'/%25}"
+  msg="${msg//$'\r'/}"
+  echo "::error title=Signing::${msg//$'\n'/%0A}"
+  exit 1
+}
 
 missing=0
 for v in IOS_DISTRIBUTION_CERTIFICATE_P12_BASE64 IOS_DISTRIBUTION_CERTIFICATE_PASSWORD \
@@ -82,7 +90,7 @@ print(f"Profile: '{p['Name']}' UUID {p['UUID']}, expires {exp:%Y-%m-%d}"
       + (f" - WARNING: {days} days left" if 0 <= days < 30 else ""))
 for e in errors:
     print("ERROR: " + e)
-    print("::error title=Signing::" + e)
+    print("::error title=Signing::" + e.replace("%", "%25").replace("\r", "").replace("\n", "%0A"))
 if errors:
     sys.exit(1)
 os.makedirs(certs_dir)

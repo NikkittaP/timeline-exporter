@@ -103,7 +103,10 @@ if [[ "$STEP" == archive ]]; then
     echo "::error title=xcodebuild export::expected exactly one .ipa in the export, found ${#ipas[@]}"
     exit 1
   fi
-  [[ "${ipas[0]}" == "$OUT/ipa/TimelineExporter.ipa" ]] || mv "${ipas[0]}" "$OUT/ipa/TimelineExporter.ipa"
+  if [[ "${ipas[0]}" != "$OUT/ipa/TimelineExporter.ipa" ]]; then
+    echo "renamed $(basename "${ipas[0]}") -> TimelineExporter.ipa"
+    mv "${ipas[0]}" "$OUT/ipa/TimelineExporter.ipa"
+  fi
   ls -la "$OUT/ipa"
 
 elif [[ "$STEP" == upload ]]; then
@@ -126,7 +129,7 @@ elif [[ "$STEP" == upload ]]; then
   fi
   if [[ ! -d "$ARCHIVE" ]]; then
     echo "ERROR: no archive at $ARCHIVE - run the archive step first."
-    echo "::error title=Upload::no archive at $ARCHIVE - run the archive step first."
+    echo "::error title=Upload::no TimelineExporter.xcarchive - run the archive step first."
     exit 1
   fi
 
