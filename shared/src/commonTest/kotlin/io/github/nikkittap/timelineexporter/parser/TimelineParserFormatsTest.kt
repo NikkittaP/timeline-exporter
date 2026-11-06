@@ -199,6 +199,18 @@ class TimelineParserFormatsTest {
         ).forEach { assertNull(parseTimestamp(it), it) }
     }
 
+    // The two short offset forms, pinned so a kotlinx-datetime upgrade cannot
+    // change them silently. "+02" loads, as OffsetDateTime.parse took it;
+    // "+0200" is dropped, as both java.time parsers dropped it.
+    @Test
+    fun `short offsets are handled as java time handled them`() {
+        assertEquals(Instant.parse("2025-06-09T19:58:00Z"), parseTimestamp("2025-06-09T21:58:00+02"))
+        assertEquals(120, parseOffsetMinutes("2025-06-09T21:58:00+02"))
+        assertEquals(-210, parseOffsetMinutes("2025-06-09T21:58:00.000-03:30"))
+        assertNull(parseTimestamp("2025-06-09T21:58:00+0200"))
+        assertNull(parseOffsetMinutes("2025-06-09T21:58:00+0200"))
+    }
+
     @Test
     fun `parseTimestamp rejects junk`() {
         assertNull(parseTimestamp("not a date"))

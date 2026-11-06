@@ -582,7 +582,7 @@ class TimelineViewModel(
  * range: the small semanticSegments section is fully parsed (timestamps,
  * coordinates, Segment/PathPoint allocation — expensive per byte), and the
  * much larger rawSignals tail after it is only ever skipped once
- * semanticSegments already produced points (JsonParser#skipChildren(), no
+ * semanticSegments already produced points (JsonReader.skipChildren(), no
  * allocation — nearly free per byte). Measured against the app's own
  * reference export, rawSignals starts 8% of the way into a 62 MB file and
  * both the file size and that 8% are typical, not an outlier. A straight

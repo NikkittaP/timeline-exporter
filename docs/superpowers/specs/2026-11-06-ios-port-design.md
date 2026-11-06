@@ -35,7 +35,7 @@ JVM-only dependencies are replaced:
 | Now | Replacement |
 |---|---|
 | `java.time` (Instant, ZoneId, LocalDate, OffsetDateTime, DateTimeFormatter) | `kotlinx-datetime` (system time zone database on both platforms) |
-| Jackson streaming (`JsonParser`, only in `TimelineParser`) | Our own streaming JSON lexer over a `kotlinx-io` `Source`. Files are never loaded whole. |
+| Jackson streaming (`JsonParser`, only in `TimelineParser`) | Our own streaming JSON lexer over a `kotlinx-io` `Source`. Files are never loaded whole. UTF-16 and UTF-32 input (detected by BOM or by the zero bytes at the start, as Jackson did) is transcoded to UTF-8 a chunk at a time before lexing, so a file re-saved as "Unicode" still loads. |
 | `InputStream`, `BigDecimal`, `Locale` | `kotlinx-io` `Source`/`Sink`; coordinate formatting without `BigDecimal`; explicit output formatting |
 
 There is one parser for both platforms. Changes to the Timeline format must
@@ -49,8 +49,12 @@ Platforms:
   progress reporting.
 
 Acceptance:
-- All existing parser/filter/export/trips tests move to `commonTest` and pass
-  on the JVM and the iOS simulator.
+- Parser/filter/export/trips tests live in `commonTest` and pass on the JVM
+  and the iOS simulator. The exceptions stay in `jvmTest`: JVM-reference
+  tests (differential tests against Jackson and `java.time`/`String.format`/
+  `BigDecimal`, which do not exist on iOS) and the real-file tests, which read
+  developer-local exports from disk. Pure-logic tests still in `jvmTest` move
+  to `commonTest` over time.
 - Exports (GPX, KML, GeoJSON, CSV) of the real test files are byte-identical
   before and after the move.
 - Parsing `Timeline_merged_big.json` with the new lexer is at most 20% slower

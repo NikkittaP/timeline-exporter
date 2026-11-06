@@ -61,19 +61,23 @@ on an old-driver Adreno phone and grep logcat for
 ## Architecture
 
 ```
-parser/   — pure Kotlin JSON parser, unit-tested on real 60 MB exports
-filter/   — TimelineFilter spec + applyFilter pure function
-export/   — Exporter strategy interface + GPX/KML/GeoJSON/CSV objects
-ui/       — Compose screens, ViewModel, MapLibre wrapper, dialogs
+shared/     — Kotlin Multiplatform core (JVM plus iOS targets), no Android types
+  json/     — JsonReader, a streaming JSON reader in common Kotlin
+  parser/   — Timeline parser, unit-tested on real 60 MB exports
+  filter/   — TimelineFilter spec + applyFilter pure function
+  export/   — Exporter strategy interface + GPX/KML/GeoJSON/CSV objects
+  trips/    — trip detection over the parsed track
+app/        — the Android app, which depends on shared
+  ui/       — Compose screens, ViewModel, MapLibre wrapper, dialogs
 ```
 
 Each layer is independently unit-testable. UI never touches MapLibre or
 ContentResolver types directly; the ViewModel mediates.
 
-The `parser`, `filter`, `export` and `trips` layers live in the Kotlin
-Multiplatform module `shared` (JVM plus iOS targets), which the Android app
-depends on; the `shared` workflow runs its tests on the JVM and on the iOS
-simulator.
+The `json`, `parser`, `filter`, `export` and `trips` layers live in the
+Kotlin Multiplatform module `shared` (JVM plus iOS targets), which the
+Android app depends on; the `shared` workflow runs its tests on the JVM and
+on the iOS simulator.
 
 ## Attribution
 

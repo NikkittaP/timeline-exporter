@@ -145,6 +145,10 @@ object CsvExporter : Exporter {
      * useless to a spreadsheet.
      */
     private fun formatOffset(minutes: Int): String {
+        // ZoneOffset, which this replaced, threw outside ±18:00. The parser
+        // only hands out offsets within -12:00..+14:00, so this cannot fire on
+        // real data; it keeps a bad offset from becoming a malformed field.
+        require(minutes in -18 * 60..18 * 60) { "UTC offset out of range: $minutes minutes" }
         val sign = if (minutes < 0) '-' else '+'
         val abs = abs(minutes)
         return "$sign${(abs / 60).toString().padStart(2, '0')}:${(abs % 60).toString().padStart(2, '0')}"

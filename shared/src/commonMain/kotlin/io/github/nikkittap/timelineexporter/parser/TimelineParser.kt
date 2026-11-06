@@ -1025,6 +1025,12 @@ internal fun e7Pair(latE7: Long?, lonE7: Long?): Pair<Double, Double>? {
  *  - epoch milliseconds as a numeric string, e.g. "1718460089460"
  *  - epoch seconds as a numeric string, e.g. "1718460089"
  *
+ * Offsets are taken as the java.time parsers this replaced took them: the
+ * hours-only form "+02" is accepted (OffsetDateTime.parse took it, and so
+ * does [Instant.parseOrNull]), while the colon-less "+0200" is rejected, as
+ * both java.time parsers rejected it. TimelineParserFormatsTest pins both, so
+ * a kotlinx-datetime upgrade cannot widen or narrow this unnoticed.
+ *
  * Returns null for unparseable strings so one bad row doesn't kill a big file.
  */
 internal fun parseTimestamp(text: String?): Instant? {
