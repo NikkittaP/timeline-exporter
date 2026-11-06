@@ -18,6 +18,11 @@ import sys
 import xml.etree.ElementTree as ET
 
 MAX_ANNOTATIONS = 10
+# Last-line markers of a successful xcodebuild run: build, test, archive,
+# -exportArchive (export and upload). Such a log adds nothing even when a
+# later step failed.
+SUCCEEDED = ("** BUILD SUCCEEDED **", "** TEST SUCCEEDED **",
+             "** ARCHIVE SUCCEEDED **", "** EXPORT SUCCEEDED **")
 MAX_LEN = 3500
 
 
@@ -121,7 +126,7 @@ def main(argv=None) -> None:
         name = os.path.basename(path)
         xerrors = xcodebuild_errors(xlines)
         xtests = xcodebuild_test_failures(xlines)
-        succeeded = any(l.strip() in ("** BUILD SUCCEEDED **", "** TEST SUCCEEDED **") for l in xlines)
+        succeeded = any(l.strip() in SUCCEEDED for l in xlines)
         if succeeded and not xerrors:
             continue
         xcode_seen = True

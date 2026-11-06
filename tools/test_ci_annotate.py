@@ -72,7 +72,8 @@ class XcodebuildParsing(unittest.TestCase):
         self.assertEqual(["ld: symbol(s) not found"], errors)
 
     def test_succeeded_log_produces_no_annotation(self):
-        for marker in ("** BUILD SUCCEEDED **", "** TEST SUCCEEDED **"):
+        for marker in ("** BUILD SUCCEEDED **", "** TEST SUCCEEDED **",
+                       "** ARCHIVE SUCCEEDED **", "** EXPORT SUCCEEDED **"):
             with tempfile.TemporaryDirectory() as tmp:
                 log = os.path.join(tmp, "xcodebuild.log")
                 with open(log, "w", encoding="utf-8") as f:
