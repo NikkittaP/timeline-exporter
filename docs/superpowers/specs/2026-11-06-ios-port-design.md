@@ -25,8 +25,9 @@ Google Play app stays free with tips and does not change for the user.
 ## 1. Shared core (`shared`, KMP)
 
 Moves to `shared/commonMain`: the packages `parser`, `filter`, `export` and
-`trips` (about 5,000 lines, no `android.*` imports), plus the Android-free UI
-helpers `MapImageLayout`, `RouteMotion`, `TrackDays` and `WhatsNewNotes`. The
+`trips` (about 5,000 lines, no `android.*` imports). These UI helpers move when iOS
+needs them (stages 4–5): they use `R` and locale-aware date formatting, which must
+first be split from their pure geometry and grouping logic. The
 Kotlin package stays `io.github.nikkittap.timelineexporter`.
 
 JVM-only dependencies are replaced:

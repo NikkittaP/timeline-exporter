@@ -70,6 +70,11 @@ ui/       — Compose screens, ViewModel, MapLibre wrapper, dialogs
 Each layer is independently unit-testable. UI never touches MapLibre or
 ContentResolver types directly; the ViewModel mediates.
 
+The `parser`, `filter`, `export` and `trips` layers live in the Kotlin
+Multiplatform module `shared` (JVM plus iOS targets), which the Android app
+depends on; the `shared` workflow runs its tests on the JVM and on the iOS
+simulator.
+
 ## Attribution
 
 - Map tiles: **OpenFreeMap** (donation-funded), based on **OpenStreetMap**
