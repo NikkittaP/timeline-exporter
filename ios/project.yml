@@ -11,7 +11,9 @@ options:
 settings:
   base:
     DEVELOPMENT_TEAM: 87H7UW6D73
-    SWIFT_VERSION: "6.0"
+    # Swift 5 language mode: the Kotlin framework's types are not Sendable,
+    # and strict concurrency would flag every hop to a background task.
+    SWIFT_VERSION: "5.0"
     # Shared.xcframework has an arm64 simulator slice only (Apple silicon).
     "EXCLUDED_ARCHS[sdk=iphonesimulator*]": x86_64
 targets:
@@ -20,6 +22,20 @@ targets:
     platform: iOS
     sources:
       - path: TimelineExporter
+    # Merged with the generated keys (GENERATE_INFOPLIST_FILE): what has no
+    # INFOPLIST_KEY_ build setting. Written by xcodegen, not committed.
+    info:
+      path: Generated/TimelineExporter-Info.plist
+      properties:
+        # Timeline.json opens in the app from Files and share sheets.
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: JSON
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [public.json]
+        LSSupportsOpeningDocumentsInPlace: true
+        # The languages of Localizable.xcstrings (tools/ios/strings_to_xcstrings.py).
+        CFBundleLocalizations: [en, ar, de, es, fr, hi, it, ja, ko, nl, pl, pt-BR, ru, sv, tr, uk, zh-Hans, zh-Hant]
     dependencies:
       # Static Kotlin/Native framework: linked, not embedded.
       - framework: ../shared/build/XCFrameworks/release/Shared.xcframework

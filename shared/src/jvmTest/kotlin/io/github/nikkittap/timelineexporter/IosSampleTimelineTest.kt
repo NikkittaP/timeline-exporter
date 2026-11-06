@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 
 /**
  * The iOS app bundles ios/TimelineExporter/Resources/sample-timeline.json and its
- * XCTest (ios/TimelineExporterTests/SharedLinkTests.swift) expects these counts.
+ * XCTest (ios/TimelineExporterTests/TimelineStoreTests.swift) expects these counts.
  * Checking them here keeps the two in step without a Mac.
  */
 class IosSampleTimelineTest {
