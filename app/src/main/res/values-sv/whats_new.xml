@@ -3,7 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
-    <string name="whats_new_1_10_1">Nytt: Kartbild. Gör din rutt till en bild att spara eller dela – stående, som inlägg, kvadratisk eller liggande, med datum, sträcka och platser. Finns på kartan och i steg 4.\nEfter en uppdatering visar appen nu vad som är nytt. Tryck på versionsnumret längst ned för att se alla tidigare ändringar.</string>
+    <string name="whats_new_1_10_2">Nytt: Kartbild. Gör din rutt till en bild att spara eller dela – stående, som inlägg, kvadratisk eller liggande, med datum, sträcka och platser. Finns på kartan och i steg 4.\nEfter en uppdatering visar appen nu vad som är nytt. Tryck på versionsnumret längst ned för att se alla tidigare ändringar.</string>
     <string name="whats_new_1_9_2">Appen fungerar nu även på Android 8 och 9.\nInterna uppdateringar för nyare Android-versioner.</string>
     <string name="whats_new_1_9_1">Datum kan nu skrivas in. Öppna ”Period” i steg 2 och tryck på pennan för att skriva dem med tangentbordet; kalenderikonen tar dig tillbaka till kalendern.</string>
     <string name="whats_new_1_9_0">Nytt: Resor. Steg 3 har en flik ”Resor” med varje resa längre än 50 km hemifrån, från dörr till dörr, med datum, sträcka och färdsätt. Tryck på en resa för att se den på kartan; bocka för resor för att bara exportera dem.\nFilter och exportval sparas nu till nästa fil.\nTotala sträckor räknar inte längre aktiviteter dubbelt i sammanslagna filer.\nÅtgärdat en krasch när en andra fil öppnades på vissa telefoner.</string>

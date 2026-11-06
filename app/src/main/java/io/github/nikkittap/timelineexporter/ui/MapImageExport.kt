@@ -14,6 +14,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -254,127 +257,159 @@ private fun MapImageExportContent(
     }
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(R.string.map_image_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                TextButton(onClick = onClose) {
-                    Text(stringResource(R.string.preview_close))
+        BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp)) {
+            // A window wider than it is tall (a tablet, or a phone on its
+            // side) puts the picture beside its settings. Stacked there, the
+            // settings took the whole height and left the preview a
+            // thumbnail.
+            val sideBySide = maxWidth > maxHeight
+
+            val preview: @Composable (Modifier) -> Unit = { modifier ->
+                Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    BoxWithConstraints(
+                        modifier = Modifier.fillMaxWidth().weight(1f),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        // The frame is the picture's exact shape, as large as fits.
+                        val ratio = aspect.widthPx.toFloat() / aspect.heightPx
+                        val (frameW, frameH) = if (maxWidth / maxHeight > ratio) maxHeight * ratio to maxHeight
+                        else maxWidth to maxWidth / ratio
+                        PreviewFrame(
+                            width = frameW,
+                            height = frameH,
+                            state = state,
+                            shown = shown?.takeIf { it.aspect == aspect }?.bitmap,
+                            onRetry = { attempt++ },
+                        )
+                    }
+
+                    Text(
+                        text = stringResource(R.string.map_image_size, outputSpec.widthPx, outputSpec.heightPx, format.label),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
             }
 
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                contentAlignment = Alignment.Center,
+            val controls: @Composable ColumnScope.() -> Unit = {
+                val enabled = state !is RenderState.Empty && !status.busy
+                AspectChooser(selected = aspect, enabled = enabled, onSelect = { aspect = it })
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    val formatLabel = stringResource(R.string.map_image_format)
+                    SingleChoiceSegmentedButtonRow(
+                        modifier = Modifier.weight(1f).semantics { contentDescription = formatLabel },
+                    ) {
+                        MapImageFormat.entries.forEachIndexed { i, entry ->
+                            SegmentedButton(
+                                selected = format == entry,
+                                onClick = { format = entry },
+                                enabled = enabled,
+                                shape = SegmentedButtonDefaults.itemShape(i, MapImageFormat.entries.size),
+                                icon = {},
+                            ) { ButtonLabel(entry.label) }
+                        }
+                    }
+                    val resolutionLabel = stringResource(R.string.map_image_resolution)
+                    SingleChoiceSegmentedButtonRow(
+                        modifier = Modifier.weight(1.25f).semantics { contentDescription = resolutionLabel },
+                    ) {
+                        MapImageResolution.entries.forEachIndexed { i, entry ->
+                            val text = when (entry) {
+                                MapImageResolution.Standard -> stringResource(R.string.map_image_res_standard)
+                                MapImageResolution.High -> stringResource(R.string.map_image_res_high)
+                            }
+                            SegmentedButton(
+                                selected = effectiveResolution == entry,
+                                onClick = { resolution = entry },
+                                enabled = enabled && (entry == MapImageResolution.Standard || highAvailable),
+                                shape = SegmentedButtonDefaults.itemShape(i, MapImageResolution.entries.size),
+                                icon = {},
+                            ) { ButtonLabel(text) }
+                        }
+                    }
+                }
+                when (highSupport) {
+                    HighResolutionSupport.ExceedsGpu -> Note(stringResource(R.string.map_image_high_gpu))
+                    HighResolutionSupport.InsufficientMemory -> Note(stringResource(R.string.map_image_high_memory))
+                    else -> Unit
+                }
+
+                OptionRow(stringResource(R.string.map_image_show_stats), showStats, enabled) { showStats = it }
+                OptionRow(stringResource(R.string.map_image_show_endpoints), showEndpoints, enabled) { showEndpoints = it }
+                OptionRow(stringResource(R.string.map_color_by_day), colorByDay, enabled) { colorByDay = it }
+
+                StatusLine(state = state, status = status)
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(
+                        onClick = {
+                            val spec = outputSpec
+                            val fileFormat = format
+                            val name = filename
+                            scope.launch {
+                                val (bitmap, owned) = produce(spec) ?: return@launch
+                                if (status == OutputStatus.RenderingHigh) status = OutputStatus.None
+                                val ok = shareImage(context, bitmap, fileFormat, name)
+                                if (owned) bitmap.recycle()
+                                if (!ok) status = OutputStatus.ShareFailed
+                            }
+                        },
+                        enabled = ready != null && !status.busy,
+                        shape = MaterialTheme.shapes.small,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        ButtonLabel(stringResource(R.string.map_image_share))
+                    }
+                    Button(
+                        onClick = {
+                            when (format) {
+                                MapImageFormat.Png -> savePng.launch(filename)
+                                MapImageFormat.Jpeg -> saveJpeg.launch(filename)
+                            }
+                        },
+                        enabled = ready != null && !status.busy,
+                        shape = MaterialTheme.shapes.small,
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        ButtonLabel(stringResource(R.string.map_image_save))
+                    }
+                }
+            }
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                // The frame is the picture's exact shape, as large as fits.
-                val ratio = aspect.widthPx.toFloat() / aspect.heightPx
-                val (frameW, frameH) = if (maxWidth / maxHeight > ratio) maxHeight * ratio to maxHeight
-                else maxWidth to maxWidth / ratio
-                PreviewFrame(
-                    width = frameW,
-                    height = frameH,
-                    state = state,
-                    shown = shown?.takeIf { it.aspect == aspect }?.bitmap,
-                    onRetry = { attempt++ },
-                )
-            }
-
-            Text(
-                text = stringResource(R.string.map_image_size, outputSpec.widthPx, outputSpec.heightPx, format.label),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            val enabled = state !is RenderState.Empty && !status.busy
-            AspectChooser(selected = aspect, enabled = enabled, onSelect = { aspect = it })
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                val formatLabel = stringResource(R.string.map_image_format)
-                SingleChoiceSegmentedButtonRow(
-                    modifier = Modifier.weight(1f).semantics { contentDescription = formatLabel },
-                ) {
-                    MapImageFormat.entries.forEachIndexed { i, entry ->
-                        SegmentedButton(
-                            selected = format == entry,
-                            onClick = { format = entry },
-                            enabled = enabled,
-                            shape = SegmentedButtonDefaults.itemShape(i, MapImageFormat.entries.size),
-                            icon = {},
-                        ) { ButtonLabel(entry.label) }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(R.string.map_image_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.weight(1f),
+                    )
+                    TextButton(onClick = onClose) {
+                        Text(stringResource(R.string.preview_close))
                     }
                 }
-                val resolutionLabel = stringResource(R.string.map_image_resolution)
-                SingleChoiceSegmentedButtonRow(
-                    modifier = Modifier.weight(1.25f).semantics { contentDescription = resolutionLabel },
-                ) {
-                    MapImageResolution.entries.forEachIndexed { i, entry ->
-                        val text = when (entry) {
-                            MapImageResolution.Standard -> stringResource(R.string.map_image_res_standard)
-                            MapImageResolution.High -> stringResource(R.string.map_image_res_high)
-                        }
-                        SegmentedButton(
-                            selected = effectiveResolution == entry,
-                            onClick = { resolution = entry },
-                            enabled = enabled && (entry == MapImageResolution.Standard || highAvailable),
-                            shape = SegmentedButtonDefaults.itemShape(i, MapImageResolution.entries.size),
-                            icon = {},
-                        ) { ButtonLabel(text) }
+
+
+                if (sideBySide) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().weight(1f),
+                        horizontalArrangement = Arrangement.spacedBy(24.dp),
+                    ) {
+                        preview(Modifier.weight(1f).fillMaxHeight())
+                        Column(
+                            modifier = Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(6.dp),
+                            content = controls,
+                        )
                     }
-                }
-            }
-            when (highSupport) {
-                HighResolutionSupport.ExceedsGpu -> Note(stringResource(R.string.map_image_high_gpu))
-                HighResolutionSupport.InsufficientMemory -> Note(stringResource(R.string.map_image_high_memory))
-                else -> Unit
-            }
-
-            OptionRow(stringResource(R.string.map_image_show_stats), showStats, enabled) { showStats = it }
-            OptionRow(stringResource(R.string.map_image_show_endpoints), showEndpoints, enabled) { showEndpoints = it }
-            OptionRow(stringResource(R.string.map_color_by_day), colorByDay, enabled) { colorByDay = it }
-
-            StatusLine(state = state, status = status)
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(
-                    onClick = {
-                        val spec = outputSpec
-                        val fileFormat = format
-                        val name = filename
-                        scope.launch {
-                            val (bitmap, owned) = produce(spec) ?: return@launch
-                            if (status == OutputStatus.RenderingHigh) status = OutputStatus.None
-                            val ok = shareImage(context, bitmap, fileFormat, name)
-                            if (owned) bitmap.recycle()
-                            if (!ok) status = OutputStatus.ShareFailed
-                        }
-                    },
-                    enabled = ready != null && !status.busy,
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    ButtonLabel(stringResource(R.string.map_image_share))
-                }
-                Button(
-                    onClick = {
-                        when (format) {
-                            MapImageFormat.Png -> savePng.launch(filename)
-                            MapImageFormat.Jpeg -> saveJpeg.launch(filename)
-                        }
-                    },
-                    enabled = ready != null && !status.busy,
-                    shape = MaterialTheme.shapes.small,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    ButtonLabel(stringResource(R.string.map_image_save))
+                } else {
+                    preview(Modifier.fillMaxWidth().weight(1f))
+                    controls()
                 }
             }
         }

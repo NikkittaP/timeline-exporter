@@ -3,7 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
-    <string name="whats_new_1_10_1">Novo: Imagem do mapa. Transforme seu trajeto em uma imagem para salvar ou compartilhar: retrato, post, quadrada ou paisagem, com suas datas, distância e lugares. Fica no mapa e na etapa 4.\nDepois de uma atualização, o app agora mostra as novidades. Toque no número da versão embaixo para ver todas as mudanças anteriores.</string>
+    <string name="whats_new_1_10_2">Novo: Imagem do mapa. Transforme seu trajeto em uma imagem para salvar ou compartilhar: retrato, post, quadrada ou paisagem, com suas datas, distância e lugares. Fica no mapa e na etapa 4.\nDepois de uma atualização, o app agora mostra as novidades. Toque no número da versão embaixo para ver todas as mudanças anteriores.</string>
     <string name="whats_new_1_9_2">O app agora também funciona no Android 8 e 9.\nAtualizações internas para as versões mais recentes do Android.</string>
     <string name="whats_new_1_9_1">Agora dá para digitar as datas. Abra \"Período\" na etapa 2 e toque no lápis para inseri-las pelo teclado; o ícone de calendário volta ao calendário.</string>
     <string name="whats_new_1_9_0">Novo: Viagens. A etapa 3 tem uma aba \"Viagens\" com cada viagem a mais de 50 km de casa, de porta a porta, com datas, distância e meio de transporte. Toque em uma viagem para vê-la no mapa; marque viagens para exportar só elas.\nFiltros e opções de exportação agora são lembrados para o próximo arquivo.\nAs distâncias totais não contam mais em dobro as atividades de arquivos mesclados.\nCorrigido um fechamento ao abrir um segundo arquivo em alguns celulares.</string>

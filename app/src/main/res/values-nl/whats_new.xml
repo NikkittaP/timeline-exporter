@@ -3,7 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
-    <string name="whats_new_1_10_1">Nieuw: Kaartafbeelding. Maak van je route een afbeelding om op te slaan of te delen – staand, als post, vierkant of liggend, met je data, afstand en plaatsen. Te vinden op de kaart en in stap 4.\nNa een update laat de app nu zien wat er nieuw is. Tik onderaan op het versienummer om alle eerdere wijzigingen te zien.</string>
+    <string name="whats_new_1_10_2">Nieuw: Kaartafbeelding. Maak van je route een afbeelding om op te slaan of te delen – staand, als post, vierkant of liggend, met je data, afstand en plaatsen. Te vinden op de kaart en in stap 4.\nNa een update laat de app nu zien wat er nieuw is. Tik onderaan op het versienummer om alle eerdere wijzigingen te zien.</string>
     <string name="whats_new_1_9_2">De app werkt nu ook op Android 8 en 9.\nInterne updates voor nieuwere Android-versies.</string>
     <string name="whats_new_1_9_1">Datums kun je nu typen. Open ‘Periode’ in stap 2 en tik op het potlood om ze met het toetsenbord in te voeren; het kalenderpictogram brengt je terug naar de kalender.</string>
     <string name="whats_new_1_9_0">Nieuw: Reizen. Stap 3 heeft een tab ‘Reizen’ met elke reis verder dan 50 km van huis, van deur tot deur, met data, afstand en vervoermiddel. Tik op een reis om hem op de kaart te zien; vink reizen aan om alleen die te exporteren.\nFilters en exportkeuzes worden onthouden voor het volgende bestand.\nTotale afstanden tellen activiteiten in samengevoegde bestanden niet meer dubbel.\nCrash opgelost bij het openen van een tweede bestand op sommige telefoons.</string>

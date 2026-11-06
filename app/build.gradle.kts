@@ -436,8 +436,11 @@ android {
         //   versionCode=28, versionName="1.10.1" -> 27 is on internal testing;
         //       adds the app bar title shrinking to fit on narrow screens
         //       (OnePlus 7 Pro, Mi 5s). changelogs/28.txt is 27.txt as is.
-        versionCode = 28
-        versionName = "1.10.1"
+        //   versionCode=29, versionName="1.10.2" -> 28 is on internal testing;
+        //       adds the Map image screen putting the picture beside its
+        //       settings in landscape. changelogs/29.txt is 28.txt as is.
+        versionCode = 29
+        versionName = "1.10.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

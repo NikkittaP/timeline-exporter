@@ -3,7 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
-    <string name="whats_new_1_10_1">Neu: Kartenbild. Mach aus deiner Route ein Bild zum Speichern oder Teilen – hoch, als Post, quadratisch oder quer, mit Zeitraum, Strecke und Orten. Du findest es auf der Karte und in Schritt 4.\nNach einem Update zeigt die App jetzt, was neu ist. Tippe unten auf die Versionsnummer, um alle früheren Änderungen zu sehen.</string>
+    <string name="whats_new_1_10_2">Neu: Kartenbild. Mach aus deiner Route ein Bild zum Speichern oder Teilen – hoch, als Post, quadratisch oder quer, mit Zeitraum, Strecke und Orten. Du findest es auf der Karte und in Schritt 4.\nNach einem Update zeigt die App jetzt, was neu ist. Tippe unten auf die Versionsnummer, um alle früheren Änderungen zu sehen.</string>
     <string name="whats_new_1_9_2">Die App läuft jetzt auch unter Android 8 und 9.\nInterne Aktualisierungen für neuere Android-Versionen.</string>
     <string name="whats_new_1_9_1">Daten lassen sich jetzt eintippen. Öffne „Zeitraum“ in Schritt 2 und tippe auf den Stift, um sie mit der Tastatur einzugeben; das Kalendersymbol bringt dich zurück zum Kalender.</string>
     <string name="whats_new_1_9_0">Neu: Reisen. Schritt 3 hat jetzt einen Tab „Reisen“ mit jeder Reise über 50 km von zu Hause, von Tür zu Tür, mit Daten, Strecke und Verkehrsmittel. Tippe auf eine Reise für die Karte; hake Reisen an, um nur diese zu exportieren.\nFilter und Exporteinstellungen werden jetzt für die nächste Datei gemerkt.\nGesamtstrecken zählen Aktivitäten in zusammengeführten Dateien nicht mehr doppelt.\nAbsturz beim Öffnen einer zweiten Datei auf manchen Handys behoben.</string>

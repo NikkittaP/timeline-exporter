@@ -25,12 +25,13 @@ Where things go at release time:
 
 # Unreleased — everything since v1.9.2
 
-To ship as **1.10.1 (versionCode 28)**: Map image and the What's new
-popup. 1.10.0 (27) went to internal testing only; 28 adds the app bar
-title shrinking to fit on narrow screens and carries the same store text.
-Store text, two items: `fastlane/metadata/android/<locale>/changelogs/28.txt`
-and `F:\Timeline\Whats_New_v1.10.1_tagged.txt`, 18 locales, 104–359
-characters each; the same text is the app's own 1.10.1 notes
+To ship as **1.10.2 (versionCode 29)**: Map image and the What's new
+popup. 1.10.0 (27) and 1.10.1 (28) went to internal testing only; 28
+added the app bar title shrinking to fit on narrow screens, 29 the Map
+image screen's landscape layout, and both carry the same store text.
+Store text, two items: `fastlane/metadata/android/<locale>/changelogs/29.txt`
+and `F:\Timeline\Whats_New_v1.10.2_tagged.txt`, 18 locales, 104–359
+characters each; the same text is the app's own 1.10.2 notes
 (`tools/whats_new.py`). The hidden route animation (long press on the
 fit-to-data button) and the journey scenes behind the logo and title are
 left out of the store text on purpose.
@@ -55,6 +56,10 @@ left out of the store text on purpose.
   PNG or JPEG (quality 93). High (2×) keeps the same framing at twice
   the pixels and is offered only where the GPU and free memory allow it.
 - Switches for the stats, the start/end markers and color by day.
+- On a screen wider than it is tall (a tablet, or a phone on its side)
+  the picture sits beside its settings, which scroll. Stacked there, the
+  settings took the whole height and left the preview a thumbnail
+  (versionCode 29).
 - Dates on the image and in its filename follow the phone's time zone,
   like the rest of the app; the day count is the file card's own figure.
 - Dashed gap connectors on exported images are slightly stronger.

@@ -3,7 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
-    <string name="whats_new_1_10_1">Nowość: Obraz mapy. Zamień trasę w obraz do zapisania lub udostępnienia – pionowy, do posta, kwadratowy lub poziomy, z datami, dystansem i miejscami. Znajdziesz go na mapie i w kroku 4.\nPo aktualizacji aplikacja pokazuje teraz, co nowego. Stuknij numer wersji na dole, aby zobaczyć wszystkie wcześniejsze zmiany.</string>
+    <string name="whats_new_1_10_2">Nowość: Obraz mapy. Zamień trasę w obraz do zapisania lub udostępnienia – pionowy, do posta, kwadratowy lub poziomy, z datami, dystansem i miejscami. Znajdziesz go na mapie i w kroku 4.\nPo aktualizacji aplikacja pokazuje teraz, co nowego. Stuknij numer wersji na dole, aby zobaczyć wszystkie wcześniejsze zmiany.</string>
     <string name="whats_new_1_9_2">Aplikacja działa teraz także na Androidzie 8 i 9.\nWewnętrzne aktualizacje dla nowszych wersji Androida.</string>
     <string name="whats_new_1_9_1">Daty można teraz wpisać. Otwórz „Okres” w kroku 2 i dotknij ołówka, by wpisać je z klawiatury; ikona kalendarza przywraca kalendarz.</string>
     <string name="whats_new_1_9_0">Nowość: Podróże. Krok 3 ma kartę „Podróże” z każdą podróżą dalej niż 50 km od domu, od drzwi do drzwi, z datami, dystansem i środkiem transportu. Dotknij podróży, by zobaczyć ją na mapie; zaznacz podróże, by wyeksportować tylko je.\nFiltry i ustawienia eksportu są zapamiętywane dla następnego pliku.\nŁączny dystans nie liczy już podwójnie aktywności w scalonych plikach.\nNaprawiono awarię przy otwieraniu drugiego pliku na niektórych telefonach.</string>

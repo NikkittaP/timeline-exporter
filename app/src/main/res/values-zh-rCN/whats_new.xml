@@ -3,7 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
-    <string name="whats_new_1_10_1">新功能：地图图片。将路线生成图片，保存或分享——竖版、帖子、方形或横版，并附上日期、距离和地点。在地图上和第 4 步中均可找到。\n更新后，应用现在会显示新功能。点按底部的版本号即可查看以往的所有更改。</string>
+    <string name="whats_new_1_10_2">新功能：地图图片。将路线生成图片，保存或分享——竖版、帖子、方形或横版，并附上日期、距离和地点。在地图上和第 4 步中均可找到。\n更新后，应用现在会显示新功能。点按底部的版本号即可查看以往的所有更改。</string>
     <string name="whats_new_1_9_2">应用现在也支持 Android 8 和 9。\n针对较新 Android 版本的内部更新。</string>
     <string name="whats_new_1_9_1">现在可以直接输入日期。在第 2 步打开“日期范围”，点按铅笔即可用键盘输入；点按日历图标可返回日历。</string>
     <string name="whats_new_1_9_0">新功能：旅行。第 3 步新增“旅行”标签，列出每次离家超过 50 公里的旅行，从出门到回家，附日期、距离和出行方式。点按旅行可在地图上查看；勾选旅行即可只导出这些旅行。\n筛选条件和导出选项现在会为下一个文件保留。\n合并文件中的活动不再被重复计入总距离。\n修复了部分手机上打开第二个文件时崩溃的问题。</string>
