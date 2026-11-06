@@ -2,6 +2,7 @@ package io.github.nikkittap.timelineexporter
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,6 +26,20 @@ class MainActivity : ComponentActivity() {
     // Apply the user's in-app language choice before any resources are resolved.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleManager.wrap(newBase))
+    }
+
+    // The framework resets Locale.getDefault() to the system locale when it
+    // applies a configuration to the process (Play's billing screen does it),
+    // and attachBaseContext does not run again on return. See
+    // LocaleManager.reapplyDefault.
+    override fun onResume() {
+        super.onResume()
+        LocaleManager.reapplyDefault(this)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        LocaleManager.reapplyDefault(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

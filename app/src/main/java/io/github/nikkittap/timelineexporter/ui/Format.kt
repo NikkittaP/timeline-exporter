@@ -68,7 +68,8 @@ fun formatLocalDayRange(context: Context, first: LocalDate, last: LocalDate): St
     // ICU directly, with the skeleton DateUtils.formatDateRange built from
     // SHOW_DATE | SHOW_YEAR | ABBREV_MONTH. API 37 deprecated its FORMAT_UTC
     // flag; the zone is now set on the formatter instead. Locale.getDefault()
-    // is what DateUtils read too, and it follows the per-app language.
+    // is what DateUtils read too; it follows the per-app language because
+    // MainActivity re-applies it (LocaleManager.reapplyDefault).
     val format = DateIntervalFormat.getInstance("yMMMd", Locale.getDefault())
     format.timeZone = TimeZone.GMT_ZONE
     val range = format.format(DateInterval(startMillis, endMillis), StringBuffer(), FieldPosition(0)).toString()

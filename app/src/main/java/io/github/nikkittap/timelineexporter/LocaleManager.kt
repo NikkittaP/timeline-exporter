@@ -66,15 +66,36 @@ object LocaleManager {
      * [base] unchanged. Call from Activity.attachBaseContext.
      */
     fun wrap(base: Context): Context {
-        if (isPlatformLocaleApi()) return base
-        val tag = base.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            .getString(KEY_LANG, "") ?: ""
-        if (tag.isEmpty()) return base
-        val locale = Locale.forLanguageTag(tag)
-        Locale.setDefault(locale)
+        val locale = reapplyDefault(base) ?: return base
         val config = Configuration(base.resources.configuration)
         config.setLocale(locale)
         config.setLayoutDirection(locale)
         return base.createConfigurationContext(config)
     }
+
+    /**
+     * Set the JVM default [Locale] to the chosen language again on API 26–32
+     * and return it, or return null when the platform or the system language
+     * is in charge.
+     *
+     * Formatters such as `"%,d".format(n)` and `DateIntervalFormat` read
+     * [Locale.getDefault], and the framework resets it to the system locale
+     * whenever it applies a configuration to the process: for example while
+     * Google Play's in-process billing activity runs. [wrap] only runs when
+     * the activity is created, so after returning from that screen numbers
+     * and dates came out in the system language until a restart. Call this
+     * from onResume and onConfigurationChanged as well.
+     */
+    fun reapplyDefault(context: Context): Locale? {
+        if (isPlatformLocaleApi()) return null
+        val tag = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getString(KEY_LANG, "") ?: ""
+        val locale = localeForTag(tag) ?: return null
+        if (Locale.getDefault() != locale) Locale.setDefault(locale)
+        return locale
+    }
+
+    /** The locale for a persisted tag, or null for "" (follow the system). */
+    internal fun localeForTag(tag: String): Locale? =
+        if (tag.isEmpty()) null else Locale.forLanguageTag(tag)
 }
