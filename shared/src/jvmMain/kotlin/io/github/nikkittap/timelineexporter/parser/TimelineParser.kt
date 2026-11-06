@@ -1,9 +1,8 @@
 package io.github.nikkittap.timelineexporter.parser
 
-import com.fasterxml.jackson.core.JsonFactory
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.core.JsonToken
-import java.io.InputStream
+import io.github.nikkittap.timelineexporter.json.JsonReader
+import io.github.nikkittap.timelineexporter.json.JsonToken
+import kotlinx.io.Source
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
@@ -35,7 +34,7 @@ sealed interface ParserStage {
  * Parses a Google Maps Timeline / Location History export into a normalized
  * [ParsedTimeline].
  *
- * The parser is fully STREAMING: it uses a Jackson pull-parser to read one
+ * The parser is fully STREAMING: it uses a pull-style [JsonReader] to read one
  * JSON token at a time and extract GPS points as it goes, discarding each raw
  * segment immediately. The whole file is never materialized as a String or as
  * an object tree, so peak memory is proportional to the number of extracted
@@ -65,23 +64,24 @@ sealed interface ParserStage {
  * Returned [PathPoint]s are sorted ascending by time.
  *
  * @throws NotTimelineFileException if the file matches no known layout.
- * @throws com.fasterxml.jackson.core.JsonProcessingException if it isn't valid JSON.
+ * @throws io.github.nikkittap.timelineexporter.json.JsonParseException if it
+ *   isn't valid JSON (an IOException on the JVM, as Jackson's was).
  */
 
 private const val PROGRESS_STRIDE = 100
 
-private val jsonFactory: JsonFactory = JsonFactory()
-
 /** Parse from an in-memory string (used by tests and small shared text). */
 fun parseTimeline(jsonText: String, onProgress: (ParserStage) -> Unit = {}): ParsedTimeline =
-    jsonFactory.createParser(jsonText).use { streamTimeline(it, onProgress) }
+    JsonReader.of(jsonText).use { streamTimeline(it, onProgress) }
 
 /**
- * Parse straight from a stream (used for real files). The caller owns the
- * stream's lifecycle; this only reads from it.
+ * Parse straight from a byte source (used for real files). [source] is read
+ * to the end of the JSON value and closed when the parse finishes or fails —
+ * as the Jackson parser this replaced closed its stream. The JVM
+ * `InputStream` overload lives in TimelineParserJvm.kt.
  */
-fun parseTimeline(input: InputStream, onProgress: (ParserStage) -> Unit = {}): ParsedTimeline =
-    jsonFactory.createParser(input).use { streamTimeline(it, onProgress) }
+fun parseTimeline(source: Source, onProgress: (ParserStage) -> Unit = {}): ParsedTimeline =
+    JsonReader(source).use { streamTimeline(it, onProgress) }
 
 // ---------- Progress pre-scan ----------
 //
@@ -90,7 +90,7 @@ fun parseTimeline(input: InputStream, onProgress: (ParserStage) -> Unit = {}): P
 // rawSignals fallback array last — see the "rawSignals" branch of
 // streamTimeline. That means a byte read in the first few percent of the
 // file costs far more (parses fields, allocates PathPoints and Segments)
-// than a byte read in the rest of it (JsonParser#skipChildren(), no
+// than a byte read in the rest of it (JsonReader#skipChildren(), no
 // allocation), so a plain bytesRead/totalBytes progress fraction crawls
 // through the expensive part and then finishes the rest in under a second
 // — accurate about bytes, misleading about time. These two functions let a
@@ -102,7 +102,7 @@ fun parseTimeline(input: InputStream, onProgress: (ParserStage) -> Unit = {}): P
 /**
  * Byte offset of the first real semantic-content key (`semanticSegments`,
  * `timelineObjects` or `locations`) and of `rawSignals`, found by scanning
- * [input] once for the literal (quoted) key names as ASCII bytes — no JSON
+ * [source] once for the literal (quoted) key names as ASCII bytes — no JSON
  * parsing, so it costs one sequential read rather than a second full parse.
  *
  * [rawSignalsOffset] is only meaningful as a progress-weighting split point
@@ -117,11 +117,14 @@ fun parseTimeline(input: InputStream, onProgress: (ParserStage) -> Unit = {}): P
 class KeyOffsets(val firstContentKeyOffset: Long?, val rawSignalsOffset: Long?)
 
 private val CONTENT_KEY_NEEDLES = listOf("\"semanticSegments\"", "\"timelineObjects\"", "\"locations\"")
-    .map { it.toByteArray(Charsets.US_ASCII) }
-private val RAW_SIGNALS_NEEDLE = "\"rawSignals\"".toByteArray(Charsets.US_ASCII)
+    .map { it.encodeToByteArray() }
+private val RAW_SIGNALS_NEEDLE = "\"rawSignals\"".encodeToByteArray()
 
-/** Public for the app module. */
-fun findKeyOffsets(input: InputStream): KeyOffsets {
+/**
+ * Public for the app module. Reads [source] only as far as needed to find
+ * every key (or to its end) and does not close it.
+ */
+fun findKeyOffsets(source: Source): KeyOffsets {
     val needles = CONTENT_KEY_NEEDLES + RAW_SIGNALS_NEEDLE
     val found = arrayOfNulls<Long>(needles.size)
     val buffer = ByteArray(64 * 1024)
@@ -130,7 +133,7 @@ fun findKeyOffsets(input: InputStream): KeyOffsets {
     val maxNeedleLen = needles.maxOf { it.size }
 
     while (found.any { it == null }) {
-        val n = input.read(buffer)
+        val n = source.readAtMostTo(buffer)
         if (n < 0) break
         val chunk = if (carry.isEmpty()) buffer.copyOf(n) else carry + buffer.copyOf(n)
         for (i in needles.indices) {
@@ -165,7 +168,7 @@ private class SegmentCounters {
     var activity = 0
 }
 
-private fun streamTimeline(p: JsonParser, onProgress: (ParserStage) -> Unit): ParsedTimeline {
+private fun streamTimeline(p: JsonReader, onProgress: (ParserStage) -> Unit): ParsedTimeline {
     onProgress(ParserStage.DecodingJson)
 
     val points = ArrayList<PathPoint>()
@@ -396,7 +399,7 @@ private class RawPt(val point: String?, val time: String?, val offset: String?)
 
 /** Phone-takeout semantic segment: timelinePath points, or visit/activity. */
 private fun extractSemanticSegment(
-    p: JsonParser,
+    p: JsonReader,
     out: MutableList<PathPoint>,
     counters: SegmentCounters,
     segments: MutableList<Segment>,
@@ -503,7 +506,7 @@ private class ActivityFields(
  * `parking` and the full `candidates` list are deliberately skipped — nothing
  * consumes them, and skipping keeps the streaming parser's memory profile flat.
  */
-private fun readActivity(p: JsonParser): ActivityFields? {
+private fun readActivity(p: JsonReader): ActivityFields? {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
     var type: String? = null
     var distance: Double? = null
@@ -533,7 +536,7 @@ private fun readActivity(p: JsonParser): ActivityFields? {
 }
 
 /** Phone-takeout `visit`: the matched place and how sure Google is about it. */
-private fun readVisit(p: JsonParser): Place? {
+private fun readVisit(p: JsonReader): Place? {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
     var probability: Double? = null
     var hierarchyLevel: Int? = null
@@ -575,7 +578,7 @@ private fun readVisit(p: JsonParser): Place? {
 }
 
 /** `{ "latLng": "41.28°, 69.24°" }` as used throughout the phone takeout. */
-private fun readLatLngObject(p: JsonParser): Pair<Double, Double>? {
+private fun readLatLngObject(p: JsonReader): Pair<Double, Double>? {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
     var raw: String? = null
     while (p.nextToken() != JsonToken.END_OBJECT) {
@@ -586,7 +589,7 @@ private fun readLatLngObject(p: JsonParser): Pair<Double, Double>? {
     return raw?.let { parseCoordinatePair(it) }
 }
 
-private fun readTimelinePoint(p: JsonParser): RawPt {
+private fun readTimelinePoint(p: JsonReader): RawPt {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return RawPt(null, null, null) }
     var point: String? = null
     var time: String? = null
@@ -622,7 +625,7 @@ private fun readTimelinePoint(p: JsonParser): RawPt {
  * documented layout.
  */
 private fun extractTimelineObject(
-    p: JsonParser,
+    p: JsonReader,
     out: MutableList<PathPoint>,
     counters: SegmentCounters,
     segments: MutableList<Segment>,
@@ -650,7 +653,7 @@ private fun extractTimelineObject(
 }
 
 private fun readActivitySegment(
-    p: JsonParser,
+    p: JsonReader,
     out: MutableList<PathPoint>,
     segments: MutableList<Segment>,
 ) {
@@ -724,7 +727,7 @@ private fun readActivitySegment(
 }
 
 private fun readPlaceVisit(
-    p: JsonParser,
+    p: JsonReader,
     out: MutableList<PathPoint>,
     segments: MutableList<Segment>,
 ) {
@@ -790,7 +793,7 @@ private class VisitLocation(
     val address: String? = null,
 )
 
-private fun readVisitLocation(p: JsonParser): VisitLocation {
+private fun readVisitLocation(p: JsonReader): VisitLocation {
     if (p.currentToken() != JsonToken.START_OBJECT) {
         p.skipChildren(); return VisitLocation(null, null, null)
     }
@@ -822,7 +825,7 @@ private fun readVisitLocation(p: JsonParser): VisitLocation {
 }
 
 /** Returns (startTimestamp ?: startTimestampMs, endTimestamp ?: endTimestampMs). */
-private fun readDuration(p: JsonParser): Pair<String?, String?> {
+private fun readDuration(p: JsonReader): Pair<String?, String?> {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null to null }
     var ts: String? = null
     var tsMs: String? = null
@@ -842,7 +845,7 @@ private fun readDuration(p: JsonParser): Pair<String?, String?> {
     return (ts ?: tsMs) to (es ?: esMs)
 }
 
-private fun readWaypointPath(p: JsonParser): ArrayList<Pair<Double, Double>>? {
+private fun readWaypointPath(p: JsonReader): ArrayList<Pair<Double, Double>>? {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
     var result: ArrayList<Pair<Double, Double>>? = null
     while (p.nextToken() != JsonToken.END_OBJECT) {
@@ -857,7 +860,7 @@ private fun readWaypointPath(p: JsonParser): ArrayList<Pair<Double, Double>>? {
     return result
 }
 
-private fun readSimplifiedRawPath(p: JsonParser): ArrayList<Pair<Pair<Double, Double>, String?>>? {
+private fun readSimplifiedRawPath(p: JsonReader): ArrayList<Pair<Pair<Double, Double>, String?>>? {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
     var result: ArrayList<Pair<Pair<Double, Double>, String?>>? = null
     while (p.nextToken() != JsonToken.END_OBJECT) {
@@ -872,7 +875,7 @@ private fun readSimplifiedRawPath(p: JsonParser): ArrayList<Pair<Pair<Double, Do
     return result
 }
 
-private fun readSimplifiedPoint(p: JsonParser): Pair<Pair<Double, Double>, String?>? {
+private fun readSimplifiedPoint(p: JsonReader): Pair<Pair<Double, Double>, String?>? {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
     var latP: Long? = null; var latA: Long? = null
     var lonP: Long? = null; var lonA: Long? = null
@@ -895,7 +898,7 @@ private fun readSimplifiedPoint(p: JsonParser): Pair<Pair<Double, Double>, Strin
 }
 
 /** E7 location object with either latitudeE7/longitudeE7 or latE7/lngE7. */
-private fun readE7Location(p: JsonParser): Pair<Double, Double>? {
+private fun readE7Location(p: JsonReader): Pair<Double, Double>? {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return null }
     var latP: Long? = null; var latA: Long? = null
     var lonP: Long? = null; var lonA: Long? = null
@@ -914,7 +917,7 @@ private fun readE7Location(p: JsonParser): Pair<Double, Double>? {
 }
 
 /** Takeout "Records.json" entry: E7 coords + timestamp. */
-private fun extractLocationRecord(p: JsonParser, out: MutableList<PathPoint>) {
+private fun extractLocationRecord(p: JsonReader, out: MutableList<PathPoint>) {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return }
     var latE7: Long? = null; var lonE7: Long? = null
     var ts: String? = null; var tsMs: String? = null
@@ -936,7 +939,7 @@ private fun extractLocationRecord(p: JsonParser, out: MutableList<PathPoint>) {
 }
 
 /** Phone export rawSignals fallback: position.LatLng + position.timestamp. */
-private fun extractRawSignal(p: JsonParser, out: MutableList<PathPoint>) {
+private fun extractRawSignal(p: JsonReader, out: MutableList<PathPoint>) {
     if (p.currentToken() != JsonToken.START_OBJECT) { p.skipChildren(); return }
     var latLng: String? = null
     var ts: String? = null
@@ -963,14 +966,14 @@ private fun extractRawSignal(p: JsonParser, out: MutableList<PathPoint>) {
 // ---------- Token helpers ----------
 
 /** Text of the current scalar value, or null for null / nested structures. */
-private fun JsonParser.valueAsStringOrNull(): String? = when (currentToken()) {
+private fun JsonReader.valueAsStringOrNull(): String? = when (currentToken()) {
     JsonToken.VALUE_NULL -> null
     JsonToken.START_OBJECT, JsonToken.START_ARRAY -> { skipChildren(); null }
     else -> valueAsString
 }
 
 /** Long value of the current token (int or numeric string), else null. */
-private fun JsonParser.longOrNull(): Long? = when (currentToken()) {
+private fun JsonReader.longOrNull(): Long? = when (currentToken()) {
     JsonToken.VALUE_NUMBER_INT -> longValue
     JsonToken.VALUE_STRING -> valueAsString?.trim()?.toLongOrNull()
     JsonToken.START_OBJECT, JsonToken.START_ARRAY -> { skipChildren(); null }
@@ -982,7 +985,7 @@ private fun JsonParser.longOrNull(): Long? = when (currentToken()) {
  * Non-finite values are rejected: a NaN distance would poison every total it
  * is ever summed into, and silently — NaN propagates without throwing.
  */
-private fun JsonParser.doubleOrNull(): Double? = when (currentToken()) {
+private fun JsonReader.doubleOrNull(): Double? = when (currentToken()) {
     JsonToken.VALUE_NUMBER_FLOAT, JsonToken.VALUE_NUMBER_INT -> doubleValue
     JsonToken.VALUE_STRING -> valueAsString?.trim()?.toDoubleOrNull()
     JsonToken.START_OBJECT, JsonToken.START_ARRAY -> { skipChildren(); null }

@@ -140,6 +140,18 @@ class TimelineParserFormatsTest {
         parseTimeline("""{ "somethingElse": [] }""")
     }
 
+    // The app shows malformed JSON as "not a Timeline file" by catching
+    // IOException, which Jackson's parse errors were. JsonReader's must be too.
+    @Test(expected = java.io.IOException::class)
+    fun `malformed JSON throws an IOException`() {
+        parseTimeline("""{ "semanticSegments": [ { "startTime": """)
+    }
+
+    @Test(expected = java.io.IOException::class)
+    fun `malformed JSON from a stream throws an IOException`() {
+        parseTimeline("""{ "semanticSegments": [ } """.byteInputStream())
+    }
+
     // ----- low-level helpers -----
 
     @Test

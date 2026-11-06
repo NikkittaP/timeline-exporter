@@ -7,8 +7,7 @@
 # ship their own, or for our own code if we ever do reflection on it.
 #
 # The one we need to handle by hand: MapLibre Native (reflective JNI
-# bindings). jackson-core is a pure streaming JSON parser with no runtime
-# reflection, so it needs no keep rules — only a defensive -dontwarn.
+# bindings).
 # =============================================================================
 
 
@@ -18,14 +17,6 @@
 # -----------------------------------------------------------------------------
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
-
-
-# -----------------------------------------------------------------------------
-# Jackson (jackson-core) — streaming JSON parser used by parser/TimelineParser.
-# Pure pull-parser, no reflection, ships no consumer rules. Defensive -dontwarn
-# in case R8 sees optional references it can't resolve.
-# -----------------------------------------------------------------------------
--dontwarn com.fasterxml.jackson.**
 
 
 # -----------------------------------------------------------------------------

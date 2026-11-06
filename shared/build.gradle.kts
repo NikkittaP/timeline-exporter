@@ -25,11 +25,10 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
-        jvmMain.dependencies {
-            implementation(libs.jackson.core)
-        }
         jvmTest.dependencies {
             implementation(libs.junit)
+            // Test-only: the reference tokenizer JsonReaderVsJacksonTest compares against.
+            implementation(libs.jackson.core)
             // Test-only: an independent JSON parser to validate GeoJsonExporter output.
             implementation(libs.kotlinx.serialization.json)
         }

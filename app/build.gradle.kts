@@ -531,7 +531,8 @@ dependencies {
     implementation(project(":shared"))
     testImplementation(libs.junit)
     // Test-only: an independent JSON parser to validate GeoJsonExporter output.
-    // The app itself writes GeoJSON by hand and reads Timeline.json with Jackson.
+    // The app itself writes GeoJSON by hand and reads Timeline.json with the
+    // shared module's own JsonReader.
     testImplementation(libs.kotlinx.serialization.json)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

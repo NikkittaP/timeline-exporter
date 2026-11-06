@@ -1,6 +1,7 @@
 package io.github.nikkittap.timelineexporter.json
 
 import kotlinx.io.Buffer
+import kotlinx.io.IOException
 import kotlinx.io.Source
 import kotlinx.io.writeString
 
@@ -10,8 +11,12 @@ enum class JsonToken {
     VALUE_STRING, VALUE_NUMBER_INT, VALUE_NUMBER_FLOAT, VALUE_TRUE, VALUE_FALSE, VALUE_NULL,
 }
 
-/** Malformed (or truncated) JSON; [byteOffset] is how far into the input the reader got. */
-class JsonParseException(message: String, val byteOffset: Long) : Exception(message)
+/**
+ * Malformed (or truncated) JSON; [byteOffset] is how far into the input the reader got.
+ * An [IOException] (java.io.IOException on the JVM), as Jackson's JsonParseException
+ * is, so callers that treat read failures and malformed files alike keep doing so.
+ */
+class JsonParseException(message: String, val byteOffset: Long) : IOException(message)
 
 /**
  * A streaming, pull-style JSON tokenizer in common Kotlin — the subset of
