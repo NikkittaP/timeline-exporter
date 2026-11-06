@@ -75,6 +75,8 @@ jobs:
           python3 tools/test_ci_annotate.py
           python3 tools/ios/test_simulator_udid.py
           python3 tools/ios/test_make_app_icon.py
+          python3 tools/ios/test_asc_builds.py
+          python3 tools/ios/test_check_ipa.py
 
       - name: Shared tests (JVM)
         run: |
