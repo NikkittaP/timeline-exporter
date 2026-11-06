@@ -43,7 +43,7 @@ INT32 = 2**31 - 1
 
 
 def format_errors(build: str) -> list[str]:
-    if not BUILD_RE.match(build):
+    if not BUILD_RE.fullmatch(build):
         return [f"'{build}': needs 1-3 integers separated by dots, the first > 0, no leading zeros"]
     errors = []
     if len(build) > 18:

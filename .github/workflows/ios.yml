@@ -79,7 +79,9 @@ jobs:
       - name: Trusted ref check
         if: env.MODE == 'testflight' && github.ref != 'refs/heads/master'
         run: |
-          echo "::error title=testflight::testflight runs only from master (requested: $GITHUB_REF)"
+          # Workflow-command escaping: % first, then CR dropped and LF as %0A.
+          ref="$(printf '%s' "$GITHUB_REF" | python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))')"
+          echo "::error title=testflight::testflight runs only from master (requested: $ref)"
           exit 1
 
       # Only "set / not set": the values never reach this environment.
@@ -189,7 +191,8 @@ jobs:
           fi
           v="${found[0]}"
           if [[ ! "$v" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "::error title=Marketing version::MARKETING_VERSION '$v' in ios/project.yml is not X.Y.Z"
+            shown="$(printf '%s' "$v" | python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))')"
+            echo "::error title=Marketing version::MARKETING_VERSION '$shown' in ios/project.yml is not X.Y.Z"
             exit 1
           fi
           echo "Marketing version (CFBundleShortVersionString): $v"
@@ -248,11 +251,14 @@ jobs:
           BUILD_NUMBER: ${{ steps.number.outputs.build_number }}
         run: |
           set -uo pipefail
+          # ERROR lines may carry App Store Connect's text: escaped for the
+          # workflow command (% first, then CR dropped and LF as %0A).
+          esc() { python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))'; }
           python3 tools/ios/asc_builds.py check --version "$VERSION" --build "$BUILD_NUMBER" 2>&1 \
             | tee "$RUNNER_TEMP/asc-check.log"
           rc=${PIPESTATUS[0]}
           if [[ $rc != 0 ]]; then
-            msg="$(sed -n 's/^ERROR: //p' "$RUNNER_TEMP/asc-check.log" | head -n 3 | tr '\n' ' ')"
+            msg="$(sed -n 's/^ERROR: //p' "$RUNNER_TEMP/asc-check.log" | head -n 3 | esc)"
             echo "::error title=Build number vs App Store Connect::${msg:-asc_builds.py check failed (exit $rc)}"
             exit 1
           fi
@@ -261,9 +267,12 @@ jobs:
         with: { distribution: temurin, java-version: "21" }
       - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
+      # Before Gradle, so Failure annotations (gated on gradle.log) does not
+      # cover it: the step names the failing test script itself.
       - name: CI script tests
         run: |
           set -euo pipefail
+          trap 'echo "::error title=CI script tests::$BASH_COMMAND failed"' ERR
           python3 tools/test_ci_annotate.py
           python3 tools/ios/test_simulator_udid.py
           python3 tools/ios/test_make_app_icon.py
@@ -276,10 +285,9 @@ jobs:
           ./gradlew :shared:jvmTest --stacktrace 2>&1 | tee gradle.log
 
       # Logs need a GitHub login; annotations are public (check-runs API).
-      # Skipped when the run stopped before checkout (Trusted ref check,
-      # Required secrets: they annotate themselves).
+      # Only once Gradle has run: every earlier step writes its own ::error.
       - name: Failure annotations
-        if: failure() && hashFiles('tools/ci_annotate.py') != ''
+        if: failure() && hashFiles('tools/ci_annotate.py') != '' && hashFiles('gradle.log') != ''
         run: python3 tools/ci_annotate.py gradle.log shared/build/test-results
 
   ios:
@@ -464,13 +472,16 @@ jobs:
           IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
         run: |
           set -euo pipefail
+          # ERROR lines may carry App Store Connect's text: escaped for the
+          # workflow command (% first, then CR dropped and LF as %0A).
+          esc() { python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))'; }
           # Once more right before the upload: something may have appeared in
           # App Store Connect during the build, and "Re-run failed jobs" does
           # not re-run preflight with its check. Read-only.
           if ! python3 tools/ios/asc_builds.py check --version "$MARKETING_VERSION" --build "$BUILD_NUMBER" \
               > "$RUNNER_TEMP/asc-check.log" 2>&1; then
             cat "$RUNNER_TEMP/asc-check.log"
-            msg="$(sed -n 's/^ERROR: //p' "$RUNNER_TEMP/asc-check.log" | head -n 3 | tr '\n' ' ')"
+            msg="$(sed -n 's/^ERROR: //p' "$RUNNER_TEMP/asc-check.log" | head -n 3 | esc)"
             echo "::error title=Build number vs App Store Connect::${msg:-asc_builds.py check failed}"
             exit 1
           fi
@@ -500,10 +511,12 @@ jobs:
           echo "::notice title=iOS ${MODE}::version ${MARKETING_VERSION:-?}, build ${BUILD_NUMBER:-?}, ${JOB_STATUS}"
 
       # Logs need a GitHub login; annotations are public (check-runs API).
-      # Skipped when the run stopped before checkout (the Toolchain step).
-      # Logs that are missing or ended in success add nothing.
+      # Only once Gradle has run (gradle.log is written even when it fails):
+      # every earlier step (Toolchain, Signing) writes its own ::error, and
+      # every xcodebuild step comes after Gradle. Logs that are missing or
+      # ended in success add nothing.
       - name: Failure annotations
-        if: failure() && hashFiles('tools/ci_annotate.py') != ''
+        if: failure() && hashFiles('tools/ci_annotate.py') != '' && hashFiles('gradle.log') != ''
         run: >
           python3 tools/ci_annotate.py gradle.log shared/build/test-results
           --xcodebuild "$LOGS/xcodebuild-device.log"
@@ -553,11 +566,14 @@ jobs:
           BUILD_NUMBER: ${{ needs.ios.outputs.build_number }}
         run: |
           set -uo pipefail
+          # ERROR lines may carry App Store Connect's text: escaped for the
+          # workflow command (% first, then CR dropped and LF as %0A).
+          esc() { python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))'; }
           python3 tools/ios/asc_builds.py wait --version "$VERSION" --build "$BUILD_NUMBER" --minutes 20 2>&1 \
             | tee "$RUNNER_TEMP/asc-wait.log"
           rc=${PIPESTATUS[0]}
           if [[ $rc != 0 ]]; then
-            msg="$(sed -n 's/^ERROR: //p' "$RUNNER_TEMP/asc-wait.log" | head -n 3 | tr '\n' ' ')"
+            msg="$(sed -n 's/^ERROR: //p' "$RUNNER_TEMP/asc-wait.log" | head -n 3 | esc)"
             echo "::error title=TestFlight processing::${msg:-asc_builds.py wait failed (exit $rc)}"
             exit 1
           fi

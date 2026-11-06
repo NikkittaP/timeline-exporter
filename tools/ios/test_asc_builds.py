@@ -20,6 +20,11 @@ class FormatTest(unittest.TestCase):
                   "1" * 19, "2147483648.1", "1.2147483648"):
             self.assertTrue(asc_builds.format_errors(b), b)
 
+    def test_rejects_trailing_newline(self):
+        # re.match with $ would let "1.2\n" through into $GITHUB_OUTPUT.
+        for b in ("1.2\n", "1\n", "261106.93012.1\n"):
+            self.assertTrue(asc_builds.format_errors(b), repr(b))
+
     def test_length_limit(self):
         self.assertEqual(asc_builds.format_errors("261106.93012.1234"), [])  # 17 chars
         self.assertTrue(asc_builds.format_errors("1" * 19))
