@@ -3,6 +3,7 @@ package io.github.nikkittap.timelineexporter.json
 import kotlinx.io.Buffer
 import kotlinx.io.IOException
 import kotlinx.io.Source
+import kotlinx.io.buffered
 import kotlinx.io.writeString
 
 /** Token kinds, named after Jackson's `JsonToken`. */
@@ -46,16 +47,41 @@ class JsonParseException(message: String, val byteOffset: Long) : IOException(me
  *    tokenizes, and so validates, skipped content.
  *  - A string that is never read is never UTF-8-decoded or validated.
  *
- * Input is UTF-8; a leading byte order mark is skipped. Bytes are read from
- * [source] through a 64 KiB buffer, and the only allocations per token are
- * the strings handed out ([currentName], [valueAsString]) — field names are
- * additionally cached, so a repeated name is the same String instance.
+ * Input is UTF-8; a leading byte order mark is skipped. UTF-16 and UTF-32
+ * (big or little endian, with or without a BOM — detected as Jackson did,
+ * see [detectWideEncoding]) are transcoded to UTF-8 a chunk at a time before
+ * lexing; for such input [bytesRead] and error offsets count the UTF-8
+ * bytes, not the file's. Bytes are read from [source] through a 64 KiB
+ * buffer, and the only allocations per token are the strings handed out
+ * ([currentName], [valueAsString]) — field names are additionally cached, so
+ * a repeated name is the same String instance.
+ *
+ * Limits, Jackson's `StreamReadConstraints` defaults, so a crafted or corrupt
+ * file fails with [JsonParseException] instead of running out of memory
+ * (which Kotlin/Native cannot catch): nesting deeper than [MAX_DEPTH], a
+ * number literal longer than [MAX_NUMBER_LENGTH] characters, a string longer
+ * than [MAX_STRING_LENGTH] characters ([maxStringLength] exists for tests).
  */
-class JsonReader(private val source: Source) : AutoCloseable {
+class JsonReader internal constructor(
+    source: Source,
+    private val maxStringLength: Int,
+) : AutoCloseable {
+
+    constructor(source: Source) : this(source, MAX_STRING_LENGTH)
+
+    /** [source], or the UTF-8 transcoding of it once [detectWideEncoding] found UTF-16/32. */
+    private var input: Source = source
 
     companion object {
         /** A reader over [text] (encoded as UTF-8). */
         fun of(text: String): JsonReader = JsonReader(Buffer().also { it.writeString(text) })
+
+        /** Deepest allowed nesting of objects and arrays. */
+        const val MAX_DEPTH = 1000
+        /** Longest allowed number literal, in characters. */
+        const val MAX_NUMBER_LENGTH = 1000
+        /** Longest allowed string (value or field name), in characters. */
+        const val MAX_STRING_LENGTH = 20_000_000
 
         private const val BUFFER_SIZE = 64 * 1024
 
@@ -135,6 +161,10 @@ class JsonReader(private val source: Source) : AutoCloseable {
     fun nextToken(): JsonToken? {
         if (!started) {
             started = true
+            detectWideEncoding(input)?.let { d ->
+                input.skip(d.bomBytes.toLong())
+                input = WideToUtf8Source(input, d.encoding, d.bomBytes.toLong()).buffered()
+            }
             skipBom()
         }
         strValue = null
@@ -215,7 +245,7 @@ class JsonReader(private val source: Source) : AutoCloseable {
     }
 
     override fun close() {
-        source.close()
+        input.close()
     }
 
     // ------------------------------------------------------------------
@@ -283,6 +313,7 @@ class JsonReader(private val source: Source) : AutoCloseable {
     }
 
     private fun push(type: Int) {
+        if (depth >= MAX_DEPTH) fail("Nesting deeper than $MAX_DEPTH levels")
         if (depth == ctxType.size) {
             val n = depth * 2
             ctxType = ctxType.copyOf(n)
@@ -321,8 +352,14 @@ class JsonReader(private val source: Source) : AutoCloseable {
     // ---- numbers ----
 
     private fun appendNum(x: Int) {
-        if (numLen == numBuf.size) numBuf = numBuf.copyOf(numLen * 2)
+        if (numLen == numBuf.size) growNum()
         numBuf[numLen++] = x.toByte()
+    }
+
+    /** The limit is checked only here, when the buffer is full, to keep [appendNum] cheap. */
+    private fun growNum() {
+        if (numLen >= MAX_NUMBER_LENGTH) fail("Number longer than $MAX_NUMBER_LENGTH characters")
+        numBuf = numBuf.copyOf(minOf(numLen * 2, MAX_NUMBER_LENGTH))
     }
 
     private fun readNumber(first: Int): JsonToken {
@@ -464,6 +501,7 @@ class JsonReader(private val source: Source) : AutoCloseable {
         while (i < l) {
             val x = b[i].toInt()
             if (x == QUOTE) {
+                if (i - start > maxStringLength) tooLong()
                 strStart = start
                 strEnd = i
                 pos = i + 1
@@ -486,6 +524,7 @@ class JsonReader(private val source: Source) : AutoCloseable {
             val x = b[i].toInt()
             if (x == QUOTE) {
                 val len = i - start
+                if (len > maxStringLength) tooLong()
                 pos = i + 1
                 if (len > NAME_CACHE_MAX_LEN) return b.decodeToString(start, i)
                 val slot = (h xor (h ushr 9)) and (NAME_CACHE_SIZE - 1)
@@ -513,9 +552,16 @@ class JsonReader(private val source: Source) : AutoCloseable {
         var n = 0
         while (true) {
             val x = readByteOrFail()
-            if (n + 2 > cbuf.size) cbuf = cbuf.copyOf(cbuf.size * 2)
+            if (n + 2 > cbuf.size) {
+                // Checked here, not per char; a full cbuf of maxStringLength + 2 means n is past the limit.
+                if (n > maxStringLength) tooLong()
+                cbuf = cbuf.copyOf(minOf(cbuf.size * 2, maxStringLength + 2))
+            }
             when {
-                x == QUOTE -> return cbuf.concatToString(0, n)
+                x == QUOTE -> {
+                    if (n > maxStringLength) tooLong()
+                    return cbuf.concatToString(0, n)
+                }
                 x == BACKSLASH -> {
                     cbuf[n++] = when (val e = readByteOrFail()) {
                         QUOTE, BACKSLASH, SLASH -> e.toChar()
@@ -552,6 +598,8 @@ class JsonReader(private val source: Source) : AutoCloseable {
             }
         }
     }
+
+    private fun tooLong(): Nothing = fail("String longer than $maxStringLength characters")
 
     private fun cont(): Int {
         val y = readByteOrFail()
@@ -615,7 +663,7 @@ class JsonReader(private val source: Source) : AutoCloseable {
         pos = 0
         limit = 0
         while (true) {
-            val n = source.readAtMostTo(buf, 0, buf.size)
+            val n = input.readAtMostTo(buf, 0, buf.size)
             if (n < 0) { eof = true; return false }
             if (n > 0) { limit = n; return true }
         }
