@@ -16,6 +16,7 @@ import io.github.nikkittap.timelineexporter.trips.TripDetection
 import io.github.nikkittap.timelineexporter.trips.haversineMeters
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.offsetAt
 
 // Trips, places and the map's geometry for the iOS app, in the same
 // plain-value style as TimelineSession.kt: epoch milliseconds, epoch days,
@@ -314,4 +315,50 @@ internal fun buildMapTrack(runs: List<Run>, budget: Int): MapTrack {
         }
     }
     return MapTrack(lats.toDoubleArray(), lons.toDoubleArray(), starts.toIntArray(), colors, total)
+}
+
+/**
+ * The figures on the map image, for the selection the map shows. Dates are
+ * the session zone's; [dayCount] counts the days that have points, each in
+ * the zone it was recorded in, as the day colours do; [distanceMeters] sums
+ * the drawn line only, skipping the jumps the map breaks at.
+ */
+class MapImageStats(
+    val firstEpochDay: Long,
+    val lastEpochDay: Long,
+    val dayCount: Int,
+    val distanceMeters: Double,
+)
+
+/** Stats for the filtered track, or null when nothing matches. */
+fun TimelineSession.trackImageStats(spec: FilterSpec): MapImageStats? =
+    imageStats(listOf(filteredPoints(spec)))
+
+/** Stats for the trips [mapTrips] draws with the same [keys]. */
+fun TimelineSession.tripsImageStats(spec: FilterSpec, keys: LongArray): MapImageStats? {
+    val chosen = selectTrips(spec, keys)
+    if (chosen.isEmpty()) return null
+    return imageStats(exportTrips(chosen, filteredPoints(spec), zone).map { it.points })
+}
+
+private fun TimelineSession.imageStats(runs: List<List<PathPoint>>): MapImageStats? {
+    var first = Long.MAX_VALUE
+    var last = Long.MIN_VALUE
+    val days = HashSet<Long>()
+    var meters = 0.0
+    for (run in runs) {
+        for ((i, p) in run.withIndex()) {
+            val local = (p.timeUtc.epochSeconds + zone.offsetAt(p.timeUtc).totalSeconds).floorDiv(86_400L)
+            if (local < first) first = local
+            if (local > last) last = local
+            days += p.trackEpochDay(zone)
+            if (i > 0) {
+                val q = run[i - 1]
+                val d = haversineMeters(q.latitude, q.longitude, p.latitude, p.longitude)
+                if (d <= MAP_GAP_METERS) meters += d
+            }
+        }
+    }
+    if (days.isEmpty()) return null
+    return MapImageStats(first, last, days.size, meters)
 }

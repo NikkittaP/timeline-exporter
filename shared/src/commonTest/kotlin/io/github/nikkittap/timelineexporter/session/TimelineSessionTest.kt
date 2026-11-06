@@ -246,6 +246,17 @@ class TimelineSessionTest {
     }
 
     @Test
+    fun `image stats count the drawn days and distance`() {
+        val s = open()
+        val stats = s.trackImageStats(FilterSpec())!!
+        assertEquals(2, stats.dayCount)
+        assertEquals(stats.firstEpochDay + 1, stats.lastEpochDay)
+        assertTrue(stats.distanceMeters > 0)
+        assertEquals(null, s.trackImageStats(FilterSpec(rangeStartMillis = 0, rangeEndMillis = 1)))
+        assertEquals(null, s.tripsImageStats(FilterSpec(), LongArray(0)))
+    }
+
+    @Test
     fun `trips cross as a list even when there are none`() {
         val s = open()
         val list = s.tripList()
