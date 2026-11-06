@@ -43,3 +43,11 @@ ios/*.xcodeproj/
 ios/build/
 xcuserdata/
 *.xcresult
+
+# iOS / App Store signing: certificates, profiles and App Store Connect keys
+# live only in GitHub secrets (docs/IOS_BUILD.md), never in the repository.
+*.p12
+*.p8
+*.mobileprovision
+*.cer
+AuthKey_*.p8

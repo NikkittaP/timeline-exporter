@@ -54,7 +54,7 @@ includes everything `build` does).
 | mode | Where | Line |
 |---|---|---|
 | `validate` | preflight "Required secrets" | `validate needs no secrets.` |
-| `validate` | "Project IDs" | `ios/project.yml: team ..., bundle ...` (masked as `***`) |
+| `validate` | "Project IDs" | `ios/project.yml: team ..., bundle ...` (masked as `***` once the secrets exist) |
 | `build`, `testflight` | "Signing" | `Certificate/private-key pair and provisioning profile verified.` |
 | `build`, `testflight` | "Check IPA" | `IPA check: all checks passed` |
 | `testflight` | preflight "Build number vs App Store Connect (read-only)" | `Build number <n> is new and higher than every build of <version>.` |
@@ -104,6 +104,10 @@ GitHub never shows a secret value back, so keep the original files (`.p12`
 and its password, `AuthKey_<KeyID>.p8`, Key ID, Issuer ID). Secrets are per
 repository: copy the values over from the originals.
 
+Keep the `.p12`, `.p8` and `.mobileprovision` outside the repository folder
+(for example in `Documents\Apple`); `.gitignore` excludes them as a safety
+net only.
+
 Base64 on Windows (PowerShell), for both files; the result goes to the
 clipboard, paste it into the secret:
 
@@ -125,7 +129,9 @@ copy everything and paste it into the secret.
    No capabilities.
 2. App Store Connect -> Apps -> New App: platform iOS, name "Timeline
    Exporter", primary language English (U.S.), Bundle ID from step 1, SKU
-   `timelineexporter-ios`, user access Full Access.
+   `timelineexporter-ios`, user access Full Access. App Store names are unique
+   store-wide: if "Timeline Exporter" is taken, use e.g. "Timeline Exporter
+   for Maps" (the home-screen name comes from the app, not this field).
 3. Profiles -> new **App Store Connect** distribution profile for that App ID,
    with the existing Apple Distribution certificate, named `Timeline Exporter
    App Store`. Download the `.mobileprovision`.
@@ -142,8 +148,13 @@ copy everything and paste it into the secret.
   create a group, add yourself (you must be an App Store Connect user).
 - Install the TestFlight app on the iPhone and accept the invitation; the
   build appears there after processing (minutes to an hour, Apple e-mails).
+- If a new build does not show up for testers, open the group -> Builds -> +
+  and add it (only groups with Automatic Distribution get builds by themselves).
 - Internal builds need no Beta App Review.
 - A build expires after 90 days.
+- An e-mail "ITMS-91053: Missing API declaration" after an upload is a
+  warning, not a failure: TestFlight still works. The privacy manifest
+  that silences it comes with a later stage.
 - Export compliance is already answered by `ITSAppUsesNonExemptEncryption =
   NO`; App Store Connect does not ask.
 - An App Store-signed `.ipa` does not install outside TestFlight and the App
@@ -151,8 +162,10 @@ copy everything and paste it into the secret.
 
 ## Security
 
-- `*.p12`, `*.p8`, `*.mobileprovision`, `*.cer` stay out of git.
-- Secrets reach only the steps that need them; preflight sees "set / not set".
+- `*.p12`, `*.p8`, `*.mobileprovision`, `*.cer` are in `.gitignore`; keep them
+  outside the repository folder anyway.
+- Secrets reach only the steps that check or use them; the "Required secrets"
+  step sees only "set / not set".
 - Everything secret lives in `$RUNNER_TEMP` (`signing/`, `asc/`), never in
   `build/ios`, so the `.ipa` artifact and `ios-build-logs` hold none.
 - The `.p12` is deleted right after import; the keychain password is random
@@ -190,5 +203,10 @@ copy everything and paste it into the secret.
 | `build number <n> is already used` / `is not higher than ...` | Run again (new time) or pass a bigger `build_number`. |
 | `App Store Connect rejected the upload` | The reason is at the end of the step and in `xcodebuild-upload.log`. Common: key role too low, version already submitted for review. |
 | `App Store Connect rejected the build (INVALID/FAILED)` | The reason is in Apple's e-mail and in TestFlight -> Builds. |
+| `the .p12 holds several Apple Distribution identities; export only one.` | Export the `.p12` again with only the one certificate and its key. |
+| `provisioning profile platform is ..., not iOS.` | A macOS/tvOS profile: create an iOS App Store Connect profile. |
+| `APPSTORE_KEY_ID must be the 10-character Key ID.` / `APPSTORE_ISSUER_ID must be the Issuer ID UUID.` | Copy them again from App Store Connect -> Users and Access -> Integrations -> App Store Connect API. |
+| `openssl could not sign with APPSTORE_PRIVATE_KEY (not an EC P-256 key?)` | The secret is not the `.p8` text; paste the whole file including the BEGIN/END lines. |
+| `Shared.xcframework not found ...` / `XcodeGen` errors | A build problem in the repository, not in your setup: tell the developer. |
 | `testflight runs only from master` | Run the workflow on branch `master`. |
 | `runner provides 'Xcode ...', the workflow expects Xcode 27` | The `xcode-27` image served another Xcode; no silent fallback by design. |

@@ -50,9 +50,10 @@ permissions:
 
 # A running iOS build is never cancelled: an App Store Connect upload cut
 # halfway is worse than a queue. At most one run waits behind it: a newer
-# pending run replaces an older pending one.
+# pending run replaces an older pending one. The group is per mode, so a
+# push-triggered validate never replaces a queued testflight run.
 concurrency:
-  group: ios-${{ github.ref }}
+  group: ios-${{ github.ref }}-${{ inputs.mode || 'validate' }}
   cancel-in-progress: false
 
 env:
@@ -205,7 +206,8 @@ jobs:
       #  - "Re-run failed jobs" does not repeat a number: preflight is not
       #    re-run then, but the iOS job takes the new attempt
       #    (github.run_attempt) and the number comes out higher;
-      #  - two runs at once are impossible (concurrency).
+      #  - two uploading runs at once are impossible (concurrency: one
+      #    testflight run per ref at a time).
       # The leading zero of HHMMSS is dropped (090512 -> 90512): same numeric
       # order, and "integer without leading zeros" is unambiguous for Apple.
       # Before the upload the number is also checked against App Store
@@ -223,7 +225,7 @@ jobs:
             read -r day time <<< "$(date -u '+%y%m%d %H%M%S')"
             base="$day.$((10#$time))"; auto=true; n="$base.$ATTEMPT"
           fi
-          if ! out="$(python3 tools/ios/asc_builds.py format "$n" 2>&1)"; then
+          if ! out="$(python3 tools/ios/asc_builds.py format -- "$n" 2>&1)"; then
             echo "$out"
             # The number may come from the input: escaped for the workflow command.
             msg="$(printf '%s' "$out" | sed 's/^ERROR: //' | python3 -c 'import sys; print(sys.stdin.read().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))')"
@@ -254,7 +256,7 @@ jobs:
           # ERROR lines may carry App Store Connect's text: escaped for the
           # workflow command (% first, then CR dropped and LF as %0A).
           esc() { python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))'; }
-          python3 tools/ios/asc_builds.py check --version "$VERSION" --build "$BUILD_NUMBER" 2>&1 \
+          python3 tools/ios/asc_builds.py check --version="$VERSION" --build="$BUILD_NUMBER" 2>&1 \
             | tee "$RUNNER_TEMP/asc-check.log"
           rc=${PIPESTATUS[0]}
           if [[ $rc != 0 ]]; then
@@ -448,8 +450,8 @@ jobs:
         run: >
           python3 tools/ios/check_ipa.py "$BUILD_DIR"/ipa/*.ipa
           --bundle-id "$EXPECTED_IOS_BUNDLE_ID"
-          --version "$MARKETING_VERSION"
-          --build "$BUILD_NUMBER"
+          --version="$MARKETING_VERSION"
+          --build="$BUILD_NUMBER"
 
       # The .ipa only: no .p12, .p8 or keychain is in build/ios/ipa (they live
       # in $RUNNER_TEMP). The embedded.mobileprovision inside the .ipa is in
@@ -478,7 +480,7 @@ jobs:
           # Once more right before the upload: something may have appeared in
           # App Store Connect during the build, and "Re-run failed jobs" does
           # not re-run preflight with its check. Read-only.
-          if ! python3 tools/ios/asc_builds.py check --version "$MARKETING_VERSION" --build "$BUILD_NUMBER" \
+          if ! python3 tools/ios/asc_builds.py check --version="$MARKETING_VERSION" --build="$BUILD_NUMBER" \
               > "$RUNNER_TEMP/asc-check.log" 2>&1; then
             cat "$RUNNER_TEMP/asc-check.log"
             msg="$(sed -n 's/^ERROR: //p' "$RUNNER_TEMP/asc-check.log" | head -n 3 | esc)"
@@ -569,7 +571,7 @@ jobs:
           # ERROR lines may carry App Store Connect's text: escaped for the
           # workflow command (% first, then CR dropped and LF as %0A).
           esc() { python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))'; }
-          python3 tools/ios/asc_builds.py wait --version "$VERSION" --build "$BUILD_NUMBER" --minutes 20 2>&1 \
+          python3 tools/ios/asc_builds.py wait --version="$VERSION" --build="$BUILD_NUMBER" --minutes 20 2>&1 \
             | tee "$RUNNER_TEMP/asc-wait.log"
           rc=${PIPESTATUS[0]}
           if [[ $rc != 0 ]]; then
