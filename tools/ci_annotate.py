@@ -66,7 +66,7 @@ def failed_tests(roots):
     return found
 
 
-XCODE_ERROR = re.compile(r"(: error: |^error: |^clang: error|^ld: |^Undefined symbols)")
+XCODE_ERROR = re.compile(r"(: error: |^error: |^clang: error|^ld: (?!warning)|^Undefined symbols)")
 XCTEST_LINE = re.compile(r"(^Test Case '-\[.*\]' failed|: error: -\[.*\] : )")
 
 
@@ -118,10 +118,13 @@ def main(argv=None) -> None:
         xlines = read_lines(path)
         if not xlines or budget <= 0:
             continue
-        xcode_seen = True
         name = os.path.basename(path)
         xerrors = xcodebuild_errors(xlines)
         xtests = xcodebuild_test_failures(xlines)
+        succeeded = any(l.strip() in ("** BUILD SUCCEEDED **", "** TEST SUCCEEDED **") for l in xlines)
+        if succeeded and not xerrors:
+            continue
+        xcode_seen = True
         if xerrors:
             emit(f"xcodebuild errors ({name})", "\n".join(xerrors))
             budget -= 1

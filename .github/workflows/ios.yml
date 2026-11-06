@@ -34,7 +34,8 @@ permissions:
   contents: read
 
 # A running iOS build is never cancelled (stage 2 uploads must not be cut
-# halfway); a second one waits.
+# halfway). At most one run waits behind it: a newer pending run replaces an
+# older pending one.
 concurrency:
   group: ios-${{ github.ref }}
   cancel-in-progress: false
@@ -68,7 +69,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
       - name: CI script tests
-        run: python3 tools/test_ci_annotate.py
+        run: |
+          set -euo pipefail
+          python3 tools/test_ci_annotate.py
+          python3 tools/ios/test_simulator_udid.py
 
       - name: Shared tests (JVM)
         run: |
@@ -120,7 +124,9 @@ jobs:
           set -euo pipefail
           mkdir -p "$LOGS"
           ./gradlew :shared:iosSimulatorArm64Test :shared:assembleSharedReleaseXCFramework --stacktrace 2>&1 | tee gradle.log
-          ls shared/build/XCFrameworks/release/Shared.xcframework
+          ls shared/build/XCFrameworks/release/Shared.xcframework || {
+            echo "::error title=Shared.xcframework::not found at shared/build/XCFrameworks/release after a successful Gradle run"
+            exit 1; }
 
       - name: XcodeGen
         env:
@@ -128,9 +134,20 @@ jobs:
           HOMEBREW_NO_INSTALL_CLEANUP: "1"
         run: |
           set -euo pipefail
-          command -v xcodegen >/dev/null || brew install xcodegen
+          mkdir -p "$LOGS"
+          command -v xcodegen >/dev/null || brew install xcodegen || {
+            echo "::error title=XcodeGen install::brew install xcodegen failed"
+            exit 1; }
           xcodegen --version
-          cd ios && xcodegen generate
+          log="$LOGS/xcodegen.log"
+          if ! (cd ios && xcodegen generate) > "$log" 2>&1; then
+            cat "$log"
+            # Workflow-command escaping: % first, then CR dropped and LF as %0A.
+            msg="$(tail -n 15 "$log" | python3 -c 'import sys; print(sys.stdin.read().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))')"
+            echo "::error title=XcodeGen::$msg"
+            exit 1
+          fi
+          cat "$log"
 
       # Proves the device slice links. Never becomes an .ipa.
       # The full log goes to $LOGS; the step shows errors and the tail on
@@ -156,7 +173,9 @@ jobs:
           set -euo pipefail
           mkdir -p "$LOGS"
           log="$LOGS/xcodebuild-test.log"
-          udid="$(xcrun simctl list devices available -j | python3 tools/ios/simulator_udid.py)" || {
+          # Never pick a runtime newer than the Xcode's SDK.
+          sdk="$(xcrun --sdk iphonesimulator --show-sdk-version)"
+          udid="$(xcrun simctl list devices available -j | python3 tools/ios/simulator_udid.py "$sdk")" || {
             echo "::error title=Simulator::could not pick an iPhone simulator (simctl or tools/ios/simulator_udid.py failed, see the log)"
             exit 1; }
           echo "Simulator: $udid"

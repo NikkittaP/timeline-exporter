@@ -31,7 +31,7 @@ targets:
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"
         # Kotlin/Native static frameworks need the C++ runtime from the app's link.
-        OTHER_LDFLAGS: ["-lc++"]
+        OTHER_LDFLAGS: ["$(inherited)", "-lc++"]
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Timeline Exporter
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
@@ -55,6 +55,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nikitapetrovapps.timelineexporter.tests
+        # Finds module Shared, which the app's swiftmodule imports; never links it.
+        FRAMEWORK_SEARCH_PATHS: ["$(inherited)", "$(BUILT_PRODUCTS_DIR)"]
         GENERATE_INFOPLIST_FILE: YES
 schemes:
   TimelineExporter:

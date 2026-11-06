@@ -66,6 +66,23 @@ class XcodebuildParsing(unittest.TestCase):
                 ci_annotate.main([os.path.join(tmp, "missing-gradle.log"), "--xcodebuild", log])
         self.assertIn("something odd happened", out.getvalue())
 
+    def test_ld_warnings_are_not_errors(self):
+        errors = ci_annotate.xcodebuild_errors(
+            ["ld: warning: ignoring duplicate libraries: '-lc++'", "ld: symbol(s) not found"])
+        self.assertEqual(["ld: symbol(s) not found"], errors)
+
+    def test_succeeded_log_produces_no_annotation(self):
+        for marker in ("** BUILD SUCCEEDED **", "** TEST SUCCEEDED **"):
+            with tempfile.TemporaryDirectory() as tmp:
+                log = os.path.join(tmp, "xcodebuild.log")
+                with open(log, "w", encoding="utf-8") as f:
+                    f.write("ld: warning: ignoring duplicate libraries\nCompile ok\n" + marker + "\n")
+                out = io.StringIO()
+                with redirect_stdout(out):
+                    ci_annotate.main([os.path.join(tmp, "missing-gradle.log"), tmp, "--xcodebuild", log])
+            self.assertNotIn("xcodebuild log tail", out.getvalue(), marker)
+            self.assertNotIn("title=xcodebuild", out.getvalue(), marker)
+
 
 if __name__ == "__main__":
     unittest.main()
