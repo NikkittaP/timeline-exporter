@@ -15,3 +15,5 @@ Actions (`.github/workflows/ios.yml`). The steps the workflow runs:
 Source layout: `TimelineExporter/App` (SwiftUI), `TimelineExporter/Shared`
 (the only Swift that imports the Kotlin framework), `TimelineExporter/Resources`,
 `TimelineExporterTests`.
+
+Secrets, signing, TestFlight and troubleshooting: `docs/IOS_BUILD.md`.
