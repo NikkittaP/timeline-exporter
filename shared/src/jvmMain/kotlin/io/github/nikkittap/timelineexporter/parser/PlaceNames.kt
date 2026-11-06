@@ -1,6 +1,6 @@
 package io.github.nikkittap.timelineexporter.parser
 
-import java.util.Locale
+import io.github.nikkittap.timelineexporter.export.formatFixed
 
 /**
  * What to call a place, in order of how much it is worth trusting.
@@ -35,10 +35,10 @@ fun resolvePlaceName(
 /**
  * "55.59462, 13.00655" — five decimals, about a metre.
  *
- * Locale.ROOT on purpose even though this is UI: under a locale that writes
+ * A fixed dot on purpose even though this is UI: under a locale that writes
  * decimals with a comma, a locale-formatted pair reads as "55,59462, 13,00655"
  * — four numbers separated by commas, and no way to tell which pairs with
  * which. A dot here is the lesser inconsistency.
  */
 fun formatCoordinates(latitude: Double, longitude: Double): String =
-    String.format(Locale.ROOT, "%.5f, %.5f", latitude, longitude)
+    "${formatFixed(latitude, 5)}, ${formatFixed(longitude, 5)}"

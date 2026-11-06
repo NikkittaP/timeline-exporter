@@ -6,7 +6,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
-import java.util.Locale
 
 /**
  * One trip ready to be written: the trip, its name, its colour and the track
@@ -70,11 +69,11 @@ fun localDate(instant: Instant, offsetMinutes: Int?, zone: ZoneId): LocalDate =
 internal fun describe(trip: ExportTrip): String {
     val t = trip.trip
     val days = t.durationSeconds / 86_400.0
-    val length = if (days >= 1.0) String.format(Locale.ROOT, "%.1f days", days)
-    else String.format(Locale.ROOT, "%.1f h", t.durationSeconds / 3600.0)
-    val far = String.format(Locale.ROOT, "%.0f km from home", t.maxDistanceMeters / 1000)
+    val length = if (days >= 1.0) "${formatFixed(days, 1)} days"
+    else "${formatFixed(t.durationSeconds / 3600.0, 1)} h"
+    val far = "${formatFixed(t.maxDistanceMeters / 1000, 0)} km from home"
     val about = if (t.travelledEstimated) "about " else ""
-    val travelled = String.format(Locale.ROOT, "%s%.0f km travelled", about, t.travelledMeters / 1000)
+    val travelled = "$about${formatFixed(t.travelledMeters / 1000, 0)} km travelled"
     val places = if (t.placeCount == 1) "1 place" else "${t.placeCount} places"
     return "$length, $far, $travelled, $places"
 }

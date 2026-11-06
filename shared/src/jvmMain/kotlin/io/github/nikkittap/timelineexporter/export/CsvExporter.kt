@@ -76,8 +76,8 @@ object CsvExporter : Exporter {
             sb.append(',')
             appendMoment(sb, t.end, t.endOffsetMinutes)
             sb.append(',').append(t.durationSeconds.toString())
-            sb.append(',').append(String.format(Locale.ROOT, "%.1f", t.maxDistanceMeters / 1000))
-            sb.append(',').append(String.format(Locale.ROOT, "%.1f", t.travelledMeters / 1000))
+            sb.append(',').append(formatFixed(t.maxDistanceMeters / 1000, 1))
+            sb.append(',').append(formatFixed(t.travelledMeters / 1000, 1))
             sb.append(',').append(t.travelledEstimated.toString())
             sb.append(',').append(t.placeCount.toString())
             sb.append(',').append(csvField(movementList(t)))
@@ -158,7 +158,7 @@ object CsvExporter : Exporter {
     private fun formatOffset(minutes: Int): String {
         val sign = if (minutes < 0) '-' else '+'
         val abs = abs(minutes)
-        return String.format(Locale.ROOT, "%c%02d:%02d", sign, abs / 60, abs % 60)
+        return "$sign${(abs / 60).toString().padStart(2, '0')}:${(abs % 60).toString().padStart(2, '0')}"
     }
 }
 

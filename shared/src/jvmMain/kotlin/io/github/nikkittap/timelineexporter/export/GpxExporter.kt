@@ -147,7 +147,7 @@ object GpxExporter : Exporter {
 internal fun describe(place: ExportPlace): String {
     val visits = if (place.visits == 1) "1 visit" else "${place.visits} visits"
     val hours = place.totalSeconds / 3600.0
-    val duration = if (hours >= 1.0) ", %.1f h total".format(java.util.Locale.ROOT, hours) else ""
+    val duration = if (hours >= 1.0) ", ${formatFixed(hours, 1)} h total" else ""
     val address = place.address?.takeIf { it.isNotBlank() }?.let { ", $it" } ?: ""
     return "$visits$duration$address"
 }

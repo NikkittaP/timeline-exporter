@@ -1,7 +1,5 @@
 package io.github.nikkittap.timelineexporter.export
 
-import java.math.BigDecimal
-
 /**
  * Append [value] to [out] as a plain decimal that reads back as the identical
  * double, without going through `Double.toString`.
@@ -18,7 +16,7 @@ import java.math.BigDecimal
  * dividing that integer back by 1e7 returns the very double it started from —
  * which is exactly the promise that reading the text back is lossless. A
  * coordinate that is not on the grid (a value with more precision than Google
- * ever stores) fails that check and falls through to [BigDecimal], which is
+ * ever stores) fails that check and falls through to [plainDecimal], which is
  * slow and correct and almost never reached.
  *
  * The output is identical to `Double.toString` wherever that produces a plain
@@ -81,16 +79,16 @@ private val POWERS_OF_TEN = intArrayOf(1, 10, 100, 1_000, 10_000, 100_000, 1_000
 /**
  * The shortest text that reads back as [value], never in scientific notation.
  *
- * `BigDecimal.valueOf` is `Double.toString` with the exponent unpacked, so
- * this keeps the round trip and only changes how the same digits are laid out.
- * Stripping the zeros first drops the one the mantissa carries — "1.0E-12"
- * would otherwise spell out as 0.0000000000010.
+ * [plainDecimal] is `Double.toString` with the exponent unpacked (what
+ * `BigDecimal.valueOf(v).stripTrailingZeros().toPlainString()` wrote before),
+ * so this keeps the round trip and only changes how the same digits are laid
+ * out; trailing zeros are dropped, so "1.0E-12" is not 0.0000000000010.
  */
 private fun plainString(value: Double): String =
     if (!value.isFinite()) {
         value.toString()
     } else {
-        BigDecimal.valueOf(value).stripTrailingZeros().toPlainString()
+        plainDecimal(value)
     }
 
 private fun appendDigits(out: Appendable, value: Long) {

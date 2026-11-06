@@ -56,7 +56,8 @@ private fun String.shiftedToward(target: Int): String {
         val value = (rgb shr shift) and 0xFF
         return (value + (target - value) * TRACK_DAY_SHADE_AMOUNT).toInt().coerceIn(0, 0xFF)
     }
-    return "#%02X%02X%02X".format(channel(16), channel(8), channel(0))
+    fun hex(value: Int) = value.toString(16).uppercase().padStart(2, '0')
+    return "#" + hex(channel(16)) + hex(channel(8)) + hex(channel(0))
 }
 
 /**

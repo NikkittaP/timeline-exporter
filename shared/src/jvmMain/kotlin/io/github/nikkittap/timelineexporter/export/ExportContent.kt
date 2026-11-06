@@ -3,7 +3,6 @@ package io.github.nikkittap.timelineexporter.export
 import io.github.nikkittap.timelineexporter.parser.PathPoint
 import java.time.Instant
 import java.time.ZoneId
-import java.util.Locale
 
 /**
  * Which of the two things in a Timeline export the user is currently looking
@@ -140,13 +139,13 @@ data class ExportPlace(
  * instead of an empty search. That is also why this returns a link for a place
  * with no ID at all, where the previous version returned null.
  *
- * Coordinates are formatted through [java.util.Locale.ROOT] with a fixed
- * number of decimals rather than interpolated: `Double.toString` switches to
+ * Coordinates are formatted with [formatFixed] (a fixed number of decimals,
+ * always a dot) rather than interpolated: `Double.toString` switches to
  * scientific notation for small magnitudes, and "1.0E-5" in a URL is a broken
  * link for anyone near the equator or the prime meridian.
  */
 fun googleMapsUrl(latitude: Double, longitude: Double, placeId: String?): String {
-    val query = String.format(Locale.ROOT, "%.7f%%2C%.7f", latitude, longitude)
+    val query = "${formatFixed(latitude, 7)}%2C${formatFixed(longitude, 7)}"
     val id = placeId?.takeIf { it.isNotEmpty() }
     val suffix = if (id == null) "" else "&query_place_id=$id"
     return "https://www.google.com/maps/search/?api=1&query=$query$suffix"

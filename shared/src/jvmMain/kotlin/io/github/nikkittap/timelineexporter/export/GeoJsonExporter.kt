@@ -82,7 +82,7 @@ object GeoJsonExporter : Exporter {
         sb.append("}\n")
     }
 
-    private fun km(meters: Double): String = String.format(java.util.Locale.ROOT, "%.1f", meters / 1000)
+    private fun km(meters: Double): String = formatFixed(meters / 1000, 1)
 
     private fun exportTrack(points: List<PathPoint>, trackName: String, sb: Appendable) {
         sb.append("{\n")
@@ -262,7 +262,7 @@ private fun jsonString(s: String): String {
             '\t' -> sb.append("\\t")
             '\b' -> sb.append("\\b")
             else -> if (c.code < 0x20) {
-                sb.append("\\u").append("%04x".format(c.code))
+                sb.append("\\u").append(c.code.toString(16).padStart(4, '0'))
             } else {
                 sb.append(c)
             }
