@@ -70,7 +70,7 @@ class TimelineSessionTest {
     }
 
     @Test
-    fun `filters by range, movement and time of day`() {
+    fun `filters by range and movement and time of day`() {
         val s = open()
         assertEquals(5, s.filteredCount(FilterSpec()))
         val day2 = Instant.parse("2025-06-02T00:00:00Z").toEpochMilliseconds()
@@ -186,5 +186,73 @@ class TimelineSessionTest {
         assertEquals(false, result.failed)
         val bad = ok.session!!.exportTrackResult(spec, ExportFormat.CSV, false, "n", "/no/such/dir/x.csv")
         assertEquals(true, bad.failed)
+    }
+
+    @Test
+    fun `places cross with their maps link and coordinates`() {
+        val s = open()
+        val places = s.places(FilterSpec(), includeContainers = false)
+        assertEquals(1, places.size)
+        val p = places.single()
+        assertEquals("p1", p.placeId)
+        assertEquals(1, p.visits)
+        assertEquals("48.10000, 2.10000", p.coordinates)
+        assertTrue(p.mapsUrl.contains("query_place_id=p1"))
+
+        val out = tempFile("places")
+        val r = s.exportPlacesResult(FilterSpec(), false, mapOf(p.key to "Cafe"), ExportFormat.CSV, "Places", out.toString())
+        assertEquals(1, r.count)
+        assertTrue(read(out).contains("Cafe"))
+    }
+
+    @Test
+    fun `map track is cut by day when colouring by day`() {
+        val s = open()
+        val plain = s.mapTrack(FilterSpec(), colorByDay = false, budget = 1000)
+        assertEquals(5, plain.pointCount)
+        assertEquals(1, plain.pieceCount)
+        assertEquals(listOf(""), plain.pieceColors)
+
+        val byDay = s.mapTrack(FilterSpec(), colorByDay = true, budget = 1000)
+        assertEquals(listOf(0, 2), byDay.pieceStarts.toList())
+        assertEquals(2, byDay.pieceColors.distinct().size)
+        assertTrue(byDay.pieceColors.all { it.startsWith("#") })
+    }
+
+    @Test
+    fun `map track is thinned to the budget and keeps the last point`() {
+        val s = open()
+        val thin = s.mapTrack(FilterSpec(), colorByDay = false, budget = 2)
+        assertEquals(5, thin.sourcePoints)
+        assertEquals(3, thin.pointCount)
+        assertEquals(49.0, thin.latitudes.last())
+    }
+
+    @Test
+    fun `map track breaks at a long jump`() {
+        val jump = """
+            { "semanticSegments": [
+                { "startTime": "2025-06-01T08:00:00.000Z", "endTime": "2025-06-01T12:00:00.000Z",
+                  "timelinePath": [
+                    { "point": "48.0°, 2.0°", "time": "2025-06-01T08:10:00.000Z" },
+                    { "point": "48.01°, 2.01°", "time": "2025-06-01T08:20:00.000Z" },
+                    { "point": "52.0°, 13.0°", "time": "2025-06-01T11:00:00.000Z" },
+                    { "point": "52.01°, 13.01°", "time": "2025-06-01T11:10:00.000Z" } ] }
+            ] }
+        """.trimIndent()
+        val t = open(jump).mapTrack(FilterSpec(), colorByDay = false, budget = 1000)
+        assertEquals(listOf(0, 2), t.pieceStarts.toList())
+        assertEquals(4, t.pointCount)
+    }
+
+    @Test
+    fun `trips cross as a list even when there are none`() {
+        val s = open()
+        val list = s.tripList()
+        assertTrue(list.trips.isEmpty())
+        val out = tempFile("trips")
+        val r = s.exportTripsResult(FilterSpec(), LongArray(0), ExportFormat.GPX, "Trips", out.toString())
+        assertEquals(0, r.count)
+        assertEquals(0, s.mapTrips(FilterSpec(), LongArray(0), 1000).pointCount)
     }
 }

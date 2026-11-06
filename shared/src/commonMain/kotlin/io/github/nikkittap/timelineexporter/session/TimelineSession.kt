@@ -177,7 +177,7 @@ class WrongFileException(message: String?, cause: Throwable?) : Exception(messag
  */
 class TimelineSession private constructor(
     val timeline: ParsedTimeline,
-    private val zone: TimeZone,
+    internal val zone: TimeZone,
 ) {
     val pointCount: Int get() = timeline.pathPoints.size
     val segmentCount: Int get() = timeline.totalSegments
