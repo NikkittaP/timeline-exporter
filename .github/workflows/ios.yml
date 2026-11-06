@@ -1,0 +1,193 @@
+# iOS: Shared.xcframework -> XcodeGen project -> simulator build and tests.
+# Laid out as NEARCOIL's ios.yml: modes validate / build / testflight; cheap
+# checks on Linux first, the macOS job only after they pass.
+#   validate    shared JVM tests, then on macOS: shared simulator tests, the
+#               xcframework, XcodeGen, an unsigned device build and the
+#               XCTests on the simulator. No secrets needed.
+#   build       signed .ipa       - stage 2, needs signing secrets
+#   testflight  .ipa + TestFlight - stage 2, needs signing secrets, master only
+# Runs by hand (Actions -> iOS -> Run workflow) and, in validate mode, on
+# pushes to master that touch the iOS side. Free: the repository is public.
+# Job logs need a GitHub login; failures are also written as annotations
+# (tools/ci_annotate.py), readable through the public check-runs API.
+name: iOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "validate - checks, unsigned build, simulator tests; build - signed .ipa (stage 2); testflight - .ipa to TestFlight (stage 2, master only)"
+        type: choice
+        options: [validate, build, testflight]
+        default: validate
+  push:
+    branches: [master]
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios.yml"
+      - "tools/ci_annotate.py"
+      - "tools/test_ci_annotate.py"
+      - "tools/ios/**"
+      - "shared/build.gradle.kts"
+
+permissions:
+  contents: read
+
+# A running iOS build is never cancelled (stage 2 uploads must not be cut
+# halfway); a second one waits.
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Pushes have no inputs: they validate.
+  MODE: ${{ inputs.mode || 'validate' }}
+  # The runner image's Xcode must be this major; another fails the run.
+  XCODE_MAJOR: "27"
+
+jobs:
+  preflight:
+    name: Preflight (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Mode
+        run: |
+          set -euo pipefail
+          echo "Mode: $MODE"
+          if [[ "$MODE" != validate ]]; then
+            echo "::error title=Mode $MODE not available yet::'$MODE' needs signing secrets (stage 2). Run the workflow with mode validate."
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+        with: { distribution: temurin, java-version: "21" }
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+
+      - name: CI script tests
+        run: python3 tools/test_ci_annotate.py
+
+      - name: Shared tests (JVM)
+        run: |
+          set -euo pipefail
+          ./gradlew :shared:jvmTest --stacktrace 2>&1 | tee gradle.log
+
+      # Logs need a GitHub login; annotations are public (check-runs API).
+      # Skipped when the run stopped before checkout (the Mode step).
+      - name: Failure annotations
+        if: failure() && hashFiles('tools/ci_annotate.py') != ''
+        run: python3 tools/ci_annotate.py gradle.log shared/build/test-results
+
+  ios:
+    name: iOS (${{ inputs.mode || 'validate' }})
+    needs: preflight
+    runs-on: xcode-27
+    timeout-minutes: 60
+    env:
+      LOGS: ${{ github.workspace }}/build/ios/logs
+    steps:
+      # No fallback Xcode: if the image serves another major, failing beats
+      # silently building with a toolchain nobody checked. The notice makes the
+      # versions readable without a login.
+      - name: Toolchain
+        run: |
+          set -euo pipefail
+          xcode="$(xcodebuild -version | sed -n 1p)"
+          sdk="$(xcrun --sdk iphonesimulator --show-sdk-version)"
+          echo "::notice title=Toolchain::$xcode, iphonesimulator SDK $sdk, macOS $(sw_vers -productVersion), $(uname -m)"
+          if [[ "$(uname -m)" != arm64 ]]; then
+            echo "::error title=Runner::expected an Apple Silicon (arm64) runner, got $(uname -m)"
+            exit 1
+          fi
+          if [[ ! "$xcode" =~ ^Xcode\ ${XCODE_MAJOR}(\.|$) ]]; then
+            echo "::error title=Xcode version::runner provides '$xcode', the workflow expects Xcode ${XCODE_MAJOR}"
+            exit 1
+          fi
+
+      # checkout empties the workspace, so $LOGS is created after it.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+        with: { distribution: temurin, java-version: "21" }
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+
+      - name: Shared simulator tests + Shared.xcframework
+        run: |
+          set -euo pipefail
+          mkdir -p "$LOGS"
+          ./gradlew :shared:iosSimulatorArm64Test :shared:assembleSharedReleaseXCFramework --stacktrace 2>&1 | tee gradle.log
+          ls shared/build/XCFrameworks/release/Shared.xcframework
+
+      - name: XcodeGen
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        run: |
+          set -euo pipefail
+          command -v xcodegen >/dev/null || brew install xcodegen
+          xcodegen --version
+          cd ios && xcodegen generate
+
+      # Proves the device slice links. Never becomes an .ipa.
+      # The full log goes to $LOGS; the step shows errors and the tail on
+      # failure, warnings and the result line on success.
+      - name: Unsigned device build
+        run: |
+          set -euo pipefail
+          mkdir -p "$LOGS"
+          log="$LOGS/xcodebuild-device.log"
+          cd ios
+          if ! xcodebuild build -project TimelineExporter.xcodeproj -scheme TimelineExporter \
+              -configuration Release -destination 'generic/platform=iOS' \
+              CODE_SIGNING_ALLOWED=NO > "$log" 2>&1; then
+            grep -E "error:|\*\* BUILD" "$log" | head -n 60 || true
+            echo "--- last 30 lines of $log ---"
+            tail -n 30 "$log"
+            exit 1
+          fi
+          grep -E "warning:|\*\* BUILD" "$log" || true
+
+      - name: Simulator tests
+        run: |
+          set -euo pipefail
+          mkdir -p "$LOGS"
+          log="$LOGS/xcodebuild-test.log"
+          udid="$(xcrun simctl list devices available -j | python3 tools/ios/simulator_udid.py)" || {
+            echo "::error title=Simulator::could not pick an iPhone simulator (simctl or tools/ios/simulator_udid.py failed, see the log)"
+            exit 1; }
+          echo "Simulator: $udid"
+          cd ios
+          if ! xcodebuild test -project TimelineExporter.xcodeproj -scheme TimelineExporter \
+              -configuration Debug -destination "platform=iOS Simulator,id=$udid" \
+              -resultBundlePath "$RUNNER_TEMP/tests.xcresult" \
+              CODE_SIGNING_ALLOWED=NO > "$log" 2>&1; then
+            grep -E "error:|Test Case .* failed|\*\* TEST" "$log" | head -n 60 || true
+            echo "--- last 30 lines of $log ---"
+            tail -n 30 "$log"
+            exit 1
+          fi
+          grep -E "Test Case .*(passed|failed)|Executed|\*\* TEST" "$log" || true
+
+      # Logs need a GitHub login; annotations are public (check-runs API).
+      # Skipped when the run stopped before checkout (the Toolchain step).
+      - name: Failure annotations
+        if: failure() && hashFiles('tools/ci_annotate.py') != ''
+        run: >
+          python3 tools/ci_annotate.py gradle.log shared/build/test-results
+          --xcodebuild "$LOGS/xcodebuild-device.log"
+          --xcodebuild "$LOGS/xcodebuild-test.log"
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ios-logs
+          path: |
+            build/ios/logs/
+            ${{ runner.temp }}/tests.xcresult
+          retention-days: 7
+          if-no-files-found: ignore
