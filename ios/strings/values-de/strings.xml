@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">Seit Ende 2024 speichert Google die Zeitachse nur auf deinem Telefon – es gibt keinen Google-Takeout-Export, und keine andere App kann sie direkt lesen. Du exportierst sie einmal aus Google Maps und öffnest die Datei dann hier.</string>
+    <string name="help_note_file_location">• Die exportierte Datei heißt Timeline.json. Speichere sie in „Dateien“ – „Auf meinem iPhone“ oder iCloud Drive –, damit diese App sie öffnen kann.</string>
+    <string name="language_settings_hint">iOS legt die Sprache jeder App in den Einstellungen fest.</string>
+</resources>

@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import UIKit
 
 /// The one screen: choose a file, filter it, preview it on the map as the
 /// track, trips or places, export. The same steps as the Android MainScreen.
@@ -8,6 +9,8 @@ struct MainView: View {
     @State private var importing = false
     @State private var dateSheet = false
     @State private var timeSheet = false
+    @State private var info: InfoSheet?
+    @AppStorage(WhatsNew.seenKey) private var whatsNewSeen: String?
 
     var body: some View {
         NavigationStack {
@@ -39,6 +42,73 @@ struct MainView: View {
                 TimeOfDaySheet(initial: store.filter.timeOfDay) { store.setTimeOfDay($0) }
             }
             .exportPresenter()
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) { menu }
+            }
+            .sheet(item: $info) { sheet in
+                switch sheet {
+                case .help: HelpSheet()
+                case .feedback:
+                    FeedbackSheet(
+                        formatName: store.timeline?.formatName,
+                        pointCount: store.timeline.map { $0.pointCount }
+                    )
+                case .whatsNew(let entries): WhatsNewSheet(entries: entries, title: L.s("whats_new_title"))
+                case .history: WhatsNewSheet(entries: history, title: L.s("whats_new_history_title"))
+                }
+            }
+            .onAppear(perform: showWhatsNew)
+        }
+    }
+
+    private var history: [WhatsNewEntry] {
+        WhatsNew.history(WhatsNew.notes, current: WhatsNew.currentVersion)
+    }
+
+    private var menu: some View {
+        Menu {
+            Button { info = .help } label: { Label(L.s("action_help"), systemImage: "questionmark.circle") }
+            Button { info = .feedback } label: { Label(L.s("feedback_title"), systemImage: "lightbulb") }
+            if !history.isEmpty {
+                Button { info = .history } label: { Label(L.s("whats_new_title"), systemImage: "sparkles") }
+            }
+            Section(L.s("language_settings_hint")) {
+                Button {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    Label(L.s("language_title"), systemImage: "globe")
+                }
+            }
+            Text(L.f("app_version", WhatsNew.currentVersion))
+        } label: {
+            Image(systemName: "ellipsis.circle")
+        }
+        .accessibilityLabel(L.s("action_more"))
+        .accessibilityIdentifier("moreMenu")
+    }
+
+    /// After an update, the notes of every release since the last one seen;
+    /// a fresh install just records its version.
+    private func showWhatsNew() {
+        let current = WhatsNew.currentVersion
+        let pending = WhatsNew.pending(WhatsNew.notes, seen: whatsNewSeen, current: current)
+        whatsNewSeen = current
+        if !pending.isEmpty { info = .whatsNew(pending) }
+    }
+}
+
+private enum InfoSheet: Identifiable {
+    case help, feedback, history
+    case whatsNew([WhatsNewEntry])
+
+    var id: String {
+        switch self {
+        case .help: "help"
+        case .feedback: "feedback"
+        case .history: "history"
+        case .whatsNew: "whatsNew"
         }
     }
 }

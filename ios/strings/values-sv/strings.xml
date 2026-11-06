@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">Sedan slutet av 2024 sparar Google tidslinjen bara på din telefon – det finns inget Google Takeout-alternativ och ingen annan app kan läsa den direkt. Du exporterar den en gång från Google Maps och öppnar sedan filen här.</string>
+    <string name="help_note_file_location">• Den exporterade filen heter Timeline.json. Spara den i Filer (På min iPhone eller iCloud Drive) så att appen kan öppna den.</string>
+    <string name="language_settings_hint">iOS ställer in varje apps språk i Inställningar.</string>
+</resources>

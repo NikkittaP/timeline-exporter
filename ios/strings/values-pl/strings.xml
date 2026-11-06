@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">Od końca 2024 roku Google przechowuje Oś czasu tylko na telefonie — nie ma opcji Google Takeout i żadna inna aplikacja nie może jej odczytać bezpośrednio. Eksportujesz ją raz z Map Google, a potem otwierasz plik tutaj.</string>
+    <string name="help_note_file_location">• Wyeksportowany plik nazywa się Timeline.json. Zapisz go w aplikacji Pliki (Na moim iPhonie lub iCloud Drive), aby ta aplikacja mogła go otworzyć.</string>
+    <string name="language_settings_hint">iOS ustawia język każdej aplikacji w Ustawieniach.</string>
+</resources>

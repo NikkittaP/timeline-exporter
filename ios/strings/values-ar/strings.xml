@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">منذ أواخر 2024 يحتفظ Google بالمخطط الزمني على هاتفك فقط — لا يوجد خيار في Google Takeout ولا يمكن لأي تطبيق آخر قراءته مباشرة. صدّره مرة واحدة من خرائط Google، ثم افتح الملف هنا.</string>
+    <string name="help_note_file_location">• اسم الملف المُصدَّر هو Timeline.json. احفظه في تطبيق الملفات (على iPhone أو iCloud Drive) ليتمكن هذا التطبيق من فتحه.</string>
+    <string name="language_settings_hint">يحفظ iOS لغة كل تطبيق في الإعدادات.</string>
+</resources>

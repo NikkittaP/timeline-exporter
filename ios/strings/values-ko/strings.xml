@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">2024년 말부터 Google은 타임라인을 휴대전화에만 저장합니다. Google 테이크아웃 옵션이 없고 다른 앱이 직접 읽을 수도 없습니다. Google 지도에서 한 번 내보낸 다음 여기에서 파일을 여세요.</string>
+    <string name="help_note_file_location">• 내보낸 파일 이름은 Timeline.json입니다. 이 앱에서 열 수 있도록 파일 앱(나의 iPhone 또는 iCloud Drive)에 저장하세요.</string>
+    <string name="language_settings_hint">iOS에서는 앱별 언어를 설정에서 지정합니다.</string>
+</resources>

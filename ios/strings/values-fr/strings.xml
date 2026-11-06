@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">Depuis fin 2024, Google ne conserve la Timeline que sur votre téléphone : plus d\'export Google Takeout, et aucune autre app ne peut la lire directement. Exportez-la une fois depuis Google Maps, puis ouvrez le fichier ici.</string>
+    <string name="help_note_file_location">• Le fichier exporté s\'appelle Timeline.json. Enregistrez-le dans Fichiers (Sur mon iPhone ou iCloud Drive) pour que cette app puisse l\'ouvrir.</string>
+    <string name="language_settings_hint">iOS règle la langue de chaque app dans Réglages.</string>
+</resources>

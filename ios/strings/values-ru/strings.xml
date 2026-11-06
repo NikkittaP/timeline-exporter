@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">С конца 2024 года Google хранит Timeline только на вашем телефоне — нет ни выгрузки через Google Takeout, ни других приложений, читающих её напрямую. Вы один раз экспортируете данные из Google Карт, а затем открываете файл здесь.</string>
+    <string name="help_note_file_location">• Экспортированный файл называется Timeline.json. Сохраните его в «Файлы» — «На iPhone» или iCloud Drive, — чтобы приложение могло его открыть.</string>
+    <string name="language_settings_hint">iOS хранит язык каждого приложения в Настройках.</string>
+</resources>

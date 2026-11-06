@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">自 2024 年底起，Google 只在你的手機上保存時間軸——沒有 Google Takeout 選項，其他應用程式也無法直接讀取。請先從 Google 地圖匯出一次，再在這裡開啟該檔案。</string>
+    <string name="help_note_file_location">• 匯出的檔案名稱為 Timeline.json。請將它儲存到「檔案」（「我的 iPhone」或 iCloud 雲碟），讓本 App 能開啟。</string>
+    <string name="language_settings_hint">iOS 在「設定」中為每個 App 設定語言。</string>
+</resources>

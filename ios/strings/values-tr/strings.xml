@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">2024 sonundan beri Google Zaman Çizelgesi\'ni yalnızca telefonunuzda tutuyor — Google Takeout seçeneği yok ve başka hiçbir uygulama onu doğrudan okuyamıyor. Bir kez Google Haritalar\'dan dışa aktarır, ardından dosyayı burada açarsınız.</string>
+    <string name="help_note_file_location">• Dışa aktarılan dosyanın adı Timeline.json\'dur. Bu uygulamanın açabilmesi için onu Dosyalar\'a (iPhone\'umda veya iCloud Drive) kaydedin.</string>
+    <string name="language_settings_hint">iOS her uygulamanın dilini Ayarlar\'da tutar.</string>
+</resources>

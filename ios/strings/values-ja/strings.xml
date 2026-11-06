@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">2024年末から、Google はタイムラインをスマートフォン内にのみ保存しています。Google データエクスポートの選択肢はなく、他のアプリが直接読み取ることもできません。Google マップから一度エクスポートし、そのファイルをここで開いてください。</string>
+    <string name="help_note_file_location">• エクスポートされたファイル名は Timeline.json です。このアプリで開けるよう、「ファイル」（「この iPhone 内」または iCloud Drive）に保存してください。</string>
+    <string name="language_settings_hint">iOS では各アプリの言語を「設定」で選びます。</string>
+</resources>

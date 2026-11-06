@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">Desde finales de 2024, Google guarda la cronología solo en tu teléfono: no hay opción de Google Takeout y ninguna otra app puede leerla directamente. La exportas una vez desde Google Maps y luego abres el archivo aquí.</string>
+    <string name="help_note_file_location">• El archivo exportado se llama Timeline.json. Guárdalo en Archivos (En mi iPhone o iCloud Drive) para que esta app pueda abrirlo.</string>
+    <string name="language_settings_hint">iOS guarda el idioma de cada app en Ajustes.</string>
+</resources>

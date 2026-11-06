@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">Desde o fim de 2024, o Google guarda a Linha do tempo apenas no seu celular — não há opção no Google Takeout e nenhum outro app consegue lê-la diretamente. Você a exporta uma vez pelo Google Maps e depois abre o arquivo aqui.</string>
+    <string name="help_note_file_location">• O arquivo exportado se chama Timeline.json. Salve-o no app Arquivos (No Meu iPhone ou iCloud Drive) para que este app possa abri-lo.</string>
+    <string name="language_settings_hint">O iOS define o idioma de cada app nos Ajustes.</string>
+</resources>

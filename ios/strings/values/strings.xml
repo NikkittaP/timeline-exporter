@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">Since late 2024 Google keeps Timeline only on your phone — there\'s no Google Takeout option and no other app can read it directly. You export it once from Google Maps, then open the file here.</string>
+    <string name="help_note_file_location">• The exported file is named Timeline.json. Save it to Files — On My iPhone or iCloud Drive — so this app can open it.</string>
+    <string name="language_settings_hint">iOS keeps each app\'s language in Settings.</string>
+</resources>

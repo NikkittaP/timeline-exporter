@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">Sinds eind 2024 bewaart Google de tijdlijn alleen op je telefoon — er is geen Google Takeout-optie en geen andere app kan hem rechtstreeks lezen. Je exporteert hem één keer vanuit Google Maps en opent het bestand daarna hier.</string>
+    <string name="help_note_file_location">• Het geëxporteerde bestand heet Timeline.json. Bewaar het in Bestanden (Op mijn iPhone of iCloud Drive) zodat deze app het kan openen.</string>
+    <string name="language_settings_hint">iOS stelt de taal van elke app in bij Instellingen.</string>
+</resources>

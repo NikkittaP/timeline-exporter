@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- iOS-only strings, and Android strings whose wording is Android-specific.
+     Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
+<resources>
+    <string name="help_intro">2024 के अंत से Google टाइमलाइन को सिर्फ़ आपके फ़ोन पर रखता है — Google Takeout का कोई विकल्प नहीं है और कोई दूसरा ऐप इसे सीधे नहीं पढ़ सकता। इसे एक बार Google Maps से एक्सपोर्ट करें, फिर फ़ाइल यहाँ खोलें।</string>
+    <string name="help_note_file_location">• एक्सपोर्ट की गई फ़ाइल का नाम Timeline.json है। इसे Files में (On My iPhone या iCloud Drive) सेव करें, ताकि यह ऐप इसे खोल सके।</string>
+    <string name="language_settings_hint">iOS हर ऐप की भाषा Settings में रखता है।</string>
+</resources>

@@ -10064,109 +10064,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "منذ أواخر عام 2024، يخزّن Google المخطط الزمني على جهازك فقط — لا يوجد خيار Google Takeout ولا تطبيق خارجي يمكنه قراءته مباشرةً. تصدّره مرة واحدة من إعدادات النظام، ثم تفتح الملف هنا."
+            "value" : "منذ أواخر 2024 يحتفظ Google بالمخطط الزمني على هاتفك فقط — لا يوجد خيار في Google Takeout ولا يمكن لأي تطبيق آخر قراءته مباشرة. صدّره مرة واحدة من خرائط Google، ثم افتح الملف هنا."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seit Ende 2024 speichert Google die Timeline nur noch auf deinem Gerät — es gibt keine Google-Takeout-Option und keine Drittanbieter-App, die sie direkt lesen kann. Du exportierst sie einmal aus den Systemeinstellungen und öffnest die Datei dann hier."
+            "value" : "Seit Ende 2024 speichert Google die Zeitachse nur auf deinem Telefon – es gibt keinen Google-Takeout-Export, und keine andere App kann sie direkt lesen. Du exportierst sie einmal aus Google Maps und öffnest die Datei dann hier."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Since late 2024 Google stores Timeline only on your device — there's no Google Takeout option and no third-party app can read it directly. You export it once from system Settings, then bring the file here."
+            "value" : "Since late 2024 Google keeps Timeline only on your phone — there's no Google Takeout option and no other app can read it directly. You export it once from Google Maps, then open the file here."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desde finales de 2024, Google almacena la Timeline solo en tu dispositivo: no hay opción de Google Takeout ni apps de terceros que puedan leerla directamente. La exportas una vez desde los Ajustes del sistema y luego abres el archivo aquí."
+            "value" : "Desde finales de 2024, Google guarda la cronología solo en tu teléfono: no hay opción de Google Takeout y ninguna otra app puede leerla directamente. La exportas una vez desde Google Maps y luego abres el archivo aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Depuis fin 2024, Google ne stocke la Timeline que sur votre appareil — il n'y a pas d'option Google Takeout ni d'application tierce capable de la lire directement. Vous l'exportez une fois depuis les Paramètres système, puis vous ouvrez le fichier ici."
+            "value" : "Depuis fin 2024, Google ne conserve la Timeline que sur votre téléphone : plus d'export Google Takeout, et aucune autre app ne peut la lire directement. Exportez-la une fois depuis Google Maps, puis ouvrez le fichier ici."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2024 के अंत से Google, Timeline को केवल आपके डिवाइस पर संग्रहीत करता है — न तो Google Takeout विकल्प है और न ही कोई तृतीय-पक्ष ऐप जो इसे सीधे पढ़ सके। आप इसे एक बार सिस्टम सेटिंग से एक्सपोर्ट करते हैं, फिर फ़ाइल यहाँ खोलते हैं।"
+            "value" : "2024 के अंत से Google टाइमलाइन को सिर्फ़ आपके फ़ोन पर रखता है — Google Takeout का कोई विकल्प नहीं है और कोई दूसरा ऐप इसे सीधे नहीं पढ़ सकता। इसे एक बार Google Maps से एक्सपोर्ट करें, फिर फ़ाइल यहाँ खोलें।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Da fine 2024 Google memorizza la Timeline solo sul tuo dispositivo: non c'è l'opzione Google Takeout né app di terze parti che possano leggerla direttamente. La esporti una volta dalle Impostazioni di sistema, poi apri il file qui."
+            "value" : "Da fine 2024 Google conserva la cronologia solo sul telefono: non c'è un'opzione Google Takeout e nessun'altra app può leggerla direttamente. La esporti una volta da Google Maps, poi apri il file qui."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2024 年後半以降、Google はタイムラインをお使いの端末にのみ保存します。Google Takeout のオプションはなく、直接読み取れるサードパーティ製アプリもありません。システムの設定から一度エクスポートし、そのファイルをここで開きます。"
+            "value" : "2024年末から、Google はタイムラインをスマートフォン内にのみ保存しています。Google データエクスポートの選択肢はなく、他のアプリが直接読み取ることもできません。Google マップから一度エクスポートし、そのファイルをここで開いてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2024년 말부터 Google은 타임라인을 기기에만 저장합니다 — Google Takeout 옵션도 없고 직접 읽을 수 있는 타사 앱도 없습니다. 시스템 설정에서 한 번 내보낸 뒤 그 파일을 여기서 엽니다."
+            "value" : "2024년 말부터 Google은 타임라인을 휴대전화에만 저장합니다. Google 테이크아웃 옵션이 없고 다른 앱이 직접 읽을 수도 없습니다. Google 지도에서 한 번 내보낸 다음 여기에서 파일을 여세요."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sinds eind 2024 bewaart Google de Timeline alleen op je apparaat — er is geen Google Takeout-optie en geen app van derden die het rechtstreeks kan lezen. Je exporteert het één keer via de systeeminstellingen en opent het bestand daarna hier."
+            "value" : "Sinds eind 2024 bewaart Google de tijdlijn alleen op je telefoon — er is geen Google Takeout-optie en geen andere app kan hem rechtstreeks lezen. Je exporteert hem één keer vanuit Google Maps en opent het bestand daarna hier."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Od końca 2024 r. Google przechowuje Timeline tylko na Twoim urządzeniu — nie ma opcji Google Takeout ani aplikacji innych firm, które mogłyby je odczytać bezpośrednio. Eksportujesz dane raz z ustawień systemowych, a potem otwierasz plik tutaj."
+            "value" : "Od końca 2024 roku Google przechowuje Oś czasu tylko na telefonie — nie ma opcji Google Takeout i żadna inna aplikacja nie może jej odczytać bezpośrednio. Eksportujesz ją raz z Map Google, a potem otwierasz plik tutaj."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desde o fim de 2024, o Google armazena o Timeline apenas no seu dispositivo — não há opção no Google Takeout nem aplicativos de terceiros que o leiam diretamente. Você o exporta uma vez nas Configurações do sistema e depois abre o arquivo aqui."
+            "value" : "Desde o fim de 2024, o Google guarda a Linha do tempo apenas no seu celular — não há opção no Google Takeout e nenhum outro app consegue lê-la diretamente. Você a exporta uma vez pelo Google Maps e depois abre o arquivo aqui."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "С конца 2024 года Google хранит Timeline только на вашем устройстве — нет ни выгрузки через Google Takeout, ни сторонних приложений, читающих её напрямую. Вы один раз экспортируете данные из системных настроек, а затем открываете файл здесь."
+            "value" : "С конца 2024 года Google хранит Timeline только на вашем телефоне — нет ни выгрузки через Google Takeout, ни других приложений, читающих её напрямую. Вы один раз экспортируете данные из Google Карт, а затем открываете файл здесь."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sedan slutet av 2024 lagrar Google Timeline endast på din enhet — det finns inget Google Takeout-alternativ och ingen tredjepartsapp som kan läsa den direkt. Du exporterar den en gång från systeminställningarna och öppnar sedan filen här."
+            "value" : "Sedan slutet av 2024 sparar Google tidslinjen bara på din telefon – det finns inget Google Takeout-alternativ och ingen annan app kan läsa den direkt. Du exporterar den en gång från Google Maps och öppnar sedan filen här."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2024 sonundan beri Google, Timeline'ı yalnızca cihazınızda saklıyor — Google Takeout seçeneği yok ve onu doğrudan okuyabilen üçüncü taraf uygulama da yok. Verileri sistem Ayarları'ndan bir kez dışa aktarır, ardından dosyayı burada açarsınız."
+            "value" : "2024 sonundan beri Google Zaman Çizelgesi'ni yalnızca telefonunuzda tutuyor — Google Takeout seçeneği yok ve başka hiçbir uygulama onu doğrudan okuyamıyor. Bir kez Google Haritalar'dan dışa aktarır, ardından dosyayı burada açarsınız."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "З кінця 2024 року Google зберігає Timeline лише на вашому пристрої — немає ні вивантаження через Google Takeout, ні сторонніх застосунків, що читають її напряму. Ви один раз експортуєте дані із системних налаштувань, а потім відкриваєте файл тут."
+            "value" : "З кінця 2024 року Google зберігає Timeline лише на вашому телефоні — немає ні вивантаження через Google Takeout, ні інших застосунків, які читають її напряму. Ви один раз експортуєте дані з Google Карт, а потім відкриваєте файл тут."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自 2024 年底起，Google 仅将时间轴存储在你的设备上——没有 Google Takeout 选项，也没有可直接读取它的第三方应用。你从系统设置中导出一次，然后在这里打开该文件。"
+            "value" : "自 2024 年底起，Google 只在你的手机上保存时间轴——没有 Google Takeout 选项，其他应用也无法直接读取。请先从 Google 地图导出一次，然后在这里打开该文件。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自 2024 年底起，Google 僅將時間軸儲存在你的裝置上——沒有 Google Takeout 選項，也沒有可直接讀取它的第三方應用程式。你從系統設定匯出一次，然後在這裡開啟該檔案。"
+            "value" : "自 2024 年底起，Google 只在你的手機上保存時間軸——沒有 Google Takeout 選項，其他應用程式也無法直接讀取。請先從 Google 地圖匯出一次，再在這裡開啟該檔案。"
           }
         }
       }
@@ -12211,109 +12211,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• اسم الملف المُصدَّر هو Timeline.json. يُحفظ في المكان الذي اخترته أثناء التصدير — تقيّد بعض إصدارات Android الوصول إلى مجلدات معيّنة (مثل التنزيلات)، فإذا تعذّر على التطبيق قراءته، جرّب نقله."
+            "value" : "• اسم الملف المُصدَّر هو Timeline.json. احفظه في تطبيق الملفات (على iPhone أو iCloud Drive) ليتمكن هذا التطبيق من فتحه."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Die exportierte Datei heißt Timeline.json. Sie landet dort, wo du beim Export gewählt hast — manche Android-Versionen beschränken den Zugriff auf bestimmte Ordner (z. B. Downloads). Wenn die App sie nicht lesen kann, verschiebe sie."
+            "value" : "• Die exportierte Datei heißt Timeline.json. Speichere sie in „Dateien“ – „Auf meinem iPhone“ oder iCloud Drive –, damit diese App sie öffnen kann."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• The exported file is named Timeline.json. It lands wherever you chose during export — some Android versions restrict access to certain folders (e.g. Downloads), so if this app can't read it, try moving it."
+            "value" : "• The exported file is named Timeline.json. Save it to Files — On My iPhone or iCloud Drive — so this app can open it."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• El archivo exportado se llama Timeline.json. Se guarda donde lo hayas elegido al exportar; algunas versiones de Android restringen el acceso a ciertas carpetas (p. ej. Descargas), así que si la app no puede leerlo, prueba a moverlo."
+            "value" : "• El archivo exportado se llama Timeline.json. Guárdalo en Archivos (En mi iPhone o iCloud Drive) para que esta app pueda abrirlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Le fichier exporté s'appelle Timeline.json. Il est enregistré là où vous l'avez choisi lors de l'export — certaines versions d'Android restreignent l'accès à certains dossiers (par ex. Téléchargements) ; si l'application ne peut pas le lire, essayez de le déplacer."
+            "value" : "• Le fichier exporté s'appelle Timeline.json. Enregistrez-le dans Fichiers (Sur mon iPhone ou iCloud Drive) pour que cette app puisse l'ouvrir."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• एक्सपोर्ट की गई फ़ाइल का नाम Timeline.json है। यह वहीं सहेजी जाती है जहाँ आपने एक्सपोर्ट के समय चुना — कुछ Android संस्करण कुछ फ़ोल्डर (जैसे Downloads) तक पहुँच सीमित करते हैं, इसलिए अगर ऐप इसे न पढ़ पाए तो इसे ले जाकर देखें।"
+            "value" : "• एक्सपोर्ट की गई फ़ाइल का नाम Timeline.json है। इसे Files में (On My iPhone या iCloud Drive) सेव करें, ताकि यह ऐप इसे खोल सके।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Il file esportato si chiama Timeline.json. Viene salvato dove hai scelto durante l'esportazione: alcune versioni di Android limitano l'accesso a certe cartelle (es. Download), quindi se l'app non riesce a leggerlo, prova a spostarlo."
+            "value" : "• Il file esportato si chiama Timeline.json. Salvalo in File (Sul mio iPhone o iCloud Drive) perché questa app possa aprirlo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• エクスポートされたファイル名は Timeline.json です。エクスポート時に選んだ場所に保存されます。Android のバージョンによっては特定のフォルダ（例: ダウンロード）へのアクセスが制限されるため、アプリが読み取れない場合は移動してみてください。"
+            "value" : "• エクスポートされたファイル名は Timeline.json です。このアプリで開けるよう、「ファイル」（「この iPhone 内」または iCloud Drive）に保存してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 내보낸 파일 이름은 Timeline.json입니다. 내보낼 때 선택한 위치에 저장됩니다 — 일부 Android 버전은 특정 폴더(예: 다운로드)에 대한 접근을 제한하므로, 앱이 읽지 못하면 파일을 옮겨 보세요."
+            "value" : "• 내보낸 파일 이름은 Timeline.json입니다. 이 앱에서 열 수 있도록 파일 앱(나의 iPhone 또는 iCloud Drive)에 저장하세요."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Het geëxporteerde bestand heet Timeline.json. Het komt terecht waar je tijdens het exporteren koos — sommige Android-versies beperken de toegang tot bepaalde mappen (bijv. Downloads), dus als de app het niet kan lezen, probeer het te verplaatsen."
+            "value" : "• Het geëxporteerde bestand heet Timeline.json. Bewaar het in Bestanden (Op mijn iPhone of iCloud Drive) zodat deze app het kan openen."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Wyeksportowany plik nazywa się Timeline.json. Trafia tam, gdzie wskazałeś podczas eksportu — niektóre wersje Androida ograniczają dostęp do pewnych folderów (np. Pobrane), więc jeśli aplikacja nie może go odczytać, spróbuj go przenieść."
+            "value" : "• Wyeksportowany plik nazywa się Timeline.json. Zapisz go w aplikacji Pliki (Na moim iPhonie lub iCloud Drive), aby ta aplikacja mogła go otworzyć."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• O arquivo exportado se chama Timeline.json. Ele é salvo onde você escolheu durante a exportação — algumas versões do Android restringem o acesso a certas pastas (por ex., Downloads), então, se o app não conseguir lê-lo, tente movê-lo."
+            "value" : "• O arquivo exportado se chama Timeline.json. Salve-o no app Arquivos (No Meu iPhone ou iCloud Drive) para que este app possa abri-lo."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Экспортированный файл называется Timeline.json. Он сохраняется туда, куда вы указали при экспорте — некоторые версии Android ограничивают доступ к отдельным папкам (например, «Загрузки»), поэтому если приложение не может его прочитать, попробуйте переместить файл."
+            "value" : "• Экспортированный файл называется Timeline.json. Сохраните его в «Файлы» — «На iPhone» или iCloud Drive, — чтобы приложение могло его открыть."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Den exporterade filen heter Timeline.json. Den hamnar där du valde vid exporten — vissa Android-versioner begränsar åtkomsten till vissa mappar (t.ex. Nedladdningar), så om appen inte kan läsa den, prova att flytta den."
+            "value" : "• Den exporterade filen heter Timeline.json. Spara den i Filer (På min iPhone eller iCloud Drive) så att appen kan öppna den."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Dışa aktarılan dosyanın adı Timeline.json'dur. Dışa aktarırken seçtiğiniz yere kaydedilir — bazı Android sürümleri belirli klasörlere (ör. İndirilenler) erişimi kısıtlar; uygulama okuyamıyorsa dosyayı taşımayı deneyin."
+            "value" : "• Dışa aktarılan dosyanın adı Timeline.json'dur. Bu uygulamanın açabilmesi için onu Dosyalar'a (iPhone'umda veya iCloud Drive) kaydedin."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Експортований файл називається Timeline.json. Він зберігається туди, куди ви вказали під час експорту — деякі версії Android обмежують доступ до окремих папок (напр., «Завантаження»), тож якщо застосунок не може його прочитати, спробуйте перемістити файл."
+            "value" : "• Експортований файл називається Timeline.json. Збережіть його у «Файли» — «На iPhone» або iCloud Drive, — щоб застосунок міг його відкрити."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 导出的文件名为 Timeline.json。它会保存在你导出时选择的位置——某些 Android 版本会限制对特定文件夹（如“下载”）的访问，因此如果应用无法读取，请尝试移动该文件。"
+            "value" : "• 导出的文件名为 Timeline.json。请将其保存到“文件”（“我的 iPhone”或 iCloud 云盘），以便本应用打开。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 匯出的檔案名稱為 Timeline.json。它會儲存在你匯出時選擇的位置——某些 Android 版本會限制對特定資料夾（如「下載」）的存取，因此如果應用程式無法讀取，請嘗試移動該檔案。"
+            "value" : "• 匯出的檔案名稱為 Timeline.json。請將它儲存到「檔案」（「我的 iPhone」或 iCloud 雲碟），讓本 App 能開啟。"
           }
         }
       }
@@ -13670,6 +13670,119 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "漫遊的人不一定迷了路，有些人只是慢慢前行。"
+          }
+        }
+      }
+    },
+    "language_settings_hint" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يحفظ iOS لغة كل تطبيق في الإعدادات."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS legt die Sprache jeder App in den Einstellungen fest."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS keeps each app's language in Settings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS guarda el idioma de cada app en Ajustes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS règle la langue de chaque app dans Réglages."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS हर ऐप की भाषा Settings में रखता है।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS imposta la lingua di ogni app in Impostazioni."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS では各アプリの言語を「設定」で選びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS에서는 앱별 언어를 설정에서 지정합니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS stelt de taal van elke app in bij Instellingen."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS ustawia język każdej aplikacji w Ustawieniach."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O iOS define o idioma de cada app nos Ajustes."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS хранит язык каждого приложения в Настройках."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS ställer in varje apps språk i Inställningar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS her uygulamanın dilini Ayarlar'da tutar."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS зберігає мову кожного застосунку в Параметрах."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS 在“设置”中为每个应用设置语言。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS 在「設定」中為每個 App 設定語言。"
           }
         }
       }
