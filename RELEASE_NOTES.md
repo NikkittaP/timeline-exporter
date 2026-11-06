@@ -25,10 +25,12 @@ Where things go at release time:
 
 # Unreleased — everything since v1.9.2
 
-To ship as **1.10.0 (versionCode 27)**: Map image and the What's new
-popup. Store text, two items: `fastlane/metadata/android/<locale>/changelogs/27.txt`
-and `F:\Timeline\Whats_New_v1.10.0_tagged.txt`, 18 locales, 104–359
-characters each; the same text is the app's own 1.10.0 notes
+To ship as **1.10.1 (versionCode 28)**: Map image and the What's new
+popup. 1.10.0 (27) went to internal testing only; 28 adds the app bar
+title shrinking to fit on narrow screens and carries the same store text.
+Store text, two items: `fastlane/metadata/android/<locale>/changelogs/28.txt`
+and `F:\Timeline\Whats_New_v1.10.1_tagged.txt`, 18 locales, 104–359
+characters each; the same text is the app's own 1.10.1 notes
 (`tools/whats_new.py`). The hidden route animation (long press on the
 fit-to-data button) and the journey scenes behind the logo and title are
 left out of the store text on purpose.

@@ -433,8 +433,11 @@ android {
         //       What's new popup with the version history behind the footer.
         //       Minor: new features. changelogs/27.txt covers everything
         //       since 26.
-        versionCode = 27
-        versionName = "1.10.0"
+        //   versionCode=28, versionName="1.10.1" -> 27 is on internal testing;
+        //       adds the app bar title shrinking to fit on narrow screens
+        //       (OnePlus 7 Pro, Mi 5s). changelogs/28.txt is 27.txt as is.
+        versionCode = 28
+        versionName = "1.10.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

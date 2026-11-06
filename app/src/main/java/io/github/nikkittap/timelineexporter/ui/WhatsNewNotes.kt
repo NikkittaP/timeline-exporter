@@ -5,7 +5,7 @@ import io.github.nikkittap.timelineexporter.R
 
 /** Every release with in-app notes, newest first. */
 val WHATS_NEW_NOTES: List<WhatsNewEntry> = listOf(
-    WhatsNewEntry("1.10.0", R.string.whats_new_1_10_0),
+    WhatsNewEntry("1.10.1", R.string.whats_new_1_10_1),
     WhatsNewEntry("1.9.2", R.string.whats_new_1_9_2),
     WhatsNewEntry("1.9.1", R.string.whats_new_1_9_1),
     WhatsNewEntry("1.9.0", R.string.whats_new_1_9_0),
