@@ -22,10 +22,13 @@ SHOTS = "../tools/store_shots"
 # Options for one capture pass. `locales:ru-RU,ar` on any screens_* lane runs
 # just those two languages instead of all 18 — a full pass is 25-40 minutes, a
 # long way to go to check one change. Left out, the Screengrabfile's list is
-# used, so the key is omitted rather than passed as nil.
+# used, so the key is omitted rather than passed as nil. `device:<serial>`
+# pins the pass to one adb device, so a phone left plugged in next to the
+# emulator does not make screengrab stop at "multiple devices".
 def capture_options(device_type, options)
   args = { device_type: device_type }
   args[:locales] = options[:locales].split(",") if options[:locales]
+  args[:specific_device] = options[:device] if options[:device]
   args
 end
 

@@ -4,8 +4,13 @@
     "title": "Hela historiken {på en karta}",
     "sub": "År av Google Maps tidslinje på en gång"
   },
+  "mapimage": {
+    "eyebrow": "Nytt: Kartbild",
+    "title": "Din rutt {som bild}",
+    "sub": "Spara eller dela — med datum, sträcka och platser"
+  },
   "trip": {
-    "eyebrow": "Nytt: Resor",
+    "eyebrow": "Resor",
     "title": "Varje {resa} hittas åt dig",
     "sub": "Semestrar och dagsutflykter – datum, avstånd och platser"
   },

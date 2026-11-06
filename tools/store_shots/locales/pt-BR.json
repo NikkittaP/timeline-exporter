@@ -4,8 +4,13 @@
     "title": "Seu histórico {em um mapa}",
     "sub": "Anos da Linha do tempo do Google Maps de uma vez"
   },
+  "mapimage": {
+    "eyebrow": "Novo: Imagem do mapa",
+    "title": "Seu trajeto {em uma imagem}",
+    "sub": "Salve ou compartilhe, com datas, distância e lugares"
+  },
   "trip": {
-    "eyebrow": "Novo: Viagens",
+    "eyebrow": "Viagens",
     "title": "Cada {viagem} encontrada para você",
     "sub": "Férias e passeios de um dia: datas, distância e lugares"
   },

@@ -4,8 +4,13 @@
     "title": "Je geschiedenis, {op één kaart}",
     "sub": "Jaren Google Maps Timeline in één oogopslag"
   },
+  "mapimage": {
+    "eyebrow": "Nieuw: Kaartafbeelding",
+    "title": "Je route {als afbeelding}",
+    "sub": "Bewaar of deel hem — met data, afstand en plaatsen"
+  },
   "trip": {
-    "eyebrow": "Nieuw: Reizen",
+    "eyebrow": "Reizen",
     "title": "Elke {reis} vanzelf gevonden",
     "sub": "Vakanties en dagtrips: data, afstand en plaatsen"
   },

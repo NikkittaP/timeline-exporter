@@ -4,8 +4,13 @@
     "title": "Twoja historia {na jednej mapie}",
     "sub": "Lata Osi czasu Google Maps na jednym ekranie"
   },
+  "mapimage": {
+    "eyebrow": "Nowość: Obraz mapy",
+    "title": "Twoja trasa {jako obraz}",
+    "sub": "Zapisz lub udostępnij — z datami, dystansem i miejscami"
+  },
   "trip": {
-    "eyebrow": "Nowość: Podróże",
+    "eyebrow": "Podróże",
     "title": "Każda {podróż} znaleziona sama",
     "sub": "Urlopy i wycieczki jednodniowe: daty, dystans i miejsca"
   },

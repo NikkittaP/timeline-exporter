@@ -4,8 +4,13 @@
     "title": "Tüm geçmişin {tek haritada}",
     "sub": "Yılların Google Haritalar Zaman Tüneli tek ekranda"
   },
+  "mapimage": {
+    "eyebrow": "Yeni: Harita görüntüsü",
+    "title": "Rotanız {bir görselde}",
+    "sub": "Kaydedin veya paylaşın; tarihler, mesafe ve yerlerle"
+  },
   "trip": {
-    "eyebrow": "Yeni: Seyahatler",
+    "eyebrow": "Seyahatler",
     "title": "Her {seyahat} sizin için bulunur",
     "sub": "Tatiller ve günübirlik geziler: tarih, mesafe ve yerler"
   },

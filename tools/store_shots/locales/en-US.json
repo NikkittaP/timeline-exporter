@@ -4,8 +4,13 @@
     "title": "Your history, {on one map}",
     "sub": "Years of Google Maps Timeline in one view"
   },
+  "mapimage": {
+    "eyebrow": "New: Map image",
+    "title": "Your route {as a picture}",
+    "sub": "Save or share it — with dates, distance and places"
+  },
   "trip": {
-    "eyebrow": "New: Trips",
+    "eyebrow": "Trips",
     "title": "Every {trip}, found for you",
     "sub": "Holidays and day trips — dates, distance and places"
   },

@@ -68,6 +68,8 @@ import java.util.Locale
  *                    ticked for export: the trip on the map, its card, and
  *                    the newest trips listed under it
  *   12_trips         the full trips list, grouped under year headers
+ *   13_map_image     the Map image screen: 10_days's week as a Portrait
+ *                    picture with its stats card, coloured by day
  *
  * The order of the captures inside captureLoadedFlow is not cosmetic. The
  * Track / Places switch in step 3 decides what step 4 says it will export, so
@@ -245,6 +247,10 @@ class ScreenshotTest {
         // pumps waitForIdle() repeatedly so the map actually updates while we
         // wait. Raise if maps still look half-loaded.
         const val MAP_TILE_WAIT_MS = 6_000L
+
+        // How long 13_map_image waits for the export screen's preview, which
+        // fetches and draws its own tiles before it appears.
+        const val MAP_IMAGE_RENDER_TIMEOUT_MS = 45_000L
 
         // How often shoot() tries a capture, and how long it waits in between.
         const val SCREENSHOT_ATTEMPTS = 4
@@ -482,6 +488,21 @@ class ScreenshotTest {
         composeRule.onAllNodesWithText(dayLabel).onFirst().performClick()
         settle(MAP_TILE_WAIT_MS)
         shoot("10_days")
+
+        // 13 — Map image: the same week turned into a picture, Portrait with
+        // the stats card and colour by day, which is how the screen opens.
+        // Opened from the fullscreen map's own button, so it draws exactly the
+        // week above. The preview renders off-screen with its own tiles; the
+        // shot waits until the picture is up and the status line has stopped
+        // saying it is rendering.
+        composeRule.onNodeWithContentDescription(str(R.string.map_export_image)).performClick()
+        waitForDescription(R.string.map_image_preview_description, timeoutMs = MAP_IMAGE_RENDER_TIMEOUT_MS)
+        val rendering = str(R.string.map_image_rendering)
+        composeRule.waitUntil(timeoutMillis = MAP_IMAGE_RENDER_TIMEOUT_MS) {
+            composeRule.onAllNodesWithText(rendering).fetchSemanticsNodes().isEmpty()
+        }
+        settle(1_500)
+        shoot("13_map_image")
     }
 
     // ---- helpers ----

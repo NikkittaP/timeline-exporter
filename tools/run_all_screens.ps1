@@ -217,7 +217,8 @@ foreach ($slot in $SlotList) {
         Log ("=== {0} on {1}, attempt {2} of 2 ===" -f $slot, $cfg.Avd, $attempt) "Green"
         $serial = Start-Avd $cfg.Avd
         if (-not $serial) { continue }
-        $ok = Invoke-Lane $cfg.Lane $localeArg
+        # Pinned to the emulator: a phone on USB or adb Wi-Fi stays out of it.
+        $ok = Invoke-Lane $cfg.Lane ("$localeArg device:$serial").Trim()
         if ($ok) { break }
         Log "$($cfg.Lane) failed" "Red"
     }

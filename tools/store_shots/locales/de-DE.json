@@ -4,8 +4,13 @@
     "title": "Deine Historie, {auf einer Karte}",
     "sub": "Jahre Google Maps Timeline auf einen Blick"
   },
+  "mapimage": {
+    "eyebrow": "Neu: Kartenbild",
+    "title": "Deine Route {als Bild}",
+    "sub": "Speichern oder teilen — mit Daten, Strecke und Orten"
+  },
   "trip": {
-    "eyebrow": "Neu: Reisen",
+    "eyebrow": "Reisen",
     "title": "Jede {Reise} automatisch erkannt",
     "sub": "Urlaube und Tagesausflüge – mit Daten, Strecke und Orten"
   },

@@ -4,8 +4,13 @@
     "title": "Tu historial, {en un mapa}",
     "sub": "Años de Google Maps Timeline de un vistazo"
   },
+  "mapimage": {
+    "eyebrow": "Novedad: Imagen del mapa",
+    "title": "Tu ruta, {en una imagen}",
+    "sub": "Guárdala o compártela, con fechas, distancia y lugares"
+  },
   "trip": {
-    "eyebrow": "Novedad: Viajes",
+    "eyebrow": "Viajes",
     "title": "Cada {viaje}, encontrado solo",
     "sub": "Vacaciones y escapadas: fechas, distancia y lugares"
   },

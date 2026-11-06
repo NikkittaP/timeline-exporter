@@ -4,8 +4,13 @@
     "title": "La tua cronologia, {su una mappa}",
     "sub": "Anni di Google Maps Timeline in un colpo d'occhio"
   },
+  "mapimage": {
+    "eyebrow": "Novità: Immagine della mappa",
+    "title": "Il tuo percorso {in un'immagine}",
+    "sub": "Salvalo o condividilo, con date, distanza e luoghi"
+  },
   "trip": {
-    "eyebrow": "Novità: Viaggi",
+    "eyebrow": "Viaggi",
     "title": "Ogni {viaggio}, trovato per te",
     "sub": "Vacanze e gite in giornata: date, distanza e luoghi"
   },
