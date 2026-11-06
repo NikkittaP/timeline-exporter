@@ -1,7 +1,7 @@
 # XcodeGen spec of the iOS app. The .xcodeproj is generated (`xcodegen generate`
 # in ios/) and not committed. Needs shared/build/XCFrameworks/release/Shared.xcframework
 # (./gradlew :shared:assembleSharedReleaseXCFramework). Built only in CI:
-# .github/workflows/ios.yml. Signing arrives in stage 2.
+# .github/workflows/ios.yml. Signing comes from CI (tools/ios/build_ipa.sh).
 name: TimelineExporter
 options:
   bundleIdPrefix: com.nikitapetrovapps
@@ -28,6 +28,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nikitapetrovapps.timelineexporter
         TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "1"
         # Kotlin/Native static frameworks need the C++ runtime from the app's link.

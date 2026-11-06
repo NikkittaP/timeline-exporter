@@ -74,6 +74,7 @@ jobs:
           set -euo pipefail
           python3 tools/test_ci_annotate.py
           python3 tools/ios/test_simulator_udid.py
+          python3 tools/ios/test_make_app_icon.py
 
       - name: Shared tests (JVM)
         run: |
