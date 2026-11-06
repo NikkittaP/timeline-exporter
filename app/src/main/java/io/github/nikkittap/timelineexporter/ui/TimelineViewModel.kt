@@ -37,6 +37,9 @@ import java.io.IOException
 import java.io.InputStream
 import java.time.Instant
 import java.time.ZoneId
+import kotlin.time.toJavaInstant
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinTimeZone
 
 // ---------- UI state types ----------
 //
@@ -361,7 +364,7 @@ class TimelineViewModel(
     }
 
     fun setDateRange(range: ClosedRange<Instant>) {
-        updateFilter { it.copy(dateRange = range) }
+        updateFilter { it.copy(dateRange = range.toKotlinRange()) }
     }
 
     fun clearDateRange() {
@@ -676,9 +679,9 @@ fun suggestFilename(
         val stem = if (trip == null) {
             "Timeline_trips_${checkedTrips.size}"
         } else {
-            val z = ZoneId.systemDefault()
-            val from = localDate(trip.start, trip.startOffsetMinutes, z)
-            val to = localDate(trip.end, trip.endOffsetMinutes, z)
+            val z = ZoneId.systemDefault().toKotlinTimeZone()
+            val from = localDate(trip.start, trip.startOffsetMinutes, z).toJavaLocalDate()
+            val to = localDate(trip.end, trip.endOffsetMinutes, z).toJavaLocalDate()
             "Timeline_trip_${from}_$to"
         }
         return "$stem.${exporter.fileExtension}"
@@ -693,8 +696,8 @@ fun suggestFilename(
         ""
     } else {
         val z = ZoneId.systemDefault()
-        val from = range.start.atZone(z).toLocalDate()
-        val to = range.endInclusive.atZone(z).toLocalDate()
+        val from = range.start.toJavaInstant().atZone(z).toLocalDate()
+        val to = range.endInclusive.toJavaInstant().atZone(z).toLocalDate()
         "_${from}_to_$to"
     }
     // The time-of-day window is in the name for the same reason the content

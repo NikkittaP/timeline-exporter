@@ -4,7 +4,7 @@ import io.github.nikkittap.timelineexporter.parser.PathPoint
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Instant
 import java.util.Locale
 
 class CsvExporterTest {

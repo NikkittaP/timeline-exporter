@@ -3,8 +3,11 @@ package io.github.nikkittap.timelineexporter.export
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Instant
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.random.Random
+import kotlin.time.toKotlinInstant
 
 /**
  * [appendIsoInstant] exists only to be faster than
@@ -15,8 +18,10 @@ import kotlin.random.Random
  */
 class IsoInstantTest {
 
+    // The reference is java.time; what is formatted is the same instant as a
+    // kotlin.time.Instant, the type the shared code carries.
     private fun formatted(instant: Instant): String =
-        buildString { appendIsoInstant(this, instant) }
+        buildString { appendIsoInstant(this, instant.toKotlinInstant()) }
 
     private fun assertSameAsJavaTime(instant: Instant) {
         assertEquals(
@@ -79,6 +84,39 @@ class IsoInstantTest {
         val until = Instant.parse("2100-01-01T00:00:00Z").epochSecond
         repeat(20_000) {
             assertSameAsJavaTime(Instant.ofEpochSecond(random.nextLong(from, until)))
+        }
+    }
+
+    // The CSV's local-time columns used DateTimeFormatter.ofPattern(
+    // "yyyy-MM-dd HH:mm:ss", Locale.ROOT) on instant.atOffset(offset).
+    private val localPattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ROOT)
+
+    private fun assertLocalSameAsJavaTime(instant: Instant, offsetSeconds: Int) {
+        assertEquals(
+            "epochSecond=${instant.epochSecond} offset=$offsetSeconds",
+            localPattern.format(instant.atOffset(ZoneOffset.ofTotalSeconds(offsetSeconds))),
+            buildString { appendLocalDateTime(this, instant.toKotlinInstant(), offsetSeconds) },
+        )
+    }
+
+    @Test
+    fun `local time agrees with java time across two centuries and every offset`() {
+        val random = Random(20261106)
+        val from = Instant.parse("1900-01-01T00:00:00Z").epochSecond
+        val until = Instant.parse("2100-01-01T00:00:00Z").epochSecond
+        repeat(20_000) {
+            val instant = Instant.ofEpochSecond(random.nextLong(from, until), random.nextLong(0, 1_000_000_000))
+            assertLocalSameAsJavaTime(instant, random.nextInt(-12 * 60, 14 * 60 + 1) * 60)
+        }
+    }
+
+    @Test
+    fun `local time agrees with java time outside the four-digit years`() {
+        listOf(
+            "+10000-01-01T00:00:00Z", "9999-12-31T23:59:59Z", "0999-12-31T23:59:59Z", "0001-01-01T00:00:00Z",
+            "0000-06-01T12:00:00Z", "-0001-12-31T23:59:59Z", "-12345-03-01T00:00:00Z",
+        ).forEach { iso ->
+            for (offset in listOf(-12 * 3600, 0, 14 * 3600)) assertLocalSameAsJavaTime(Instant.parse(iso), offset)
         }
     }
 }

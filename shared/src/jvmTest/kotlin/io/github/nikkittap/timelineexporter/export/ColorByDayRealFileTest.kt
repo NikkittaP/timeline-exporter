@@ -11,7 +11,7 @@ import org.xml.sax.helpers.DefaultHandler
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.ZoneId
+import kotlinx.datetime.TimeZone
 import javax.xml.parsers.SAXParserFactory
 import kotlin.system.measureTimeMillis
 
@@ -31,7 +31,7 @@ import kotlin.system.measureTimeMillis
 class ColorByDayRealFileTest {
 
     private val realFile: Path = Path.of("F:/Timeline/Timeline_merged_big.json")
-    private val zone: ZoneId = ZoneId.of("Europe/Stockholm")
+    private val zone: TimeZone = TimeZone.of("Europe/Stockholm")
 
     @Test
     fun `a multi-year track exports by day to kml and geojson`() {

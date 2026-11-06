@@ -66,8 +66,9 @@ class JsonReaderVsJacksonTest {
 
     @Test
     fun `parser test fixtures match Jackson`() {
-        val dir = Path.of("src/jvmTest/kotlin/io/github/nikkittap/timelineexporter")
-        val fixtures = Files.walk(dir).use { s -> s.filter { it.extension == "kt" && it.parent.fileName.toString() != "json" }.toList() }
+        // The parser tests live in commonTest, a few (real files, XML) in jvmTest.
+        val dirs = listOf("commonTest", "jvmTest").map { Path.of("src/$it/kotlin/io/github/nikkittap/timelineexporter") }
+        val fixtures = dirs.flatMap { dir -> Files.walk(dir).use { s -> s.filter { it.extension == "kt" && it.parent.fileName.toString() != "json" }.toList() } }
             .flatMap { file -> RAW_STRING.findAll(file.readText()).map { it.groupValues[1].trimIndent() } }
             .filter { it.startsWith("{") || it.startsWith("[") }
         assertTrue("expected the parser tests' inline fixtures, found ${fixtures.size}", fixtures.size >= 40)

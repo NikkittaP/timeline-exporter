@@ -14,7 +14,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.w3c.dom.Element
-import java.time.Instant
+import kotlin.time.Instant
 import javax.xml.parsers.DocumentBuilderFactory
 
 /**

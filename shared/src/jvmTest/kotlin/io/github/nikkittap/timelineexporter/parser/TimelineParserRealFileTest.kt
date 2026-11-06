@@ -8,7 +8,7 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.ZoneId
+import kotlinx.datetime.TimeZone
 import kotlin.system.measureTimeMillis
 
 /**
@@ -106,7 +106,7 @@ class TimelineParserRealFileTest {
         // The zone only stands in for points the file states no offset for;
         // in this export every point has one, so it should not matter — which
         // is itself worth not leaving to the machine the test runs on.
-        val zone = ZoneId.of("Europe/Stockholm")
+        val zone = TimeZone.of("Europe/Stockholm")
 
         val night = TimeOfDayWindow(0, 6 * 60)
         val rest = TimeOfDayWindow(6 * 60, 0)

@@ -13,8 +13,9 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.Instant
-import java.time.ZoneId
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
+import kotlin.time.Duration.Companion.seconds
 
 /** Which transport icons a trip gets, and when it gets none. */
 class TransportTest {
@@ -24,9 +25,9 @@ class TransportTest {
 
     /** An activity of [km] taking [hours], placed after the previous one. */
     private fun leg(type: String, km: Double, hours: Double): Segment {
-        val start = t0.plusSeconds(clock)
+        val start = t0.plus(clock.seconds)
         clock += (hours * 3600).toLong() + 600
-        return Segment(SegmentKind.ACTIVITY, start, start.plusSeconds((hours * 3600).toLong()), activityType = type, distanceMeters = km * 1000)
+        return Segment(SegmentKind.ACTIVITY, start, start.plus(((hours * 3600).toLong()).seconds), activityType = type, distanceMeters = km * 1000)
     }
 
     @Test
@@ -91,7 +92,7 @@ class TransportTest {
         val file = Path.of("F:/Timeline/Timeline_merged_big.json")
         assumeTrue("Skipped: $file not present (developer-local only).", Files.exists(file))
         val parsed = Files.newInputStream(file).use { parseTimeline(it) }
-        val trips = (detectTrips(parsed, ZoneId.of("Europe/Stockholm")) as TripDetection.Found).trips
+        val trips = (detectTrips(parsed, TimeZone.of("Europe/Stockholm")) as TripDetection.Found).trips
         fun at(moment: String) = trips.single { it.covers(Instant.parse(moment)) }.transport
 
         assertEquals(listOf(CAR), at("2025-07-25T12:00:00Z")) // Norway by car

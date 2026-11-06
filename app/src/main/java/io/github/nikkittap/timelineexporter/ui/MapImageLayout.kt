@@ -12,6 +12,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import kotlin.time.toJavaInstant
 
 /**
  * The pure half of "Export map as PNG": what the picture is, where the camera
@@ -390,7 +391,7 @@ internal fun mapImageStats(
     var last = Long.MIN_VALUE
     val rules = zone.rules
     for (p in points) {
-        val day = Math.floorDiv(p.timeUtc.epochSecond + rules.getOffset(p.timeUtc).totalSeconds, SECONDS_PER_DAY)
+        val day = Math.floorDiv(p.timeUtc.epochSeconds + rules.getOffset(p.timeUtc.toJavaInstant()).totalSeconds, SECONDS_PER_DAY)
         if (day < first) first = day
         if (day > last) last = day
     }

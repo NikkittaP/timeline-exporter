@@ -143,6 +143,9 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.time.toJavaInstant
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinTimeZone
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -881,9 +884,9 @@ fun MainScreen(
 
                 StepCard(step = 2, title = stringResource(R.string.step_filter)) {
                     FilterContent(
-                        currentRange = filter.dateRange,
-                        dataFirst = loaded.pathPoints.firstOrNull()?.timeUtc,
-                        dataLast = dataLast,
+                        currentRange = filter.dateRange?.toJavaRange(),
+                        dataFirst = loaded.pathPoints.firstOrNull()?.timeUtc?.toJavaInstant(),
+                        dataLast = dataLast?.toJavaInstant(),
                         totalCount = loaded.pathPoints.size,
                         filteredCount = filteredPoints.size,
                         onApply = { viewModel.setDateRange(it) },
@@ -1091,15 +1094,15 @@ fun MainScreen(
     if (dateDialogOpen) {
         val dataRange = loadedResult?.let {
             it.pathPoints.firstOrNull()?.timeUtc?.let { first ->
-                first..it.pathPoints.last().timeUtc
+                first.toJavaInstant()..it.pathPoints.last().timeUtc.toJavaInstant()
             }
         }
         DateRangeDialog(
-            initialRange = filter.dateRange,
+            initialRange = filter.dateRange?.toJavaRange(),
             dataRange = dataRange,
             countPoints = { range ->
                 loadedResult?.let {
-                    applyFilter(it.pathPoints, filter.copy(dateRange = range), it.segments).size
+                    applyFilter(it.pathPoints, filter.copy(dateRange = range.toKotlinRange()), it.segments).size
                 } ?: 0
             },
             onConfirm = { range ->
@@ -1199,7 +1202,7 @@ private fun LoadedSummary(result: ParsedTimeline, fileName: String?, onChangeFil
     val formatName = formatLabel(result.format)
     val context = LocalContext.current
     val span = result.pathPoints.takeIf { it.isNotEmpty() }?.let {
-        formatLocalDayRange(context, it.first().timeUtc, it.last().timeUtc)
+        formatLocalDayRange(context, it.first().timeUtc.toJavaInstant(), it.last().timeUtc.toJavaInstant())
     }
     // Days and distance both walk the whole file, so they are worked out once
     // per file and off the main thread; their cells appear when ready. Days are
@@ -2628,16 +2631,16 @@ private fun buildContentName(
         val last = checkedTrips.maxBy { it.end }
         stringResource(
             R.string.track_name_date_range,
-            localDate(first.start, first.startOffsetMinutes, zone).format(formatter),
-            localDate(last.end, last.endOffsetMinutes, zone).format(formatter),
+            localDate(first.start, first.startOffsetMinutes, zone.toKotlinTimeZone()).toJavaLocalDate().format(formatter),
+            localDate(last.end, last.endOffsetMinutes, zone.toKotlinTimeZone()).toJavaLocalDate().format(formatter),
         )
     } else if (range == null) {
         stringResource(R.string.track_name_full_range)
     } else {
         stringResource(
             R.string.track_name_date_range,
-            formatLocalDate(range.start),
-            formatLocalDate(range.endInclusive),
+            formatLocalDate(range.start.toJavaInstant()),
+            formatLocalDate(range.endInclusive.toJavaInstant()),
         )
     }
     // The window is appended to the range rather than given its own slot in

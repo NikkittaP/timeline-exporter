@@ -3,7 +3,8 @@ package io.github.nikkittap.timelineexporter.parser
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Instant
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Tests for the streaming parser: the InputStream entry point, the rawSignals
@@ -97,7 +98,7 @@ class TimelineParserStreamingTest {
             // past hour 23 and yields timestamps like "T83:20:00Z", which the
             // parser rightly drops — the test then measured the drop, not the
             // stream.
-            val ts = epoch.plusSeconds((n - i) * 60L).toString()
+            val ts = epoch.plus(((n - i) * 60L).seconds).toString()
             sb.append(
                 "{ \"startTime\": \"$ts\", \"timelinePath\": [ { \"point\": \"10.0°, 20.0°\", \"time\": \"$ts\" } ] }"
             )
@@ -111,7 +112,7 @@ class TimelineParserStreamingTest {
         assertEquals(n, result.pathPoints.size)
         // Sorted ascending after the stream completes.
         val times = result.pathPoints.map { it.timeUtc }
-        assertTrue(times.zipWithNext().all { (a, b) -> !a.isAfter(b) })
+        assertTrue(times.zipWithNext().all { (a, b) -> a <= b })
     }
 
     @Test

@@ -5,7 +5,8 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.Instant
+import kotlin.time.Instant
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Step 1's distance and step 2's movement breakdown count each stretch of
@@ -14,7 +15,7 @@ import java.time.Instant
 class DistinctActivitiesTest {
 
     private val t0 = Instant.parse("2025-06-07T10:00:00Z")
-    private fun h(hours: Double) = t0.plusSeconds((hours * 3600).toLong())
+    private fun h(hours: Double) = t0.plus(((hours * 3600).toLong()).seconds)
 
     private fun act(fromH: Double, toH: Double, type: String, meters: Double) =
         Segment(SegmentKind.ACTIVITY, h(fromH), h(toH), activityType = type, distanceMeters = meters)

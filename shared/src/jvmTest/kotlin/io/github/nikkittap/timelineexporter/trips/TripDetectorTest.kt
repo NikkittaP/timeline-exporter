@@ -14,13 +14,13 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
+import kotlin.time.Duration.Companion.seconds
 
 class TripDetectorTest {
 
-    private val zone: ZoneId = ZoneOffset.UTC
+    private val zone: TimeZone = TimeZone.UTC
     private val t0: Instant = Instant.parse("2026-01-01T00:00:00Z")
 
     // Home in Malmö; Copenhagen is ~30 km away (not a trip), Gothenburg ~230 km.
@@ -28,7 +28,7 @@ class TripDetectorTest {
     private val near = 55.68 to 12.57
     private val far = 57.70 to 11.97
 
-    private fun h(hours: Number) = t0.plusSeconds((hours.toDouble() * 3600).toLong())
+    private fun h(hours: Number) = t0.plus(((hours.toDouble() * 3600).toLong()).seconds)
 
     private fun visit(fromH: Number, toH: Number, at: Pair<Double, Double>, type: String = "UNKNOWN", id: String = "p$fromH") =
         Segment(
@@ -255,7 +255,7 @@ class TripDetectorTest {
         val file = Path.of("F:/Timeline/Timeline_2.json")
         assumeTrue("Skipped: $file not present (developer-local only).", Files.exists(file))
         val parsed = Files.newInputStream(file).use { parseTimeline(it) }
-        val trips = (detectTrips(parsed, ZoneId.of("Europe/Stockholm")) as TripDetection.Found).trips
+        val trips = (detectTrips(parsed, TimeZone.of("Europe/Stockholm")) as TripDetection.Found).trips
         trips.forEach {
             println("${it.start} – ${it.end}  ${it.maxDistanceMeters.toInt() / 1000} km from home  ${it.travelledMeters.toInt() / 1000} km travelled est=${it.travelledEstimated}  ${it.placeCount} places  open=${it.openStart}/${it.openEnd}")
         }
@@ -272,9 +272,9 @@ class TripDetectorTest {
         val file = Path.of("F:/Timeline/Timeline_merged_big.json")
         assumeTrue("Skipped: $file not present (developer-local only).", Files.exists(file))
         val parsed = Files.newInputStream(file).use { parseTimeline(it) }
-        val trips = (detectTrips(parsed, ZoneId.of("Europe/Stockholm")) as TripDetection.Found).trips
+        val trips = (detectTrips(parsed, TimeZone.of("Europe/Stockholm")) as TripDetection.Found).trips
         println("${trips.size} trips")
-        fun at(moment: String) = trips.single { it.covers(java.time.Instant.parse(moment)) }
+        fun at(moment: String) = trips.single { it.covers(Instant.parse(moment)) }
 
         // 12-15 Sep 2013: ~640 km each way by road, recorded as points only.
         // Was "19 km travelled".

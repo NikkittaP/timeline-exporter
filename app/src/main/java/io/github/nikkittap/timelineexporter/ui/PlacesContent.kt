@@ -46,6 +46,7 @@ import io.github.nikkittap.timelineexporter.parser.PlaceEntry
 import io.github.nikkittap.timelineexporter.parser.formatCoordinates
 import io.github.nikkittap.timelineexporter.parser.resolvePlaceName
 import java.util.Locale
+import kotlin.time.toJavaInstant
 
 /**
  * How many places the inline list in step 3 shows before offering "show all".
@@ -222,7 +223,7 @@ private fun PlaceRow(
             )
             Text(
                 text = "${formatPlaceDuration(entry.totalSeconds)} · " +
-                    stringResource(R.string.place_last_visit, formatLocalDate(entry.lastVisit)),
+                    stringResource(R.string.place_last_visit, formatLocalDate(entry.lastVisit.toJavaInstant())),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -344,8 +345,8 @@ fun PlaceLabelDialog(
                 Text(
                     text = stringResource(
                         R.string.track_name_date_range,
-                        formatLocalDate(entry.firstVisit),
-                        formatLocalDate(entry.lastVisit),
+                        formatLocalDate(entry.firstVisit.toJavaInstant()),
+                        formatLocalDate(entry.lastVisit.toJavaInstant()),
                     ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

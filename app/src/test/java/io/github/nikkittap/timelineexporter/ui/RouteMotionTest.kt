@@ -1,12 +1,12 @@
 package io.github.nikkittap.timelineexporter.ui
 
 import io.github.nikkittap.timelineexporter.parser.PathPoint
-import java.time.Instant
+import kotlin.time.Instant
 import org.junit.Assert.*
 import org.junit.Test
 
 class RouteMotionTest {
-    private fun p(lat: Double, lon: Double) = PathPoint(Instant.EPOCH, lat, lon)
+    private fun p(lat: Double, lon: Double) = PathPoint(Instant.fromEpochSeconds(0), lat, lon)
 
     @Test fun emptyAndSinglePointHaveNoFlight() {
         assertNull(RouteMotion.prepare(emptyList()))

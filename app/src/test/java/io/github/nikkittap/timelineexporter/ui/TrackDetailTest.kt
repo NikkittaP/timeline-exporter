@@ -5,7 +5,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlin.random.Random
 
 /**
@@ -18,7 +19,7 @@ class TrackDetailTest {
     private val epoch = Instant.parse("2025-06-09T00:00:00Z")
 
     private fun point(latitude: Double, longitude: Double, index: Int = 0) =
-        PathPoint(epoch.plusSeconds(index * 60L), latitude, longitude)
+        PathPoint(epoch + (index * 60L).seconds, latitude, longitude)
 
     /** A straight run of [count] points from (0,0) heading east. */
     private fun straightLine(count: Int, stepDegrees: Double = 0.001) =

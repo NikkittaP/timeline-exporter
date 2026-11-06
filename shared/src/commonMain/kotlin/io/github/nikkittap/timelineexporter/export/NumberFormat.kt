@@ -1,19 +1,19 @@
 package io.github.nikkittap.timelineexporter.export
 
-// Number formatting for the shared core, which cannot reach java.util.Formatter
-// or java.math.BigDecimal. Both functions reproduce what the JVM calls they
-// replace wrote, because that text is in every file the app has ever exported
+// Number formatting for the shared core, which cannot reach the JVM's
+// Formatter or its arbitrary-precision decimals. Both functions reproduce what
+// the JVM calls they replace wrote, because that text is in every file the app has ever exported
 // (NumberFormatVsJvmTest checks them against the JVM at scale).
 //
 // Both start from the shortest decimal digits of the double - the digits of
 // `Double.toString` - and not from its exact binary value. That is what Java
-// does too: `String.format("%.1f", 2.45)` is "2.5" although the double is
+// does too: the JVM's "%.1f" of 2.45 is "2.5" although the double is
 // 2.4500000000000001776..., because the Formatter rounds the digits "245",
 // not the binary fraction. Rounding the exact value would be more "correct"
 // and would change exported text.
 
 /**
- * `String.format(Locale.ROOT, "%.<decimals>f", value)`: HALF_UP on the
+ * The JVM's `"%.<decimals>f"` in the root locale: HALF_UP on the
  * shortest decimal digits of [value], '-' for a negative sign (kept when the
  * result rounds to zero: -0.04 is "-0.0"), no grouping, no exponent.
  * NaN and the infinities are written as Java writes them.
@@ -58,10 +58,10 @@ fun formatFixed(value: Double, decimals: Int): String {
 }
 
 /**
- * `BigDecimal.valueOf(value).stripTrailingZeros().toPlainString()`: the
+ * The JVM's `valueOf(value).stripTrailingZeros().toPlainString()`: the
  * shortest decimal digits of [value] laid out without an exponent, trailing
- * zeros dropped, and "0" for either zero (BigDecimal has no negative zero).
- * NaN and the infinities, which BigDecimal rejects, come back as
+ * zeros dropped, and "0" for either zero (the JVM decimal has no negative zero).
+ * NaN and the infinities, which the JVM decimal rejects, come back as
  * `value.toString()`.
  */
 fun plainDecimal(value: Double): String {

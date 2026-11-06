@@ -17,7 +17,7 @@ import java.io.BufferedInputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.security.MessageDigest
-import java.time.ZoneId
+import kotlinx.datetime.TimeZone
 
 /**
  * Pins every export, byte for byte, so the stage-0 move of the core code into
@@ -29,7 +29,7 @@ import java.time.ZoneId
  */
 class GoldenExportTest {
 
-    private val zone = ZoneId.of("Europe/Berlin")
+    private val zone = TimeZone.of("Europe/Berlin")
 
     private class Input(val name: String, val load: () -> ParsedTimeline)
 

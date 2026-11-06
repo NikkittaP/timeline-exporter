@@ -15,10 +15,17 @@ import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Locale
+import kotlin.time.toKotlinInstant
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinLocalDate
+import kotlinx.datetime.toKotlinTimeZone
 
 class TrackDaysTest {
+    /** The shared colour of a day the screens hold as a java.time date. */
+    private fun color(date: LocalDate) = trackDayColor(date.toKotlinLocalDate())
+
     private fun point(time: String, offset: Int? = 0) =
-        PathPoint(Instant.parse(time), 55.0, 13.0, offset)
+        PathPoint(Instant.parse(time).toKotlinInstant(), 55.0, 13.0, offset)
 
     @Test fun `midnight keeps every edge exactly once and shares its boundary sample`() {
         val points = listOf(
@@ -34,8 +41,8 @@ class TrackDaysTest {
 
     @Test fun `historical offset wins over current phone timezone`() {
         val sample = point("2026-09-09T22:30:00Z", 120)
-        assertEquals(LocalDate.parse("2026-09-10"), sample.trackDate(ZoneId.of("America/Los_Angeles")))
-        assertEquals(LocalDate.parse("2026-09-09"), sample.copy(tzOffsetMinutes = null).trackDate(ZoneId.of("America/Los_Angeles")))
+        assertEquals(LocalDate.parse("2026-09-10"), sample.trackDate(ZoneId.of("America/Los_Angeles").toKotlinTimeZone()).toJavaLocalDate())
+        assertEquals(LocalDate.parse("2026-09-09"), sample.copy(tzOffsetMinutes = null).trackDate(ZoneId.of("America/Los_Angeles").toKotlinTimeZone()).toJavaLocalDate())
     }
 
     @Test fun `travel back across date line can revisit an earlier date without losing edges`() {
@@ -57,20 +64,20 @@ class TrackDaysTest {
     @Test fun `colors remain stable after range changes and work before epoch`() {
         val start = LocalDate.parse("1969-12-28")
         val dates = (0L..365L).map { start.plusDays(it) }
-        assertTrue(dates.zipWithNext().all { (a, b) -> trackDayColor(a) != trackDayColor(b) })
-        assertEquals(dates.map(::trackDayColor).drop(15), dates.drop(15).map(::trackDayColor))
-        assertNotEquals(trackDayColor(start), trackDayColor(start.plusDays(1)))
+        assertTrue(dates.zipWithNext().all { (a, b) -> color(a) != color(b) })
+        assertEquals(dates.map(::color).drop(15), dates.drop(15).map(::color))
+        assertNotEquals(color(start), color(start.plusDays(1)))
     }
 
     @Test fun `colour is not a synonym for the weekday`() {
         val monday = LocalDate.parse("2026-09-07")
-        assertNotEquals(trackDayColor(monday), trackDayColor(monday.plusWeeks(1)))
-        assertNotEquals(trackDayColor(monday), trackDayColor(monday.plusWeeks(2)))
+        assertNotEquals(color(monday), color(monday.plusWeeks(1)))
+        assertNotEquals(color(monday), color(monday.plusWeeks(2)))
         // Twenty-one days of distinct colours, then an exact repeat: a legend
         // covering less than three weeks can never show one swatch twice.
         val cycle = (0L until 21L).map { monday.plusDays(it) }
-        assertEquals(21, cycle.map(::trackDayColor).distinct().size)
-        assertEquals(cycle.map(::trackDayColor), cycle.map { trackDayColor(it.plusDays(21)) })
+        assertEquals(21, cycle.map(::color).distinct().size)
+        assertEquals(cycle.map(::color), cycle.map { color(it.plusDays(21)) })
     }
 
     @Test fun `day legend summary is null for no days and de-duplicates otherwise`() {
@@ -152,7 +159,7 @@ class TrackDaysTest {
     }
 
     @Test fun `a day box covers every stretch of that day and nothing from its neighbours`() {
-        fun at(time: String, lat: Double, lon: Double) = PathPoint(Instant.parse(time), lat, lon, 0)
+        fun at(time: String, lat: Double, lon: Double) = PathPoint(Instant.parse(time).toKotlinInstant(), lat, lon, 0)
         val points = listOf(
             at("2026-09-08T22:00:00Z", 10.0, 10.0),
             // Morning in one city, evening in another: one day, two stretches,
@@ -174,11 +181,11 @@ class TrackDaysTest {
     }
 
     @Test fun `a day spent in one spot has no box to fit`() {
-        fun at(time: String) = PathPoint(Instant.parse(time), 59.3, 18.0, 0)
+        fun at(time: String) = PathPoint(Instant.parse(time).toKotlinInstant(), 59.3, 18.0, 0)
         val indoors = listOf(at("2026-09-09T08:00:00Z"), at("2026-09-09T18:00:00Z"))
         assertTrue(dayBox(indoors, LocalDate.parse("2026-09-09"), ZoneOffset.UTC)!!.isDegenerate)
 
-        val single = listOf(PathPoint(Instant.parse("2026-09-09T08:00:00Z"), 59.3, 18.0, 0))
+        val single = listOf(PathPoint(Instant.parse("2026-09-09T08:00:00Z").toKotlinInstant(), 59.3, 18.0, 0))
         assertTrue(dayBox(single, LocalDate.parse("2026-09-09"), ZoneOffset.UTC)!!.isDegenerate)
     }
 
@@ -191,18 +198,18 @@ class TrackDaysTest {
             val at = base.plusSeconds(step * 1800L)
             assertEquals(
                 at.atZone(stockholm).toLocalDate(),
-                PathPoint(at, 59.3, 18.0, null).trackDate(stockholm),
+                PathPoint(at.toKotlinInstant(), 59.3, 18.0, null).trackDate(stockholm.toKotlinTimeZone()).toJavaLocalDate(),
             )
             assertEquals(
                 at.atZone(ZoneOffset.ofTotalSeconds(-8 * 3600)).toLocalDate(),
-                PathPoint(at, 59.3, 18.0, -8 * 60).trackDate(stockholm),
+                PathPoint(at.toKotlinInstant(), 59.3, 18.0, -8 * 60).trackDate(stockholm.toKotlinTimeZone()).toJavaLocalDate(),
             )
         }
     }
     // ---------- Which days are in view ----------
 
     private fun at(time: String, lat: Double, lon: Double) =
-        PathPoint(Instant.parse(time), lat, lon, 0)
+        PathPoint(Instant.parse(time).toKotlinInstant(), lat, lon, 0)
 
     /** Every day, everywhere: the window a camera showing the whole earth has. */
     private val world = TrackWindow(minLat = -90.0, maxLat = 90.0, westLon = -180.0, lonSpan = 360.0)

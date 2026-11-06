@@ -10,6 +10,8 @@ import io.github.nikkittap.timelineexporter.trips.Trip
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Instant
+import kotlin.time.toJavaInstant
+import kotlin.time.toKotlinInstant
 
 /**
  * The names a trips export suggests: every trip keeps the plain name, one
@@ -21,8 +23,8 @@ class SuggestFilenameTest {
     private val formats = listOf(GpxExporter, KmlExporter, GeoJsonExporter, CsvExporter)
 
     private fun trip(start: String, end: String) = Trip(
-        start = Instant.parse(start),
-        end = Instant.parse(end),
+        start = Instant.parse(start).toKotlinInstant(),
+        end = Instant.parse(end).toKotlinInstant(),
         // UTC+2: the first trip below starts on the 18th in UTC but the 19th locally.
         startOffsetMinutes = 120,
         endOffsetMinutes = 120,

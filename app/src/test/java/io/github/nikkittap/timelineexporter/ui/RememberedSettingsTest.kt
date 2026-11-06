@@ -7,7 +7,8 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.time.Instant
+import kotlin.time.Instant
+import kotlin.time.toJavaInstant
 
 class RememberedSettingsTest {
 
@@ -94,7 +95,7 @@ class TimelineViewModelSettingsTest {
     fun `filter changes are saved to the store`() {
         val store = SettingsStore.InMemory()
         val vm = TimelineViewModel(store)
-        vm.setDateRange(jan1..jan31)
+        vm.setDateRange(jan1.toJavaInstant()..jan31.toJavaInstant())
         vm.setMovingOnly(true)
         vm.setTimeOfDay(TimeOfDayWindow(8 * 60, 18 * 60))
 

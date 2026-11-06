@@ -13,10 +13,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.w3c.dom.Element
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * A track exported with the map's `Color by day` switch on: KML and GeoJSON
@@ -41,7 +42,7 @@ class ColorByDayExportTest {
     )
 
     private fun Exporter.byDay(points: List<PathPoint>, name: String = "Trip"): String =
-        buildString { export(ExportContent.Track(points, colorByDay = true, fallbackZone = ZoneOffset.UTC), name, this) }
+        buildString { export(ExportContent.Track(points, colorByDay = true, fallbackZone = TimeZone.UTC), name, this) }
 
     private fun kmlDoc(kml: String) = DocumentBuilderFactory.newInstance().apply { isNamespaceAware = true }
         .newDocumentBuilder().parse(kml.byteInputStream(Charsets.UTF_8))
@@ -103,7 +104,7 @@ class ColorByDayExportTest {
     @Test fun `kml writes one style per colour, not one per day`() {
         val start = Instant.parse("2026-01-01T12:00:00Z")
         val sixtyDays = List(120) { i ->
-            PathPoint(start.plusSeconds(i * 43_200L), 55.0 + i * 1e-3, 13.0, 0)
+            PathPoint(start.plus((i * 43_200L).seconds), 55.0 + i * 1e-3, 13.0, 0)
         }
         val doc = kmlDoc(KmlExporter.byDay(sixtyDays)).documentElement
         assertEquals(60, doc.children("Placemark").size)

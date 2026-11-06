@@ -9,7 +9,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import io.github.nikkittap.timelineexporter.filter.TimelineFilter
 import io.github.nikkittap.timelineexporter.parser.MovementGroup
 import io.github.nikkittap.timelineexporter.parser.TimeOfDayWindow
-import java.time.Instant
+import kotlin.time.Instant
+import kotlin.time.toJavaInstant
+import kotlin.time.toKotlinInstant
 
 /**
  * The choices that carry over from one export to the next: the filters in
@@ -136,8 +138,10 @@ class PrefsSettingsStore(private val prefs: SharedPreferences) : SettingsStore {
                 remove(KEY_RANGE_FROM)
                 remove(KEY_RANGE_TO)
             } else {
-                putString(KEY_RANGE_FROM, range.start.toString())
-                putString(KEY_RANGE_TO, range.endInclusive.toString())
+                // Written and read as java.time text, as every version before
+                // the shared core moved to kotlin.time did.
+                putString(KEY_RANGE_FROM, range.start.toJavaInstant().toString())
+                putString(KEY_RANGE_TO, range.endInclusive.toJavaInstant().toString())
             }
             val movements = settings.movements
             if (movements == null) remove(KEY_MOVEMENTS) else putStringSet(KEY_MOVEMENTS, movements.map { it.name }.toSet())
@@ -157,7 +161,8 @@ class PrefsSettingsStore(private val prefs: SharedPreferences) : SettingsStore {
         }.apply()
     }
 
-    private fun parseInstant(s: String): Instant? = runCatching { Instant.parse(s) }.getOrNull()
+    private fun parseInstant(s: String): Instant? =
+        runCatching { java.time.Instant.parse(s).toKotlinInstant() }.getOrNull()
 
     private companion object {
         const val KEY_RANGE_FROM = "range_from"

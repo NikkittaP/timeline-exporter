@@ -46,8 +46,9 @@ import io.github.nikkittap.timelineexporter.R
 import io.github.nikkittap.timelineexporter.export.localDate
 import io.github.nikkittap.timelineexporter.trips.TransportMode
 import io.github.nikkittap.timelineexporter.trips.Trip
-import java.time.Instant
-import java.time.ZoneId
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDate
 import java.util.Locale
 
 /** Rows shown in step 3 before "Show all"; same budget as the places list. */
@@ -441,7 +442,7 @@ fun ExpandedTrips(
 ) {
     // Newest first in, newest year first out: groupBy keeps first-seen order.
     val byYear = remember(trips) {
-        val zone = ZoneId.systemDefault()
+        val zone = TimeZone.currentSystemDefault()
         trips.groupBy { localDate(it.start, it.startOffsetMinutes, zone).year }
     }
     val listState = rememberLazyListState()
@@ -540,11 +541,11 @@ private fun YearHeader(year: Int, count: Int) {
 /** "19 Jul – 1 Aug 2025", in the local dates where the trip began and ended. */
 @Composable
 private fun tripDates(trip: Trip): String {
-    val zone = ZoneId.systemDefault()
+    val zone = TimeZone.currentSystemDefault()
     return formatLocalDayRange(
         LocalContext.current,
-        localDate(trip.start, trip.startOffsetMinutes, zone),
-        localDate(trip.end, trip.endOffsetMinutes, zone),
+        localDate(trip.start, trip.startOffsetMinutes, zone).toJavaLocalDate(),
+        localDate(trip.end, trip.endOffsetMinutes, zone).toJavaLocalDate(),
     )
 }
 
@@ -559,10 +560,10 @@ private fun formatTripLength(trip: Trip): String {
         val hours = trip.durationSeconds / 3600.0
         return stringResource(R.string.place_duration_hours, String.format(LocalLocale.current.platformLocale, "%.0f", hours))
     }
-    val zone = ZoneId.systemDefault()
+    val zone = TimeZone.currentSystemDefault()
     val days = (
-        localDate(trip.end, trip.endOffsetMinutes, zone).toEpochDay() -
-            localDate(trip.start, trip.startOffsetMinutes, zone).toEpochDay() + 1
+        localDate(trip.end, trip.endOffsetMinutes, zone).toEpochDays() -
+            localDate(trip.start, trip.startOffsetMinutes, zone).toEpochDays() + 1
         ).toInt()
     return pluralStringResource(R.plurals.map_day_count, days, days)
 }

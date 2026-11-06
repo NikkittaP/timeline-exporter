@@ -172,6 +172,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.toKotlinLocalDate
 
 private const val TAG = "TimelineMap"
 
@@ -1267,7 +1268,7 @@ fun TimelineMap(
                                 daySummary?.hintDates?.forEach { date ->
                                     Box(
                                         Modifier.size(8.dp)
-                                            .background(Color(trackDayColor(date).toColorInt()), RoundedCornerShape(4.dp)),
+                                            .background(Color(trackDayColor(date.toKotlinLocalDate()).toColorInt()), RoundedCornerShape(4.dp)),
                                     )
                                     Spacer(Modifier.width(4.dp))
                                 }
@@ -1355,7 +1356,7 @@ fun TimelineMap(
                 ) {
                     Box(
                         Modifier.size(10.dp)
-                            .background(Color(trackDayColor(callout).toColorInt()), RoundedCornerShape(5.dp)),
+                            .background(Color(trackDayColor(callout.toKotlinLocalDate()).toColorInt()), RoundedCornerShape(5.dp)),
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(calloutText, style = MaterialTheme.typography.labelLarge)
@@ -1637,7 +1638,7 @@ private fun DayLegendSheet(
                         ) {
                             Box(
                                 Modifier.size(10.dp)
-                                    .background(Color(trackDayColor(entry.date).toColorInt()), RoundedCornerShape(5.dp)),
+                                    .background(Color(trackDayColor(entry.date.toKotlinLocalDate()).toColorInt()), RoundedCornerShape(5.dp)),
                             )
                             Spacer(Modifier.width(12.dp))
                             Text(entry.date.format(dayFormatter), style = MaterialTheme.typography.bodyMedium)
@@ -1862,7 +1863,7 @@ private class TrackGeometry(
         val features = if (colorByDay) {
             pieces.map { piece ->
                 val date = checkNotNull(piece.date)
-                val color = trackDayColor(date)
+                val color = trackDayColor(date.toKotlinLocalDate())
                 Feature.fromGeometry(LineString.fromLngLats(thin(piece).map { it.toPoint() })).apply {
                     addStringProperty(PROPERTY_CORE_COLOR, color)
                     addStringProperty(PROPERTY_GLOW_COLOR, color)

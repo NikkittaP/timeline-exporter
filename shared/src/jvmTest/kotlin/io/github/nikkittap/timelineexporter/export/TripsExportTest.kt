@@ -12,15 +12,16 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.w3c.dom.Element
-import java.time.Instant
-import java.time.ZoneOffset
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.time.Duration.Companion.seconds
 
 /** The trips content in every format, added in 1.9.0. */
 class TripsExportTest {
 
     private val t0 = Instant.parse("2025-07-19T10:00:00Z")
-    private fun h(hours: Long) = t0.plusSeconds(hours * 3600)
+    private fun h(hours: Long) = t0.plus((hours * 3600).seconds)
 
     private fun trip(fromH: Long, toH: Long) = Trip(
         start = h(fromH),
@@ -41,7 +42,7 @@ class TripsExportTest {
     // Points at hours 0..400: the first trip (hours 0..312) gets 313 of them,
     // the second (hours 500..510) none at all.
     private val points = (0L..400L).map { PathPoint(h(it), 59.0 + it / 1000.0, 10.0) }
-    private val trips = exportTrips(listOf(trip(0, 312), trip(500, 510)), points, ZoneOffset.UTC)
+    private val trips = exportTrips(listOf(trip(0, 312), trip(500, 510)), points, TimeZone.UTC)
     private val content = ExportContent.Trips(trips)
 
     private fun export(exporter: Exporter) = StringBuilder().also { exporter.export(content, "Trips", it) }.toString()

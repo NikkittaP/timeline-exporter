@@ -5,7 +5,7 @@ import kotlinx.io.IOException
 import kotlinx.io.Source
 import kotlinx.io.writeString
 
-/** Token kinds, named after Jackson's `com.fasterxml.jackson.core.JsonToken`. */
+/** Token kinds, named after Jackson's `JsonToken`. */
 enum class JsonToken {
     START_OBJECT, END_OBJECT, START_ARRAY, END_ARRAY, FIELD_NAME,
     VALUE_STRING, VALUE_NUMBER_INT, VALUE_NUMBER_FLOAT, VALUE_TRUE, VALUE_FALSE, VALUE_NULL,

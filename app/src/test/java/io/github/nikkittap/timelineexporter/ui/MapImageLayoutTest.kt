@@ -11,12 +11,14 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
+import kotlin.time.toJavaInstant
+import kotlin.time.toKotlinInstant
 
 class MapImageLayoutTest {
     private val spec = MapImageSpec.CleanPortrait
 
     private fun p(lat: Double, lon: Double, time: String = "2026-05-12T10:00:00Z") =
-        PathPoint(Instant.parse(time), lat, lon, 0)
+        PathPoint(Instant.parse(time).toKotlinInstant(), lat, lon, 0)
 
     /** Every point of [points] lands inside the area the route may use. */
     private fun assertInsideUsableArea(points: List<PathPoint>, showStats: Boolean, spec: MapImageSpec = this.spec) {
@@ -105,15 +107,15 @@ class MapImageLayoutTest {
      * day in the sample's own offset rather than the phone's zone.
      */
     @Test fun `dates follow the phone's zone like the rest of the app, not each sample's offset`() {
-        val tashkentEvening = PathPoint(Instant.parse("2025-06-09T19:58:00Z"), 41.28, 69.24, tzOffsetMinutes = 300)
-        val later = PathPoint(Instant.parse("2026-05-21T10:00:00Z"), 52.0, 4.0, tzOffsetMinutes = 120)
+        val tashkentEvening = PathPoint(Instant.parse("2025-06-09T19:58:00Z").toKotlinInstant(), 41.28, 69.24, tzOffsetMinutes = 300)
+        val later = PathPoint(Instant.parse("2026-05-21T10:00:00Z").toKotlinInstant(), 52.0, 4.0, tzOffsetMinutes = 120)
         val points = listOf(tashkentEvening, later)
         for (zoneId in listOf("UTC", "Europe/Berlin", "Europe/Moscow", "America/New_York")) {
             val zone = ZoneId.of(zoneId)
             val stats = mapImageStats(points, listOf(points), zone, null)!!
             // The same conversion step 2's period and every suggested filename use.
-            assertEquals(zoneId, tashkentEvening.timeUtc.atZone(zone).toLocalDate(), stats.firstDate)
-            assertEquals(zoneId, later.timeUtc.atZone(zone).toLocalDate(), stats.lastDate)
+            assertEquals(zoneId, tashkentEvening.timeUtc.toJavaInstant().atZone(zone).toLocalDate(), stats.firstDate)
+            assertEquals(zoneId, later.timeUtc.toJavaInstant().atZone(zone).toLocalDate(), stats.lastDate)
         }
         val inUtc = mapImageStats(points, listOf(points), ZoneOffset.UTC, null)!!
         assertEquals(LocalDate.parse("2025-06-09"), inUtc.firstDate)
@@ -126,15 +128,15 @@ class MapImageLayoutTest {
     @Test fun `the day count is the app's own days figure, not a second definition`() {
         // A line from 23:30 to 00:30 Berlin time, recorded in Berlin: dates follow the
         // phone, but the count is drawnTrackDays - the file card's "days" - wherever the phone is.
-        val a = PathPoint(Instant.parse("2026-05-12T21:30:00Z"), 52.5, 13.4, tzOffsetMinutes = 120)
-        val b = PathPoint(Instant.parse("2026-05-12T22:30:00Z"), 52.51, 13.41, tzOffsetMinutes = 120)
-        val c = PathPoint(Instant.parse("2026-05-14T10:00:00Z"), 52.52, 13.42, tzOffsetMinutes = 120)
+        val a = PathPoint(Instant.parse("2026-05-12T21:30:00Z").toKotlinInstant(), 52.5, 13.4, tzOffsetMinutes = 120)
+        val b = PathPoint(Instant.parse("2026-05-12T22:30:00Z").toKotlinInstant(), 52.51, 13.41, tzOffsetMinutes = 120)
+        val c = PathPoint(Instant.parse("2026-05-14T10:00:00Z").toKotlinInstant(), 52.52, 13.42, tzOffsetMinutes = 120)
         val points = listOf(a, b, c)
         for (zone in listOf(ZoneOffset.UTC, ZoneId.of("Europe/Berlin"), ZoneId.of("Asia/Tashkent"))) {
             val stats = mapImageStats(points, listOf(points), zone, null)!!
             assertEquals(zone.id, drawnTrackDays(points, zone).size, stats.dayCount)
-            assertEquals(zone.id, a.timeUtc.atZone(zone).toLocalDate(), stats.firstDate)
-            assertEquals(zone.id, c.timeUtc.atZone(zone).toLocalDate(), stats.lastDate)
+            assertEquals(zone.id, a.timeUtc.toJavaInstant().atZone(zone).toLocalDate(), stats.firstDate)
+            assertEquals(zone.id, c.timeUtc.toJavaInstant().atZone(zone).toLocalDate(), stats.lastDate)
         }
         // 12 May (the 23:30 edge) and 13 May (the 00:30 -> 14 May edge), as recorded.
         assertEquals(2, mapImageStats(points, listOf(points), ZoneOffset.UTC, null)!!.dayCount)

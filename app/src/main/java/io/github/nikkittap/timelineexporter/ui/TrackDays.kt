@@ -8,6 +8,8 @@ import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinTimeZone
 
 internal data class TrackDayRun(val date: LocalDate, val points: List<PathPoint>)
 
@@ -131,13 +133,14 @@ internal data class DayBox(
  */
 internal fun dayBox(points: List<PathPoint>, date: LocalDate, zone: ZoneId): DayBox? {
     val epochDay = date.toEpochDay()
+    val sharedZone = zone.toKotlinTimeZone()
     var minLat = 0.0
     var maxLat = 0.0
     var minLon = 0.0
     var maxLon = 0.0
     var count = 0
     for (point in points) {
-        if (point.trackEpochDay(zone) != epochDay) continue
+        if (point.trackEpochDay(sharedZone) != epochDay) continue
         if (count == 0) {
             minLat = point.latitude
             maxLat = point.latitude
@@ -175,8 +178,8 @@ internal fun dayEntryIndex(entries: List<DayListEntry>, date: LocalDate?): Int {
  * file.
  */
 internal fun splitTrackDays(points: List<PathPoint>, fallbackZone: ZoneId): List<TrackDayRun> =
-    trackDaySpans(points, fallbackZone).map { span ->
-        TrackDayRun(span.date, points.subList(span.first, span.last + 1))
+    trackDaySpans(points, fallbackZone.toKotlinTimeZone()).map { span ->
+        TrackDayRun(span.date.toJavaLocalDate(), points.subList(span.first, span.last + 1))
     }
 
 /**
@@ -254,11 +257,12 @@ internal fun drawnTrackDays(
 ): List<LocalDate> {
     if (points.size < 2) return emptyList()
     val days = HashSet<Long>()
+    val sharedZone = fallbackZone.toKotlinTimeZone()
     var prev = points.first()
-    var prevDay = prev.trackEpochDay(fallbackZone)
+    var prevDay = prev.trackEpochDay(sharedZone)
     for (i in 1 until points.size) {
         val cur = points[i]
-        val curDay = cur.trackEpochDay(fallbackZone)
+        val curDay = cur.trackEpochDay(sharedZone)
         if (prevDay !in days &&
             haversineMeters(prev, cur) <= GAP_DISTANCE_METERS &&
             (window == null || window.crossedBy(prev, cur))
