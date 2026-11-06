@@ -29,6 +29,7 @@ on:
       - "tools/test_ci_annotate.py"
       - "tools/ios/**"
       - "shared/build.gradle.kts"
+      - "shared/src/**"
 
 permissions:
   contents: read
