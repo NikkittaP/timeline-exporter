@@ -23,4 +23,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Timeline Exporter"
-include(":app")
+include(":app", ":shared")

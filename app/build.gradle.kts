@@ -529,6 +529,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.android.billing.ktx)
     implementation(libs.google.play.app.update.ktx)
+    implementation(project(":shared"))
     testImplementation(libs.junit)
     // Test-only: an independent JSON parser to validate GeoJsonExporter output.
     // The app itself writes GeoJSON by hand and reads Timeline.json with Jackson.
