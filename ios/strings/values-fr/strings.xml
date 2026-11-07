@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">Depuis fin 2024, Google ne conserve la Timeline que sur votre téléphone : plus d\'export Google Takeout, et aucune autre app ne peut la lire directement. Exportez-la une fois depuis Google Maps, puis ouvrez le fichier ici.</string>
-    <string name="help_note_file_location">• Le fichier exporté s\'appelle Timeline.json. Enregistrez-le dans Fichiers (Sur mon iPhone ou iCloud Drive) pour que cette app puisse l\'ouvrir.</string>
+    <string name="ios_welcome_title">Comment ça marche</string>
+    <string name="ios_welcome_body">Google Maps peut mémoriser les lieux où vous allez : c'est votre **Timeline**. Cette app ouvre votre fichier Timeline, affiche vos trajets sur une carte et les enregistre en fichiers GPX, KML, GeoJSON ou CSV pour d'autres apps (Strava, Garmin, Google Earth, Excel…).</string>
+    <string name="ios_welcome_not_tracker">Cette app ne vous suit pas et ne se connecte pas à Google. Elle lit seulement le fichier que vous enregistrez depuis Google Maps, et tout reste sur cet appareil.</string>
+    <string name="ios_requirements_title">⚠️ Important — à vérifier d'abord</string>
+    <string name="ios_requirement_account">**Votre historique de localisation vient de votre compte Google.** Il faut l'app Google Maps, connectée à votre compte Google.</string>
+    <string name="ios_requirement_timeline">**Timeline doit être activée dans Google Maps.** Google n'enregistre que les jours depuis son activation : si elle était désactivée, il n'y a rien à exporter.</string>
+    <string name="ios_requirement_location">**Google Maps doit avoir l'accès à la position « Toujours »** (app Réglages → Google Maps → Position), sinon Timeline n'enregistre presque rien.</string>
+    <string name="ios_requirement_device">**Timeline est conservée sur le téléphone qui l'a enregistrée.** Si votre historique a été enregistré sur un autre téléphone, enregistrez le fichier sur celui-ci.</string>
+    <string name="ios_quick_title">Votre fichier en 3 étapes</string>
+    <string name="ios_quick_step1">Dans **Google Maps**, touchez votre photo de profil → **Paramètres** → **Localisation et confidentialité** → **Exporter les données Timeline**.</string>
+    <string name="ios_quick_step2">Touchez **Enregistrer dans Fichiers** et enregistrez le fichier Sur mon iPhone ou dans iCloud Drive.</string>
+    <string name="ios_quick_step3">Revenez ici et touchez **Choisir le fichier Timeline** ci-dessous.</string>
+    <string name="ios_full_guide_button">Guide détaillé étape par étape</string>
+    <string name="ios_try_sample_button">Essayer avec des données d'exemple</string>
+    <string name="ios_sample_hint">Des trajets inventés : découvrez l'app avant d'exporter les vôtres.</string>
+    <string name="help_intro">Google Maps conserve votre Timeline uniquement sur votre téléphone, pas en ligne : aucune autre app ne peut la lire directement. Enregistrez-la une fois depuis Google Maps dans un fichier, puis ouvrez ce fichier ici. Rien n'est envoyé nulle part.</string>
+    <string name="ios_turn_on_title">1. Activer Timeline (à sauter si elle est activée)</string>
+    <string name="ios_maps_profile">Ouvrez Google Maps et touchez votre photo de profil (en haut à droite)</string>
+    <string name="ios_turn_on_step2">Touchez **Votre Timeline**</string>
+    <string name="ios_turn_on_step3">Touchez ⋯ (en haut à droite) → **Paramètres de localisation et de confidentialité**</string>
+    <string name="ios_turn_on_step4">Touchez **Timeline est désactivée** → **Activer**</string>
+    <string name="ios_turn_on_note">Dès lors, Google enregistre où vous allez. Les jours précédents ne peuvent pas être ajoutés : revenez dans quelques jours.</string>
+    <string name="ios_export_title">2. Enregistrer votre Timeline dans un fichier</string>
+    <string name="ios_export_step2">Touchez **Paramètres** → **Localisation et confidentialité**</string>
+    <string name="ios_export_step3">Touchez **Exporter les données Timeline**</string>
+    <string name="ios_export_step4">Touchez **Enregistrer dans Fichiers**, choisissez Sur mon iPhone ou iCloud Drive, puis touchez **Enregistrer**</string>
+    <string name="ios_import_title">3. Ouvrir le fichier ici</string>
+    <string name="help_import_step1">Touchez **Choisir le fichier Timeline** sur l'écran principal et trouvez le fichier. Il s'appelle généralement location-history.json.</string>
+    <string name="help_import_step2">Ou dans l'app Fichiers : maintenez le doigt sur le fichier → Partager → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Si quelque chose ne marche pas</string>
+    <string name="ios_trouble_no_export">**Pas d'option « Exporter les données Timeline » ?** Vérifiez que vous êtes connecté à Google Maps et que Timeline est activée (étape 1). L'option apparaît dès que Timeline a enregistré quelque chose.</string>
+    <string name="ios_trouble_alt_path">**Menu introuvable ?** Essayez : photo de profil → **Votre Timeline** → ⋯ → **Paramètres de localisation et de confidentialité** → **Exporter les données Timeline**.</string>
+    <string name="ios_trouble_few_days">**Seulement quelques jours dans le fichier ?** Google ne garde que ce que ce téléphone a enregistré pendant que Timeline était activée. Vérifiez aussi que la suppression automatique est désactivée (icône de nuage dans Votre Timeline).</string>
+    <string name="ios_trouble_android">**Historique sur un téléphone Android ?** Enregistrez-le là-bas : Paramètres → Localisation → Services de localisation → Timeline → Exporter les données Timeline. Envoyez le fichier sur cet iPhone (Google Drive, e-mail ou messagerie) et enregistrez-le dans Fichiers.</string>
+    <string name="help_note_file_location">• Sur iPhone, le fichier s'appelle location-history.json ; sur Android, Timeline.json. Les deux s'ouvrent ici.</string>
+    <string name="pick_file_button">Choisir le fichier Timeline</string>
+    <string name="error_not_timeline">Ce fichier ne ressemble pas à une Timeline Google Maps. Choisissez le fichier enregistré depuis Google Maps (généralement location-history.json) — l'Aide montre les étapes.</string>
     <string name="language_settings_hint">iOS règle la langue de chaque app dans Réglages.</string>
 </resources>

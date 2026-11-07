@@ -1,0 +1,30 @@
+Google 地图可以记住你去过的地方——这就是你的时间轴。本应用打开你的时间轴文件，在地图上显示你的行程，并保存为 GPX、KML、GeoJSON 或 CSV 文件，供其他应用使用（Strava、Garmin、Google 地球、Excel 等）。
+
+本应用不会追踪你，也不会登录 Google。它只读取你从 Google 地图保存的文件，一切都留在这台设备上。
+
+⚠️ 重要：请先检查
+• 你的位置记录来自你的 GOOGLE 账号。 需要安装 Google 地图应用并登录你的 Google 账号。
+• 必须在 GOOGLE 地图中开启时间轴。 Google 只保存开启之后的日子——如果之前是关闭的，就没有可导出的内容。
+• Google 地图的位置权限需设为“始终”（“设置”应用 → Google Maps → 位置），否则时间轴几乎记录不到内容。
+• 时间轴保存在记录它的那部手机上。 如果你的记录是在另一部手机上产生的，请在那部手机上保存文件。
+
+3 步获取文件
+1. 在 Google 地图 中点按你的头像 → 设置 → 位置信息和隐私 → 导出时间轴数据。
+2. 点按 存储到“文件”，将文件保存到“我的 iPhone”或 iCloud 云盘。
+3. 在主屏幕点按 选择时间轴文件 并找到该文件。它通常名为 location-history.json。
+
+还不确定？点按“用示例数据试试”。虚构的行程：在导出你自己的数据之前，先看看本应用能做什么。
+
+应用内的“帮助”用简单的话讲解每一步，包括如何开启时间轴。
+
+你可以
+• 在地图上查看行程
+• 选择日期：最近 7、30 或 90 天，或全部
+• 导出为 GPX（Strava、Garmin、Komoot 及大多数 GPS 应用）、KML（Google 地球）、GeoJSON（QGIS、网页地图）或 CSV（Excel、Numbers）
+• 存储到“文件”或通过共享菜单发送
+• 也能打开旧版 Google 文件：Android 的 Timeline.json、Semantic Location History、Records.json
+
+隐私
+一切都在你的 iPhone 或 iPad 上完成。位置记录绝不会被上传：无账号、无服务器、无统计、无广告。仅在加载地图时使用网络。免费且开源。
+
+Timeline Exporter 是独立应用，与 Google 无关。

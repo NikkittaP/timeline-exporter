@@ -5,8 +5,8 @@ import Foundation
 /// that state, loaded from the bundled demo timeline, without a tap. Each
 /// scene is a fresh launch, so no scene depends on getting back from another.
 ///
-/// Debug builds only: the demo file is excluded from Release
-/// (EXCLUDED_SOURCE_FILE_NAMES in project.yml) and `scene` is always nil there.
+/// Debug builds only: `scene` is always nil in Release. The demo file itself
+/// ships in both, for "Try it with sample data" (TimelineStore.openSample).
 enum ScreenshotMode {
     enum Scene: String, CaseIterable {
         /// First launch, nothing loaded.

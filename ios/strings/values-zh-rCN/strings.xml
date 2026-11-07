@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">自 2024 年底起，Google 只在你的手机上保存时间轴——没有 Google Takeout 选项，其他应用也无法直接读取。请先从 Google 地图导出一次，然后在这里打开该文件。</string>
-    <string name="help_note_file_location">• 导出的文件名为 Timeline.json。请将其保存到“文件”（“我的 iPhone”或 iCloud 云盘），以便本应用打开。</string>
+    <string name="ios_welcome_title">工作原理</string>
+    <string name="ios_welcome_body">Google 地图可以记住你去过的地方——这就是你的**时间轴**。本应用打开你的时间轴文件，在地图上显示你的行程，并保存为 GPX、KML、GeoJSON 或 CSV 文件，供其他应用使用（Strava、Garmin、Google 地球、Excel 等）。</string>
+    <string name="ios_welcome_not_tracker">本应用不会追踪你，也不会登录 Google。它只读取你从 Google 地图保存的文件，一切都留在这台设备上。</string>
+    <string name="ios_requirements_title">⚠️ 重要：请先检查</string>
+    <string name="ios_requirement_account">**你的位置记录来自你的 Google 账号。** 需要安装 Google 地图应用并登录你的 Google 账号。</string>
+    <string name="ios_requirement_timeline">**必须在 Google 地图中开启时间轴。** Google 只保存开启之后的日子——如果之前是关闭的，就没有可导出的内容。</string>
+    <string name="ios_requirement_location">**Google 地图的位置权限需设为“始终”**（“设置”应用 → Google Maps → 位置），否则时间轴几乎记录不到内容。</string>
+    <string name="ios_requirement_device">**时间轴保存在记录它的那部手机上。** 如果你的记录是在另一部手机上产生的，请在那部手机上保存文件。</string>
+    <string name="ios_quick_title">3 步获取文件</string>
+    <string name="ios_quick_step1">在 **Google 地图** 中点按你的头像 → **设置** → **位置信息和隐私** → **导出时间轴数据**。</string>
+    <string name="ios_quick_step2">点按 **存储到“文件”**，将文件保存到“我的 iPhone”或 iCloud 云盘。</string>
+    <string name="ios_quick_step3">回到这里，点按下方的 **选择时间轴文件**。</string>
+    <string name="ios_full_guide_button">详细分步指南</string>
+    <string name="ios_try_sample_button">用示例数据试试</string>
+    <string name="ios_sample_hint">虚构的行程：在导出你自己的数据之前，先看看本应用能做什么。</string>
+    <string name="help_intro">Google 地图只把时间轴保存在手机上，而不是在线保存，所以其他应用无法直接读取。你只需从 Google 地图把它保存成文件一次，然后在这里打开该文件。不会上传到任何地方。</string>
+    <string name="ios_turn_on_title">1. 开启时间轴（已开启可跳过）</string>
+    <string name="ios_maps_profile">打开 Google 地图，点按你的头像（右上角）</string>
+    <string name="ios_turn_on_step2">点按 **你的时间轴**</string>
+    <string name="ios_turn_on_step3">点按 ⋯（右上角）→ **位置信息和隐私设置**</string>
+    <string name="ios_turn_on_step4">点按 **时间轴已关闭** → **开启**</string>
+    <string name="ios_turn_on_note">从那时起 Google 会保存你去过的地方。之前的日子无法补加，请过几天再回来。</string>
+    <string name="ios_export_title">2. 将时间轴保存为文件</string>
+    <string name="ios_export_step2">点按 **设置** → **位置信息和隐私**</string>
+    <string name="ios_export_step3">点按 **导出时间轴数据**</string>
+    <string name="ios_export_step4">点按 **存储到“文件”**，选择“我的 iPhone”或 iCloud 云盘，然后点按 **存储**</string>
+    <string name="ios_import_title">3. 在这里打开文件</string>
+    <string name="help_import_step1">在主屏幕点按 **选择时间轴文件** 并找到该文件。它通常名为 location-history.json。</string>
+    <string name="help_import_step2">或在“文件”应用中：按住文件 → 共享 → **Timeline Exporter**。</string>
+    <string name="ios_trouble_title">遇到问题时</string>
+    <string name="ios_trouble_no_export">**没有“导出时间轴数据”？** 请确认已在 Google 地图中登录且时间轴已开启（第 1 步）。时间轴保存了内容后该选项才会出现。</string>
+    <string name="ios_trouble_alt_path">**找不到菜单？** 试试：头像 → **你的时间轴** → ⋯ → **位置信息和隐私设置** → **导出时间轴数据**。</string>
+    <string name="ios_trouble_few_days">**文件里只有几天？** Google 只保留这部手机在时间轴开启期间记录的内容。另请确认自动删除已关闭（“你的时间轴”中的云朵图标）。</string>
+    <string name="ios_trouble_android">**记录在 Android 手机上？** 在那部手机上保存：设置 → 位置信息 → 位置信息服务 → 时间轴 → 导出时间轴数据。把文件发送到这部 iPhone（Google 云端硬盘、电子邮件或聊天应用），并存储到“文件”。</string>
+    <string name="help_note_file_location">• 在 iPhone 上文件名为 location-history.json，在 Android 上为 Timeline.json。两者都能在这里打开。</string>
+    <string name="pick_file_button">选择时间轴文件</string>
+    <string name="error_not_timeline">这看起来不像 Google 地图的时间轴文件。请选择你从 Google 地图保存的文件（通常为 location-history.json）——步骤见“帮助”。</string>
     <string name="language_settings_hint">iOS 在“设置”中为每个应用设置语言。</string>
 </resources>

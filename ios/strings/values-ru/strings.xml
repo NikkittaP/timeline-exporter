@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">С конца 2024 года Google хранит Timeline только на вашем телефоне — нет ни выгрузки через Google Takeout, ни других приложений, читающих её напрямую. Вы один раз экспортируете данные из Google Карт, а затем открываете файл здесь.</string>
-    <string name="help_note_file_location">• Экспортированный файл называется Timeline.json. Сохраните его в «Файлы» — «На iPhone» или iCloud Drive, — чтобы приложение могло его открыть.</string>
+    <string name="ios_welcome_title">Как это работает</string>
+    <string name="ios_welcome_body">Google Карты умеют запоминать, где вы бывали, — это ваша **Хронология**. Приложение открывает файл Хронологии, показывает поездки на карте и сохраняет их в файлы GPX, KML, GeoJSON или CSV для других приложений (Strava, Garmin, Google Earth, Excel…).</string>
+    <string name="ios_welcome_not_tracker">Приложение не следит за вами и не входит в аккаунт Google. Оно только читает файл, который вы сохранили из Google Карт, и всё остаётся на этом устройстве.</string>
+    <string name="ios_requirements_title">⚠️ Важно — проверьте сначала</string>
+    <string name="ios_requirement_account">**История местоположений берётся из вашего аккаунта Google.** Нужно приложение Google Карты, в котором выполнен вход в ваш аккаунт Google.</string>
+    <string name="ios_requirement_timeline">**В Google Картах должна быть включена Хронология.** Google сохраняет только дни после её включения — если она была выключена, экспортировать нечего.</string>
+    <string name="ios_requirement_location">**Google Картам нужен доступ к геопозиции «Всегда»** (приложение «Настройки» → Google Maps → Геопозиция), иначе Хронология почти ничего не запишет.</string>
+    <string name="ios_requirement_device">**Хронология хранится на том телефоне, который её записал.** Если история записывалась на другом телефоне, сохраните файл на нём.</string>
+    <string name="ios_quick_title">Получите файл за 3 шага</string>
+    <string name="ios_quick_step1">В **Google Картах** нажмите на фото профиля → **Настройки** → **Местоположение и конфиденциальность** → **Экспортировать данные Хронологии**.</string>
+    <string name="ios_quick_step2">Нажмите **Сохранить в «Файлы»** и сохраните файл в «На iPhone» или iCloud Drive.</string>
+    <string name="ios_quick_step3">Вернитесь сюда и нажмите **Выбрать файл Хронологии** ниже.</string>
+    <string name="ios_full_guide_button">Подробная пошаговая инструкция</string>
+    <string name="ios_try_sample_button">Попробовать на примере</string>
+    <string name="ios_sample_hint">Выдуманные поездки: посмотрите, что умеет приложение, до экспорта своих.</string>
+    <string name="help_intro">Google Карты хранят Хронологию только на телефоне, а не в интернете, поэтому другие приложения не могут прочитать её напрямую. Один раз сохраните её из Google Карт в файл и откройте этот файл здесь. Ничего никуда не загружается.</string>
+    <string name="ios_turn_on_title">1. Включите Хронологию (если уже включена — пропустите)</string>
+    <string name="ios_maps_profile">Откройте Google Карты и нажмите на фото профиля (вверху справа)</string>
+    <string name="ios_turn_on_step2">Нажмите **Хронология**</string>
+    <string name="ios_turn_on_step3">Нажмите ⋯ (вверху справа) → **Настройки местоположения и конфиденциальности**</string>
+    <string name="ios_turn_on_step4">Нажмите **Хронология отключена** → **Включить**</string>
+    <string name="ios_turn_on_note">С этого момента Google сохраняет, где вы бываете. Прошлые дни добавить нельзя, поэтому вернитесь через несколько дней.</string>
+    <string name="ios_export_title">2. Сохраните Хронологию в файл</string>
+    <string name="ios_export_step2">Нажмите **Настройки** → **Местоположение и конфиденциальность**</string>
+    <string name="ios_export_step3">Нажмите **Экспортировать данные Хронологии**</string>
+    <string name="ios_export_step4">Нажмите **Сохранить в «Файлы»**, выберите «На iPhone» или iCloud Drive и нажмите **Сохранить**</string>
+    <string name="ios_import_title">3. Откройте файл здесь</string>
+    <string name="help_import_step1">Нажмите **Выбрать файл Хронологии** на главном экране и найдите файл. Обычно он называется location-history.json.</string>
+    <string name="help_import_step2">Или в приложении «Файлы»: нажмите и удерживайте файл → «Поделиться» → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Если что-то не получается</string>
+    <string name="ios_trouble_no_export">**Нет пункта «Экспортировать данные Хронологии»?** Проверьте, что вы вошли в аккаунт в Google Картах и Хронология включена (шаг 1). Пункт появится, когда Хронология что-нибудь сохранит.</string>
+    <string name="ios_trouble_alt_path">**Не нашли меню?** Попробуйте так: фото профиля → **Хронология** → ⋯ → **Настройки местоположения и конфиденциальности** → **Экспортировать данные Хронологии**.</string>
+    <string name="ios_trouble_few_days">**В файле всего несколько дней?** Google хранит только то, что этот телефон записал, пока Хронология была включена. Проверьте также, что автоудаление выключено (значок облака в Хронологии).</string>
+    <string name="ios_trouble_android">**История на Android-телефоне?** Сохраните её там: Настройки → Местоположение → Геолокация → Хронология → «Экспортировать данные Хронологии». Перешлите файл на этот iPhone (Google Диск, почта или мессенджер) и сохраните в «Файлы».</string>
+    <string name="help_note_file_location">• На iPhone файл называется location-history.json, на Android — Timeline.json. Здесь открываются оба.</string>
+    <string name="pick_file_button">Выбрать файл Хронологии</string>
+    <string name="error_not_timeline">Это не похоже на файл Хронологии Google Карт. Выберите файл, сохранённый из Google Карт (обычно location-history.json), — шаги есть в Справке.</string>
     <string name="language_settings_hint">iOS хранит язык каждого приложения в Настройках.</string>
 </resources>

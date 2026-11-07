@@ -1,0 +1,1 @@
+把 Google 地图时间轴中的位置记录转换为 GPX、KML、GeoJSON 或 CSV 文件——在 iPhone 上本地完成，保护隐私。

@@ -1,0 +1,1 @@
+gpx,kml,geojson,csv,historique des positions,vos trajets,timeline,export,convertisseur,trace gps

@@ -1,0 +1,1 @@
+gpx,kml,geojson,csv,standortverlauf,zeitachse,timeline,export,konverter,gps track,reise,karte

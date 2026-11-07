@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">2024年末から、Google はタイムラインをスマートフォン内にのみ保存しています。Google データエクスポートの選択肢はなく、他のアプリが直接読み取ることもできません。Google マップから一度エクスポートし、そのファイルをここで開いてください。</string>
-    <string name="help_note_file_location">• エクスポートされたファイル名は Timeline.json です。このアプリで開けるよう、「ファイル」（「この iPhone 内」または iCloud Drive）に保存してください。</string>
+    <string name="ios_welcome_title">使い方</string>
+    <string name="ios_welcome_body">Google マップは行った場所を記録できます。これがあなたの**タイムライン**です。このアプリはタイムラインのファイルを開き、移動を地図に表示し、他のアプリ（Strava、Garmin、Google Earth、Excel など）で使える GPX・KML・GeoJSON・CSV ファイルとして保存します。</string>
+    <string name="ios_welcome_not_tracker">このアプリはあなたを追跡せず、Google にもログインしません。Google マップから保存したファイルを読むだけで、すべてこのデバイス内に留まります。</string>
+    <string name="ios_requirements_title">⚠️ 重要：最初に確認してください</string>
+    <string name="ios_requirement_account">**位置情報の履歴はあなたの Google アカウントから来ます。** Google アカウントでログインした Google マップアプリが必要です。</string>
+    <string name="ios_requirement_timeline">**Google マップでタイムラインがオンになっている必要があります。** Google はオンにした日以降しか保存しません。オフだった場合、エクスポートするものはありません。</string>
+    <string name="ios_requirement_location">**Google マップの位置情報へのアクセスを「常に」にしてください**（設定アプリ → Google Maps → 位置情報）。そうしないとタイムラインはほとんど記録されません。</string>
+    <string name="ios_requirement_device">**タイムラインは記録したスマートフォンに保存されています。** 別のスマートフォンで記録した場合は、そのスマートフォンでファイルを保存してください。</string>
+    <string name="ios_quick_title">3 ステップでファイルを取得</string>
+    <string name="ios_quick_step1">**Google マップ**でプロフィール写真 → **設定** → **位置情報とプライバシー** → **タイムラインデータをエクスポート** をタップ。</string>
+    <string name="ios_quick_step2">**“ファイル”に保存** をタップし、「このiPhone内」または iCloud Drive に保存します。</string>
+    <string name="ios_quick_step3">ここに戻り、下の **タイムラインファイルを選択** をタップします。</string>
+    <string name="ios_full_guide_button">詳しい手順ガイド</string>
+    <string name="ios_try_sample_button">サンプルデータで試す</string>
+    <string name="ios_sample_hint">架空の移動データで、自分のデータをエクスポートする前にアプリの機能を確認できます。</string>
+    <string name="help_intro">Google マップはタイムラインをオンラインではなくスマートフォン内だけに保存するため、他のアプリは直接読めません。Google マップから一度ファイルとして保存し、そのファイルをここで開きます。どこにもアップロードされません。</string>
+    <string name="ios_turn_on_title">1. タイムラインをオンにする（オンなら不要）</string>
+    <string name="ios_maps_profile">Google マップを開き、プロフィール写真（右上）をタップ</string>
+    <string name="ios_turn_on_step2">**タイムライン** をタップ</string>
+    <string name="ios_turn_on_step3">⋯（右上）→ **位置情報とプライバシーの設定** をタップ</string>
+    <string name="ios_turn_on_step4">**タイムラインはオフです** → **オンにする** をタップ</string>
+    <string name="ios_turn_on_note">その日から Google が行き先を保存します。それ以前の日は後から追加できないので、数日後に戻ってきてください。</string>
+    <string name="ios_export_title">2. タイムラインをファイルとして保存</string>
+    <string name="ios_export_step2">**設定** → **位置情報とプライバシー** をタップ</string>
+    <string name="ios_export_step3">**タイムラインデータをエクスポート** をタップ</string>
+    <string name="ios_export_step4">**“ファイル”に保存** をタップし、「このiPhone内」または iCloud Drive を選んで **保存** をタップ</string>
+    <string name="ios_import_title">3. ここでファイルを開く</string>
+    <string name="help_import_step1">メイン画面の **タイムラインファイルを選択** をタップしてファイルを探します。通常は location-history.json という名前です。</string>
+    <string name="help_import_step2">または「ファイル」アプリでファイルを長押し → 共有 → **Timeline Exporter**。</string>
+    <string name="ios_trouble_title">うまくいかないとき</string>
+    <string name="ios_trouble_no_export">**「タイムラインデータをエクスポート」がない？** Google マップにログインしていて、タイムラインがオンか確認してください（ステップ 1）。タイムラインに何か保存されると表示されます。</string>
+    <string name="ios_trouble_alt_path">**メニューが見つからない？** プロフィール写真 → **タイムライン** → ⋯ → **位置情報とプライバシーの設定** → **タイムラインデータをエクスポート** を試してください。</string>
+    <string name="ios_trouble_few_days">**ファイルに数日分しかない？** Google はタイムラインがオンの間にこのスマートフォンが記録したものしか保存しません。自動削除がオフかどうかも確認してください（タイムラインの雲のアイコン）。</string>
+    <string name="ios_trouble_android">**履歴が Android スマートフォンにある？** そちらで保存してください：設定 → 位置情報 → 位置情報サービス → タイムライン → タイムラインデータをエクスポート。ファイルをこの iPhone に送り（Google ドライブ、メール、メッセージアプリ）、「ファイル」に保存します。</string>
+    <string name="help_note_file_location">• iPhone ではファイル名は location-history.json、Android では Timeline.json です。どちらもここで開けます。</string>
+    <string name="pick_file_button">タイムラインファイルを選択</string>
+    <string name="error_not_timeline">Google マップのタイムラインファイルではないようです。Google マップから保存したファイル（通常は location-history.json）を選んでください。手順はヘルプにあります。</string>
     <string name="language_settings_hint">iOS では各アプリの言語を「設定」で選びます。</string>
 </resources>

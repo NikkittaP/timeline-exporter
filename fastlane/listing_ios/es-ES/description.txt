@@ -1,0 +1,30 @@
+Google Maps puede recordar los lugares a los que vas: es tu cronología (Timeline). Esta app abre tu archivo de cronología, muestra tus viajes en un mapa y los guarda como archivos GPX, KML, GeoJSON o CSV para otras apps (Strava, Garmin, Google Earth, Excel…).
+
+Esta app no te rastrea ni inicia sesión en Google. Solo lee el archivo que guardas desde Google Maps, y todo se queda en este dispositivo.
+
+⚠️ IMPORTANTE: COMPRUÉBALO PRIMERO
+• TU HISTORIAL DE UBICACIONES VIENE DE TU CUENTA DE GOOGLE. Necesitas la app Google Maps con tu cuenta de Google iniciada.
+• LA CRONOLOGÍA DEBE ESTAR ACTIVADA EN GOOGLE MAPS. Google solo guarda los días desde que se activó; si estaba desactivada, no hay nada que exportar.
+• Google Maps necesita acceso a la ubicación «Siempre» (app Ajustes → Google Maps → Ubicación); si no, la cronología apenas registra nada.
+• La cronología se guarda en el teléfono que la registró. Si tu historial se registró en otro teléfono, guarda el archivo en ese teléfono.
+
+TU ARCHIVO EN 3 PASOS
+1. En Google Maps, toca tu foto de perfil → Configuración → Ubicación y privacidad → Exportar datos de Timeline.
+2. Toca Guardar en Archivos y guarda el archivo En mi iPhone o en iCloud Drive.
+3. Toca Elegir archivo de cronología en la pantalla principal y busca el archivo. Normalmente se llama location-history.json.
+
+¿Aún dudas? Toca «Probar con datos de ejemplo». Viajes inventados: mira lo que hace la app antes de exportar los tuyos.
+
+La Ayuda de la app explica cada paso con palabras sencillas, incluido cómo activar la Cronología.
+
+QUÉ PUEDES HACER
+• Ver tus viajes en un mapa
+• Elegir fechas: últimos 7, 30 o 90 días, o todo
+• Exportar a GPX (Strava, Garmin, Komoot y la mayoría de apps GPS), KML (Google Earth), GeoJSON (QGIS, mapas web) o CSV (Excel, Numbers)
+• Guardar en Archivos o enviar con el menú Compartir
+• También abre archivos antiguos de Google: Timeline.json de Android, Semantic Location History, Records.json
+
+PRIVADO
+Todo ocurre en tu iPhone o iPad. Tu historial nunca se sube: sin cuenta, sin servidores, sin analíticas, sin anuncios. Internet solo se usa para cargar el mapa. Gratis y de código abierto.
+
+Timeline Exporter es una app independiente, sin relación con Google.

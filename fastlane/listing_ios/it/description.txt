@@ -1,0 +1,30 @@
+Google Maps può ricordare i luoghi in cui vai: è la tua Timeline. Questa app apre il file della Timeline, mostra i tuoi spostamenti su una mappa e li salva come file GPX, KML, GeoJSON o CSV per altre app (Strava, Garmin, Google Earth, Excel…).
+
+Questa app non ti traccia e non accede a Google. Legge solo il file che salvi da Google Maps, e tutto resta su questo dispositivo.
+
+⚠️ IMPORTANTE: CONTROLLA PRIMA QUESTO
+• LA CRONOLOGIA DELLE POSIZIONI VIENE DAL TUO ACCOUNT GOOGLE. Serve l'app Google Maps con l'accesso al tuo account Google.
+• LA TIMELINE DEVE ESSERE ATTIVA IN GOOGLE MAPS. Google salva solo i giorni da quando è stata attivata: se era disattivata, non c'è nulla da esportare.
+• Google Maps deve avere l'accesso alla posizione «Sempre» (app Impostazioni → Google Maps → Posizione), altrimenti la Timeline registra pochissimo.
+• La Timeline resta sul telefono che l'ha registrata. Se la cronologia è stata registrata su un altro telefono, salva il file su quel telefono.
+
+IL TUO FILE IN 3 PASSAGGI
+1. In Google Maps tocca la tua foto profilo → Impostazioni → Posizione e privacy → Esporta dati Timeline.
+2. Tocca Salva su File e salva il file Su iPhone o in iCloud Drive.
+3. Tocca Scegli file Timeline nella schermata principale e trova il file. Di solito si chiama location-history.json.
+
+Non sei sicuro? Tocca «Prova con dati di esempio». Viaggi inventati: guarda cosa fa l'app prima di esportare i tuoi.
+
+La Guida dell’app spiega ogni passaggio in modo semplice, anche come attivare la Cronologia.
+
+COSA PUOI FARE
+• Vedere i tuoi spostamenti su una mappa
+• Scegliere le date: ultimi 7, 30 o 90 giorni, o tutto
+• Esportare in GPX (Strava, Garmin, Komoot e la maggior parte delle app GPS), KML (Google Earth), GeoJSON (QGIS, mappe web) o CSV (Excel, Numbers)
+• Salvare in File o inviare con il menu Condividi
+• Apre anche i vecchi file di Google: Timeline.json di Android, Semantic Location History, Records.json
+
+PRIVATO
+Tutto avviene sul tuo iPhone o iPad. La cronologia non viene mai caricata: niente account, server, statistiche o pubblicità. Internet serve solo per la mappa. Gratuita e open source.
+
+Timeline Exporter è un’app indipendente, non affiliata a Google.

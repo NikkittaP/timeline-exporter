@@ -1,0 +1,30 @@
+Google Maps kann sich merken, wo du warst — das ist deine Zeitachse (Timeline). Diese App öffnet deine Zeitachsen-Datei, zeigt deine Wege auf einer Karte und speichert sie als GPX-, KML-, GeoJSON- oder CSV-Dateien für andere Apps (Strava, Garmin, Google Earth, Excel …).
+
+Diese App verfolgt dich nicht und meldet sich nicht bei Google an. Sie liest nur die Datei, die du aus Google Maps sicherst, und alles bleibt auf diesem Gerät.
+
+⚠️ WICHTIG — ZUERST PRÜFEN
+• DEIN STANDORTVERLAUF KOMMT AUS DEINEM GOOGLE-KONTO. Du brauchst die Google Maps-App, angemeldet mit deinem Google-Konto.
+• DIE ZEITACHSE MUSS IN GOOGLE MAPS AKTIVIERT SEIN. Google speichert nur die Tage seit der Aktivierung — war sie aus, gibt es nichts zu exportieren.
+• Google Maps braucht Standortzugriff „Immer“ (App „Einstellungen“ → Google Maps → Standort), sonst zeichnet die Zeitachse kaum etwas auf.
+• Die Zeitachse liegt auf dem Telefon, das sie aufgezeichnet hat. Wurde dein Verlauf auf einem anderen Telefon aufgezeichnet, sichere die Datei dort.
+
+DEINE DATEI IN 3 SCHRITTEN
+1. Tippe in Google Maps auf dein Profilbild → Einstellungen → Standort und Datenschutz → Timeline-Daten exportieren.
+2. Tippe auf In „Dateien“ sichern und sichere die Datei unter „Auf meinem iPhone“ oder in iCloud Drive.
+3. Tippe auf dem Hauptbildschirm auf Zeitachsen-Datei wählen und suche die Datei. Meist heißt sie location-history.json.
+
+Noch unsicher? Tippe auf „Mit Beispieldaten ausprobieren“. Ausgedachte Reisen: sieh dir die App an, bevor du deine eigenen exportierst.
+
+Die Hilfe in der App erklärt jeden Schritt in einfachen Worten, auch wie du die Zeitachse aktivierst.
+
+WAS DU TUN KANNST
+• Deine Wege auf einer Karte sehen
+• Zeitraum wählen: letzte 7, 30 oder 90 Tage oder alles
+• Export als GPX (Strava, Garmin, Komoot und die meisten GPS-Apps), KML (Google Earth), GeoJSON (QGIS, Webkarten) oder CSV (Excel, Numbers)
+• In „Dateien“ sichern oder über das Teilen-Menü senden
+• Öffnet auch ältere Google-Dateien: Android-Timeline.json, Semantic Location History, Records.json
+
+PRIVAT
+Alles passiert auf deinem iPhone oder iPad. Dein Standortverlauf wird nie hochgeladen: kein Konto, keine Server, keine Analyse, keine Werbung. Das Internet wird nur für die Karte genutzt. Kostenlos und Open Source.
+
+Timeline Exporter ist eine unabhängige App und steht in keiner Verbindung zu Google.

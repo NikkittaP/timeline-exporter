@@ -1,0 +1,68 @@
+# App Store listing text: fastlane/listing_ios/<locale>/*.txt and the App
+# Review notes, uploaded by `fastlane ios upload_metadata`. Run by hand from
+# master once a version is in "Prepare for Submission". Never touches the
+# screenshots or the binary, never submits for review.
+# Secrets: APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_PRIVATE_KEY,
+# IOS_BUNDLE_ID (the same ones as ios-screens.yml).
+name: iOS listing
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-metadata
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    name: Upload listing to App Store Connect
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check limits
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib, sys
+          limits = {"name.txt": 30, "subtitle.txt": 30, "keywords.txt": 100,
+                    "promotional_text.txt": 170, "description.txt": 4000}
+          bad = []
+          for d in sorted(pathlib.Path("fastlane/listing_ios").iterdir()):
+              for name, limit in limits.items():
+                  f = d / name
+                  if f.exists() and len(f.read_text(encoding="utf-8").strip()) > limit:
+                      bad.append(f"{f}: over {limit} characters")
+          for b in bad:
+              print(f"::error title=listing::{b}")
+          sys.exit(1 if bad else 0)
+          PY
+
+      - name: fastlane
+        run: |
+          set -euo pipefail
+          sudo gem install bundler --no-document
+          bundle config set --local path vendor/bundle
+          bundle install --jobs 4
+
+      - name: Upload
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+        run: |
+          set -euo pipefail
+          if ! bundle exec fastlane ios upload_metadata 2>&1 | tee upload.log; then
+            msg="$(grep -E "\[!\]|Error|error" upload.log | tail -n 5 | python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))')"
+            echo "::error title=deliver::${msg:-fastlane ios upload_metadata failed}"
+            exit 1
+          fi
+          echo "::notice title=App Store listing::uploaded; nothing was submitted for review"

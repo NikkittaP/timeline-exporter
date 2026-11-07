@@ -186,7 +186,8 @@ How it works:
 1. The Debug app takes `-screenshotScene <scene>`
    (`ios/TimelineExporter/App/ScreenshotMode.swift`). It loads the bundled
    demo history (the Android screenshot test's `timeline_demo.json`, which
-   is excluded from Release) and puts itself in that state without a tap.
+   Release ships too, for "Try it with sample data") and puts itself in that
+   state without a tap.
 2. `StoreScreenshots` (`ios/TimelineExporterUITests`) launches each scene in
    each language and writes `fastlane/screenshots_raw/<locale>/<iphone|ipad>/`
    with the same names as the Android captures.
@@ -199,6 +200,27 @@ How it works:
 A full run takes about 9 scenes x 18 languages per device. Each scene
 waits for the map tiles from the network, so expect 40-70 minutes for each
 of the two parallel macOS jobs.
+
+## App Store listing
+
+The listing text lives in `fastlane/listing_ios/<App Store locale>/`
+(`name`, `subtitle`, `description`, `keywords`, `promotional_text`,
+`support_url`, `privacy_url`, `marketing_url`), 18 languages, plus
+`review_information/notes.txt` for App Review (it points the reviewer to
+"Try it with sample data", since a real export needs a Google account with
+Timeline history).
+
+Actions -> **iOS listing** -> Run workflow (`.github/workflows/ios-metadata.yml`)
+checks the App Store length limits and runs `fastlane ios upload_metadata`.
+Same secrets and the same editable version as the screenshots; screenshots,
+binary and review submission are untouched.
+
+The description is plain text (App Store shows no bold), so the
+requirements — data from the Google account, Timeline turned on in Google
+Maps, location "Always" — are in CAPITALS under a warning sign. Its
+requirement and step sentences are the in-app strings from
+`ios/strings/values*/strings.xml` (`ios_requirement_*`, `ios_quick_step*`,
+`help_import_step1`): change one, change the other.
 
 ## Security
 

@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">Desde o fim de 2024, o Google guarda a Linha do tempo apenas no seu celular — não há opção no Google Takeout e nenhum outro app consegue lê-la diretamente. Você a exporta uma vez pelo Google Maps e depois abre o arquivo aqui.</string>
-    <string name="help_note_file_location">• O arquivo exportado se chama Timeline.json. Salve-o no app Arquivos (No Meu iPhone ou iCloud Drive) para que este app possa abri-lo.</string>
+    <string name="ios_welcome_title">Como funciona</string>
+    <string name="ios_welcome_body">O Google Maps pode lembrar os lugares por onde você passa: é a sua **Linha do tempo** (Timeline). Este app abre o arquivo da Linha do tempo, mostra suas viagens no mapa e as salva como arquivos GPX, KML, GeoJSON ou CSV para outros apps (Strava, Garmin, Google Earth, Excel…).</string>
+    <string name="ios_welcome_not_tracker">Este app não rastreia você e não entra na sua conta do Google. Ele só lê o arquivo que você salva pelo Google Maps, e tudo fica neste aparelho.</string>
+    <string name="ios_requirements_title">⚠️ Importante: confira primeiro</string>
+    <string name="ios_requirement_account">**Seu histórico de localização vem da sua Conta do Google.** Você precisa do app Google Maps conectado à sua Conta do Google.</string>
+    <string name="ios_requirement_timeline">**A Linha do tempo precisa estar ativada no Google Maps.** O Google só salva os dias desde a ativação; se estava desativada, não há nada para exportar.</string>
+    <string name="ios_requirement_location">**O Google Maps precisa de acesso à localização “Sempre”** (app Ajustes → Google Maps → Localização); senão a Linha do tempo registra muito pouco.</string>
+    <string name="ios_requirement_device">**A Linha do tempo fica no celular que a registrou.** Se o seu histórico foi registrado em outro celular, salve o arquivo nele.</string>
+    <string name="ios_quick_title">Seu arquivo em 3 passos</string>
+    <string name="ios_quick_step1">No **Google Maps**, toque na sua foto de perfil → **Configurações** → **Localização e privacidade** → **Exportar dados da Linha do tempo**.</string>
+    <string name="ios_quick_step2">Toque em **Salvar em Arquivos** e salve o arquivo No Meu iPhone ou no iCloud Drive.</string>
+    <string name="ios_quick_step3">Volte aqui e toque em **Escolher arquivo da Linha do tempo** abaixo.</string>
+    <string name="ios_full_guide_button">Guia detalhado passo a passo</string>
+    <string name="ios_try_sample_button">Testar com dados de exemplo</string>
+    <string name="ios_sample_hint">Viagens inventadas: veja o que o app faz antes de exportar as suas.</string>
+    <string name="help_intro">O Google Maps guarda a Linha do tempo só no seu celular, não na internet, então nenhum outro app consegue lê-la diretamente. Você a salva uma vez pelo Google Maps como arquivo e abre esse arquivo aqui. Nada é enviado para lugar nenhum.</string>
+    <string name="ios_turn_on_title">1. Ative a Linha do tempo (pule se já estiver ativa)</string>
+    <string name="ios_maps_profile">Abra o Google Maps e toque na sua foto de perfil (canto superior direito)</string>
+    <string name="ios_turn_on_step2">Toque em **Sua linha do tempo**</string>
+    <string name="ios_turn_on_step3">Toque em ⋯ (canto superior direito) → **Configurações de localização e privacidade**</string>
+    <string name="ios_turn_on_step4">Toque em **Linha do tempo desativada** → **Ativar**</string>
+    <string name="ios_turn_on_note">A partir daí, o Google salva por onde você anda. Dias anteriores não podem ser adicionados depois, então volte daqui a alguns dias.</string>
+    <string name="ios_export_title">2. Salve sua Linha do tempo como arquivo</string>
+    <string name="ios_export_step2">Toque em **Configurações** → **Localização e privacidade**</string>
+    <string name="ios_export_step3">Toque em **Exportar dados da Linha do tempo**</string>
+    <string name="ios_export_step4">Toque em **Salvar em Arquivos**, escolha No Meu iPhone ou iCloud Drive e toque em **Salvar**</string>
+    <string name="ios_import_title">3. Abra o arquivo aqui</string>
+    <string name="help_import_step1">Toque em **Escolher arquivo da Linha do tempo** na tela principal e encontre o arquivo. Normalmente ele se chama location-history.json.</string>
+    <string name="help_import_step2">Ou no app Arquivos: toque e segure o arquivo → Compartilhar → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Se algo não funcionar</string>
+    <string name="ios_trouble_no_export">**Não aparece “Exportar dados da Linha do tempo”?** Confira se você entrou na sua conta no Google Maps e se a Linha do tempo está ativa (passo 1). A opção aparece quando a Linha do tempo já salvou algo.</string>
+    <string name="ios_trouble_alt_path">**Não achou o menu?** Tente: foto de perfil → **Sua linha do tempo** → ⋯ → **Configurações de localização e privacidade** → **Exportar dados da Linha do tempo**.</string>
+    <string name="ios_trouble_few_days">**Só alguns dias no arquivo?** O Google guarda apenas o que este celular registrou com a Linha do tempo ativa. Confira também se a exclusão automática está desativada (ícone de nuvem em Sua linha do tempo).</string>
+    <string name="ios_trouble_android">**Histórico em um celular Android?** Salve-o lá: Configurações → Localização → Serviços de localização → Linha do tempo → Exportar dados da Linha do tempo. Envie o arquivo para este iPhone (Google Drive, e-mail ou um mensageiro) e salve-o em Arquivos.</string>
+    <string name="help_note_file_location">• No iPhone o arquivo se chama location-history.json; no Android, Timeline.json. Os dois abrem aqui.</string>
+    <string name="pick_file_button">Escolher arquivo da Linha do tempo</string>
+    <string name="error_not_timeline">Isto não parece um arquivo da Linha do tempo do Google Maps. Escolha o arquivo que você salvou pelo Google Maps (normalmente location-history.json); a Ajuda mostra os passos.</string>
     <string name="language_settings_hint">O iOS define o idioma de cada app nos Ajustes.</string>
 </resources>

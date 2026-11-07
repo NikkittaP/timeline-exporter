@@ -1,0 +1,1 @@
+Trasforma la cronologia delle posizioni di Google Maps in file GPX, KML, GeoJSON o CSV — in privato, direttamente sul tuo iPhone.

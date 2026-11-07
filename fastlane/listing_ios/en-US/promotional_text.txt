@@ -1,0 +1,1 @@
+Turn the location history from your Google Maps Timeline into GPX, KML, GeoJSON or CSV files — privately, right on your iPhone.

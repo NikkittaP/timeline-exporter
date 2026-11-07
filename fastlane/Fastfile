@@ -188,4 +188,31 @@ platform :ios do
       force: true # no HTML preview to confirm on CI
     )
   end
+
+  # Listing text: fastlane/listing_ios/<App Store locale>/*.txt (name,
+  # subtitle, description, keywords, promotional text, URLs) and
+  # review_information/notes.txt. The description repeats the in-app
+  # requirement and step strings (ios/strings) - keep them in step.
+  desc "Upload ONLY the listing text and App Review notes to App Store "        "Connect. Screenshots, binary, price and review submission untouched."
+  lane :upload_metadata do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("APPSTORE_KEY_ID"),
+      issuer_id: ENV.fetch("APPSTORE_ISSUER_ID"),
+      key_content: ENV.fetch("APPSTORE_PRIVATE_KEY"),
+      in_house: false
+    )
+    upload_to_app_store(
+      api_key: api_key,
+      app_identifier: ENV["IOS_BUNDLE_ID"] || "com.nikitapetrovapps.timelineexporter",
+      metadata_path: "./listing_ios",
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_app_version_update: true,
+      ignore_language_directory_validation: true,
+      submit_for_review: false,
+      automatic_release: false,
+      run_precheck_before_submit: false,
+      force: true
+    )
+  end
 end

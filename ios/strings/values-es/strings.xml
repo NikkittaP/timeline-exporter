@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">Desde finales de 2024, Google guarda la cronología solo en tu teléfono: no hay opción de Google Takeout y ninguna otra app puede leerla directamente. La exportas una vez desde Google Maps y luego abres el archivo aquí.</string>
-    <string name="help_note_file_location">• El archivo exportado se llama Timeline.json. Guárdalo en Archivos (En mi iPhone o iCloud Drive) para que esta app pueda abrirlo.</string>
+    <string name="ios_welcome_title">Cómo funciona</string>
+    <string name="ios_welcome_body">Google Maps puede recordar los lugares a los que vas: es tu **cronología** (Timeline). Esta app abre tu archivo de cronología, muestra tus viajes en un mapa y los guarda como archivos GPX, KML, GeoJSON o CSV para otras apps (Strava, Garmin, Google Earth, Excel…).</string>
+    <string name="ios_welcome_not_tracker">Esta app no te rastrea ni inicia sesión en Google. Solo lee el archivo que guardas desde Google Maps, y todo se queda en este dispositivo.</string>
+    <string name="ios_requirements_title">⚠️ Importante: compruébalo primero</string>
+    <string name="ios_requirement_account">**Tu historial de ubicaciones viene de tu cuenta de Google.** Necesitas la app Google Maps con tu cuenta de Google iniciada.</string>
+    <string name="ios_requirement_timeline">**La cronología debe estar activada en Google Maps.** Google solo guarda los días desde que se activó; si estaba desactivada, no hay nada que exportar.</string>
+    <string name="ios_requirement_location">**Google Maps necesita acceso a la ubicación «Siempre»** (app Ajustes → Google Maps → Ubicación); si no, la cronología apenas registra nada.</string>
+    <string name="ios_requirement_device">**La cronología se guarda en el teléfono que la registró.** Si tu historial se registró en otro teléfono, guarda el archivo en ese teléfono.</string>
+    <string name="ios_quick_title">Tu archivo en 3 pasos</string>
+    <string name="ios_quick_step1">En **Google Maps**, toca tu foto de perfil → **Configuración** → **Ubicación y privacidad** → **Exportar datos de Timeline**.</string>
+    <string name="ios_quick_step2">Toca **Guardar en Archivos** y guarda el archivo En mi iPhone o en iCloud Drive.</string>
+    <string name="ios_quick_step3">Vuelve aquí y toca **Elegir archivo de cronología** abajo.</string>
+    <string name="ios_full_guide_button">Guía detallada paso a paso</string>
+    <string name="ios_try_sample_button">Probar con datos de ejemplo</string>
+    <string name="ios_sample_hint">Viajes inventados: mira lo que hace la app antes de exportar los tuyos.</string>
+    <string name="help_intro">Google Maps guarda tu cronología solo en tu teléfono, no en internet, así que ninguna otra app puede leerla directamente. La guardas una vez desde Google Maps como archivo y abres ese archivo aquí. No se sube nada a ningún sitio.</string>
+    <string name="ios_turn_on_title">1. Activa la cronología (sáltalo si ya está activada)</string>
+    <string name="ios_maps_profile">Abre Google Maps y toca tu foto de perfil (arriba a la derecha)</string>
+    <string name="ios_turn_on_step2">Toca **Tu cronología**</string>
+    <string name="ios_turn_on_step3">Toca ⋯ (arriba a la derecha) → **Configuración de ubicación y privacidad**</string>
+    <string name="ios_turn_on_step4">Toca **Cronología desactivada** → **Activar**</string>
+    <string name="ios_turn_on_note">A partir de entonces, Google guarda por dónde vas. Los días anteriores no se pueden añadir, así que vuelve dentro de unos días.</string>
+    <string name="ios_export_title">2. Guarda tu cronología como archivo</string>
+    <string name="ios_export_step2">Toca **Configuración** → **Ubicación y privacidad**</string>
+    <string name="ios_export_step3">Toca **Exportar datos de Timeline**</string>
+    <string name="ios_export_step4">Toca **Guardar en Archivos**, elige En mi iPhone o iCloud Drive y toca **Guardar**</string>
+    <string name="ios_import_title">3. Abre el archivo aquí</string>
+    <string name="help_import_step1">Toca **Elegir archivo de cronología** en la pantalla principal y busca el archivo. Normalmente se llama location-history.json.</string>
+    <string name="help_import_step2">O en la app Archivos: mantén pulsado el archivo → Compartir → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Si algo no funciona</string>
+    <string name="ios_trouble_no_export">**¿No aparece «Exportar datos de Timeline»?** Comprueba que has iniciado sesión en Google Maps y que la cronología está activada (paso 1). La opción aparece cuando la cronología ha guardado algo.</string>
+    <string name="ios_trouble_alt_path">**¿No encuentras el menú?** Prueba: foto de perfil → **Tu cronología** → ⋯ → **Configuración de ubicación y privacidad** → **Exportar datos de Timeline**.</string>
+    <string name="ios_trouble_few_days">**¿Solo unos pocos días en el archivo?** Google solo conserva lo que este teléfono registró con la cronología activada. Comprueba también que la eliminación automática está desactivada (icono de nube en Tu cronología).</string>
+    <string name="ios_trouble_android">**¿Historial en un teléfono Android?** Guárdalo allí: Ajustes → Ubicación → Servicios de ubicación → Cronología → Exportar datos de Timeline. Envía el archivo a este iPhone (Google Drive, correo o un mensajero) y guárdalo en Archivos.</string>
+    <string name="help_note_file_location">• En iPhone el archivo se llama location-history.json; en Android, Timeline.json. Los dos se abren aquí.</string>
+    <string name="pick_file_button">Elegir archivo de cronología</string>
+    <string name="error_not_timeline">Esto no parece un archivo de cronología de Google Maps. Elige el archivo que guardaste desde Google Maps (normalmente location-history.json); la Ayuda muestra los pasos.</string>
     <string name="language_settings_hint">iOS guarda el idioma de cada app en Ajustes.</string>
 </resources>

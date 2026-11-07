@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">Sedan slutet av 2024 sparar Google tidslinjen bara på din telefon – det finns inget Google Takeout-alternativ och ingen annan app kan läsa den direkt. Du exporterar den en gång från Google Maps och öppnar sedan filen här.</string>
-    <string name="help_note_file_location">• Den exporterade filen heter Timeline.json. Spara den i Filer (På min iPhone eller iCloud Drive) så att appen kan öppna den.</string>
+    <string name="ios_welcome_title">Så fungerar det</string>
+    <string name="ios_welcome_body">Google Maps kan komma ihåg platser du besöker – det är din **tidslinje** (Timeline). Den här appen öppnar din tidslinjefil, visar dina resor på en karta och sparar dem som GPX-, KML-, GeoJSON- eller CSV-filer för andra appar (Strava, Garmin, Google Earth, Excel …).</string>
+    <string name="ios_welcome_not_tracker">Appen spårar dig inte och loggar inte in på Google. Den läser bara filen du sparar från Google Maps, och allt stannar på den här enheten.</string>
+    <string name="ios_requirements_title">⚠️ Viktigt – kontrollera först</string>
+    <string name="ios_requirement_account">**Din platshistorik kommer från ditt Google-konto.** Du behöver appen Google Maps, inloggad med ditt Google-konto.</string>
+    <string name="ios_requirement_timeline">**Tidslinjen måste vara på i Google Maps.** Google sparar bara dagarna sedan den slogs på – var den av finns det inget att exportera.</string>
+    <string name="ios_requirement_location">**Google Maps behöver platsåtkomst ”Alltid”** (appen Inställningar → Google Maps → Plats), annars registrerar tidslinjen nästan ingenting.</string>
+    <string name="ios_requirement_device">**Tidslinjen sparas på telefonen som registrerade den.** Om din historik registrerades på en annan telefon sparar du filen på den telefonen.</string>
+    <string name="ios_quick_title">Din fil i 3 steg</string>
+    <string name="ios_quick_step1">I **Google Maps** trycker du på din profilbild → **Inställningar** → **Plats och integritet** → **Exportera Timeline-data**.</string>
+    <string name="ios_quick_step2">Tryck på **Spara i Filer** och spara filen På min iPhone eller i iCloud Drive.</string>
+    <string name="ios_quick_step3">Kom tillbaka hit och tryck på **Välj tidslinjefil** nedan.</string>
+    <string name="ios_full_guide_button">Utförlig steg-för-steg-guide</string>
+    <string name="ios_try_sample_button">Prova med exempeldata</string>
+    <string name="ios_sample_hint">Påhittade resor: se vad appen gör innan du exporterar dina egna.</string>
+    <string name="help_intro">Google Maps sparar din tidslinje bara på telefonen, inte på nätet, så ingen annan app kan läsa den direkt. Du sparar den en gång från Google Maps som en fil och öppnar filen här. Inget laddas upp någonstans.</string>
+    <string name="ios_turn_on_title">1. Slå på tidslinjen (hoppa över om den är på)</string>
+    <string name="ios_maps_profile">Öppna Google Maps och tryck på din profilbild (uppe till höger)</string>
+    <string name="ios_turn_on_step2">Tryck på **Din tidslinje**</string>
+    <string name="ios_turn_on_step3">Tryck på ⋯ (uppe till höger) → **Inställningar för plats och integritet**</string>
+    <string name="ios_turn_on_step4">Tryck på **Tidslinjen är av** → **Aktivera**</string>
+    <string name="ios_turn_on_note">Därefter sparar Google var du är. Tidigare dagar kan inte läggas till, så kom tillbaka om några dagar.</string>
+    <string name="ios_export_title">2. Spara tidslinjen som en fil</string>
+    <string name="ios_export_step2">Tryck på **Inställningar** → **Plats och integritet**</string>
+    <string name="ios_export_step3">Tryck på **Exportera Timeline-data**</string>
+    <string name="ios_export_step4">Tryck på **Spara i Filer**, välj På min iPhone eller iCloud Drive och tryck på **Spara**</string>
+    <string name="ios_import_title">3. Öppna filen här</string>
+    <string name="help_import_step1">Tryck på **Välj tidslinjefil** på huvudskärmen och leta upp filen. Den heter oftast location-history.json.</string>
+    <string name="help_import_step2">Eller i appen Filer: håll fingret på filen → Dela → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Om något inte fungerar</string>
+    <string name="ios_trouble_no_export">**Inget ”Exportera Timeline-data”?** Kontrollera att du är inloggad i Google Maps och att tidslinjen är på (steg 1). Alternativet visas när tidslinjen har sparat något.</string>
+    <string name="ios_trouble_alt_path">**Hittar du inte menyn?** Prova: profilbild → **Din tidslinje** → ⋯ → **Inställningar för plats och integritet** → **Exportera Timeline-data**.</string>
+    <string name="ios_trouble_few_days">**Bara några dagar i filen?** Google sparar bara det den här telefonen registrerade medan tidslinjen var på. Kontrollera också att automatisk radering är av (molnikonen i Din tidslinje).</string>
+    <string name="ios_trouble_android">**Historik på en Android-telefon?** Spara den där: Inställningar → Plats → Platstjänster → Tidslinje → Exportera Timeline-data. Skicka filen till den här iPhonen (Google Drive, e-post eller en meddelandeapp) och spara den i Filer.</string>
+    <string name="help_note_file_location">• På iPhone heter filen location-history.json, på Android Timeline.json. Båda kan öppnas här.</string>
+    <string name="pick_file_button">Välj tidslinjefil</string>
+    <string name="error_not_timeline">Det här ser inte ut som en tidslinjefil från Google Maps. Välj filen du sparade från Google Maps (oftast location-history.json) – stegen finns i Hjälp.</string>
     <string name="language_settings_hint">iOS ställer in varje apps språk i Inställningar.</string>
 </resources>

@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">Od końca 2024 roku Google przechowuje Oś czasu tylko na telefonie — nie ma opcji Google Takeout i żadna inna aplikacja nie może jej odczytać bezpośrednio. Eksportujesz ją raz z Map Google, a potem otwierasz plik tutaj.</string>
-    <string name="help_note_file_location">• Wyeksportowany plik nazywa się Timeline.json. Zapisz go w aplikacji Pliki (Na moim iPhonie lub iCloud Drive), aby ta aplikacja mogła go otworzyć.</string>
+    <string name="ios_welcome_title">Jak to działa</string>
+    <string name="ios_welcome_body">Mapy Google mogą zapamiętywać miejsca, w których bywasz — to Twoja **oś czasu** (Timeline). Ta aplikacja otwiera plik osi czasu, pokazuje Twoje podróże na mapie i zapisuje je jako pliki GPX, KML, GeoJSON lub CSV dla innych aplikacji (Strava, Garmin, Google Earth, Excel…).</string>
+    <string name="ios_welcome_not_tracker">Ta aplikacja Cię nie śledzi i nie loguje się do Google. Czyta tylko plik zapisany z Map Google, a wszystko zostaje na tym urządzeniu.</string>
+    <string name="ios_requirements_title">⚠️ Ważne — sprawdź najpierw</string>
+    <string name="ios_requirement_account">**Historia lokalizacji pochodzi z Twojego konta Google.** Potrzebna jest aplikacja Mapy Google zalogowana na Twoje konto Google.</string>
+    <string name="ios_requirement_timeline">**Oś czasu musi być włączona w Mapach Google.** Google zapisuje tylko dni od jej włączenia — jeśli była wyłączona, nie ma czego eksportować.</string>
+    <string name="ios_requirement_location">**Mapy Google potrzebują dostępu do lokalizacji „Zawsze”** (aplikacja Ustawienia → Google Maps → Lokalizacja), inaczej oś czasu prawie nic nie zapisze.</string>
+    <string name="ios_requirement_device">**Oś czasu jest przechowywana na telefonie, który ją zapisał.** Jeśli historia była zapisywana na innym telefonie, zapisz plik na tamtym telefonie.</string>
+    <string name="ios_quick_title">Plik w 3 krokach</string>
+    <string name="ios_quick_step1">W **Mapach Google** dotknij zdjęcia profilowego → **Ustawienia** → **Lokalizacja i prywatność** → **Eksportuj dane Timeline**.</string>
+    <string name="ios_quick_step2">Dotknij **Zachowaj w Plikach** i zapisz plik Na moim iPhonie lub w iCloud Drive.</string>
+    <string name="ios_quick_step3">Wróć tutaj i dotknij **Wybierz plik osi czasu** poniżej.</string>
+    <string name="ios_full_guide_button">Szczegółowa instrukcja krok po kroku</string>
+    <string name="ios_try_sample_button">Wypróbuj na przykładowych danych</string>
+    <string name="ios_sample_hint">Zmyślone podróże: zobacz, co potrafi aplikacja, zanim wyeksportujesz swoje.</string>
+    <string name="help_intro">Mapy Google przechowują oś czasu tylko na telefonie, a nie w internecie, więc żadna inna aplikacja nie odczyta jej bezpośrednio. Raz zapisujesz ją z Map Google jako plik i otwierasz ten plik tutaj. Nic nie jest nigdzie wysyłane.</string>
+    <string name="ios_turn_on_title">1. Włącz oś czasu (pomiń, jeśli jest włączona)</string>
+    <string name="ios_maps_profile">Otwórz Mapy Google i dotknij zdjęcia profilowego (prawy górny róg)</string>
+    <string name="ios_turn_on_step2">Dotknij **Twoja oś czasu**</string>
+    <string name="ios_turn_on_step3">Dotknij ⋯ (prawy górny róg) → **Ustawienia lokalizacji i prywatności**</string>
+    <string name="ios_turn_on_step4">Dotknij **Oś czasu jest wyłączona** → **Włącz**</string>
+    <string name="ios_turn_on_note">Od tej chwili Google zapisuje, gdzie bywasz. Wcześniejszych dni nie da się dodać, więc wróć za kilka dni.</string>
+    <string name="ios_export_title">2. Zapisz oś czasu jako plik</string>
+    <string name="ios_export_step2">Dotknij **Ustawienia** → **Lokalizacja i prywatność**</string>
+    <string name="ios_export_step3">Dotknij **Eksportuj dane Timeline**</string>
+    <string name="ios_export_step4">Dotknij **Zachowaj w Plikach**, wybierz Na moim iPhonie lub iCloud Drive i dotknij **Zachowaj**</string>
+    <string name="ios_import_title">3. Otwórz plik tutaj</string>
+    <string name="help_import_step1">Dotknij **Wybierz plik osi czasu** na ekranie głównym i znajdź plik. Zwykle nazywa się location-history.json.</string>
+    <string name="help_import_step2">Albo w aplikacji Pliki: przytrzymaj plik → Udostępnij → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Jeśli coś nie działa</string>
+    <string name="ios_trouble_no_export">**Brak opcji „Eksportuj dane Timeline”?** Sprawdź, czy jesteś zalogowany w Mapach Google i czy oś czasu jest włączona (krok 1). Opcja pojawi się, gdy oś czasu coś zapisze.</string>
+    <string name="ios_trouble_alt_path">**Nie możesz znaleźć menu?** Spróbuj: zdjęcie profilowe → **Twoja oś czasu** → ⋯ → **Ustawienia lokalizacji i prywatności** → **Eksportuj dane Timeline**.</string>
+    <string name="ios_trouble_few_days">**W pliku tylko kilka dni?** Google przechowuje tylko to, co ten telefon zapisał przy włączonej osi czasu. Sprawdź też, czy automatyczne usuwanie jest wyłączone (ikona chmury w Twojej osi czasu).</string>
+    <string name="ios_trouble_android">**Historia na telefonie z Androidem?** Zapisz ją tam: Ustawienia → Lokalizacja → Usługi lokalizacyjne → Oś czasu → Eksportuj dane Timeline. Wyślij plik na tego iPhone'a (Dysk Google, e-mail lub komunikator) i zapisz go w Plikach.</string>
+    <string name="help_note_file_location">• Na iPhonie plik nazywa się location-history.json, na Androidzie Timeline.json. Oba otwierają się tutaj.</string>
+    <string name="pick_file_button">Wybierz plik osi czasu</string>
+    <string name="error_not_timeline">To nie wygląda na plik osi czasu Map Google. Wybierz plik zapisany z Map Google (zwykle location-history.json) — kroki są w Pomocy.</string>
     <string name="language_settings_hint">iOS ustawia język każdej aplikacji w Ustawieniach.</string>
 </resources>

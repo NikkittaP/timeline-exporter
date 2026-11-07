@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">منذ أواخر 2024 يحتفظ Google بالمخطط الزمني على هاتفك فقط — لا يوجد خيار في Google Takeout ولا يمكن لأي تطبيق آخر قراءته مباشرة. صدّره مرة واحدة من خرائط Google، ثم افتح الملف هنا.</string>
-    <string name="help_note_file_location">• اسم الملف المُصدَّر هو Timeline.json. احفظه في تطبيق الملفات (على iPhone أو iCloud Drive) ليتمكن هذا التطبيق من فتحه.</string>
+    <string name="ios_welcome_title">طريقة العمل</string>
+    <string name="ios_welcome_body">يمكن لخرائط Google أن تتذكر الأماكن التي تزورها — وهذا هو **مخططك الزمني** (Timeline). يفتح هذا التطبيق ملف المخطط الزمني، ويعرض رحلاتك على خريطة، ويحفظها كملفات GPX أو KML أو GeoJSON أو CSV لاستخدامها في تطبيقات أخرى (Strava وGarmin وGoogle Earth وExcel…).</string>
+    <string name="ios_welcome_not_tracker">هذا التطبيق لا يتتبعك ولا يسجّل الدخول إلى Google. إنه يقرأ فقط الملف الذي تحفظه من خرائط Google، ويبقى كل شيء على هذا الجهاز.</string>
+    <string name="ios_requirements_title">⚠️ مهم — تحقّق من هذا أولًا</string>
+    <string name="ios_requirement_account">**سجل مواقعك يأتي من حسابك على Google.** تحتاج إلى تطبيق خرائط Google مسجَّلًا فيه الدخول بحسابك على Google.</string>
+    <string name="ios_requirement_timeline">**يجب تشغيل المخطط الزمني في خرائط Google.** تحفظ Google الأيام منذ تشغيله فقط — إذا كان متوقفًا فلا يوجد ما يُصدَّر.</string>
+    <string name="ios_requirement_location">**تحتاج خرائط Google إلى الوصول إلى الموقع «دائمًا»** (تطبيق الإعدادات ← Google Maps ← الموقع)، وإلا فلن يسجّل المخطط الزمني إلا القليل جدًا.</string>
+    <string name="ios_requirement_device">**يُحفظ المخطط الزمني على الهاتف الذي سجّله.** إذا سُجّل سجلك على هاتف آخر، فاحفظ الملف على ذلك الهاتف.</string>
+    <string name="ios_quick_title">احصل على ملفك في 3 خطوات</string>
+    <string name="ios_quick_step1">في **خرائط Google** انقر على صورة ملفك الشخصي ← **الإعدادات** ← **الموقع والخصوصية** ← **تصدير بيانات المخطط الزمني**.</string>
+    <string name="ios_quick_step2">انقر على **حفظ في الملفات** واحفظ الملف في «على الـ iPhone» أو iCloud Drive.</string>
+    <string name="ios_quick_step3">عُد إلى هنا وانقر على **اختيار ملف المخطط الزمني** أدناه.</string>
+    <string name="ios_full_guide_button">دليل مفصّل خطوة بخطوة</string>
+    <string name="ios_try_sample_button">جرّبه ببيانات تجريبية</string>
+    <string name="ios_sample_hint">رحلات متخيَّلة: شاهد ما يفعله التطبيق قبل تصدير رحلاتك.</string>
+    <string name="help_intro">تحتفظ خرائط Google بمخططك الزمني على هاتفك فقط وليس على الإنترنت، لذا لا يمكن لأي تطبيق آخر قراءته مباشرة. تحفظه مرة واحدة من خرائط Google كملف، ثم تفتح ذلك الملف هنا. لا يُرفع أي شيء إلى أي مكان.</string>
+    <string name="ios_turn_on_title">1. شغّل المخطط الزمني (تخطَّ إن كان يعمل)</string>
+    <string name="ios_maps_profile">افتح خرائط Google وانقر على صورة ملفك الشخصي (أعلى اليمين)</string>
+    <string name="ios_turn_on_step2">انقر على **مخططك الزمني**</string>
+    <string name="ios_turn_on_step3">انقر على ⋯ (أعلى اليمين) ← **إعدادات الموقع والخصوصية**</string>
+    <string name="ios_turn_on_step4">انقر على **المخطط الزمني متوقف** ← **تشغيل**</string>
+    <string name="ios_turn_on_note">منذ ذلك الحين تحفظ Google الأماكن التي تذهب إليها. لا يمكن إضافة الأيام السابقة لاحقًا، لذا عُد بعد بضعة أيام.</string>
+    <string name="ios_export_title">2. احفظ مخططك الزمني كملف</string>
+    <string name="ios_export_step2">انقر على **الإعدادات** ← **الموقع والخصوصية**</string>
+    <string name="ios_export_step3">انقر على **تصدير بيانات المخطط الزمني**</string>
+    <string name="ios_export_step4">انقر على **حفظ في الملفات**، واختر «على الـ iPhone» أو iCloud Drive، ثم انقر على **حفظ**</string>
+    <string name="ios_import_title">3. افتح الملف هنا</string>
+    <string name="help_import_step1">انقر على **اختيار ملف المخطط الزمني** في الشاشة الرئيسية وابحث عن الملف. عادةً يكون اسمه location-history.json.</string>
+    <string name="help_import_step2">أو في تطبيق الملفات: المس الملف مطوّلًا ← مشاركة ← **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">إذا لم ينجح شيء</string>
+    <string name="ios_trouble_no_export">**لا يوجد «تصدير بيانات المخطط الزمني»؟** تأكد من تسجيل الدخول في خرائط Google ومن تشغيل المخطط الزمني (الخطوة 1). يظهر الخيار بعد أن يحفظ المخطط الزمني شيئًا.</string>
+    <string name="ios_trouble_alt_path">**لا تجد القائمة؟** جرّب: صورة الملف الشخصي ← **مخططك الزمني** ← ⋯ ← **إعدادات الموقع والخصوصية** ← **تصدير بيانات المخطط الزمني**.</string>
+    <string name="ios_trouble_few_days">**بضعة أيام فقط في الملف؟** تحتفظ Google فقط بما سجّله هذا الهاتف أثناء تشغيل المخطط الزمني. تحقّق أيضًا من إيقاف الحذف التلقائي (أيقونة السحابة في مخططك الزمني).</string>
+    <string name="ios_trouble_android">**السجل على هاتف Android؟** احفظه هناك: الإعدادات ← الموقع ← خدمات الموقع ← المخطط الزمني ← تصدير بيانات المخطط الزمني. أرسل الملف إلى هذا الـ iPhone (Google Drive أو البريد أو تطبيق مراسلة) واحفظه في الملفات.</string>
+    <string name="help_note_file_location">• على الـ iPhone يُسمّى الملف location-history.json، وعلى Android يُسمّى Timeline.json. كلاهما يُفتح هنا.</string>
+    <string name="pick_file_button">اختيار ملف المخطط الزمني</string>
+    <string name="error_not_timeline">لا يبدو هذا ملف مخطط زمني من خرائط Google. اختر الملف الذي حفظته من خرائط Google (عادةً location-history.json) — الخطوات في المساعدة.</string>
     <string name="language_settings_hint">يحفظ iOS لغة كل تطبيق في الإعدادات.</string>
 </resources>

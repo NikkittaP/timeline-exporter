@@ -1,0 +1,30 @@
+Google Haritalar gittiğiniz yerleri hatırlayabilir: bu sizin Zaman çizelgeniz (Timeline). Bu uygulama Zaman çizelgesi dosyanızı açar, yolculuklarınızı haritada gösterir ve bunları diğer uygulamalar için GPX, KML, GeoJSON veya CSV dosyası olarak kaydeder (Strava, Garmin, Google Earth, Excel…).
+
+Bu uygulama sizi izlemez ve Google'da oturum açmaz. Yalnızca Google Haritalar'dan kaydettiğiniz dosyayı okur ve her şey bu cihazda kalır.
+
+⚠️ ÖNEMLİ: ÖNCE BUNU KONTROL EDİN
+• KONUM GEÇMİŞİNİZ GOOGLE HESABINIZDAN GELİR. Google hesabınızla oturum açılmış Google Haritalar uygulaması gerekir.
+• GOOGLE HARİTALAR'DA ZAMAN ÇİZELGESİ AÇIK OLMALIDIR. Google yalnızca açıldığı günden sonraki günleri kaydeder; kapalıysa dışa aktarılacak bir şey yoktur.
+• Google Haritalar'ın konum erişimi “Her Zaman” olmalıdır (Ayarlar uygulaması → Google Maps → Konum), yoksa Zaman çizelgesi neredeyse hiçbir şey kaydetmez.
+• Zaman çizelgesi onu kaydeden telefonda saklanır. Geçmişiniz başka bir telefonda kaydedildiyse dosyayı o telefonda kaydedin.
+
+3 ADIMDA DOSYANIZ
+1. Google Haritalar'da profil fotoğrafınıza dokunun → Ayarlar → Konum ve Gizlilik → Timeline verilerini dışa aktar.
+2. Dosyalar'a Kaydet'e dokunun ve dosyayı iPhone'umda'ya veya iCloud Drive'a kaydedin.
+3. Ana ekranda Zaman çizelgesi dosyası seç'e dokunun ve dosyayı bulun. Genellikle adı location-history.json olur.
+
+Emin değil misiniz? “Örnek verilerle dene” düğmesine dokunun. Uydurma yolculuklar: kendinizinkini dışa aktarmadan önce uygulamanın ne yaptığını görün.
+
+Uygulamadaki Yardım, Zaman Çizelgesi'ni açmak dahil her adımı basit bir dille anlatır.
+
+NELER YAPABİLİRSİNİZ
+• Gezilerinizi haritada görün
+• Tarih seçin: son 7, 30 veya 90 gün ya da tümü
+• GPX (Strava, Garmin, Komoot ve çoğu GPS uygulaması), KML (Google Earth), GeoJSON (QGIS, web haritaları) veya CSV (Excel, Numbers) olarak dışa aktarın
+• Dosyalar'a kaydedin veya paylaşım menüsüyle gönderin
+• Eski Google dosyalarını da açar: Android Timeline.json, Semantic Location History, Records.json
+
+GİZLİ
+Her şey iPhone veya iPad'inizde gerçekleşir. Konum geçmişiniz asla yüklenmez: hesap yok, sunucu yok, analiz yok, reklam yok. İnternet yalnızca haritayı yüklemek için kullanılır. Ücretsiz ve açık kaynak.
+
+Timeline Exporter bağımsız bir uygulamadır ve Google ile bağlantılı değildir.

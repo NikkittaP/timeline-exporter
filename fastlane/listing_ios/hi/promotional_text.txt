@@ -1,0 +1,1 @@
+Google Maps Timeline की लोकेशन हिस्ट्री को GPX, KML, GeoJSON या CSV फ़ाइलों में बदलें — निजी तौर पर, सीधे आपके iPhone पर।

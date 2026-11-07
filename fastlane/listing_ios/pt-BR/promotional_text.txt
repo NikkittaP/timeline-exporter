@@ -1,0 +1,1 @@
+Transforme o histórico de localização da Linha do tempo do Google Maps em arquivos GPX, KML, GeoJSON ou CSV — com privacidade, no iPhone.

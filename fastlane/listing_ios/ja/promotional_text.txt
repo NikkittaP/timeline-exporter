@@ -1,0 +1,1 @@
+Google マップのタイムラインに記録された位置情報の履歴を、GPX・KML・GeoJSON・CSV ファイルに。iPhone 内で安全に変換します。

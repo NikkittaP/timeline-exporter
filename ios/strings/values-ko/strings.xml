@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">2024년 말부터 Google은 타임라인을 휴대전화에만 저장합니다. Google 테이크아웃 옵션이 없고 다른 앱이 직접 읽을 수도 없습니다. Google 지도에서 한 번 내보낸 다음 여기에서 파일을 여세요.</string>
-    <string name="help_note_file_location">• 내보낸 파일 이름은 Timeline.json입니다. 이 앱에서 열 수 있도록 파일 앱(나의 iPhone 또는 iCloud Drive)에 저장하세요.</string>
+    <string name="ios_welcome_title">작동 방식</string>
+    <string name="ios_welcome_body">Google 지도는 다녀온 장소를 기억할 수 있습니다. 이것이 **타임라인**입니다. 이 앱은 타임라인 파일을 열어 이동 경로를 지도에 보여 주고, 다른 앱(Strava, Garmin, Google Earth, Excel 등)에서 쓸 수 있도록 GPX, KML, GeoJSON, CSV 파일로 저장합니다.</string>
+    <string name="ios_welcome_not_tracker">이 앱은 사용자를 추적하지 않으며 Google에 로그인하지 않습니다. Google 지도에서 저장한 파일만 읽고, 모든 것이 이 기기에 남습니다.</string>
+    <string name="ios_requirements_title">⚠️ 중요: 먼저 확인하세요</string>
+    <string name="ios_requirement_account">**위치 기록은 Google 계정에서 옵니다.** Google 계정으로 로그인한 Google 지도 앱이 필요합니다.</string>
+    <string name="ios_requirement_timeline">**Google 지도에서 타임라인이 켜져 있어야 합니다.** Google은 켠 날 이후만 저장합니다. 꺼져 있었다면 내보낼 것이 없습니다.</string>
+    <string name="ios_requirement_location">**Google 지도의 위치 접근을 ‘항상’으로 설정하세요** (설정 앱 → Google Maps → 위치). 그렇지 않으면 타임라인에 거의 기록되지 않습니다.</string>
+    <string name="ios_requirement_device">**타임라인은 기록한 휴대폰에 저장됩니다.** 다른 휴대폰에서 기록했다면 그 휴대폰에서 파일을 저장하세요.</string>
+    <string name="ios_quick_title">3단계로 파일 받기</string>
+    <string name="ios_quick_step1">**Google 지도**에서 프로필 사진 → **설정** → **위치 및 개인정보 보호** → **타임라인 데이터 내보내기**를 탭합니다.</string>
+    <string name="ios_quick_step2">**파일에 저장**을 탭하고 ‘나의 iPhone’ 또는 iCloud Drive에 저장합니다.</string>
+    <string name="ios_quick_step3">여기로 돌아와 아래의 **타임라인 파일 선택**을 탭합니다.</string>
+    <string name="ios_full_guide_button">자세한 단계별 안내</string>
+    <string name="ios_try_sample_button">샘플 데이터로 사용해 보기</string>
+    <string name="ios_sample_hint">가상의 여행으로, 내 데이터를 내보내기 전에 앱이 하는 일을 확인하세요.</string>
+    <string name="help_intro">Google 지도는 타임라인을 온라인이 아닌 휴대폰에만 보관하므로 다른 앱은 직접 읽을 수 없습니다. Google 지도에서 한 번 파일로 저장한 뒤 그 파일을 여기에서 엽니다. 어디에도 업로드되지 않습니다.</string>
+    <string name="ios_turn_on_title">1. 타임라인 켜기 (켜져 있으면 건너뛰기)</string>
+    <string name="ios_maps_profile">Google 지도를 열고 프로필 사진(오른쪽 위)을 탭합니다</string>
+    <string name="ios_turn_on_step2">**내 타임라인**을 탭합니다</string>
+    <string name="ios_turn_on_step3">⋯(오른쪽 위) → **위치 및 개인정보 설정**을 탭합니다</string>
+    <string name="ios_turn_on_step4">**타임라인이 사용 중지됨** → **사용**을 탭합니다</string>
+    <string name="ios_turn_on_note">그때부터 Google이 다닌 곳을 저장합니다. 이전 날짜는 나중에 추가할 수 없으니 며칠 뒤에 다시 오세요.</string>
+    <string name="ios_export_title">2. 타임라인을 파일로 저장</string>
+    <string name="ios_export_step2">**설정** → **위치 및 개인정보 보호**를 탭합니다</string>
+    <string name="ios_export_step3">**타임라인 데이터 내보내기**를 탭합니다</string>
+    <string name="ios_export_step4">**파일에 저장**을 탭하고 ‘나의 iPhone’ 또는 iCloud Drive를 선택한 뒤 **저장**을 탭합니다</string>
+    <string name="ios_import_title">3. 여기에서 파일 열기</string>
+    <string name="help_import_step1">메인 화면에서 **타임라인 파일 선택**을 탭하고 파일을 찾습니다. 보통 이름은 location-history.json입니다.</string>
+    <string name="help_import_step2">또는 파일 앱에서 파일을 길게 누름 → 공유 → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">잘 안 될 때</string>
+    <string name="ios_trouble_no_export">**‘타임라인 데이터 내보내기’가 없나요?** Google 지도에 로그인했는지, 타임라인이 켜져 있는지 확인하세요(1단계). 타임라인에 무언가 저장되면 나타납니다.</string>
+    <string name="ios_trouble_alt_path">**메뉴를 찾을 수 없나요?** 프로필 사진 → **내 타임라인** → ⋯ → **위치 및 개인정보 설정** → **타임라인 데이터 내보내기**를 시도해 보세요.</string>
+    <string name="ios_trouble_few_days">**파일에 며칠만 있나요?** Google은 타임라인이 켜져 있는 동안 이 휴대폰이 기록한 것만 보관합니다. 자동 삭제가 꺼져 있는지도 확인하세요(내 타임라인의 구름 아이콘).</string>
+    <string name="ios_trouble_android">**기록이 Android 휴대폰에 있나요?** 거기서 저장하세요: 설정 → 위치 → 위치 서비스 → 타임라인 → 타임라인 데이터 내보내기. 파일을 이 iPhone으로 보낸 뒤(Google Drive, 이메일, 메신저) 파일 앱에 저장하세요.</string>
+    <string name="help_note_file_location">• iPhone에서는 파일 이름이 location-history.json, Android에서는 Timeline.json입니다. 둘 다 여기서 열립니다.</string>
+    <string name="pick_file_button">타임라인 파일 선택</string>
+    <string name="error_not_timeline">Google 지도 타임라인 파일이 아닌 것 같습니다. Google 지도에서 저장한 파일(보통 location-history.json)을 선택하세요. 단계는 도움말에 있습니다.</string>
     <string name="language_settings_hint">iOS에서는 앱별 언어를 설정에서 지정합니다.</string>
 </resources>

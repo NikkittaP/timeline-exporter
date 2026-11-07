@@ -1,0 +1,30 @@
+Google Maps peut mémoriser les lieux où vous allez : c'est votre Timeline. Cette app ouvre votre fichier Timeline, affiche vos trajets sur une carte et les enregistre en fichiers GPX, KML, GeoJSON ou CSV pour d'autres apps (Strava, Garmin, Google Earth, Excel…).
+
+Cette app ne vous suit pas et ne se connecte pas à Google. Elle lit seulement le fichier que vous enregistrez depuis Google Maps, et tout reste sur cet appareil.
+
+⚠️ IMPORTANT — À VÉRIFIER D'ABORD
+• VOTRE HISTORIQUE DE LOCALISATION VIENT DE VOTRE COMPTE GOOGLE. Il faut l'app Google Maps, connectée à votre compte Google.
+• TIMELINE DOIT ÊTRE ACTIVÉE DANS GOOGLE MAPS. Google n'enregistre que les jours depuis son activation : si elle était désactivée, il n'y a rien à exporter.
+• Google Maps doit avoir l'accès à la position « Toujours » (app Réglages → Google Maps → Position), sinon Timeline n'enregistre presque rien.
+• Timeline est conservée sur le téléphone qui l'a enregistrée. Si votre historique a été enregistré sur un autre téléphone, enregistrez le fichier sur celui-ci.
+
+VOTRE FICHIER EN 3 ÉTAPES
+1. Dans Google Maps, touchez votre photo de profil → Paramètres → Localisation et confidentialité → Exporter les données Timeline.
+2. Touchez Enregistrer dans Fichiers et enregistrez le fichier Sur mon iPhone ou dans iCloud Drive.
+3. Touchez Choisir le fichier Timeline sur l'écran principal et trouvez le fichier. Il s'appelle généralement location-history.json.
+
+Pas encore sûr ? Touchez « Essayer avec des données d'exemple ». Des trajets inventés : découvrez l'app avant d'exporter les vôtres.
+
+L’aide de l’app explique chaque étape simplement, y compris comment activer Vos trajets.
+
+CE QUE VOUS POUVEZ FAIRE
+• Voir vos trajets sur une carte
+• Choisir les dates : 7, 30 ou 90 derniers jours, ou tout
+• Exporter en GPX (Strava, Garmin, Komoot et la plupart des apps GPS), KML (Google Earth), GeoJSON (QGIS, cartes web) ou CSV (Excel, Numbers)
+• Enregistrer dans Fichiers ou partager
+• Ouvre aussi les anciens fichiers Google : Timeline.json d’Android, Semantic Location History, Records.json
+
+CONFIDENTIEL
+Tout se passe sur votre iPhone ou iPad. Votre historique n’est jamais envoyé : pas de compte, pas de serveur, pas de statistiques, pas de pub. Internet sert uniquement à charger la carte. Gratuit et open source.
+
+Timeline Exporter est une app indépendante, sans lien avec Google.

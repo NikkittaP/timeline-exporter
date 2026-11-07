@@ -3,8 +3,11 @@ import UIKit
 
 // MARK: Help
 
-/// Where Timeline.json comes from and how it gets here. The Android steps
-/// through system Settings do not exist on iPhone: Google Maps is the way.
+/// Where the Timeline file comes from and how it gets here, for someone who
+/// has never exported anything: what must already be true (in bold), turning
+/// Timeline on, saving the file from Google Maps, opening it, and what to do
+/// when a step is missing. The Android steps through system Settings do not
+/// exist on iPhone; Google Maps is the way (support.google.com/maps/answer/6258979).
 struct HelpSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -15,15 +18,33 @@ struct HelpSheet: View {
                 Section {
                     Text(L.s("help_intro"))
                 }
-                Section("Google Maps") {
-                    Steps(keys: (1...6).map { "help_method_maps_step\($0)" })
+                Section(L.s("ios_requirements_title")) {
+                    Requirements(withDevice: true)
+                }
+                Section {
+                    NumberedSteps(keys: ["ios_maps_profile", "ios_turn_on_step2", "ios_turn_on_step3",
+                                         "ios_turn_on_step4"])
+                } header: {
+                    Text(L.s("ios_turn_on_title"))
+                } footer: {
+                    Text(L.s("ios_turn_on_note"))
+                }
+                Section(L.s("ios_export_title")) {
+                    NumberedSteps(keys: ["ios_maps_profile", "ios_export_step2", "ios_export_step3",
+                                         "ios_export_step4"])
                     Button(L.s("help_method_maps_button")) {
                         // A universal link: the Google Maps app if it is installed.
                         openURL(URL(string: "https://maps.google.com/")!)
                     }
                 }
-                Section(L.s("help_import_title")) {
-                    Steps(keys: ["help_import_step1", "help_import_step2"])
+                Section(L.s("ios_import_title")) {
+                    NumberedSteps(keys: ["help_import_step1", "help_import_step2"])
+                }
+                Section(L.s("ios_trouble_title")) {
+                    ForEach(["ios_trouble_no_export", "ios_trouble_alt_path", "ios_trouble_few_days",
+                             "ios_trouble_android"], id: \.self) { key in
+                        Text(L.md(key)).font(.callout)
+                    }
                 }
                 Section(L.s("help_notes_title")) {
                     ForEach(["help_note_file_location", "help_note_eu_csv", "help_note_slow_first",
@@ -38,22 +59,6 @@ struct HelpSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(L.s("help_dismiss")) { dismiss() }
                 }
-            }
-        }
-    }
-}
-
-private struct Steps: View {
-    let keys: [String]
-
-    var body: some View {
-        ForEach(Array(keys.enumerated()), id: \.offset) { index, key in
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                Text("\(index + 1)")
-                    .font(.callout.weight(.semibold).monospacedDigit())
-                    .foregroundStyle(.secondary)
-                    .frame(minWidth: 18)
-                Text(L.s(key))
             }
         }
     }

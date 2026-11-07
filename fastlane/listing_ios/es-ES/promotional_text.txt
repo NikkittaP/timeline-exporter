@@ -1,0 +1,1 @@
+Convierte el historial de ubicaciones de tu Cronología de Google Maps en archivos GPX, KML, GeoJSON o CSV, en privado y en tu iPhone.

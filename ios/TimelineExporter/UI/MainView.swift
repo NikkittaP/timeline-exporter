@@ -16,6 +16,9 @@ struct MainView: View {
         NavigationStack {
             ScrollViewReader { proxy in
                 Form {
+                    if showsWelcome {
+                        WelcomeSections { info = .help }
+                    }
                     FileSection(importing: $importing)
                     if store.phase == .loaded, let core = store.timeline {
                         FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
@@ -31,6 +34,7 @@ struct MainView: View {
                 .task(id: store.phase == .loaded) {
                     await frameScreenshot(proxy)
                 }
+                .modifier(ReadableColumn())
             }
             .navigationTitle(L.s("app_name"))
             .fileImporter(isPresented: $importing, allowedContentTypes: [.json, .data]) { result in
@@ -63,6 +67,15 @@ struct MainView: View {
                 }
             }
             .onAppear(perform: showWhatsNew)
+        }
+    }
+
+    /// The explanation stays until a file has opened: also after a wrong
+    /// file, which is when it is needed most.
+    private var showsWelcome: Bool {
+        switch store.phase {
+        case .idle, .failed: true
+        case .loading, .loaded: false
         }
     }
 
@@ -136,8 +149,8 @@ private struct FileSection: View {
         Section(L.s("step_choose_file")) {
             switch store.phase {
             case .idle:
-                Text(L.s("idle_hint")).foregroundStyle(.secondary)
                 pickButton(L.s("pick_file_button"))
+                sampleButton
             case .loading(let info):
                 LoadingRow(info: info)
             case .loaded:
@@ -154,6 +167,7 @@ private struct FileSection: View {
                     Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                 }
                 pickButton(L.s("pick_file_button"))
+                sampleButton
             }
         }
     }
@@ -163,8 +177,25 @@ private struct FileSection: View {
             importing = true
         } label: {
             Label(title, systemImage: "doc.badge.plus")
+                .font(.body.weight(.semibold))
         }
         .accessibilityIdentifier("pickFile")
+    }
+
+    /// Made-up history: what the app does, before the effort of an export.
+    private var sampleButton: some View {
+        Button {
+            Task { await store.openSample() }
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                Label(L.s("ios_try_sample_button"), systemImage: "wand.and.stars")
+                Text(L.s("ios_sample_hint"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.leading, 34)
+            }
+        }
+        .accessibilityIdentifier("trySample")
     }
 }
 

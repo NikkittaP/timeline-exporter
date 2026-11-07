@@ -102,6 +102,17 @@ final class TimelineStore {
 
     // MARK: Loading
 
+    /// The bundled demo history (made-up trips), for a first look without a
+    /// Timeline of one's own, and for App Review. Opened from a temporary copy
+    /// so it reads like any other file.
+    func openSample() async {
+        guard let bundled = Bundle.main.url(forResource: "timeline_demo", withExtension: "json") else { return }
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("sample-timeline.json")
+        try? FileManager.default.removeItem(at: url)
+        guard (try? FileManager.default.copyItem(at: bundled, to: url)) != nil else { return }
+        await open(url: url)
+    }
+
     /// Parse [url]. Returns when the file is loaded or has failed.
     func open(url: URL) async {
         loadGeneration += 1

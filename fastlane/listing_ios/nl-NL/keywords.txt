@@ -1,0 +1,1 @@
+gpx,kml,geojson,csv,locatiegeschiedenis,tijdlijn,timeline,exporteren,converter,gps route,kaart

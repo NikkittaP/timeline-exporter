@@ -1,0 +1,1 @@
+gpx,kml,geojson,csv,platshistorik,tidslinje,timeline,exportera,konverterare,gps spår,resa,karta

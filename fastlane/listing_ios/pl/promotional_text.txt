@@ -1,0 +1,1 @@
+Zamień historię lokalizacji z osi czasu Map Google na pliki GPX, KML, GeoJSON lub CSV — prywatnie, prosto na iPhonie.

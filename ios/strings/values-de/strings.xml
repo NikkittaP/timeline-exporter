@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">Seit Ende 2024 speichert Google die Zeitachse nur auf deinem Telefon – es gibt keinen Google-Takeout-Export, und keine andere App kann sie direkt lesen. Du exportierst sie einmal aus Google Maps und öffnest die Datei dann hier.</string>
-    <string name="help_note_file_location">• Die exportierte Datei heißt Timeline.json. Speichere sie in „Dateien“ – „Auf meinem iPhone“ oder iCloud Drive –, damit diese App sie öffnen kann.</string>
+    <string name="ios_welcome_title">So funktioniert es</string>
+    <string name="ios_welcome_body">Google Maps kann sich merken, wo du warst — das ist deine **Zeitachse** (Timeline). Diese App öffnet deine Zeitachsen-Datei, zeigt deine Wege auf einer Karte und speichert sie als GPX-, KML-, GeoJSON- oder CSV-Dateien für andere Apps (Strava, Garmin, Google Earth, Excel …).</string>
+    <string name="ios_welcome_not_tracker">Diese App verfolgt dich nicht und meldet sich nicht bei Google an. Sie liest nur die Datei, die du aus Google Maps sicherst, und alles bleibt auf diesem Gerät.</string>
+    <string name="ios_requirements_title">⚠️ Wichtig — zuerst prüfen</string>
+    <string name="ios_requirement_account">**Dein Standortverlauf kommt aus deinem Google-Konto.** Du brauchst die Google Maps-App, angemeldet mit deinem Google-Konto.</string>
+    <string name="ios_requirement_timeline">**Die Zeitachse muss in Google Maps aktiviert sein.** Google speichert nur die Tage seit der Aktivierung — war sie aus, gibt es nichts zu exportieren.</string>
+    <string name="ios_requirement_location">**Google Maps braucht Standortzugriff „Immer“** (App „Einstellungen“ → Google Maps → Standort), sonst zeichnet die Zeitachse kaum etwas auf.</string>
+    <string name="ios_requirement_device">**Die Zeitachse liegt auf dem Telefon, das sie aufgezeichnet hat.** Wurde dein Verlauf auf einem anderen Telefon aufgezeichnet, sichere die Datei dort.</string>
+    <string name="ios_quick_title">Deine Datei in 3 Schritten</string>
+    <string name="ios_quick_step1">Tippe in **Google Maps** auf dein Profilbild → **Einstellungen** → **Standort und Datenschutz** → **Timeline-Daten exportieren**.</string>
+    <string name="ios_quick_step2">Tippe auf **In „Dateien“ sichern** und sichere die Datei unter „Auf meinem iPhone“ oder in iCloud Drive.</string>
+    <string name="ios_quick_step3">Komm hierher zurück und tippe unten auf **Zeitachsen-Datei wählen**.</string>
+    <string name="ios_full_guide_button">Ausführliche Schritt-für-Schritt-Anleitung</string>
+    <string name="ios_try_sample_button">Mit Beispieldaten ausprobieren</string>
+    <string name="ios_sample_hint">Ausgedachte Reisen: sieh dir die App an, bevor du deine eigenen exportierst.</string>
+    <string name="help_intro">Google Maps speichert deine Zeitachse nur auf deinem Telefon, nicht online — keine andere App kann sie direkt lesen. Du sicherst sie einmal aus Google Maps als Datei und öffnest diese Datei hier. Es wird nichts hochgeladen.</string>
+    <string name="ios_turn_on_title">1. Zeitachse aktivieren (überspringen, wenn sie an ist)</string>
+    <string name="ios_maps_profile">Öffne Google Maps und tippe auf dein Profilbild (oben rechts)</string>
+    <string name="ios_turn_on_step2">Tippe auf **Deine Zeitachse**</string>
+    <string name="ios_turn_on_step3">Tippe auf ⋯ (oben rechts) → **Einstellungen für Standort und Datenschutz**</string>
+    <string name="ios_turn_on_step4">Tippe auf **Zeitachse ist deaktiviert** → **Aktivieren**</string>
+    <string name="ios_turn_on_note">Ab dann speichert Google, wo du bist. Frühere Tage lassen sich nicht nachtragen — komm in ein paar Tagen wieder.</string>
+    <string name="ios_export_title">2. Zeitachse als Datei sichern</string>
+    <string name="ios_export_step2">Tippe auf **Einstellungen** → **Standort und Datenschutz**</string>
+    <string name="ios_export_step3">Tippe auf **Timeline-Daten exportieren**</string>
+    <string name="ios_export_step4">Tippe auf **In „Dateien“ sichern**, wähle „Auf meinem iPhone“ oder iCloud Drive und tippe auf **Sichern**</string>
+    <string name="ios_import_title">3. Datei hier öffnen</string>
+    <string name="help_import_step1">Tippe auf dem Hauptbildschirm auf **Zeitachsen-Datei wählen** und suche die Datei. Meist heißt sie location-history.json.</string>
+    <string name="help_import_step2">Oder in der App „Dateien“: Datei gedrückt halten → Teilen → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Wenn etwas nicht klappt</string>
+    <string name="ios_trouble_no_export">**Kein „Timeline-Daten exportieren“?** Prüfe, ob du in Google Maps angemeldet bist und die Zeitachse aktiviert ist (Schritt 1). Die Option erscheint, sobald die Zeitachse etwas gespeichert hat.</string>
+    <string name="ios_trouble_alt_path">**Menü nicht gefunden?** Versuche: Profilbild → **Deine Zeitachse** → ⋯ → **Einstellungen für Standort und Datenschutz** → **Timeline-Daten exportieren**.</string>
+    <string name="ios_trouble_few_days">**Nur wenige Tage in der Datei?** Google behält nur, was dieses Telefon bei aktivierter Zeitachse aufgezeichnet hat. Prüfe auch, ob automatisches Löschen aus ist (Wolkensymbol in „Deine Zeitachse“).</string>
+    <string name="ios_trouble_android">**Verlauf auf einem Android-Telefon?** Sichere ihn dort: Einstellungen → Standort → Standortdienste → Zeitachse → Timeline-Daten exportieren. Schicke die Datei an dieses iPhone (Google Drive, E-Mail oder Messenger) und sichere sie in „Dateien“.</string>
+    <string name="help_note_file_location">• Auf dem iPhone heißt die Datei location-history.json, auf Android Timeline.json. Beide lassen sich hier öffnen.</string>
+    <string name="pick_file_button">Zeitachsen-Datei wählen</string>
+    <string name="error_not_timeline">Das sieht nicht nach einer Google Maps-Zeitachsen-Datei aus. Wähle die Datei, die du aus Google Maps gesichert hast (meist location-history.json) — die Schritte stehen in der Hilfe.</string>
     <string name="language_settings_hint">iOS legt die Sprache jeder App in den Einstellungen fest.</string>
 </resources>

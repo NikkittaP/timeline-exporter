@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">2024 sonundan beri Google Zaman Çizelgesi\'ni yalnızca telefonunuzda tutuyor — Google Takeout seçeneği yok ve başka hiçbir uygulama onu doğrudan okuyamıyor. Bir kez Google Haritalar\'dan dışa aktarır, ardından dosyayı burada açarsınız.</string>
-    <string name="help_note_file_location">• Dışa aktarılan dosyanın adı Timeline.json\'dur. Bu uygulamanın açabilmesi için onu Dosyalar\'a (iPhone\'umda veya iCloud Drive) kaydedin.</string>
+    <string name="ios_welcome_title">Nasıl çalışır</string>
+    <string name="ios_welcome_body">Google Haritalar gittiğiniz yerleri hatırlayabilir: bu sizin **Zaman çizelgeniz** (Timeline). Bu uygulama Zaman çizelgesi dosyanızı açar, yolculuklarınızı haritada gösterir ve bunları diğer uygulamalar için GPX, KML, GeoJSON veya CSV dosyası olarak kaydeder (Strava, Garmin, Google Earth, Excel…).</string>
+    <string name="ios_welcome_not_tracker">Bu uygulama sizi izlemez ve Google'da oturum açmaz. Yalnızca Google Haritalar'dan kaydettiğiniz dosyayı okur ve her şey bu cihazda kalır.</string>
+    <string name="ios_requirements_title">⚠️ Önemli: önce bunu kontrol edin</string>
+    <string name="ios_requirement_account">**Konum geçmişiniz Google hesabınızdan gelir.** Google hesabınızla oturum açılmış Google Haritalar uygulaması gerekir.</string>
+    <string name="ios_requirement_timeline">**Google Haritalar'da Zaman çizelgesi açık olmalıdır.** Google yalnızca açıldığı günden sonraki günleri kaydeder; kapalıysa dışa aktarılacak bir şey yoktur.</string>
+    <string name="ios_requirement_location">**Google Haritalar'ın konum erişimi “Her Zaman” olmalıdır** (Ayarlar uygulaması → Google Maps → Konum), yoksa Zaman çizelgesi neredeyse hiçbir şey kaydetmez.</string>
+    <string name="ios_requirement_device">**Zaman çizelgesi onu kaydeden telefonda saklanır.** Geçmişiniz başka bir telefonda kaydedildiyse dosyayı o telefonda kaydedin.</string>
+    <string name="ios_quick_title">3 adımda dosyanız</string>
+    <string name="ios_quick_step1">**Google Haritalar**'da profil fotoğrafınıza dokunun → **Ayarlar** → **Konum ve Gizlilik** → **Timeline verilerini dışa aktar**.</string>
+    <string name="ios_quick_step2">**Dosyalar'a Kaydet**'e dokunun ve dosyayı iPhone'umda'ya veya iCloud Drive'a kaydedin.</string>
+    <string name="ios_quick_step3">Buraya dönün ve aşağıdaki **Zaman çizelgesi dosyası seç**'e dokunun.</string>
+    <string name="ios_full_guide_button">Ayrıntılı adım adım rehber</string>
+    <string name="ios_try_sample_button">Örnek verilerle dene</string>
+    <string name="ios_sample_hint">Uydurma yolculuklar: kendinizinkini dışa aktarmadan önce uygulamanın ne yaptığını görün.</string>
+    <string name="help_intro">Google Haritalar Zaman çizelgenizi internette değil, yalnızca telefonunuzda tutar; bu yüzden başka hiçbir uygulama onu doğrudan okuyamaz. Onu bir kez Google Haritalar'dan dosya olarak kaydedip bu dosyayı burada açarsınız. Hiçbir şey hiçbir yere yüklenmez.</string>
+    <string name="ios_turn_on_title">1. Zaman çizelgesini açın (açıksa atlayın)</string>
+    <string name="ios_maps_profile">Google Haritalar'ı açın ve profil fotoğrafınıza dokunun (sağ üst)</string>
+    <string name="ios_turn_on_step2">**Zaman çizelgeniz**'e dokunun</string>
+    <string name="ios_turn_on_step3">⋯ (sağ üst) → **Konum ve gizlilik ayarları**'na dokunun</string>
+    <string name="ios_turn_on_step4">**Zaman çizelgesi kapalı** → **Aç**'a dokunun</string>
+    <string name="ios_turn_on_note">O andan itibaren Google nereye gittiğinizi kaydeder. Önceki günler sonradan eklenemez; birkaç gün sonra geri gelin.</string>
+    <string name="ios_export_title">2. Zaman çizelgenizi dosya olarak kaydedin</string>
+    <string name="ios_export_step2">**Ayarlar** → **Konum ve Gizlilik**'e dokunun</string>
+    <string name="ios_export_step3">**Timeline verilerini dışa aktar**'a dokunun</string>
+    <string name="ios_export_step4">**Dosyalar'a Kaydet**'e dokunun, iPhone'umda veya iCloud Drive'ı seçin ve **Kaydet**'e dokunun</string>
+    <string name="ios_import_title">3. Dosyayı burada açın</string>
+    <string name="help_import_step1">Ana ekranda **Zaman çizelgesi dosyası seç**'e dokunun ve dosyayı bulun. Genellikle adı location-history.json olur.</string>
+    <string name="help_import_step2">Ya da Dosyalar uygulamasında: dosyaya basılı tutun → Paylaş → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Bir şey çalışmazsa</string>
+    <string name="ios_trouble_no_export">**“Timeline verilerini dışa aktar” yok mu?** Google Haritalar'da oturum açtığınızı ve Zaman çizelgesinin açık olduğunu kontrol edin (1. adım). Seçenek, Zaman çizelgesi bir şey kaydettiğinde görünür.</string>
+    <string name="ios_trouble_alt_path">**Menüyü bulamıyor musunuz?** Şunu deneyin: profil fotoğrafı → **Zaman çizelgeniz** → ⋯ → **Konum ve gizlilik ayarları** → **Timeline verilerini dışa aktar**.</string>
+    <string name="ios_trouble_few_days">**Dosyada yalnızca birkaç gün mü var?** Google yalnızca bu telefonun, Zaman çizelgesi açıkken kaydettiklerini tutar. Otomatik silmenin kapalı olduğunu da kontrol edin (Zaman çizelgeniz'deki bulut simgesi).</string>
+    <string name="ios_trouble_android">**Geçmiş bir Android telefonda mı?** Orada kaydedin: Ayarlar → Konum → Konum hizmetleri → Zaman çizelgesi → Timeline verilerini dışa aktar. Dosyayı bu iPhone'a gönderin (Google Drive, e-posta veya bir mesajlaşma uygulaması) ve Dosyalar'a kaydedin.</string>
+    <string name="help_note_file_location">• iPhone'da dosyanın adı location-history.json, Android'de Timeline.json'dır. İkisi de burada açılır.</string>
+    <string name="pick_file_button">Zaman çizelgesi dosyası seç</string>
+    <string name="error_not_timeline">Bu bir Google Haritalar Zaman çizelgesi dosyasına benzemiyor. Google Haritalar'dan kaydettiğiniz dosyayı seçin (genellikle location-history.json); adımlar Yardım'da.</string>
     <string name="language_settings_hint">iOS her uygulamanın dilini Ayarlar\'da tutar.</string>
 </resources>

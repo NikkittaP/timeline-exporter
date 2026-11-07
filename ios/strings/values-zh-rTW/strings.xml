@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">自 2024 年底起，Google 只在你的手機上保存時間軸——沒有 Google Takeout 選項，其他應用程式也無法直接讀取。請先從 Google 地圖匯出一次，再在這裡開啟該檔案。</string>
-    <string name="help_note_file_location">• 匯出的檔案名稱為 Timeline.json。請將它儲存到「檔案」（「我的 iPhone」或 iCloud 雲碟），讓本 App 能開啟。</string>
+    <string name="ios_welcome_title">運作方式</string>
+    <string name="ios_welcome_body">Google 地圖可以記住你去過的地方——這就是你的**時間軸**。本應用程式會開啟你的時間軸檔案，在地圖上顯示你的行程，並儲存為 GPX、KML、GeoJSON 或 CSV 檔案，供其他應用程式使用（Strava、Garmin、Google 地球、Excel 等）。</string>
+    <string name="ios_welcome_not_tracker">本應用程式不會追蹤你，也不會登入 Google。它只讀取你從 Google 地圖儲存的檔案，一切都留在這部裝置上。</string>
+    <string name="ios_requirements_title">⚠️ 重要：請先確認</string>
+    <string name="ios_requirement_account">**你的位置記錄來自你的 Google 帳戶。** 需要安裝 Google 地圖應用程式並登入你的 Google 帳戶。</string>
+    <string name="ios_requirement_timeline">**必須在 Google 地圖中開啟時間軸。** Google 只儲存開啟之後的日子——如果之前是關閉的，就沒有可匯出的內容。</string>
+    <string name="ios_requirement_location">**Google 地圖的位置存取權須設為「永遠」**（「設定」App → Google Maps → 位置），否則時間軸幾乎記錄不到內容。</string>
+    <string name="ios_requirement_device">**時間軸儲存在記錄它的那支手機上。** 如果你的記錄是在另一支手機上產生的，請在那支手機上儲存檔案。</string>
+    <string name="ios_quick_title">3 個步驟取得檔案</string>
+    <string name="ios_quick_step1">在 **Google 地圖** 中輕觸你的個人資料相片 → **設定** → **位置與隱私** → **匯出時間軸資料**。</string>
+    <string name="ios_quick_step2">輕觸 **儲存到「檔案」**，將檔案儲存到「我的 iPhone」或 iCloud 雲碟。</string>
+    <string name="ios_quick_step3">回到這裡，輕觸下方的 **選擇時間軸檔案**。</string>
+    <string name="ios_full_guide_button">詳細逐步說明</string>
+    <string name="ios_try_sample_button">用範例資料試試看</string>
+    <string name="ios_sample_hint">虛構的行程：在匯出你自己的資料之前，先看看本應用程式能做什麼。</string>
+    <string name="help_intro">Google 地圖只把時間軸儲存在手機上，而不是線上，所以其他應用程式無法直接讀取。你只需從 Google 地圖把它儲存成檔案一次，然後在這裡開啟該檔案。不會上傳到任何地方。</string>
+    <string name="ios_turn_on_title">1. 開啟時間軸（已開啟可略過）</string>
+    <string name="ios_maps_profile">開啟 Google 地圖，輕觸你的個人資料相片（右上角）</string>
+    <string name="ios_turn_on_step2">輕觸 **你的時間軸**</string>
+    <string name="ios_turn_on_step3">輕觸 ⋯（右上角）→ **位置與隱私設定**</string>
+    <string name="ios_turn_on_step4">輕觸 **時間軸已關閉** → **開啟**</string>
+    <string name="ios_turn_on_note">從那時起 Google 會儲存你去過的地方。之前的日子無法補上，請過幾天再回來。</string>
+    <string name="ios_export_title">2. 將時間軸儲存為檔案</string>
+    <string name="ios_export_step2">輕觸 **設定** → **位置與隱私**</string>
+    <string name="ios_export_step3">輕觸 **匯出時間軸資料**</string>
+    <string name="ios_export_step4">輕觸 **儲存到「檔案」**，選擇「我的 iPhone」或 iCloud 雲碟，然後輕觸 **儲存**</string>
+    <string name="ios_import_title">3. 在這裡開啟檔案</string>
+    <string name="help_import_step1">在主畫面輕觸 **選擇時間軸檔案** 並找到該檔案。它通常名為 location-history.json。</string>
+    <string name="help_import_step2">或在「檔案」App 中：按住檔案 → 分享 → **Timeline Exporter**。</string>
+    <string name="ios_trouble_title">遇到問題時</string>
+    <string name="ios_trouble_no_export">**沒有「匯出時間軸資料」？** 請確認已在 Google 地圖中登入且時間軸已開啟（第 1 步）。時間軸儲存了內容後該選項才會出現。</string>
+    <string name="ios_trouble_alt_path">**找不到選單？** 試試：個人資料相片 → **你的時間軸** → ⋯ → **位置與隱私設定** → **匯出時間軸資料**。</string>
+    <string name="ios_trouble_few_days">**檔案裡只有幾天？** Google 只保留這支手機在時間軸開啟期間記錄的內容。另請確認自動刪除已關閉（「你的時間軸」中的雲朵圖示）。</string>
+    <string name="ios_trouble_android">**記錄在 Android 手機上？** 在那支手機上儲存：設定 → 位置 → 定位服務 → 時間軸 → 匯出時間軸資料。把檔案傳到這支 iPhone（Google 雲端硬碟、電子郵件或通訊應用程式），並儲存到「檔案」。</string>
+    <string name="help_note_file_location">• 在 iPhone 上檔名為 location-history.json，在 Android 上為 Timeline.json。兩者都能在這裡開啟。</string>
+    <string name="pick_file_button">選擇時間軸檔案</string>
+    <string name="error_not_timeline">這看起來不像 Google 地圖的時間軸檔案。請選擇你從 Google 地圖儲存的檔案（通常為 location-history.json）——步驟請見「說明」。</string>
     <string name="language_settings_hint">iOS 在「設定」中為每個 App 設定語言。</string>
 </resources>

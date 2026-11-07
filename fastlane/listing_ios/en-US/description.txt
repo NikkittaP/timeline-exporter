@@ -1,0 +1,30 @@
+Google Maps can remember the places you go — that is your Timeline. This app opens your Timeline file, shows your trips on a map and saves them as GPX, KML, GeoJSON or CSV files for other apps (Strava, Garmin, Google Earth, Excel…).
+
+This app does not track you and does not sign in to Google. It only reads the file you save from Google Maps, and everything stays on this device.
+
+⚠️ IMPORTANT — CHECK THIS FIRST
+• YOUR LOCATION HISTORY COMES FROM YOUR GOOGLE ACCOUNT. You need the Google Maps app, signed in with your Google account.
+• TIMELINE MUST BE TURNED ON IN GOOGLE MAPS. Google saves only the days since it was turned on — if it was off, there is nothing to export.
+• Google Maps needs location access set to “Always” (Settings app → Google Maps → Location), otherwise Timeline records very little.
+• Timeline is kept on the phone that recorded it. If your history was recorded on another phone, save the file on that phone.
+
+GET YOUR FILE IN 3 STEPS
+1. In Google Maps tap your profile picture → Settings → Location & Privacy → Export Timeline data.
+2. Tap Save to Files and save the file to On My iPhone or iCloud Drive.
+3. Tap Choose Timeline file on the main screen and find the file. It is usually called location-history.json.
+
+Not sure yet? Tap “Try it with sample data”. Made-up trips: see what the app does before exporting your own.
+
+The Help screen in the app explains every step in simple words, including how to turn Timeline on.
+
+WHAT YOU CAN DO
+• See your trips on a map
+• Pick dates: last 7, 30 or 90 days, or everything
+• Export to GPX (Strava, Garmin, Komoot and most GPS apps), KML (Google Earth), GeoJSON (QGIS, web maps) or CSV (Excel, Numbers)
+• Save to Files or send with the share sheet
+• Also opens older Google files: Android Timeline.json, Semantic Location History, Records.json
+
+PRIVATE
+Everything happens on your iPhone or iPad. Your location history is never uploaded: no account, no servers, no analytics, no ads. The internet is used only to load the map. Free and open source.
+
+Timeline Exporter is an independent app, not affiliated with Google.

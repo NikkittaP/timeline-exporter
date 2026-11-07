@@ -1,0 +1,30 @@
+Google Maps kan onthouden waar je bent geweest: dat is je tijdlijn (Timeline). Deze app opent je tijdlijnbestand, toont je ritten op een kaart en bewaart ze als GPX-, KML-, GeoJSON- of CSV-bestanden voor andere apps (Strava, Garmin, Google Earth, Excel…).
+
+Deze app volgt je niet en logt niet in bij Google. Hij leest alleen het bestand dat je uit Google Maps bewaart, en alles blijft op dit apparaat.
+
+⚠️ BELANGRIJK: CONTROLEER DIT EERST
+• JE LOCATIEGESCHIEDENIS KOMT UIT JE GOOGLE-ACCOUNT. Je hebt de Google Maps-app nodig, ingelogd met je Google-account.
+• DE TIJDLIJN MOET AANSTAAN IN GOOGLE MAPS. Google bewaart alleen de dagen sinds hij aan is gezet; stond hij uit, dan valt er niets te exporteren.
+• Google Maps heeft locatietoegang ‘Altijd’ nodig (app Instellingen → Google Maps → Locatie), anders legt de tijdlijn bijna niets vast.
+• De tijdlijn staat op de telefoon die hem heeft vastgelegd. Is je geschiedenis op een andere telefoon vastgelegd, bewaar het bestand dan op die telefoon.
+
+JE BESTAND IN 3 STAPPEN
+1. Tik in Google Maps op je profielfoto → Instellingen → Locatie en privacy → Timeline-gegevens exporteren.
+2. Tik op Bewaar in Bestanden en bewaar het bestand Op mijn iPhone of in iCloud Drive.
+3. Tik op het hoofdscherm op Kies tijdlijnbestand en zoek het bestand. Meestal heet het location-history.json.
+
+Twijfel je nog? Tik op ‘Probeer met voorbeeldgegevens’. Verzonnen reizen: zie wat de app doet voordat je die van jezelf exporteert.
+
+De Help in de app legt elke stap eenvoudig uit, ook hoe je de tijdlijn aanzet.
+
+WAT JE KUNT DOEN
+• Je ritten op een kaart zien
+• Data kiezen: laatste 7, 30 of 90 dagen, of alles
+• Exporteren naar GPX (Strava, Garmin, Komoot en de meeste gps-apps), KML (Google Earth), GeoJSON (QGIS, webkaarten) of CSV (Excel, Numbers)
+• Bewaren in Bestanden of versturen via het deelmenu
+• Opent ook oudere Google-bestanden: Android-Timeline.json, Semantic Location History, Records.json
+
+PRIVÉ
+Alles gebeurt op je iPhone of iPad. Je locatiegeschiedenis wordt nooit geüpload: geen account, geen servers, geen analyses, geen advertenties. Internet wordt alleen gebruikt voor de kaart. Gratis en open source.
+
+Timeline Exporter is een onafhankelijke app en is niet verbonden aan Google.

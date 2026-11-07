@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">З кінця 2024 року Google зберігає Timeline лише на вашому телефоні — немає ні вивантаження через Google Takeout, ні інших застосунків, які читають її напряму. Ви один раз експортуєте дані з Google Карт, а потім відкриваєте файл тут.</string>
-    <string name="help_note_file_location">• Експортований файл називається Timeline.json. Збережіть його у «Файли» — «На iPhone» або iCloud Drive, — щоб застосунок міг його відкрити.</string>
+    <string name="ios_welcome_title">Як це працює</string>
+    <string name="ios_welcome_body">Google Карти вміють запам'ятовувати, де ви бували, — це ваша **Хронологія**. Застосунок відкриває файл Хронології, показує поїздки на карті та зберігає їх у файли GPX, KML, GeoJSON або CSV для інших застосунків (Strava, Garmin, Google Earth, Excel…).</string>
+    <string name="ios_welcome_not_tracker">Застосунок не стежить за вами і не входить в акаунт Google. Він лише читає файл, який ви зберегли з Google Карт, і все залишається на цьому пристрої.</string>
+    <string name="ios_requirements_title">⚠️ Важливо — перевірте спершу</string>
+    <string name="ios_requirement_account">**Історія місцеперебувань береться з вашого акаунта Google.** Потрібен застосунок Google Карти, у якому ви ввійшли у свій акаунт Google.</string>
+    <string name="ios_requirement_timeline">**У Google Картах має бути ввімкнена Хронологія.** Google зберігає лише дні після її ввімкнення — якщо вона була вимкнена, експортувати нічого.</string>
+    <string name="ios_requirement_location">**Google Картам потрібен доступ до геопозиції «Завжди»** (застосунок «Параметри» → Google Maps → Геопозиція), інакше Хронологія майже нічого не запише.</string>
+    <string name="ios_requirement_device">**Хронологія зберігається на тому телефоні, який її записав.** Якщо історія записувалася на іншому телефоні, збережіть файл на ньому.</string>
+    <string name="ios_quick_title">Отримайте файл за 3 кроки</string>
+    <string name="ios_quick_step1">У **Google Картах** торкніться фото профілю → **Налаштування** → **Місцезнаходження та конфіденційність** → **Експортувати дані Timeline**.</string>
+    <string name="ios_quick_step2">Торкніться **Зберегти у «Файли»** і збережіть файл у «На iPhone» або iCloud Drive.</string>
+    <string name="ios_quick_step3">Поверніться сюди й торкніться **Вибрати файл Хронології** нижче.</string>
+    <string name="ios_full_guide_button">Детальна покрокова інструкція</string>
+    <string name="ios_try_sample_button">Спробувати на прикладі</string>
+    <string name="ios_sample_hint">Вигадані поїздки: подивіться, що вміє застосунок, до експорту своїх.</string>
+    <string name="help_intro">Google Карти зберігають Хронологію лише на телефоні, а не в інтернеті, тому інші застосунки не можуть прочитати її напряму. Один раз збережіть її з Google Карт у файл і відкрийте цей файл тут. Нічого нікуди не завантажується.</string>
+    <string name="ios_turn_on_title">1. Увімкніть Хронологію (якщо вже ввімкнена — пропустіть)</string>
+    <string name="ios_maps_profile">Відкрийте Google Карти й торкніться фото профілю (угорі праворуч)</string>
+    <string name="ios_turn_on_step2">Торкніться **Ваша хронологія**</string>
+    <string name="ios_turn_on_step3">Торкніться ⋯ (угорі праворуч) → **Налаштування місцезнаходження та конфіденційності**</string>
+    <string name="ios_turn_on_step4">Торкніться **Хронологію вимкнено** → **Увімкнути**</string>
+    <string name="ios_turn_on_note">Відтоді Google зберігає, де ви буваєте. Минулі дні додати не можна, тож поверніться за кілька днів.</string>
+    <string name="ios_export_title">2. Збережіть Хронологію у файл</string>
+    <string name="ios_export_step2">Торкніться **Налаштування** → **Місцезнаходження та конфіденційність**</string>
+    <string name="ios_export_step3">Торкніться **Експортувати дані Timeline**</string>
+    <string name="ios_export_step4">Торкніться **Зберегти у «Файли»**, виберіть «На iPhone» або iCloud Drive і торкніться **Зберегти**</string>
+    <string name="ios_import_title">3. Відкрийте файл тут</string>
+    <string name="help_import_step1">Торкніться **Вибрати файл Хронології** на головному екрані та знайдіть файл. Зазвичай він називається location-history.json.</string>
+    <string name="help_import_step2">Або в застосунку «Файли»: торкніться й утримуйте файл → «Поділитися» → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Якщо щось не виходить</string>
+    <string name="ios_trouble_no_export">**Немає пункту «Експортувати дані Timeline»?** Перевірте, що ви ввійшли в акаунт у Google Картах і Хронологію ввімкнено (крок 1). Пункт з'явиться, коли Хронологія щось збереже.</string>
+    <string name="ios_trouble_alt_path">**Не знайшли меню?** Спробуйте так: фото профілю → **Ваша хронологія** → ⋯ → **Налаштування місцезнаходження та конфіденційності** → **Експортувати дані Timeline**.</string>
+    <string name="ios_trouble_few_days">**У файлі лише кілька днів?** Google зберігає тільки те, що цей телефон записав, поки Хронологію було ввімкнено. Перевірте також, що автовидалення вимкнено (значок хмари в Хронології).</string>
+    <string name="ios_trouble_android">**Історія на Android-телефоні?** Збережіть її там: Налаштування → Місцезнаходження → Служби локації → Хронологія → «Експортувати дані Timeline». Надішліть файл на цей iPhone (Google Диск, пошта або месенджер) і збережіть у «Файли».</string>
+    <string name="help_note_file_location">• На iPhone файл називається location-history.json, на Android — Timeline.json. Тут відкриваються обидва.</string>
+    <string name="pick_file_button">Вибрати файл Хронології</string>
+    <string name="error_not_timeline">Це не схоже на файл Хронології Google Карт. Виберіть файл, збережений із Google Карт (зазвичай location-history.json), — кроки є в Довідці.</string>
     <string name="language_settings_hint">iOS зберігає мову кожного застосунку в Параметрах.</string>
 </resources>

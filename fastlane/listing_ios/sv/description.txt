@@ -1,0 +1,30 @@
+Google Maps kan komma ihåg platser du besöker – det är din tidslinje (Timeline). Den här appen öppnar din tidslinjefil, visar dina resor på en karta och sparar dem som GPX-, KML-, GeoJSON- eller CSV-filer för andra appar (Strava, Garmin, Google Earth, Excel …).
+
+Appen spårar dig inte och loggar inte in på Google. Den läser bara filen du sparar från Google Maps, och allt stannar på den här enheten.
+
+⚠️ VIKTIGT – KONTROLLERA FÖRST
+• DIN PLATSHISTORIK KOMMER FRÅN DITT GOOGLE-KONTO. Du behöver appen Google Maps, inloggad med ditt Google-konto.
+• TIDSLINJEN MÅSTE VARA PÅ I GOOGLE MAPS. Google sparar bara dagarna sedan den slogs på – var den av finns det inget att exportera.
+• Google Maps behöver platsåtkomst ”Alltid” (appen Inställningar → Google Maps → Plats), annars registrerar tidslinjen nästan ingenting.
+• Tidslinjen sparas på telefonen som registrerade den. Om din historik registrerades på en annan telefon sparar du filen på den telefonen.
+
+DIN FIL I 3 STEG
+1. I Google Maps trycker du på din profilbild → Inställningar → Plats och integritet → Exportera Timeline-data.
+2. Tryck på Spara i Filer och spara filen På min iPhone eller i iCloud Drive.
+3. Tryck på Välj tidslinjefil på huvudskärmen och leta upp filen. Den heter oftast location-history.json.
+
+Osäker? Tryck på ”Prova med exempeldata”. Påhittade resor: se vad appen gör innan du exporterar dina egna.
+
+Hjälpen i appen förklarar varje steg med enkla ord, även hur du aktiverar tidslinjen.
+
+DET HÄR KAN DU GÖRA
+• Se dina resor på en karta
+• Välja datum: senaste 7, 30 eller 90 dagarna, eller allt
+• Exportera till GPX (Strava, Garmin, Komoot och de flesta GPS-appar), KML (Google Earth), GeoJSON (QGIS, webbkartor) eller CSV (Excel, Numbers)
+• Spara i Filer eller skicka via delningsmenyn
+• Öppnar även äldre Google-filer: Timeline.json från Android, Semantic Location History, Records.json
+
+PRIVAT
+Allt sker på din iPhone eller iPad. Din platshistorik laddas aldrig upp: inget konto, inga servrar, ingen analys, ingen reklam. Internet används bara för kartan. Gratis och öppen källkod.
+
+Timeline Exporter är en oberoende app och är inte knuten till Google.

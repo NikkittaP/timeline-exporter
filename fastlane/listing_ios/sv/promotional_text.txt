@@ -1,0 +1,1 @@
+Gör om platshistoriken från din tidslinje i Google Maps till GPX-, KML-, GeoJSON- eller CSV-filer – privat, direkt på din iPhone.

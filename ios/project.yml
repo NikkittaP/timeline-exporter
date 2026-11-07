@@ -33,8 +33,9 @@ targets:
         buildPhase: resources
       - path: ../app/src/main/assets/map_style_dark.json
         buildPhase: resources
-      # The store screenshots' demo history (ScreenshotMode), the Android
-      # screenshot test's own file. Debug only: excluded from Release below.
+      # The demo history: "Try it with sample data" on the first screen (for
+      # users and App Review, who have no Timeline of their own) and the store
+      # screenshots (ScreenshotMode). The Android screenshot test's own file.
       - path: ../app/src/androidTest/assets/timeline_demo.json
         buildPhase: resources
     # Merged with the generated keys (GENERATE_INFOPLIST_FILE): what has no
@@ -76,9 +77,6 @@ targets:
         # fallback; the translations are Resources/InfoPlist.xcstrings.
         INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "Saves the map images you choose to save to your photo library."
         ENABLE_USER_SCRIPT_SANDBOXING: YES
-      configs:
-        Release:
-          EXCLUDED_SOURCE_FILE_NAMES: timeline_demo.json
   TimelineExporterTests:
     type: bundle.unit-test
     platform: iOS

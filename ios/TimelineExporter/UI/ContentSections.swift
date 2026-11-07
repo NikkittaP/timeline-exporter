@@ -4,6 +4,8 @@ import SwiftUI
 
 struct PreviewSection: View {
     @Environment(TimelineStore.self) private var store
+    /// Regular on an iPad: a taller map in the wider column.
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var fitToken = 0
     @State private var expanded = false
 
@@ -21,7 +23,7 @@ struct PreviewSection: View {
             .id("preview")
 
             map
-                .frame(height: 300)
+                .frame(height: sizeClass == .regular ? 460 : 300)
                 .listRowInsets(EdgeInsets())
         }
         .fullScreenCover(isPresented: $expanded) {

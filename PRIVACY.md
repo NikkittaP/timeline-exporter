@@ -1,6 +1,8 @@
 # Privacy Policy — Timeline Exporter
 
-**Last updated:** 2026-05-27
+**Last updated:** 2026-11-07
+
+This policy covers Timeline Exporter for Android and for iPhone / iPad.
 
 ## Summary
 
@@ -10,11 +12,14 @@ happens on your device.
 
 ## What the app processes
 
-- **The Timeline.json file you choose.** The app reads it locally to extract
+- **The Timeline file you choose** (`Timeline.json` on Android,
+  `location-history.json` on iPhone). The app reads it locally to extract
   GPS points. The file is never uploaded anywhere.
-- **The exported file you save.** Saved via Android's Storage Access
-  Framework to the location you pick (local storage, Google Drive, Dropbox,
-  etc.). The app writes the file there and forgets about it.
+- **The exported file you save.** Saved through the system file picker
+  (Android's Storage Access Framework, the Files app on iOS) to the location
+  you pick (local storage, iCloud Drive, Google Drive, Dropbox, etc.), or
+  handed to the system share sheet. The app writes the file there and
+  forgets about it.
 - **Map tile requests.** To render the in-app map preview, the app fetches
   map tiles over HTTPS from `tiles.openfreemap.org` (a free, donation-funded
   OpenStreetMap tile service). These requests are standard web requests
@@ -35,12 +40,17 @@ happens on your device.
 
 ## Permissions
 
-- **INTERNET** — used only to fetch map tiles from `tiles.openfreemap.org`.
+- **Internet** — used only to fetch map tiles from `tiles.openfreemap.org`.
 
-The app does not request location, storage, contacts, camera, microphone,
-or any other runtime permission. File picking uses Android's Storage
-Access Framework, which doesn't require app-side permissions because the
-user explicitly grants per-file access through the system file picker.
+On iPhone and iPad, if you choose Save Image for a map picture, iOS asks
+once whether the app may add photos to your library (add only: the app
+cannot see your photos).
+
+Other than that, the app does not request location, storage, contacts,
+camera, microphone, or any other permission. File picking uses the system file
+picker (Android's Storage Access Framework, the Files app on iOS), which
+doesn't require app-side permissions because the user explicitly grants
+per-file access.
 
 ## Open source
 

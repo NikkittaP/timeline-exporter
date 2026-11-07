@@ -1,0 +1,1 @@
+gpx,kml,geojson,csv,cronologia delle posizioni,spostamenti,timeline,esporta,convertitore,gps,mappa

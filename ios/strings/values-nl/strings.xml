@@ -2,7 +2,42 @@
 <!-- iOS-only strings, and Android strings whose wording is Android-specific.
      Merged over app/src/main/res by tools/ios/strings_to_xcstrings.py. -->
 <resources>
-    <string name="help_intro">Sinds eind 2024 bewaart Google de tijdlijn alleen op je telefoon — er is geen Google Takeout-optie en geen andere app kan hem rechtstreeks lezen. Je exporteert hem één keer vanuit Google Maps en opent het bestand daarna hier.</string>
-    <string name="help_note_file_location">• Het geëxporteerde bestand heet Timeline.json. Bewaar het in Bestanden (Op mijn iPhone of iCloud Drive) zodat deze app het kan openen.</string>
+    <string name="ios_welcome_title">Zo werkt het</string>
+    <string name="ios_welcome_body">Google Maps kan onthouden waar je bent geweest: dat is je **tijdlijn** (Timeline). Deze app opent je tijdlijnbestand, toont je ritten op een kaart en bewaart ze als GPX-, KML-, GeoJSON- of CSV-bestanden voor andere apps (Strava, Garmin, Google Earth, Excel…).</string>
+    <string name="ios_welcome_not_tracker">Deze app volgt je niet en logt niet in bij Google. Hij leest alleen het bestand dat je uit Google Maps bewaart, en alles blijft op dit apparaat.</string>
+    <string name="ios_requirements_title">⚠️ Belangrijk: controleer dit eerst</string>
+    <string name="ios_requirement_account">**Je locatiegeschiedenis komt uit je Google-account.** Je hebt de Google Maps-app nodig, ingelogd met je Google-account.</string>
+    <string name="ios_requirement_timeline">**De tijdlijn moet aanstaan in Google Maps.** Google bewaart alleen de dagen sinds hij aan is gezet; stond hij uit, dan valt er niets te exporteren.</string>
+    <string name="ios_requirement_location">**Google Maps heeft locatietoegang ‘Altijd’ nodig** (app Instellingen → Google Maps → Locatie), anders legt de tijdlijn bijna niets vast.</string>
+    <string name="ios_requirement_device">**De tijdlijn staat op de telefoon die hem heeft vastgelegd.** Is je geschiedenis op een andere telefoon vastgelegd, bewaar het bestand dan op die telefoon.</string>
+    <string name="ios_quick_title">Je bestand in 3 stappen</string>
+    <string name="ios_quick_step1">Tik in **Google Maps** op je profielfoto → **Instellingen** → **Locatie en privacy** → **Timeline-gegevens exporteren**.</string>
+    <string name="ios_quick_step2">Tik op **Bewaar in Bestanden** en bewaar het bestand Op mijn iPhone of in iCloud Drive.</string>
+    <string name="ios_quick_step3">Kom hier terug en tik hieronder op **Kies tijdlijnbestand**.</string>
+    <string name="ios_full_guide_button">Uitgebreide stap-voor-stap-uitleg</string>
+    <string name="ios_try_sample_button">Probeer met voorbeeldgegevens</string>
+    <string name="ios_sample_hint">Verzonnen reizen: zie wat de app doet voordat je die van jezelf exporteert.</string>
+    <string name="help_intro">Google Maps bewaart je tijdlijn alleen op je telefoon, niet online, dus geen andere app kan hem direct lezen. Je bewaart hem één keer uit Google Maps als bestand en opent dat bestand hier. Er wordt niets geüpload.</string>
+    <string name="ios_turn_on_title">1. Zet de tijdlijn aan (overslaan als hij aanstaat)</string>
+    <string name="ios_maps_profile">Open Google Maps en tik op je profielfoto (rechtsboven)</string>
+    <string name="ios_turn_on_step2">Tik op **Je tijdlijn**</string>
+    <string name="ios_turn_on_step3">Tik op ⋯ (rechtsboven) → **Instellingen voor locatie en privacy**</string>
+    <string name="ios_turn_on_step4">Tik op **Tijdlijn staat uit** → **Aanzetten**</string>
+    <string name="ios_turn_on_note">Vanaf dan bewaart Google waar je komt. Eerdere dagen kun je niet toevoegen, dus kom over een paar dagen terug.</string>
+    <string name="ios_export_title">2. Bewaar je tijdlijn als bestand</string>
+    <string name="ios_export_step2">Tik op **Instellingen** → **Locatie en privacy**</string>
+    <string name="ios_export_step3">Tik op **Timeline-gegevens exporteren**</string>
+    <string name="ios_export_step4">Tik op **Bewaar in Bestanden**, kies Op mijn iPhone of iCloud Drive en tik op **Bewaar**</string>
+    <string name="ios_import_title">3. Open het bestand hier</string>
+    <string name="help_import_step1">Tik op het hoofdscherm op **Kies tijdlijnbestand** en zoek het bestand. Meestal heet het location-history.json.</string>
+    <string name="help_import_step2">Of in de app Bestanden: houd het bestand ingedrukt → Deel → **Timeline Exporter**.</string>
+    <string name="ios_trouble_title">Als iets niet lukt</string>
+    <string name="ios_trouble_no_export">**Geen ‘Timeline-gegevens exporteren’?** Controleer of je bent ingelogd in Google Maps en of de tijdlijn aanstaat (stap 1). De optie verschijnt zodra de tijdlijn iets heeft bewaard.</string>
+    <string name="ios_trouble_alt_path">**Menu niet gevonden?** Probeer: profielfoto → **Je tijdlijn** → ⋯ → **Instellingen voor locatie en privacy** → **Timeline-gegevens exporteren**.</string>
+    <string name="ios_trouble_few_days">**Maar een paar dagen in het bestand?** Google bewaart alleen wat deze telefoon vastlegde terwijl de tijdlijn aanstond. Controleer ook of automatisch verwijderen uitstaat (wolkicoon in Je tijdlijn).</string>
+    <string name="ios_trouble_android">**Geschiedenis op een Android-telefoon?** Bewaar hem daar: Instellingen → Locatie → Locatieservices → Tijdlijn → Timeline-gegevens exporteren. Stuur het bestand naar deze iPhone (Google Drive, e-mail of een messenger) en bewaar het in Bestanden.</string>
+    <string name="help_note_file_location">• Op de iPhone heet het bestand location-history.json, op Android Timeline.json. Beide openen hier.</string>
+    <string name="pick_file_button">Kies tijdlijnbestand</string>
+    <string name="error_not_timeline">Dit lijkt geen tijdlijnbestand van Google Maps. Kies het bestand dat je uit Google Maps hebt bewaard (meestal location-history.json); de Help toont de stappen.</string>
     <string name="language_settings_hint">iOS stelt de taal van elke app in bij Instellingen.</string>
 </resources>
