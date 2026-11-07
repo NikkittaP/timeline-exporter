@@ -1,0 +1,120 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSPhotoLibraryAddUsageDescription" : {
+      "comment" : "Asked when the share sheet's Save Image saves a Map image.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يحفظ صور الخرائط التي تختار حفظها في مكتبة الصور."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichert die Kartenbilder, die du speichern möchtest, in deiner Fotomediathek."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saves the map images you choose to save to your photo library."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guarda en tu fototeca las imágenes de mapa que elijas guardar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistre dans votre photothèque les images de carte que vous choisissez d’enregistrer."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आप जिन मानचित्र छवियों को सहेजना चुनते हैं, उन्हें आपकी फ़ोटो लाइब्रेरी में सहेजता है।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva nella libreria foto le immagini della mappa che scegli di salvare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存を選んだ地図画像を写真ライブラリに保存します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장하도록 선택한 지도 이미지를 사진 보관함에 저장합니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewaart de kaartafbeeldingen die je kiest in je fotobibliotheek."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zapisuje w bibliotece zdjęć wybrane przez Ciebie obrazy mapy."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva na sua fototeca as imagens de mapa que você escolher salvar."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохраняет выбранные вами изображения карты в медиатеку."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sparar de kartbilder du väljer att spara i ditt bildbibliotek."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydetmeyi seçtiğiniz harita görüntülerini fotoğraf arşivinize kaydeder."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Зберігає вибрані вами зображення карти до медіатеки."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将你选择保存的地图图片存入照片图库。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將你選擇儲存的地圖圖片存入照片圖庫。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
