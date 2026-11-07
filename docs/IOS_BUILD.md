@@ -160,6 +160,46 @@ copy everything and paste it into the secret.
 - An App Store-signed `.ipa` does not install outside TestFlight and the App
   Store: do not send the artifact around.
 
+## App Store screenshots
+
+Actions -> **iOS screenshots** -> Run workflow
+(`.github/workflows/ios-screens.yml`).
+
+- **devices**: both (iPhone 6.9" and iPad 13", the sizes App Store Connect
+  scales down for every smaller device), or one of them.
+- **locales**: empty for all 18, or a comma list of `tools/store_shots`
+  locales such as `en-US,ru-RU` for a quick pass.
+- **upload**: off by default. Off, the framed set is only the artifact
+  `app-store-screenshots` (one folder per App Store locale) to review first.
+  On, `fastlane ios upload_screens` replaces the screenshots of the version
+  being prepared. It runs only from master and needs `APPSTORE_KEY_ID`,
+  `APPSTORE_ISSUER_ID`, `APPSTORE_PRIVATE_KEY` and `IOS_BUNDLE_ID`. The
+  listing text and the binary are left alone, and nothing is submitted.
+
+Before the first upload, App Store Connect needs a version that is still
+editable (Prepare for Submission). Screenshots belong to a version, and
+deliver does not create one. The App Store Connect API key needs the App
+Manager role (or Admin) to change screenshots.
+
+How it works:
+
+1. The Debug app takes `-screenshotScene <scene>`
+   (`ios/TimelineExporter/App/ScreenshotMode.swift`). It loads the bundled
+   demo history (the Android screenshot test's `timeline_demo.json`, which
+   is excluded from Release) and puts itself in that state without a tap.
+2. `StoreScreenshots` (`ios/TimelineExporterUITests`) launches each scene in
+   each language and writes `fastlane/screenshots_raw/<locale>/<iphone|ipad>/`
+   with the same names as the Android captures.
+   `tools/ios/store_screenshots.sh` makes the simulator, sets its status bar
+   to 9:41 and runs it.
+3. `node tools/store_shots/render.mjs --platform ios` frames them with the
+   Play template, its captions and `config.json` -> `ios` (sizes and
+   App Store locale names) into `fastlane/screenshots_ios/`.
+
+A full run takes about 9 scenes x 18 languages per device. Each scene
+waits for the map tiles from the network, so expect 40-70 minutes for each
+of the two parallel macOS jobs.
+
 ## Security
 
 - `*.p12`, `*.p8`, `*.mobileprovision`, `*.cer` are in `.gitignore`; keep them
