@@ -61,7 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           if ! bundle exec fastlane ios upload_metadata 2>&1 | tee upload.log; then
-            msg="$(grep -E "\[!\]|Error|error" upload.log | tail -n 5 | python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))')"
+            msg="$(grep -E "\[!\]|Error fetching|deliver/lib|spaceship/lib|RuntimeError|user_error" upload.log | grep -v "^\* " | tail -n 15 | python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))')"
             echo "::error title=deliver::${msg:-fastlane ios upload_metadata failed}"
             exit 1
           fi

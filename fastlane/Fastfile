@@ -195,6 +195,7 @@ platform :ios do
   # requirement and step strings (ios/strings) - keep them in step.
   desc "Upload ONLY the listing text and App Review notes to App Store "        "Connect. Screenshots, binary, price and review submission untouched."
   lane :upload_metadata do
+    tolerate_missing_review_detail
     api_key = app_store_connect_api_key(
       key_id: ENV.fetch("APPSTORE_KEY_ID"),
       issuer_id: ENV.fetch("APPSTORE_ISSUER_ID"),
@@ -214,5 +215,24 @@ platform :ios do
       run_precheck_before_submit: false,
       force: true
     )
+  end
+
+  # deliver (2.236) writes the App Review notes, then fetches the review
+  # detail again, unrescued, only to clear review attachments. When App Store
+  # Connect answers that with no data, spaceship raises "No data" and the
+  # whole upload fails although the text is already saved. We attach nothing,
+  # so a missing detail there is harmless.
+  private_lane :tolerate_missing_review_detail do
+    require "deliver"
+    Deliver::UploadMetadata.class_eval do
+      next if method_defined?(:review_attachment_file_unguarded)
+      alias_method :review_attachment_file_unguarded, :review_attachment_file
+      define_method(:review_attachment_file) do |version|
+        review_attachment_file_unguarded(version)
+      rescue RuntimeError => e
+        raise unless e.message == "No data"
+        FastlaneCore::UI.important("App Review detail not returned; no attachments to clear")
+      end
+    end
   end
 end
