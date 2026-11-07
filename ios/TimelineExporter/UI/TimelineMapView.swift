@@ -27,8 +27,8 @@ struct TimelineMapView: UIViewRepresentable {
         let map = MLNMapView(frame: .zero, styleURL: Self.styleURL(colorScheme))
         map.delegate = context.coordinator
         map.logoView.isHidden = true
-        map.rotateEnabled = false
-        map.pitchEnabled = false
+        map.isRotateEnabled = false
+        map.isPitchEnabled = false
         map.attributionButtonPosition = .bottomLeft
         map.accessibilityIdentifier = "map"
 
