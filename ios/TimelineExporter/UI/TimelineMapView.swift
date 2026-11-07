@@ -88,6 +88,7 @@ struct TimelineMapView: UIViewRepresentable {
             let changedData = content.line != wanted.line || content.places != wanted.places
             wanted = content
             if fit || first || changedData { fitPending = true }
+            if changedData || fit { markBusy(map) }
             guard let style = map.style else { return }
             apply(to: style, map: map)
         }
@@ -96,6 +97,21 @@ struct TimelineMapView: UIViewRepresentable {
             shown = nil
             lineLayers = []
             apply(to: style, map: mapView)
+        }
+
+        // Store screenshots: the UI test waits for the value "idle" (the
+        // content drawn, the tiles in) instead of a fixed pause.
+        func mapViewDidBecomeIdle(_ mapView: MLNMapView) {
+            guard ScreenshotMode.isActive, let shown, shown == wanted else { return }
+            mapView.accessibilityValue = "idle"
+        }
+
+        func mapView(_ mapView: MLNMapView, regionWillChangeAnimated animated: Bool) {
+            markBusy(mapView)
+        }
+
+        private func markBusy(_ map: MLNMapView) {
+            if ScreenshotMode.isActive { map.accessibilityValue = "busy" }
         }
 
         private func apply(to style: MLNStyle, map: MLNMapView) {

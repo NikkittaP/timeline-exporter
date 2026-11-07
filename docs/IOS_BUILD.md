@@ -197,9 +197,17 @@ How it works:
    Play template, its captions and `config.json` -> `ios` (sizes and
    App Store locale names) into `fastlane/screenshots_ios/`.
 
-A full run takes about 9 scenes x 18 languages per device. Each scene
-waits for the map tiles from the network, so expect 40-70 minutes for each
-of the two parallel macOS jobs.
+A full run takes 9 scenes x 18 languages per device, every language in one
+`xcodebuild test` run. The capture is split per device and in two halves of
+the languages (`SHARD=i/n` for the script), so four macOS jobs run at once.
+A map scene waits until the app marks the map "idle" (its
+accessibilityValue, screenshot mode only), at most 20 s; a scene takes
+roughly 15-25 s, a job about 25-35 minutes with the build.
+
+The Form is lazy: a section below the fold is not created, and its `.task`
+does not run, until it is scrolled to. A scene that needs one (the
+full-screen map, the Map image sheet) has a `ScreenshotMode.anchor`, and the
+test waits for elements on the first screen only.
 
 ## App Store listing
 

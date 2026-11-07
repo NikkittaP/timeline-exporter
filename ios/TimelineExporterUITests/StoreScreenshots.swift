@@ -1,15 +1,20 @@
 import XCTest
 
-/// The raw App Store screenshots, one fresh launch per scene. The app puts
-/// itself in each state (ScreenshotMode); this only launches, waits for the
-/// scene to settle and writes the screen as a PNG.
+/// The raw App Store screenshots, one fresh launch per scene and language. The
+/// app puts itself in each state (ScreenshotMode); this only launches, waits
+/// for the scene to settle and writes the screen as a PNG.
 ///
 /// Driven by tools/ios/store_screenshots.sh through environment variables
 /// (xcodebuild passes TEST_RUNNER_<NAME> to the runner as <NAME>):
-///   SCREENSHOT_DIR       where <name>.png goes (a host path: the simulator
-///                        shares the Mac's file system)
-///   SCREENSHOT_LANGUAGE  the app's language, e.g. de or zh-Hans
+///   SCREENSHOT_DIR       the raw root: <dir>/<locale>/<kind>/<name>.png (a
+///                        host path: the simulator shares the Mac's file system)
+///   SCREENSHOT_KIND      iphone or ipad
+///   SCREENSHOT_LOCALES   comma list of locale=language, e.g. en-US=en,zh-CN=zh-Hans
 ///   SCREENSHOT_SCENES    optional, a comma list of scenes to take
+///
+/// Every language runs in this one test: a test run per language cost about
+/// a minute and a half of xcodebuild start-up each. Failures name the locale
+/// as "[de-DE] 03_map_fullscreen: ...", which the script collects.
 ///
 /// The names are the Android captures', so tools/store_shots frames both
 /// platforms from one config.
@@ -27,8 +32,9 @@ final class StoreScreenshots: XCTestCase {
         ("overview", "02_overview"),
     ]
 
-    /// The map draws OpenFreeMap tiles off the network.
-    private static let mapWait: TimeInterval = 10
+    /// The map draws OpenFreeMap tiles off the network; the app reports
+    /// "idle" once they are in (TimelineMapView), this is the most it waits.
+    private static let mapIdleWait: TimeInterval = 20
 
     override func setUp() {
         continueAfterFailure = true
@@ -37,23 +43,31 @@ final class StoreScreenshots: XCTestCase {
     @MainActor
     func testCaptureStoreScreenshots() throws {
         let env = ProcessInfo.processInfo.environment
-        let dir = try XCTUnwrap(env["SCREENSHOT_DIR"], "SCREENSHOT_DIR is not set")
-        let language = env["SCREENSHOT_LANGUAGE"] ?? "en"
-        let only = env["SCREENSHOT_SCENES"].flatMap { list -> Set<String>? in
-            let scenes = Set(list.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty })
-            return scenes.isEmpty ? nil : scenes
-        }
-        try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
+        let root = try XCTUnwrap(env["SCREENSHOT_DIR"], "SCREENSHOT_DIR is not set")
+        let kind = try XCTUnwrap(env["SCREENSHOT_KIND"], "SCREENSHOT_KIND is not set")
+        let locales = try XCTUnwrap(env["SCREENSHOT_LOCALES"], "SCREENSHOT_LOCALES is not set")
+            .split(separator: ",")
+            .compactMap { pair -> (locale: String, language: String)? in
+                let parts = pair.split(separator: "=", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
+                return parts.count == 2 ? (parts[0], parts[1]) : nil
+            }
+        XCTAssertFalse(locales.isEmpty, "SCREENSHOT_LOCALES has no locale=language pair")
+        let only = Self.list(env["SCREENSHOT_SCENES"])
 
-        for (scene, name) in Self.scenes where only?.contains(scene) ?? true {
-            XCTContext.runActivity(named: "\(language) \(name)") { _ in
-                capture(scene: scene, name: name, language: language, dir: dir)
+        for (locale, language) in locales {
+            let dir = "\(root)/\(locale)/\(kind)"
+            try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
+            for (scene, name) in Self.scenes where only?.contains(scene) ?? true {
+                XCTContext.runActivity(named: "\(locale) \(name)") { _ in
+                    capture(scene: scene, name: name, locale: locale, language: language, dir: dir)
+                }
             }
         }
     }
 
     @MainActor
-    private func capture(scene: String, name: String, language: String, dir: String) {
+    private func capture(scene: String, name: String, locale: String, language: String, dir: String) {
+        let tag = "[\(locale)] \(name)"
         let app = XCUIApplication()
         app.launchArguments = [
             "-screenshotScene", scene,
@@ -63,32 +77,72 @@ final class StoreScreenshots: XCTestCase {
         app.launch()
         defer { app.terminate() }
 
+        var ok = true
         switch scene {
         case "empty":
-            XCTAssertTrue(app.buttons["pickFile"].waitForExistence(timeout: 20), "\(name): no start screen")
+            // The welcome text fills the first screen; the toolbar is always there.
+            ok = app.buttons["moreMenu"].waitForExistence(timeout: 20)
+            XCTAssertTrue(ok, "\(tag): no start screen")
             sleep(1)
+        case "overview":
+            // The top of the loaded page: the map is below the fold, not loaded.
+            ok = app.buttons["pickFile"].waitForExistence(timeout: 30)
+            XCTAssertTrue(ok, "\(tag): the file never loaded")
+            sleep(3)
         case "mapimage":
-            let preview = app.images["mapImagePreview"]
-            XCTAssertTrue(preview.waitForExistence(timeout: 90), "\(name): the preview never rendered")
-            sleep(2)
+            ok = app.images["mapImagePreview"].waitForExistence(timeout: 60)
+            XCTAssertTrue(ok, "\(tag): the preview never rendered")
+            sleep(1)
         default:
-            XCTAssertTrue(app.otherElements["map"].waitForExistence(timeout: 60)
-                          || app.descendants(matching: .any)["map"].waitForExistence(timeout: 5),
-                          "\(name): the map never appeared")
-            Thread.sleep(forTimeInterval: Self.mapWait)
+            let map = app.descendants(matching: .any)["map"]
+            ok = map.waitForExistence(timeout: 30)
+            XCTAssertTrue(ok, "\(tag): the map never appeared")
+            if ok {
+                let fullScreen = scene == "map" || scene == "days"
+                if !waitForIdleMap(app, fullScreen: fullScreen) {
+                    print("\(tag): the map did not report idle in \(Int(Self.mapIdleWait)) s, taking it anyway")
+                }
+                sleep(1)
+            }
         }
 
         let shot = XCUIScreen.main.screenshot()
-        let attachment = XCTAttachment(screenshot: shot)
-        attachment.name = name
-        attachment.lifetime = .keepAlways
-        add(attachment)
+        if !ok {
+            let attachment = XCTAttachment(screenshot: shot)
+            attachment.name = "\(locale)-\(name)"
+            attachment.lifetime = .keepAlways
+            add(attachment)
+        }
         let url = URL(fileURLWithPath: dir).appendingPathComponent("\(name).png")
         do {
             try shot.pngRepresentation.write(to: url)
         } catch {
-            XCTFail("\(name): could not write \(url.path): \(error)")
+            XCTFail("\(tag): could not write \(url.path): \(error)")
         }
+    }
+
+    /// Polls for a map whose value is "idle"; in the full-screen scenes it
+    /// has to be the big one, the small map in the list goes idle first.
+    @MainActor
+    private func waitForIdleMap(_ app: XCUIApplication, fullScreen: Bool) -> Bool {
+        let deadline = Date().addingTimeInterval(Self.mapIdleWait)
+        let screen = app.windows.firstMatch.frame.height
+        let maps = app.descendants(matching: .any).matching(identifier: "map")
+        while Date() < deadline {
+            for map in maps.allElementsBoundByIndex where map.exists {
+                if map.value as? String == "idle", !fullScreen || map.frame.height > screen * 0.7 {
+                    return true
+                }
+            }
+            Thread.sleep(forTimeInterval: 0.5)
+        }
+        return false
+    }
+
+    private static func list(_ value: String?) -> Set<String>? {
+        guard let value else { return nil }
+        let items = Set(value.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty })
+        return items.isEmpty ? nil : items
     }
 
     /// A region for the language, so numbers and dates read the way they do there.

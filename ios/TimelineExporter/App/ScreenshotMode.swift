@@ -41,11 +41,14 @@ enum ScreenshotMode {
     static var expandsMap: Bool { scene == .map || scene == .days }
     static var opensMapImage: Bool { scene == .mapimage }
 
-    /// The Form row the shot is framed on, and where it sits on screen.
+    /// The Form row the shot is framed on, and where it sits on screen. The
+    /// Form is lazy: a section below the fold does not exist, nor run its
+    /// .task, until it is scrolled to, so the full-screen map (PreviewSection)
+    /// and the Map image sheet (ExportSection) scenes scroll to theirs too.
     static var anchor: (id: String, bottom: Bool)? {
         switch scene {
-        case .formats: ("export", true)
-        case .places, .trip, .trips: ("preview", false)
+        case .formats, .mapimage: ("export", true)
+        case .places, .trip, .trips, .map, .days: ("preview", false)
         default: nil
         }
     }

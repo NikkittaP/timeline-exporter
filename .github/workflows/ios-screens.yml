@@ -1,9 +1,10 @@
 # App Store screenshots: captured on macOS simulators, framed on Linux with the
 # same tools/store_shots template as the Play set, optionally uploaded.
-#   capture  per device (iPhone 6.9", iPad 13"): Shared.xcframework, XcodeGen,
+#   capture  per device (iPhone 6.9", iPad 13") and shard (half the languages
+#            each, so four macOS jobs at once): Shared.xcframework, XcodeGen,
 #            then tools/ios/store_screenshots.sh launches the Debug app once
-#            per scene and language (ScreenshotMode, the bundled demo history).
-#            Raw PNGs as an artifact.
+#            per scene and language (ScreenshotMode, the bundled demo history)
+#            in a single test run. Raw PNGs as an artifact.
 #   frame    node tools/store_shots/render.mjs --platform ios. The framed set
 #            is the artifact "app-store-screenshots" (fastlane deliver layout).
 #   upload   only when asked: fastlane ios upload_screens replaces the
@@ -76,14 +77,15 @@ jobs:
           fi
 
   capture:
-    name: Capture (${{ matrix.device }})
+    name: Capture (${{ matrix.device }} ${{ matrix.shard }}/2)
     needs: plan
     runs-on: xcode-27
-    timeout-minutes: 120
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
         device: ${{ fromJSON(needs.plan.outputs.devices) }}
+        shard: [1, 2]
     env:
       LOGS: ${{ github.workspace }}/build/ios/logs
     steps:
@@ -123,22 +125,23 @@ jobs:
       - name: Capture
         env:
           LOCALES: ${{ inputs.locales }}
+          SHARD: ${{ matrix.shard }}/2
         run: bash tools/ios/store_screenshots.sh "${{ matrix.device }}" "$LOCALES"
 
       - name: Upload raw screenshots
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: raw-${{ matrix.device }}
+          name: raw-${{ matrix.device }}-${{ matrix.shard }}
           path: fastlane/screenshots_raw/
           retention-days: 7
-          if-no-files-found: error
+          if-no-files-found: warn
 
       - name: Upload logs
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: logs-${{ matrix.device }}
+          name: logs-${{ matrix.device }}-${{ matrix.shard }}
           path: |
             build/ios/logs/
             build/ios/*.xcresult
