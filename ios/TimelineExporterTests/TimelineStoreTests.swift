@@ -24,7 +24,8 @@ final class TimelineStoreTests: XCTestCase {
         XCTAssertEqual(core.segmentCount, 1)
         XCTAssertEqual(store.filteredCount, 3)
         XCTAssertEqual(store.fileName, "Timeline.json")
-        XCTAssertGreaterThan(store.totalDistance, 0)
+        // The distance is Google's own, from activity segments; the sample has none.
+        XCTAssertEqual(store.totalDistance, 0)
     }
 
     func testNotATimelineFileIsReportedAsSuch() async throws {
@@ -98,6 +99,22 @@ final class TimelineStoreTests: XCTestCase {
         store.setRange(Calendar.current.dayRange(from: day, to: day))
         await store.recount()
         XCTAssertTrue(store.mapLine.isEmpty)
+    }
+
+    func testTheMapImageGetsTheLineAndItsStatistics() async throws {
+        let store = TimelineStore(settings: InMemorySettingsStore())
+        await store.open(url: sampleURL)
+        XCTAssertTrue(store.canMakeMapImage)
+        let content = await store.mapImageContent()
+        XCTAssertEqual(content.line, store.mapLine)
+        let stats = try XCTUnwrap(content.stats)
+        XCTAssertLessThanOrEqual(stats.firstDay, stats.lastDay)
+        XCTAssertGreaterThanOrEqual(stats.dayCount, 1)
+        XCTAssertGreaterThan(stats.distanceMeters, 0)
+        XCTAssertEqual(content.placeCount, 0)
+
+        store.setContentKind(.places)
+        XCTAssertFalse(store.canMakeMapImage)
     }
 
     func testASampleWithoutVisitsHasNoPlacesOrTrips() async throws {
