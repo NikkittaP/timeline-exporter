@@ -204,10 +204,11 @@ A map scene waits until the app marks the map "idle" (its
 accessibilityValue, screenshot mode only), at most 20 s; a scene takes
 roughly 15-25 s, a job about 25-35 minutes with the build.
 
-The Form is lazy: a section below the fold is not created, and its `.task`
-does not run, until it is scrolled to. A scene that needs one (the
-full-screen map, the Map image sheet) has a `ScreenshotMode.anchor`, and the
-test waits for elements on the first screen only.
+The Form is lazy: a section below the fold is not created until it is
+scrolled to, and a `.task` on a Form section never presented the full-screen
+map or the Map image sheet. So those scenes scroll to their button
+(`ScreenshotMode.anchor`) and the test taps it (`mapExpand`, `mapImage`);
+otherwise it waits only for elements on the first screen.
 
 ## App Store listing
 

@@ -90,15 +90,22 @@ final class StoreScreenshots: XCTestCase {
             XCTAssertTrue(ok, "\(tag): the file never loaded")
             sleep(3)
         case "mapimage":
-            ok = app.images["mapImagePreview"].waitForExistence(timeout: 60)
-            XCTAssertTrue(ok, "\(tag): the preview never rendered")
-            sleep(1)
+            ok = tap(app, "mapImage", tag: tag)
+            if ok {
+                // Any element type: with its overlay the picture is not always an "image".
+                ok = app.descendants(matching: .any)["mapImagePreview"].waitForExistence(timeout: 60)
+                XCTAssertTrue(ok, "\(tag): the preview never rendered")
+                sleep(1)
+            }
         default:
             let map = app.descendants(matching: .any)["map"]
             ok = map.waitForExistence(timeout: 30)
             XCTAssertTrue(ok, "\(tag): the map never appeared")
+            let fullScreen = scene == "map" || scene == "days"
+            if ok, fullScreen {
+                ok = tap(app, "mapExpand", tag: tag)
+            }
             if ok {
-                let fullScreen = scene == "map" || scene == "days"
                 if !waitForIdleMap(app, fullScreen: fullScreen) {
                     print("\(tag): the map did not report idle in \(Int(Self.mapIdleWait)) s, taking it anyway")
                 }
@@ -119,6 +126,26 @@ final class StoreScreenshots: XCTestCase {
         } catch {
             XCTFail("\(tag): could not write \(url.path): \(error)")
         }
+    }
+
+    /// Taps the button the scene scrolled to (ScreenshotMode.anchor), once
+    /// it is there and enabled and the scene has had a moment to settle.
+    @MainActor
+    private func tap(_ app: XCUIApplication, _ id: String, tag: String) -> Bool {
+        let button = app.buttons[id]
+        guard button.waitForExistence(timeout: 30) else {
+            XCTFail("\(tag): the button \(id) never appeared")
+            return false
+        }
+        let enabled = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isEnabled == true AND isHittable == true"),
+                                                object: button)
+        guard XCTWaiter().wait(for: [enabled], timeout: 20) == .completed else {
+            XCTFail("\(tag): the button \(id) never became tappable")
+            return false
+        }
+        sleep(2)
+        button.tap()
+        return true
     }
 
     /// Polls for a map whose value is "idle"; in the full-screen scenes it

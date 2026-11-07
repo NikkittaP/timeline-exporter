@@ -38,13 +38,10 @@ enum ScreenshotMode {
     }()
 
     static var isActive: Bool { scene != nil }
-    static var expandsMap: Bool { scene == .map || scene == .days }
-    static var opensMapImage: Bool { scene == .mapimage }
 
     /// The Form row the shot is framed on, and where it sits on screen. The
-    /// Form is lazy: a section below the fold does not exist, nor run its
-    /// .task, until it is scrolled to, so the full-screen map (PreviewSection)
-    /// and the Map image sheet (ExportSection) scenes scroll to theirs too.
+    /// full-screen map and Map image scenes scroll to the button the UI test
+    /// then taps (a .task on a Form section never presented them).
     static var anchor: (id: String, bottom: Bool)? {
         switch scene {
         case .formats, .mapimage: ("export", true)
@@ -56,20 +53,6 @@ enum ScreenshotMode {
     /// The first day of the Norway holiday in tools/generate_demo_timeline.py
     /// (VACATIONS), the trip the Android 11_trip shot picks too.
     private static let focusTrip = DateComponents(year: 2026, month: 5, day: 12)
-
-    /// Waits until prepare() has applied the scene (the days scenes set a
-    /// range) and the count has caught up. False when it never does.
-    @MainActor static func settled(_ store: TimelineStore) async -> Bool {
-        let wantsRange = scene == .days || scene == .mapimage
-        for _ in 0..<100 {
-            if store.phase == .loaded, !wantsRange || store.filter.range != nil {
-                try? await Task.sleep(for: .seconds(1.5))
-                return !Task.isCancelled
-            }
-            try? await Task.sleep(for: .milliseconds(200))
-        }
-        return false
-    }
 
     /// Loads the demo and applies the scene. Called once, at launch.
     @MainActor static func prepare(_ store: TimelineStore) async {

@@ -439,9 +439,6 @@ private struct ExportSection: View {
         .sheet(isPresented: $mapImage) {
             MapImageSheet()
         }
-        .task {
-            if ScreenshotMode.opensMapImage, await ScreenshotMode.settled(store) { mapImage = true }
-        }
     }
 
     private var title: String {

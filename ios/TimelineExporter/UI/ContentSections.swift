@@ -29,9 +29,6 @@ struct PreviewSection: View {
         .fullScreenCover(isPresented: $expanded) {
             ExpandedMap(content: content)
         }
-        .task {
-            if ScreenshotMode.expandsMap, await ScreenshotMode.settled(store) { expanded = true }
-        }
     }
 
     private var content: MapContent {
@@ -52,6 +49,7 @@ struct PreviewSection: View {
                 MapButton(symbol: "arrow.up.left.and.arrow.down.right", label: L.s("map_expand")) {
                     expanded = true
                 }
+                .accessibilityIdentifier("mapExpand")
                 MapButton(symbol: "scope", label: L.s("map_recenter")) {
                     fitToken += 1
                 }
