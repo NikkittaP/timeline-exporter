@@ -168,6 +168,17 @@ platform :ios do
   desc "Upload ONLY the framed screenshots to App Store Connect, replacing " \
        "the version's current ones. Listing text, binary and review untouched."
   lane :upload_screens do
+    # Lane code runs inside fastlane/, but actions run from the project root,
+    # so a relative "./screenshots_ios" handed to deliver points at a folder
+    # that does not exist — and deliver then "uploads" nothing and goes green.
+    # Resolve it here, absolute, and refuse to run on an empty set (with
+    # overwrite_screenshots an empty folder would also wipe what is there).
+    shots = File.expand_path("screenshots_ios")
+    pngs = Dir.glob(File.join(shots, "*", "*.png"))
+    UI.user_error!("No screenshots in #{shots}/<locale>/*.png") if pngs.empty?
+    UI.message("#{pngs.size} screenshots in " \
+               "#{Dir.glob(File.join(shots, '*')).select { |d| File.directory?(d) }.size} locales from #{shots}")
+
     api_key = app_store_connect_api_key(
       key_id: ENV.fetch("APPSTORE_KEY_ID"),
       issuer_id: ENV.fetch("APPSTORE_ISSUER_ID"),
@@ -177,7 +188,7 @@ platform :ios do
     upload_to_app_store(
       api_key: api_key,
       app_identifier: ENV["IOS_BUNDLE_ID"] || "com.nikitapetrovapps.timelineexporter",
-      screenshots_path: "./screenshots_ios",
+      screenshots_path: shots,
       skip_binary_upload: true,
       skip_metadata: true,
       skip_app_version_update: true,
@@ -196,6 +207,12 @@ platform :ios do
   desc "Upload ONLY the listing text and App Review notes to App Store "        "Connect. Screenshots, binary, price and review submission untouched."
   lane :upload_metadata do
     tolerate_missing_review_detail
+    # Absolute for the same reason as screenshots_ios above: deliver resolves
+    # relative paths from the project root, not from fastlane/.
+    listing = File.expand_path("listing_ios")
+    if Dir.glob(File.join(listing, "*", "description.txt")).empty?
+      UI.user_error!("No listing in #{listing}/<locale>/description.txt")
+    end
     api_key = app_store_connect_api_key(
       key_id: ENV.fetch("APPSTORE_KEY_ID"),
       issuer_id: ENV.fetch("APPSTORE_ISSUER_ID"),
@@ -205,7 +222,7 @@ platform :ios do
     upload_to_app_store(
       api_key: api_key,
       app_identifier: ENV["IOS_BUNDLE_ID"] || "com.nikitapetrovapps.timelineexporter",
-      metadata_path: "./listing_ios",
+      metadata_path: listing,
       skip_binary_upload: true,
       skip_screenshots: true,
       skip_app_version_update: true,
