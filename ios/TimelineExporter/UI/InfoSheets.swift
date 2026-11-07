@@ -186,7 +186,8 @@ enum Feedback {
 
     static func body(selected: [Int], other: String, diagnostics: String) -> String {
         var out = ""
-        let chosen = selected.filter { options.indices.contains($0) }.map { options[$0] }
+        // In the order the options are listed, whatever order they were ticked in.
+        let chosen = Set(selected).sorted().filter { options.indices.contains($0) }.map { options[$0] }
         if !chosen.isEmpty {
             out += L.s("feedback_body_requested") + "\n"
             for o in chosen { out += "- \(o.outgoing)\n" }
