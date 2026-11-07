@@ -41,10 +41,11 @@ enum ScreenshotMode {
 
     /// The Form row the shot is framed on, and where it sits on screen. The
     /// full-screen map and Map image scenes scroll to the button the UI test
-    /// then taps (a .task on a Form section never presented them).
+    /// then taps.
     static var anchor: (id: String, bottom: Bool)? {
         switch scene {
-        case .formats, .mapimage: ("export", true)
+        case .formats: ("export", true)
+        case .mapimage: ("mapImage", true)
         case .places, .trip, .trips, .map, .days: ("preview", false)
         default: nil
         }

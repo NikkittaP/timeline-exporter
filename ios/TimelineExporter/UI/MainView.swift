@@ -430,14 +430,16 @@ private struct ExportSection: View {
                 }
                 .disabled(!store.canMakeMapImage)
                 .accessibilityIdentifier("mapImage")
+                .id("mapImage")
+                // On the row, not the Section: from there the sheet never showed.
+                .sheet(isPresented: $mapImage) {
+                    MapImageSheet()
+                }
             }
         } header: {
             Text(title)
         } footer: {
             status
-        }
-        .sheet(isPresented: $mapImage) {
-            MapImageSheet()
         }
     }
 

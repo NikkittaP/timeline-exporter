@@ -205,10 +205,11 @@ accessibilityValue, screenshot mode only), at most 20 s; a scene takes
 roughly 15-25 s, a job about 25-35 minutes with the build.
 
 The Form is lazy: a section below the fold is not created until it is
-scrolled to, and a `.task` on a Form section never presented the full-screen
-map or the Map image sheet. So those scenes scroll to their button
+scrolled to. The full-screen map and Map image scenes scroll to their button
 (`ScreenshotMode.anchor`) and the test taps it (`mapExpand`, `mapImage`);
-otherwise it waits only for elements on the first screen.
+otherwise it waits only for elements on the first screen. A `.sheet` or
+`.fullScreenCover` belongs on a row, not on a Form `Section`: from a Section
+neither showed, not even after a tap.
 
 ## App Store listing
 

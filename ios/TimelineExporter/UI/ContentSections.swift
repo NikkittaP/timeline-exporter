@@ -22,12 +22,14 @@ struct PreviewSection: View {
             .accessibilityIdentifier("contentKind")
             .id("preview")
 
+            // On the row: a Form hands a Section's modifiers to each of its
+            // rows, and the cover never showed from there.
             map
                 .frame(height: sizeClass == .regular ? 460 : 300)
                 .listRowInsets(EdgeInsets())
-        }
-        .fullScreenCover(isPresented: $expanded) {
-            ExpandedMap(content: content)
+                .fullScreenCover(isPresented: $expanded) {
+                    ExpandedMap(content: content)
+                }
         }
     }
 
