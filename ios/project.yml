@@ -68,6 +68,8 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        # The share sheet offers Save Image for the Map image.
+        INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "Saves the map images you choose to save to your photo library."
         ENABLE_USER_SCRIPT_SANDBOXING: YES
   TimelineExporterTests:
     type: bundle.unit-test

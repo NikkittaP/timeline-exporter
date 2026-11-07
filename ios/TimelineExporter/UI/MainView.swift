@@ -349,6 +349,7 @@ private struct MovementRow: View {
 
 private struct ExportSection: View {
     @Environment(TimelineStore.self) private var store
+    @State private var mapImage = false
 
     var body: some View {
         @Bindable var store = store
@@ -376,10 +377,22 @@ private struct ExportSection: View {
             if store.contentKind == .track {
                 Toggle(L.s("map_color_by_day"), isOn: $store.colorByDay)
             }
+            if store.contentKind != .places {
+                Button {
+                    mapImage = true
+                } label: {
+                    Label(L.s("map_image_export_entry"), systemImage: "photo")
+                }
+                .disabled(!store.canMakeMapImage)
+                .accessibilityIdentifier("mapImage")
+            }
         } header: {
             Text(title)
         } footer: {
             status
+        }
+        .sheet(isPresented: $mapImage) {
+            MapImageSheet()
         }
     }
 

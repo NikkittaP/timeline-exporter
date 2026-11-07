@@ -256,6 +256,29 @@ final class TimelineStore {
         }
     }
 
+    // MARK: Map image
+
+    /// Whether the Map image has something to draw: the track or trips view
+    /// with a line on the map.
+    var canMakeMapImage: Bool {
+        contentKind != .places && !mapLine.isEmpty
+    }
+
+    /// The line on the map now, with its statistics, for the Map image.
+    /// Places are counted only in the track view, where the place list
+    /// describes the same selection the route does.
+    func mapImageContent() async -> (line: MapLine, stats: ImageStats?, placeCount: Int?) {
+        let line = mapLine
+        guard let core = timeline else { return (line, nil, nil) }
+        let f = filter
+        let kind = contentKind
+        let keys = mapTripKeys
+        let stats = await Task.detached(priority: .userInitiated) {
+            kind == .trips ? core.tripsImageStats(f, keys: keys) : core.trackImageStats(f)
+        }.value
+        return (line, stats, kind == .track ? places.count : nil)
+    }
+
     // MARK: Trips and places
 
     func setContentKind(_ kind: ContentKind) {

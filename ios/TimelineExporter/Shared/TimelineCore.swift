@@ -256,6 +256,14 @@ struct PlaceItem: Identifiable, Equatable {
 
 /// A line for the map: coordinates cut into coloured pieces. A piece with
 /// color "" takes the app's track colour.
+/// The Map image's statistics: epoch days in the session's zone.
+struct ImageStats: Equatable {
+    let firstDay: Int64
+    let lastDay: Int64
+    let dayCount: Int
+    let distanceMeters: Double
+}
+
 struct MapLine: Equatable {
     struct Piece: Equatable {
         let range: Range<Int>
@@ -325,6 +333,22 @@ extension CoreTimeline {
     /// The trips' lines: [keys] picks some, empty is every trip in the range.
     func mapTrips(_ f: FilterState, keys: [Int64]) -> MapLine {
         Self.line(session.mapTrips(spec: Self.spec(f), keys: Self.longArray(keys), budget: Self.mapPointBudget))
+    }
+
+    /// What the Map image's card says about the filtered track.
+    func trackImageStats(_ f: FilterState) -> ImageStats? {
+        Self.imageStats(session.trackImageStats(spec: Self.spec(f)))
+    }
+
+    /// The same for trips: [keys] picks some, empty is every trip in the range.
+    func tripsImageStats(_ f: FilterState, keys: [Int64]) -> ImageStats? {
+        Self.imageStats(session.tripsImageStats(spec: Self.spec(f), keys: Self.longArray(keys)))
+    }
+
+    private static func imageStats(_ s: MapImageStats?) -> ImageStats? {
+        guard let s else { return nil }
+        return ImageStats(firstDay: s.firstEpochDay, lastDay: s.lastEpochDay,
+                          dayCount: Int(s.dayCount), distanceMeters: s.distanceMeters)
     }
 
     func exportTrips(_ f: FilterState, keys: [Int64], format: ExportFormatChoice, name: String, to url: URL) -> ExportOutcome {
