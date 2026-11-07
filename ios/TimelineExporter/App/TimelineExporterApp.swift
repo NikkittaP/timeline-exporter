@@ -2,7 +2,9 @@ import SwiftUI
 
 @main
 struct TimelineExporterApp: App {
-    @State private var store = TimelineStore()
+    // A screenshot run remembers nothing between scenes.
+    @State private var store = ScreenshotMode.isActive
+        ? TimelineStore(settings: InMemorySettingsStore()) : TimelineStore()
 
     var body: some Scene {
         WindowGroup {
@@ -11,6 +13,9 @@ struct TimelineExporterApp: App {
                 // "Open in Timeline Exporter" from Files or another app's share sheet.
                 .onOpenURL { url in
                     Task { await store.open(url: url) }
+                }
+                .task {
+                    if ScreenshotMode.isActive { await ScreenshotMode.prepare(store) }
                 }
         }
     }

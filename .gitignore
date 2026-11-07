@@ -34,6 +34,7 @@ vendor/bundle/
 .bundle/
 fastlane/metadata/
 fastlane/screenshots_raw/
+fastlane/screenshots_ios/
 
 # Local font files for caption rendering (large binaries, downloaded on demand)
 tools/fonts/

@@ -6,11 +6,13 @@
  *   node render.mjs                            decorate every locale × every slot
  *   node render.mjs --slot phone --locales ru-RU,ar
  *   node render.mjs --palette orange --preview-only
+ *   node render.mjs --platform ios             the App Store set (config.json "ios")
  *
  * Reads  : <paths.raw>/<locale>/<slot>/<src>.png        (raw device captures)
  * Writes : <paths.metadata>/<locale>/images/<slotDir>/<out>.png
  *          <paths.metadata>/<locale>/images/featureGraphic.png
  *          <paths.preview>/<slot>_<locale>.png          (contact sheet for review)
+ * iOS    : <ios.metadata>/<App Store locale>/<slot>_<out>.png (what fastlane deliver uploads)
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -27,6 +29,21 @@ const argv = process.argv.slice(2);
 const flag = (n) => argv.includes('--' + n);
 const opt = (n, d = null) => { const i = argv.indexOf('--' + n); return i > -1 && argv[i + 1] ? argv[i + 1] : d; };
 
+// iOS: its own slots and output folder, the same frames, strings and raw
+// layout. deliver wants one folder per App Store locale holding every device's
+// shots, so the slot goes into the file name instead of a folder.
+const ios = opt('platform', 'android') === 'ios';
+if (ios) {
+  if (!cfg.ios) { console.error('config.json has no "ios" block'); process.exit(2); }
+  cfg.slots = cfg.ios.slots;
+  cfg.featureGraphic = { ...cfg.featureGraphic, enabled: false };
+}
+const outDirFor = (locale, slot) => ios
+  ? path.join(abs(cfg.ios.metadata), cfg.ios.locales[locale]?.appStore || locale)
+  : path.join(abs(cfg.paths.metadata), locale, 'images', slot.dir);
+const outName = (slot, f) => ios ? `${slot.id}_${f.out}.png` : `${f.out}.png`;
+const marker = (slot) => ios ? `.decorated-${slot.id}` : '.decorated';
+
 const paletteName = opt('palette', cfg.palette);
 const pal = cfg.palettes[paletteName];
 if (!pal) { console.error(`unknown palette "${paletteName}" — have: ${Object.keys(cfg.palettes).join(', ')}`); process.exit(2); }
@@ -40,6 +57,7 @@ const noFeature = flag('no-feature');
 /* --------------------------------------------------------------- ingest */
 // screengrab drops raw PNGs straight into the metadata folder. Move them out
 // so decorating is idempotent: raw stays raw, metadata holds finished art.
+if (flag('ingest') && ios) { console.error('--ingest is Android only: the iOS test writes straight to the raw folder'); process.exit(2); }
 if (flag('ingest')) {
   let moved = 0;
   for (const locale of locales) {
@@ -302,7 +320,7 @@ for (const slot of slots) {
     const ctx = localeCtx(locale);
     const outDir = previewOnly
       ? path.join(abs(cfg.paths.preview), '_frames', slot.id, locale)
-      : path.join(abs(cfg.paths.metadata), locale, 'images', slot.dir);
+      : outDirFor(locale, slot);
 
     const page = await browser.newPage({ deviceScaleFactor: 1 });
     const made = [];
@@ -319,7 +337,7 @@ for (const slot of slots) {
       const view = { ...slot, w: box.w, h: box.h };
       const k2 = view.typeScale ?? (Math.min(box.w, box.h) / 1080);
 
-      const outFile = path.join(outDir, `${f.out}.png`);
+      const outFile = path.join(outDir, outName(slot, f));
       const fix = await shoot(page, frameHtml(cfg, view, t, cap, ctx), box.w, box.h, '.frame', outFile, ctx, [
         `(${AUTOFIT})('.title', ${Math.round(cfg.type.titleMax * k2)}, ${Math.round(cfg.type.titleMin * k2)}, ${cfg.type.titleLines})`,
         `(${AUTOFIT})('.sub', ${Math.round(cfg.type.subMax * k2)}, ${Math.round(cfg.type.subMin * k2)}, ${cfg.type.subLines})`,
@@ -352,11 +370,12 @@ for (const slot of slots) {
       const keep = new Set(made.map(f => path.basename(f)));
       for (const f of fs.readdirSync(outDir)) {
         if (!/\.(png|jpe?g|webp)$/i.test(f) || keep.has(f)) continue;
+        if (ios && !f.startsWith(`${slot.id}_`)) continue;   // another device's shots
         fs.rmSync(path.join(outDir, f), { force: true });
         console.log(`  removed stale ${slot.id}/${locale}/${f}`);
       }
     }
-    if (made.length && !previewOnly) fs.writeFileSync(path.join(outDir, '.decorated'), new Date().toISOString());
+    if (made.length && !previewOnly) fs.writeFileSync(path.join(outDir, marker(slot)), new Date().toISOString());
     console.log(`${slot.id.padEnd(10)} ${locale.padEnd(6)} ${made.length} shot(s)`);
   }
 }

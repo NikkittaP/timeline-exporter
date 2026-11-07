@@ -18,6 +18,7 @@ struct PreviewSection: View {
             }
             .pickerStyle(.segmented)
             .accessibilityIdentifier("contentKind")
+            .id("preview")
 
             map
                 .frame(height: 300)
@@ -25,6 +26,9 @@ struct PreviewSection: View {
         }
         .fullScreenCover(isPresented: $expanded) {
             ExpandedMap(content: content)
+        }
+        .task {
+            if ScreenshotMode.expandsMap, await ScreenshotMode.settled(store) { expanded = true }
         }
     }
 

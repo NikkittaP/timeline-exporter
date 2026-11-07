@@ -1,0 +1,233 @@
+# App Store screenshots: captured on macOS simulators, framed on Linux with the
+# same tools/store_shots template as the Play set, optionally uploaded.
+#   capture  per device (iPhone 6.9", iPad 13"): Shared.xcframework, XcodeGen,
+#            then tools/ios/store_screenshots.sh launches the Debug app once
+#            per scene and language (ScreenshotMode, the bundled demo history).
+#            Raw PNGs as an artifact.
+#   frame    node tools/store_shots/render.mjs --platform ios. The framed set
+#            is the artifact "app-store-screenshots" (fastlane deliver layout).
+#   upload   only when asked: fastlane ios upload_screens replaces the
+#            screenshots of the App Store Connect version being prepared.
+#            Secrets: APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_PRIVATE_KEY,
+#            IOS_BUNDLE_ID. Never touches the listing text or the binary, never
+#            submits for review. Runs only from master.
+# Failures are annotations (readable through the public check-runs API).
+name: iOS screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      devices:
+        description: "Which simulators"
+        type: choice
+        options: [both, iphone, ipad]
+        default: both
+      locales:
+        description: "Comma list of tools/store_shots locales (en-US,ru-RU,...). Empty - all 18"
+        type: string
+        required: false
+      upload:
+        description: "Upload the framed set to App Store Connect (replaces the version's screenshots)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-screens-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  XCODE_MAJOR: "27"
+
+jobs:
+  plan:
+    name: Plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      devices: ${{ steps.plan.outputs.devices }}
+    steps:
+      - id: plan
+        env:
+          DEVICES: ${{ inputs.devices }}
+          UPLOAD: ${{ inputs.upload }}
+          HAS_KEY: ${{ secrets.APPSTORE_KEY_ID != '' && secrets.APPSTORE_ISSUER_ID != '' && secrets.APPSTORE_PRIVATE_KEY != '' }}
+        run: |
+          set -euo pipefail
+          case "$DEVICES" in
+            iphone) echo 'devices=["iphone"]' ;;
+            ipad) echo 'devices=["ipad"]' ;;
+            *) echo 'devices=["iphone","ipad"]' ;;
+          esac >> "$GITHUB_OUTPUT"
+          if [[ "$UPLOAD" == true ]]; then
+            if [[ "$GITHUB_REF" != refs/heads/master ]]; then
+              echo "::error title=upload::uploads run only from master"
+              exit 1
+            fi
+            if [[ "$HAS_KEY" != true ]]; then
+              echo "::error title=upload::APPSTORE_KEY_ID, APPSTORE_ISSUER_ID and APPSTORE_PRIVATE_KEY must all be set"
+              exit 1
+            fi
+            if [[ "$DEVICES" != both ]]; then
+              echo "::warning title=upload::only $DEVICES is captured, and deliver replaces the screenshots of the devices it uploads"
+            fi
+          fi
+
+  capture:
+    name: Capture (${{ matrix.device }})
+    needs: plan
+    runs-on: xcode-27
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        device: ${{ fromJSON(needs.plan.outputs.devices) }}
+    env:
+      LOGS: ${{ github.workspace }}/build/ios/logs
+    steps:
+      - name: Toolchain
+        run: |
+          set -euo pipefail
+          xcode="$(xcodebuild -version | sed -n 1p)"
+          echo "::notice title=Toolchain::$xcode, iphonesimulator SDK $(xcrun --sdk iphonesimulator --show-sdk-version), macOS $(sw_vers -productVersion)"
+          if [[ ! "$xcode" =~ ^Xcode\ ${XCODE_MAJOR}(\.|$) ]]; then
+            echo "::error title=Xcode version::runner provides '$xcode', the workflow expects Xcode ${XCODE_MAJOR}"
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+        with: { distribution: temurin, java-version: "21" }
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+
+      - name: Shared.xcframework
+        run: |
+          set -euo pipefail
+          ./gradlew :shared:assembleSharedReleaseXCFramework --stacktrace 2>&1 | tee gradle.log
+          ls shared/build/XCFrameworks/release/Shared.xcframework
+
+      - name: XcodeGen
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+          HOMEBREW_NO_INSTALL_CLEANUP: "1"
+        run: |
+          set -euo pipefail
+          command -v xcodegen >/dev/null || brew install xcodegen
+          (cd ios && xcodegen generate)
+
+      - name: Capture
+        env:
+          LOCALES: ${{ inputs.locales }}
+        run: bash tools/ios/store_screenshots.sh "${{ matrix.device }}" "$LOCALES"
+
+      - name: Upload raw screenshots
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: raw-${{ matrix.device }}
+          path: fastlane/screenshots_raw/
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: logs-${{ matrix.device }}
+          path: |
+            build/ios/logs/
+            build/ios/*.xcresult
+            gradle.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+  frame:
+    name: Frame
+    needs: [plan, capture]
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: raw-*
+          path: fastlane/screenshots_raw
+          merge-multiple: true
+
+      # The template's scripts: tools/fonts is not in the repository, so the
+      # Arabic, Devanagari and CJK faces come from the system's Noto packages.
+      - name: Fonts and renderer
+        run: |
+          set -euo pipefail
+          sudo apt-get update -q
+          sudo apt-get install -y -q fonts-noto-core fonts-noto-cjk
+          npm ci --prefix tools/store_shots
+          npx --prefix tools/store_shots playwright install --with-deps chromium
+
+      - name: Frame
+        env:
+          DEVICES: ${{ join(fromJSON(needs.plan.outputs.devices), ',') }}
+          LOCALES: ${{ inputs.locales }}
+        run: |
+          set -euo pipefail
+          args=(--platform ios --slot "$DEVICES")
+          [[ -n "$LOCALES" ]] && args+=(--locales "$LOCALES")
+          (cd tools/store_shots && node render.mjs "${args[@]}") 2>&1 | tee frame.log
+          if grep -q "! " frame.log; then
+            grep "! " frame.log | head -n 20 | while read -r line; do echo "::warning title=Frame::$line"; done
+          fi
+
+      - name: Upload framed screenshots
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: app-store-screenshots
+          path: fastlane/screenshots_ios/
+          retention-days: 30
+          if-no-files-found: error
+
+  upload:
+    name: Upload to App Store Connect
+    needs: frame
+    if: inputs.upload && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: app-store-screenshots
+          path: fastlane/screenshots_ios
+
+      - name: fastlane
+        run: |
+          set -euo pipefail
+          ruby --version
+          sudo gem install bundler --no-document
+          bundle config set --local path vendor/bundle
+          bundle install --jobs 4
+
+      - name: Upload
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+          IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+        run: |
+          set -euo pipefail
+          if ! bundle exec fastlane ios upload_screens 2>&1 | tee upload.log; then
+            msg="$(grep -E "\[!\]|Error|error" upload.log | tail -n 5 | python3 -c 'import sys; print(sys.stdin.read().strip().replace("%", "%25").replace(chr(13), "").replace(chr(10), "%0A"))')"
+            echo "::error title=deliver::${msg:-fastlane ios upload_screens failed}"
+            exit 1
+          fi
+          echo "::notice title=App Store screenshots::uploaded; nothing was submitted for review"

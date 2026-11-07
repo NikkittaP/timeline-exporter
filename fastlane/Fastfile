@@ -153,3 +153,39 @@ platform :android do
     )
   end
 end
+
+# ---------------------------------------------------------------------------
+# iOS — App Store screenshots. Captured on a Mac simulator by
+# tools/ios/store_screenshots.sh, framed by `render.mjs --platform ios` into
+# fastlane/screenshots_ios/<App Store locale>/, uploaded here. Normally run by
+# .github/workflows/ios-screens.yml; by hand:
+#   APPSTORE_KEY_ID=… APPSTORE_ISSUER_ID=… APPSTORE_PRIVATE_KEY="$(cat key.p8)" \
+#     bundle exec fastlane ios upload_screens
+# Needs a version in App Store Connect that is still editable ("Prepare for
+# Submission"): screenshots belong to a version, and deliver makes none.
+# ---------------------------------------------------------------------------
+platform :ios do
+  desc "Upload ONLY the framed screenshots to App Store Connect, replacing " \
+       "the version's current ones. Listing text, binary and review untouched."
+  lane :upload_screens do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("APPSTORE_KEY_ID"),
+      issuer_id: ENV.fetch("APPSTORE_ISSUER_ID"),
+      key_content: ENV.fetch("APPSTORE_PRIVATE_KEY"),
+      in_house: false
+    )
+    upload_to_app_store(
+      api_key: api_key,
+      app_identifier: ENV["IOS_BUNDLE_ID"] || "com.nikitapetrovapps.timelineexporter",
+      screenshots_path: "./screenshots_ios",
+      skip_binary_upload: true,
+      skip_metadata: true,
+      skip_app_version_update: true,
+      overwrite_screenshots: true,
+      submit_for_review: false,
+      automatic_release: false,
+      run_precheck_before_submit: false,
+      force: true # no HTML preview to confirm on CI
+    )
+  end
+end

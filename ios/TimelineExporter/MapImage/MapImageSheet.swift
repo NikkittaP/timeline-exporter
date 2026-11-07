@@ -109,6 +109,7 @@ struct MapImageSheet: View {
                     if rendering { ProgressView() }
                 }
                 .accessibilityLabel(L.s("map_image_preview_description"))
+                .accessibilityIdentifier(rendering ? "mapImagePreviewRendering" : "mapImagePreview")
         } else if rendering || content == nil {
             VStack(spacing: 8) {
                 ProgressView()

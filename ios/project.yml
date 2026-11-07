@@ -33,6 +33,10 @@ targets:
         buildPhase: resources
       - path: ../app/src/main/assets/map_style_dark.json
         buildPhase: resources
+      # The store screenshots' demo history (ScreenshotMode), the Android
+      # screenshot test's own file. Debug only: excluded from Release below.
+      - path: ../app/src/androidTest/assets/timeline_demo.json
+        buildPhase: resources
     # Merged with the generated keys (GENERATE_INFOPLIST_FILE): what has no
     # INFOPLIST_KEY_ build setting. Written by xcodegen, not committed.
     info:
@@ -71,6 +75,9 @@ targets:
         # The share sheet offers Save Image for the Map image.
         INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription: "Saves the map images you choose to save to your photo library."
         ENABLE_USER_SCRIPT_SANDBOXING: YES
+      configs:
+        Release:
+          EXCLUDED_SOURCE_FILE_NAMES: timeline_demo.json
   TimelineExporterTests:
     type: bundle.unit-test
     platform: iOS
@@ -89,7 +96,31 @@ targets:
         # Finds module Shared, which the app's swiftmodule imports; never links it.
         FRAMEWORK_SEARCH_PATHS: ["$(inherited)", "$(BUILT_PRODUCTS_DIR)"]
         GENERATE_INFOPLIST_FILE: YES
+  # Store screenshots only (.github/workflows/ios-screens.yml): launches the
+  # app once per scene and language and writes each shot as a PNG.
+  TimelineExporterUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: TimelineExporterUITests
+    dependencies:
+      - target: TimelineExporter
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.nikitapetrovapps.timelineexporter.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TimelineExporter
 schemes:
+  # Not in the TimelineExporter scheme's tests: ios.yml runs that on every push.
+  StoreScreenshots:
+    build:
+      targets:
+        TimelineExporter: all
+        TimelineExporterUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - TimelineExporterUITests
   TimelineExporter:
     build:
       targets:

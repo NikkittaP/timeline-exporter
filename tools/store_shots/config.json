@@ -118,5 +118,34 @@
     "arabic": { "locales": ["ar"],                            "letterSpacing": "0",       "titleLh": 1.45, "subLh": 1.6 },
     "indic":  { "locales": ["hi-IN"],                         "letterSpacing": "-.01em",  "titleLh": 1.35, "subLh": 1.5 },
     "thai":   { "locales": ["th"],                            "letterSpacing": "0",       "titleLh": 1.5,  "subLh": 1.6 }
+  },
+
+  "$ios": "--platform ios: the App Store set. Raw captures come from the StoreScreenshots UI test (tools/ios/store_screenshots.sh) into paths.raw/<locale>/<slot id>/, named like the Android ones. The framed art goes to ios.metadata/<App Store locale>/<slot id>_<frame>.png, the layout fastlane deliver uploads (it tells the iPhone from the iPad by the pixel size). The iOS status bar is kept, the simulator's set to 9:41, so nothing is cropped. language is what the app is launched in (-AppleLanguages).",
+  "ios": {
+    "metadata": "../../fastlane/screenshots_ios",
+    "slots": [
+      { "id": "iphone", "w": 1320, "h": 2868, "statusBarPx": 0, "bottomCropPx": 0, "device": { "radius": 64, "bezel": 12 } },
+      { "id": "ipad",   "w": 2064, "h": 2752, "statusBarPx": 0, "bottomCropPx": 0, "device": { "radius": 30, "bezel": 12 } }
+    ],
+    "locales": {
+      "en-US": { "language": "en",      "appStore": "en-US" },
+      "ar":    { "language": "ar",      "appStore": "ar-SA" },
+      "de-DE": { "language": "de",      "appStore": "de-DE" },
+      "es-ES": { "language": "es",      "appStore": "es-ES" },
+      "fr-FR": { "language": "fr",      "appStore": "fr-FR" },
+      "hi-IN": { "language": "hi",      "appStore": "hi" },
+      "it-IT": { "language": "it",      "appStore": "it" },
+      "ja-JP": { "language": "ja",      "appStore": "ja" },
+      "ko-KR": { "language": "ko",      "appStore": "ko" },
+      "nl-NL": { "language": "nl",      "appStore": "nl-NL" },
+      "pl-PL": { "language": "pl",      "appStore": "pl" },
+      "pt-BR": { "language": "pt-BR",   "appStore": "pt-BR" },
+      "ru-RU": { "language": "ru",      "appStore": "ru" },
+      "sv-SE": { "language": "sv",      "appStore": "sv" },
+      "tr-TR": { "language": "tr",      "appStore": "tr" },
+      "uk":    { "language": "uk",      "appStore": "uk" },
+      "zh-CN": { "language": "zh-Hans", "appStore": "zh-Hans" },
+      "zh-TW": { "language": "zh-Hant", "appStore": "zh-Hant" }
+    }
   }
 }

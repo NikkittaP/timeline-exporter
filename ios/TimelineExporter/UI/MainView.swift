@@ -14,17 +14,22 @@ struct MainView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
-                FileSection(importing: $importing)
-                if store.phase == .loaded, let core = store.timeline {
-                    FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
-                    PreviewSection()
-                    switch store.contentKind {
-                    case .track: EmptyView()
-                    case .trips: TripsSection()
-                    case .places: PlacesSection()
+            ScrollViewReader { proxy in
+                Form {
+                    FileSection(importing: $importing)
+                    if store.phase == .loaded, let core = store.timeline {
+                        FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
+                        PreviewSection()
+                        switch store.contentKind {
+                        case .track: EmptyView()
+                        case .trips: TripsSection()
+                        case .places: PlacesSection()
+                        }
+                        ExportSection()
                     }
-                    ExportSection()
+                }
+                .task(id: store.phase == .loaded) {
+                    await frameScreenshot(proxy)
                 }
             }
             .navigationTitle(L.s("app_name"))
@@ -61,6 +66,13 @@ struct MainView: View {
         }
     }
 
+    /// A screenshot scene's row, scrolled into view once the scene has settled.
+    private func frameScreenshot(_ proxy: ScrollViewProxy) async {
+        guard store.phase == .loaded, let anchor = ScreenshotMode.anchor else { return }
+        try? await Task.sleep(for: .seconds(2))
+        proxy.scrollTo(anchor.id, anchor: anchor.bottom ? .bottom : .top)
+    }
+
     private var history: [WhatsNewEntry] {
         WhatsNew.history(WhatsNew.notes, current: WhatsNew.currentVersion)
     }
@@ -92,6 +104,7 @@ struct MainView: View {
     /// After an update, the notes of every release since the last one seen;
     /// a fresh install just records its version.
     private func showWhatsNew() {
+        guard !ScreenshotMode.isActive else { return }
         let current = WhatsNew.currentVersion
         let pending = WhatsNew.pending(WhatsNew.notes, seen: whatsNewSeen, current: current)
         whatsNewSeen = current
@@ -374,6 +387,7 @@ private struct ExportSection: View {
                 EmptyView()
             }
             .pickerStyle(.segmented)
+            .id("export")
             if store.contentKind == .track {
                 Toggle(L.s("map_color_by_day"), isOn: $store.colorByDay)
             }
@@ -393,6 +407,9 @@ private struct ExportSection: View {
         }
         .sheet(isPresented: $mapImage) {
             MapImageSheet()
+        }
+        .task {
+            if ScreenshotMode.opensMapImage, await ScreenshotMode.settled(store) { mapImage = true }
         }
     }
 

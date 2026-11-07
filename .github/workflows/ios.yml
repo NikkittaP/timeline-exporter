@@ -281,6 +281,7 @@ jobs:
           trap 'echo "::error title=CI script tests::$BASH_COMMAND failed"' ERR
           python3 tools/test_ci_annotate.py
           python3 tools/ios/test_simulator_udid.py
+          python3 tools/ios/test_screenshot_device.py
           python3 tools/ios/test_make_app_icon.py
           python3 tools/ios/test_asc_builds.py
           python3 tools/ios/test_check_ipa.py
@@ -440,6 +441,24 @@ jobs:
           fi
           grep -E "Test Case .*(passed|failed)|Executed|\*\* TEST" "$log" || true
 
+      # The store screenshots' UI test (ios-screens.yml) is compiled on every
+      # run, so a break shows up here and not on the day the shots are wanted.
+      - name: Screenshot UI test builds
+        if: env.MODE == 'validate'
+        run: |
+          set -euo pipefail
+          mkdir -p "$LOGS"
+          log="$LOGS/xcodebuild-uitests.log"
+          cd ios
+          if ! xcodebuild build-for-testing -project TimelineExporter.xcodeproj -scheme StoreScreenshots \
+              -configuration Debug -destination 'generic/platform=iOS Simulator' \
+              CODE_SIGNING_ALLOWED=NO > "$log" 2>&1; then
+            grep -E "error:|\*\* " "$log" | head -n 60 || true
+            tail -n 30 "$log"
+            exit 1
+          fi
+          grep -E "\*\* " "$log" || true
+
       # tools/ios/build_ipa.sh annotates its own failures.
       - name: Archive and export IPA
         if: env.MODE != 'validate'
@@ -528,6 +547,7 @@ jobs:
           python3 tools/ci_annotate.py gradle.log shared/build/test-results
           --xcodebuild "$LOGS/xcodebuild-device.log"
           --xcodebuild "$LOGS/xcodebuild-test.log"
+          --xcodebuild "$LOGS/xcodebuild-uitests.log"
           --xcodebuild "$LOGS/xcodebuild-archive.log"
           --xcodebuild "$LOGS/xcodebuild-export.log"
           --xcodebuild "$LOGS/xcodebuild-upload.log"
