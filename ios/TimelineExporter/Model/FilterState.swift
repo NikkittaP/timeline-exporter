@@ -65,6 +65,53 @@ struct FilterState: Equatable {
     }
 }
 
+/// The collapsed Movement row's text. Names whichever side is shorter, so
+/// four of five modes do not push the distance off the end of the row.
+enum MovementSummary {
+    static func text(selected: [Movement], available: [Movement], meters: Double,
+                     movingOnly: Bool, places: Int) -> String {
+        // Arabic lists with "، " and Chinese and Japanese with "、", not ", ".
+        let separator = L.s("list_separator")
+        let chosen = Set(selected)
+        let missing = available.filter { !chosen.contains($0) }
+        var parts: [String]
+        if selected.isEmpty {
+            parts = [L.s("filter_movement_none")]
+        } else if missing.isEmpty {
+            parts = [L.s("date_preset_all_short")]
+        } else if missing.count < selected.count {
+            parts = [L.f("filter_movement_all_except", missing.map(\.label).joined(separator: separator))]
+        } else {
+            parts = [selected.map(\.label).joined(separator: separator)]
+        }
+        if meters > 0 { parts.append(Fmt.km(meters)) }
+        if movingOnly { parts.append(L.s("filter_moving_only_short")) }
+        if places > 0 { parts.append(L.plural("places_count", places)) }
+        return parts.joined(separator: " · ")
+    }
+}
+
+/// The trips of one calendar year, for the list's year sections.
+struct TripYear: Identifiable, Equatable {
+    let year: Int
+    var trips: [TripItem]
+    var id: Int { year }
+
+    /// [trips] are newest first; so are the years, and the trips inside each.
+    static func group(_ trips: [TripItem], calendar: Calendar = .current) -> [TripYear] {
+        var years: [TripYear] = []
+        for trip in trips {
+            let year = calendar.component(.year, from: trip.startDay)
+            if let last = years.indices.last, years[last].year == year {
+                years[last].trips.append(trip)
+            } else {
+                years.append(TripYear(year: year, trips: [trip]))
+            }
+        }
+        return years
+    }
+}
+
 /// What the screen shows and step 4 writes: the Track / Trips / Places switch.
 enum ContentKind: String, CaseIterable, Identifiable {
     case track, trips, places

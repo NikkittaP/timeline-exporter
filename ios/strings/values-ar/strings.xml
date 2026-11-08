@@ -40,4 +40,18 @@
     <string name="pick_file_button">اختيار ملف المخطط الزمني</string>
     <string name="error_not_timeline">لا يبدو هذا ملف مخطط زمني من خرائط Google. اختر الملف الذي حفظته من خرائط Google (عادةً location-history.json) — الخطوات في المساعدة.</string>
     <string name="language_settings_hint">يحفظ iOS لغة كل تطبيق في الإعدادات.</string>
+    <string name="ios_empty_title">اعرض مخططك الزمني واحفظه</string>
+    <string name="ios_empty_body">افتح ملف المخطط الزمني من خرائط Google لعرضه على الخريطة وحفظه بتنسيق GPX أو KML أو GeoJSON أو CSV.</string>
+    <string name="ios_how_to_get_data">كيف أحصل على بيانات المخطط الزمني؟</string>
+    <string name="ios_quick_step3_top">عُد إلى هنا وانقر على **اختيار ملف المخطط الزمني**.</string>
+    <string name="ios_export_run_save">حفظ %1$s</string>
+    <string name="ios_export_run_share">مشاركة %1$s</string>
+    <string name="ios_map_image_entry_hint">صورة لهذا المسار لحفظها أو مشاركتها</string>
+    <string name="ios_map_image_distance_note">المسافة المسجّلة هي مجموع الخط المرسوم في هذه الصورة، لذا قد تختلف عن المسافة المقطوعة في الرحلة.</string>
+    <string name="ios_map_status_loading">جارٍ تحميل الخريطة…</string>
+    <string name="ios_map_status_tiles">مربعات الخريطة غير متاحة. ما زالت بياناتك معروضة.</string>
+    <string name="ios_map_status_failed">تعذّر تحميل الخريطة.</string>
+    <string name="ios_trips_clear_marks">إلغاء التحديد</string>
+    <string name="ios_place_unnamed">مكان بلا اسم</string>
+    <string name="ios_trip_on_map">معروضة على الخريطة</string>
 </resources>

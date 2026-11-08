@@ -61,8 +61,12 @@ final class TimelineStore {
     /// Ticked for export; none ticked exports every visible trip.
     private(set) var checkedTrips: Set<Int64> = []
     private(set) var selectedPlace: String?
+    /// The day picked in the map's legend (epoch day); nil shows every day.
+    private(set) var selectedDay: Int64?
     /// What the map draws for Track and Trips.
     private(set) var mapLine = MapLine()
+    /// Where the user left the map, shared by the small and full-screen maps.
+    let mapCamera = MapCameraMemory()
     /// Bumped when a rename lands, so views showing names refresh.
     private(set) var labelsVersion = 0
     let labels: PlaceLabels
@@ -178,6 +182,7 @@ final class TimelineStore {
         selectedTrip = nil
         checkedTrips = []
         selectedPlace = nil
+        selectedDay = nil
         mapLine = MapLine()
     }
 
@@ -185,6 +190,28 @@ final class TimelineStore {
 
     func setRange(_ range: ClosedRange<Date>?) {
         update { $0.range = range }
+    }
+
+    /// Every filter back to "no constraint".
+    func resetFilters() {
+        update { $0 = FilterState() }
+    }
+
+    /// The range in force: the filter's, or the whole file's when it has none.
+    var effectiveRange: ClosedRange<Date>? {
+        if let r = filter.range { return r }
+        guard let first = timeline?.firstPoint, let last = timeline?.lastPoint, first <= last else { return nil }
+        return first...last
+    }
+
+    /// The Movement row's one line, as on Android.
+    var movementSummary: String {
+        let on = availableMovements.filter { isMovementOn($0) }
+        let meters = breakdown.filter { isMovementOn($0.movement) }.reduce(0) { $0 + $1.meters }
+        return MovementSummary.text(
+            selected: on, available: availableMovements, meters: meters,
+            movingOnly: filter.movingOnly, places: places.count
+        )
     }
 
     /// Tick or untick one movement group. nil ("everything") becomes every
@@ -262,6 +289,9 @@ final class TimelineStore {
         breakdown = result.1
         places = result.2
         mapLine = result.3
+        if let day = selectedDay, !mapLine.days.contains(where: { $0.epochDay == day }) {
+            selectedDay = nil
+        }
         if let key = selectedPlace, !places.contains(where: { $0.key == key }) {
             selectedPlace = nil
         }
@@ -277,17 +307,22 @@ final class TimelineStore {
 
     /// The line on the map now, with its statistics, for the Map image.
     /// Places are counted only in the track view, where the place list
-    /// describes the same selection the route does.
-    func mapImageContent() async -> (line: MapLine, stats: ImageStats?, placeCount: Int?) {
-        let line = mapLine
-        guard let core = timeline else { return (line, nil, nil) }
+    /// describes the same selection the route does. [wanted] is the image's
+    /// own colour-by-day switch for the track; nil takes the map's line as is.
+    func mapImageContent(colorByDay wanted: Bool? = nil) async -> (line: MapLine, stats: ImageStats?, placeCount: Int?) {
+        let current = mapLine
+        guard let core = timeline else { return (current, nil, nil) }
         let f = filter
         let kind = contentKind
         let keys = mapTripKeys
-        let stats = await Task.detached(priority: .userInitiated) {
-            kind == .trips ? core.tripsImageStats(f, keys: keys) : core.trackImageStats(f)
+        let redraw = kind == .track && wanted != nil && wanted != colorByDay
+        let byDay = wanted ?? colorByDay
+        let result = await Task.detached(priority: .userInitiated) { () -> (MapLine?, ImageStats?) in
+            let line = redraw ? core.mapTrack(f, colorByDay: byDay) : nil
+            let stats = kind == .trips ? core.tripsImageStats(f, keys: keys) : core.trackImageStats(f)
+            return (line, stats)
         }.value
-        return (line, stats, kind == .track ? places.count : nil)
+        return (result.0 ?? current, result.1, kind == .track ? places.count : nil)
     }
 
     // MARK: Trips and places
@@ -335,6 +370,10 @@ final class TimelineStore {
 
     func selectPlace(_ key: String?) {
         selectedPlace = key
+    }
+
+    func selectDay(_ day: Int64?) {
+        selectedDay = day
     }
 
     func rename(_ key: String, to label: String?) {

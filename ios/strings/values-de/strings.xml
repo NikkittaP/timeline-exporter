@@ -40,4 +40,18 @@
     <string name="pick_file_button">Zeitachsen-Datei wählen</string>
     <string name="error_not_timeline">Das sieht nicht nach einer Google Maps-Zeitachsen-Datei aus. Wähle die Datei, die du aus Google Maps gesichert hast (meist location-history.json) — die Schritte stehen in der Hilfe.</string>
     <string name="language_settings_hint">iOS legt die Sprache jeder App in den Einstellungen fest.</string>
+    <string name="ios_empty_title">Zeitachse ansehen und sichern</string>
+    <string name="ios_empty_body">Öffne deine Google-Maps-Zeitachse, sieh sie auf der Karte und speichere sie als GPX, KML, GeoJSON oder CSV.</string>
+    <string name="ios_how_to_get_data">Wie bekomme ich meine Zeitachsen-Daten?</string>
+    <string name="ios_quick_step3_top">Komm hierher zurück und tippe auf **Zeitachsen-Datei wählen**.</string>
+    <string name="ios_export_run_save">%1$s speichern</string>
+    <string name="ios_export_run_share">%1$s teilen</string>
+    <string name="ios_map_image_entry_hint">Ein Bild dieser Route zum Speichern oder Teilen</string>
+    <string name="ios_map_image_distance_note">Die aufgezeichnete Strecke summiert die Linie auf diesem Bild und kann daher von der Reisestrecke einer Reise abweichen.</string>
+    <string name="ios_map_status_loading">Karte wird geladen…</string>
+    <string name="ios_map_status_tiles">Kartenkacheln nicht verfügbar. Deine Daten werden weiterhin angezeigt.</string>
+    <string name="ios_map_status_failed">Die Karte konnte nicht geladen werden.</string>
+    <string name="ios_trips_clear_marks">Markierungen löschen</string>
+    <string name="ios_place_unnamed">Unbenannter Ort</string>
+    <string name="ios_trip_on_map">Auf der Karte angezeigt</string>
 </resources>

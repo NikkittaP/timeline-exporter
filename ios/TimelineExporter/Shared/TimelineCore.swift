@@ -268,11 +268,23 @@ struct MapLine: Equatable {
     struct Piece: Equatable {
         let range: Range<Int>
         let color: String
+        /// The local day (epoch day) when the line is cut by day.
+        var day: Int64? = nil
+    }
+
+    /// One day of a line coloured by day: the map's day legend.
+    struct Day: Equatable, Identifiable {
+        let epochDay: Int64
+        let color: String
+        var id: Int64 { epochDay }
+        var date: Date { CoreTimeline.localDay(epochDay) }
     }
 
     var latitudes: [Double] = []
     var longitudes: [Double] = []
     var pieces: [Piece] = []
+    /// Each day once, in track order; empty unless coloured by day.
+    var days: [Day] = []
     var isEmpty: Bool { latitudes.isEmpty }
 }
 
@@ -378,10 +390,17 @@ extension CoreTimeline {
             line.longitudes.append(t.longitudes.get(index: i))
         }
         let pieces = Int(t.pieceCount)
+        var seenDays = Set<Int64>()
         for i in 0..<pieces {
             let from = Int(t.pieceStarts.get(index: Int32(i)))
             let to = i + 1 < pieces ? Int(t.pieceStarts.get(index: Int32(i + 1))) : n
-            line.pieces.append(MapLine.Piece(range: from..<to, color: t.pieceColors[i]))
+            // Long.MIN_VALUE is MAP_NO_DAY: the piece is not one day's.
+            let rawDay = t.pieceDays.get(index: Int32(i))
+            let day: Int64? = rawDay == Int64.min ? nil : rawDay
+            line.pieces.append(MapLine.Piece(range: from..<to, color: t.pieceColors[i], day: day))
+            if let day, seenDays.insert(day).inserted {
+                line.days.append(MapLine.Day(epochDay: day, color: t.pieceColors[i]))
+            }
         }
         return line
     }

@@ -40,4 +40,18 @@
     <string name="pick_file_button">選擇時間軸檔案</string>
     <string name="error_not_timeline">這看起來不像 Google 地圖的時間軸檔案。請選擇你從 Google 地圖儲存的檔案（通常為 location-history.json）——步驟請見「說明」。</string>
     <string name="language_settings_hint">iOS 在「設定」中為每個 App 設定語言。</string>
+    <string name="ios_empty_title">查看並儲存你的時間軸</string>
+    <string name="ios_empty_body">開啟 Google 地圖時間軸檔案，在地圖上查看，並儲存為 GPX、KML、GeoJSON 或 CSV。</string>
+    <string name="ios_how_to_get_data">如何取得時間軸資料?</string>
+    <string name="ios_quick_step3_top">回到這裡，輕觸 **選擇時間軸檔案**。</string>
+    <string name="ios_export_run_save">儲存 %1$s</string>
+    <string name="ios_export_run_share">分享 %1$s</string>
+    <string name="ios_map_image_entry_hint">儲存或分享此路線的圖片</string>
+    <string name="ios_map_image_distance_note">記錄距離是此圖片上線條的總和，因此可能與行程的實際里程不同。</string>
+    <string name="ios_map_status_loading">正在載入地圖…</string>
+    <string name="ios_map_status_tiles">地圖圖磚無法使用。你的資料仍會顯示。</string>
+    <string name="ios_map_status_failed">無法載入地圖。</string>
+    <string name="ios_trips_clear_marks">清除標記</string>
+    <string name="ios_place_unnamed">未命名地點</string>
+    <string name="ios_trip_on_map">已顯示在地圖上</string>
 </resources>

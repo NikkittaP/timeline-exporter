@@ -217,6 +217,9 @@ class TimelineSessionTest {
         assertEquals(listOf(0, 2), byDay.pieceStarts.toList())
         assertEquals(2, byDay.pieceColors.distinct().size)
         assertTrue(byDay.pieceColors.all { it.startsWith("#") })
+        // The day legend and the day highlight read these.
+        assertEquals(2, byDay.pieceDays.toList().distinct().size)
+        assertEquals(listOf(MAP_NO_DAY), plain.pieceDays.toList())
     }
 
     @Test

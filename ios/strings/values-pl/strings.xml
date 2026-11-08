@@ -40,4 +40,18 @@
     <string name="pick_file_button">Wybierz plik osi czasu</string>
     <string name="error_not_timeline">To nie wygląda na plik osi czasu Map Google. Wybierz plik zapisany z Map Google (zwykle location-history.json) — kroki są w Pomocy.</string>
     <string name="language_settings_hint">iOS ustawia język każdej aplikacji w Ustawieniach.</string>
+    <string name="ios_empty_title">Zobacz i zapisz swoją oś czasu</string>
+    <string name="ios_empty_body">Otwórz plik osi czasu z Map Google, aby zobaczyć ją na mapie i zapisać jako GPX, KML, GeoJSON lub CSV.</string>
+    <string name="ios_how_to_get_data">Jak uzyskać dane osi czasu?</string>
+    <string name="ios_quick_step3_top">Wróć tutaj i dotknij **Wybierz plik osi czasu**.</string>
+    <string name="ios_export_run_save">Zapisz %1$s</string>
+    <string name="ios_export_run_share">Udostępnij %1$s</string>
+    <string name="ios_map_image_entry_hint">Obraz tej trasy do zapisania lub udostępnienia</string>
+    <string name="ios_map_image_distance_note">Zarejestrowany dystans sumuje linię na tym obrazie, więc może różnić się od dystansu przebytego w podróży.</string>
+    <string name="ios_map_status_loading">Wczytywanie mapy…</string>
+    <string name="ios_map_status_tiles">Kafelki mapy są niedostępne. Twoje dane są nadal widoczne.</string>
+    <string name="ios_map_status_failed">Nie udało się wczytać mapy.</string>
+    <string name="ios_trips_clear_marks">Wyczyść oznaczenia</string>
+    <string name="ios_place_unnamed">Miejsce bez nazwy</string>
+    <string name="ios_trip_on_map">Widoczna na mapie</string>
 </resources>

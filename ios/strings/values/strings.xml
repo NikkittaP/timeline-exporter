@@ -40,4 +40,18 @@
     <string name="pick_file_button">Choose Timeline file</string>
     <string name="error_not_timeline">This does not look like a Google Maps Timeline file. Choose the file you saved from Google Maps (usually location-history.json) — Help shows the steps.</string>
     <string name="language_settings_hint">iOS keeps each app\'s language in Settings.</string>
+    <string name="ios_empty_title">See and save your Timeline</string>
+    <string name="ios_empty_body">Open your Google Maps Timeline file to see it on a map and save it as GPX, KML, GeoJSON or CSV.</string>
+    <string name="ios_how_to_get_data">How to get Timeline data?</string>
+    <string name="ios_quick_step3_top">Come back here and tap **Choose Timeline file**.</string>
+    <string name="ios_export_run_save">Save %1$s</string>
+    <string name="ios_export_run_share">Share %1$s</string>
+    <string name="ios_map_image_entry_hint">A picture of this route to save or share</string>
+    <string name="ios_map_image_distance_note">Tracked distance adds up the line on this image, so it can differ from a trip’s travelled distance.</string>
+    <string name="ios_map_status_loading">Loading map…</string>
+    <string name="ios_map_status_tiles">Map tiles unavailable. Your data is still shown.</string>
+    <string name="ios_map_status_failed">The map could not be loaded.</string>
+    <string name="ios_trips_clear_marks">Clear marks</string>
+    <string name="ios_place_unnamed">Unnamed place</string>
+    <string name="ios_trip_on_map">Shown on the map</string>
 </resources>

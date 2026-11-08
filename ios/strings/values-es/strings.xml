@@ -40,4 +40,18 @@
     <string name="pick_file_button">Elegir archivo de cronología</string>
     <string name="error_not_timeline">Esto no parece un archivo de cronología de Google Maps. Elige el archivo que guardaste desde Google Maps (normalmente location-history.json); la Ayuda muestra los pasos.</string>
     <string name="language_settings_hint">iOS guarda el idioma de cada app en Ajustes.</string>
+    <string name="ios_empty_title">Ve y guarda tu cronología</string>
+    <string name="ios_empty_body">Abre tu archivo de cronología de Google Maps para verla en un mapa y guardarla como GPX, KML, GeoJSON o CSV.</string>
+    <string name="ios_how_to_get_data">¿Cómo obtener los datos de cronología?</string>
+    <string name="ios_quick_step3_top">Vuelve aquí y toca **Elegir archivo de cronología**.</string>
+    <string name="ios_export_run_save">Guardar %1$s</string>
+    <string name="ios_export_run_share">Compartir %1$s</string>
+    <string name="ios_map_image_entry_hint">Una imagen de esta ruta para guardar o compartir</string>
+    <string name="ios_map_image_distance_note">La distancia registrada suma la línea de esta imagen, por lo que puede diferir de la distancia recorrida de un viaje.</string>
+    <string name="ios_map_status_loading">Cargando mapa…</string>
+    <string name="ios_map_status_tiles">Mosaicos del mapa no disponibles. Tus datos se siguen mostrando.</string>
+    <string name="ios_map_status_failed">No se pudo cargar el mapa.</string>
+    <string name="ios_trips_clear_marks">Quitar marcas</string>
+    <string name="ios_place_unnamed">Lugar sin nombre</string>
+    <string name="ios_trip_on_map">Visible en el mapa</string>
 </resources>

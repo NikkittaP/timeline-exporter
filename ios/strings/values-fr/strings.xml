@@ -40,4 +40,18 @@
     <string name="pick_file_button">Choisir le fichier Timeline</string>
     <string name="error_not_timeline">Ce fichier ne ressemble pas à une Timeline Google Maps. Choisissez le fichier enregistré depuis Google Maps (généralement location-history.json) — l'Aide montre les étapes.</string>
     <string name="language_settings_hint">iOS règle la langue de chaque app dans Réglages.</string>
+    <string name="ios_empty_title">Affichez et enregistrez votre Timeline</string>
+    <string name="ios_empty_body">Ouvrez votre fichier Timeline de Google Maps pour le voir sur une carte et l’enregistrer en GPX, KML, GeoJSON ou CSV.</string>
+    <string name="ios_how_to_get_data">Comment obtenir les données Timeline ?</string>
+    <string name="ios_quick_step3_top">Revenez ici et touchez **Choisir le fichier Timeline**.</string>
+    <string name="ios_export_run_save">Enregistrer %1$s</string>
+    <string name="ios_export_run_share">Partager %1$s</string>
+    <string name="ios_map_image_entry_hint">Une image de cet itinéraire à enregistrer ou partager</string>
+    <string name="ios_map_image_distance_note">La distance enregistrée additionne la ligne de cette image : elle peut différer de la distance parcourue d’un voyage.</string>
+    <string name="ios_map_status_loading">Chargement de la carte…</string>
+    <string name="ios_map_status_tiles">Tuiles de carte indisponibles. Vos données restent affichées.</string>
+    <string name="ios_map_status_failed">Impossible de charger la carte.</string>
+    <string name="ios_trips_clear_marks">Effacer les coches</string>
+    <string name="ios_place_unnamed">Lieu sans nom</string>
+    <string name="ios_trip_on_map">Affiché sur la carte</string>
 </resources>

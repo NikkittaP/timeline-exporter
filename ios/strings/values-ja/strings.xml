@@ -40,4 +40,18 @@
     <string name="pick_file_button">タイムラインファイルを選択</string>
     <string name="error_not_timeline">Google マップのタイムラインファイルではないようです。Google マップから保存したファイル（通常は location-history.json）を選んでください。手順はヘルプにあります。</string>
     <string name="language_settings_hint">iOS では各アプリの言語を「設定」で選びます。</string>
+    <string name="ios_empty_title">タイムラインを見て保存</string>
+    <string name="ios_empty_body">Google マップのタイムラインファイルを開いて地図で確認し、GPX、KML、GeoJSON、CSV で保存できます。</string>
+    <string name="ios_how_to_get_data">タイムラインのデータを入手するには?</string>
+    <string name="ios_quick_step3_top">ここに戻り、**タイムラインファイルを選択** をタップします。</string>
+    <string name="ios_export_run_save">%1$s を保存</string>
+    <string name="ios_export_run_share">%1$s を共有</string>
+    <string name="ios_map_image_entry_hint">このルートの画像を保存または共有</string>
+    <string name="ios_map_image_distance_note">記録された距離はこの画像の線の合計なので、旅行の移動距離とは異なる場合があります。</string>
+    <string name="ios_map_status_loading">地図を読み込み中…</string>
+    <string name="ios_map_status_tiles">地図タイルを利用できません。データは引き続き表示されます。</string>
+    <string name="ios_map_status_failed">地図を読み込めませんでした。</string>
+    <string name="ios_trips_clear_marks">チェックを解除</string>
+    <string name="ios_place_unnamed">名前のない場所</string>
+    <string name="ios_trip_on_map">地図に表示中</string>
 </resources>

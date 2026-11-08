@@ -40,4 +40,18 @@
     <string name="pick_file_button">Timeline फ़ाइल चुनें</string>
     <string name="error_not_timeline">यह Google Maps की Timeline फ़ाइल नहीं लगती। Google Maps से सहेजी गई फ़ाइल चुनें (आमतौर पर location-history.json) — चरण सहायता में हैं।</string>
     <string name="language_settings_hint">iOS हर ऐप की भाषा Settings में रखता है।</string>
+    <string name="ios_empty_title">अपनी Timeline देखें और सहेजें</string>
+    <string name="ios_empty_body">अपनी Google Maps Timeline फ़ाइल खोलें, उसे मैप पर देखें और GPX, KML, GeoJSON या CSV के रूप में सहेजें।</string>
+    <string name="ios_how_to_get_data">Timeline डेटा कैसे पाएँ?</string>
+    <string name="ios_quick_step3_top">यहाँ वापस आएँ और **Timeline फ़ाइल चुनें** पर टैप करें।</string>
+    <string name="ios_export_run_save">%1$s सहेजें</string>
+    <string name="ios_export_run_share">%1$s शेयर करें</string>
+    <string name="ios_map_image_entry_hint">सहेजने या शेयर करने के लिए इस मार्ग की तस्वीर</string>
+    <string name="ios_map_image_distance_note">दर्ज की गई दूरी इस तस्वीर की रेखा का योग है, इसलिए यह यात्रा की तय दूरी से अलग हो सकती है।</string>
+    <string name="ios_map_status_loading">मैप लोड हो रहा है…</string>
+    <string name="ios_map_status_tiles">मैप टाइल उपलब्ध नहीं हैं। आपका डेटा अब भी दिख रहा है।</string>
+    <string name="ios_map_status_failed">मैप लोड नहीं हो सका।</string>
+    <string name="ios_trips_clear_marks">निशान हटाएँ</string>
+    <string name="ios_place_unnamed">बिना नाम की जगह</string>
+    <string name="ios_trip_on_map">मैप पर दिख रही है</string>
 </resources>

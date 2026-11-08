@@ -40,4 +40,18 @@
     <string name="pick_file_button">Kies tijdlijnbestand</string>
     <string name="error_not_timeline">Dit lijkt geen tijdlijnbestand van Google Maps. Kies het bestand dat je uit Google Maps hebt bewaard (meestal location-history.json); de Help toont de stappen.</string>
     <string name="language_settings_hint">iOS stelt de taal van elke app in bij Instellingen.</string>
+    <string name="ios_empty_title">Bekijk en bewaar je tijdlijn</string>
+    <string name="ios_empty_body">Open je Google Maps-tijdlijnbestand om het op een kaart te zien en op te slaan als GPX, KML, GeoJSON of CSV.</string>
+    <string name="ios_how_to_get_data">Hoe krijg ik mijn tijdlijngegevens?</string>
+    <string name="ios_quick_step3_top">Kom hier terug en tik op **Kies tijdlijnbestand**.</string>
+    <string name="ios_export_run_save">%1$s bewaren</string>
+    <string name="ios_export_run_share">%1$s delen</string>
+    <string name="ios_map_image_entry_hint">Een afbeelding van deze route om te bewaren of te delen</string>
+    <string name="ios_map_image_distance_note">De vastgelegde afstand telt de lijn op deze afbeelding op en kan dus afwijken van de afgelegde afstand van een reis.</string>
+    <string name="ios_map_status_loading">Kaart laden…</string>
+    <string name="ios_map_status_tiles">Kaarttegels niet beschikbaar. Je gegevens blijven zichtbaar.</string>
+    <string name="ios_map_status_failed">De kaart kon niet worden geladen.</string>
+    <string name="ios_trips_clear_marks">Markeringen wissen</string>
+    <string name="ios_place_unnamed">Naamloze plek</string>
+    <string name="ios_trip_on_map">Op de kaart getoond</string>
 </resources>

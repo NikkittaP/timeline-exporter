@@ -40,4 +40,18 @@
     <string name="pick_file_button">Выбрать файл Хронологии</string>
     <string name="error_not_timeline">Это не похоже на файл Хронологии Google Карт. Выберите файл, сохранённый из Google Карт (обычно location-history.json), — шаги есть в Справке.</string>
     <string name="language_settings_hint">iOS хранит язык каждого приложения в Настройках.</string>
+    <string name="ios_empty_title">Смотрите и сохраняйте Хронологию</string>
+    <string name="ios_empty_body">Откройте файл Хронологии Google Карт, чтобы увидеть её на карте и сохранить в GPX, KML, GeoJSON или CSV.</string>
+    <string name="ios_how_to_get_data">Как получить данные Хронологии?</string>
+    <string name="ios_quick_step3_top">Вернитесь сюда и нажмите **Выбрать файл Хронологии**.</string>
+    <string name="ios_export_run_save">Сохранить %1$s</string>
+    <string name="ios_export_run_share">Поделиться: %1$s</string>
+    <string name="ios_map_image_entry_hint">Картинка этого маршрута, чтобы сохранить или отправить</string>
+    <string name="ios_map_image_distance_note">Записанное расстояние — это сумма линии на картинке, поэтому оно может отличаться от пройденного расстояния поездки.</string>
+    <string name="ios_map_status_loading">Загрузка карты…</string>
+    <string name="ios_map_status_tiles">Фрагменты карты недоступны. Ваши данные по-прежнему показаны.</string>
+    <string name="ios_map_status_failed">Не удалось загрузить карту.</string>
+    <string name="ios_trips_clear_marks">Снять отметки</string>
+    <string name="ios_place_unnamed">Место без названия</string>
+    <string name="ios_trip_on_map">Показана на карте</string>
 </resources>

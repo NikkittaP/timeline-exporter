@@ -6,16 +6,23 @@ import UIKit
 struct MapImageSheet: View {
     @Environment(TimelineStore.self) private var store
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     @AppStorage("map_image_aspect") private var aspectRaw = MapImageAspect.portrait.rawValue
     @AppStorage("map_image_resolution") private var resolutionRaw = MapImageResolution.standard.rawValue
     @AppStorage("map_image_format") private var formatRaw = MapImageFormat.png.rawValue
     @AppStorage("map_image_show_stats") private var showStats = true
     @AppStorage("map_image_show_endpoints") private var showEndpoints = true
+    @AppStorage("map_image_color_by_day") private var colorByDay = true
 
     @State private var content: (line: MapLine, stats: ImageStats?, placeCount: Int?)?
+    /// Bumped each time [content] arrives, so the preview follows it.
+    @State private var contentVersion = 0
     @State private var preview: UIImage?
     @State private var rendering = false
+    @State private var renderFailed = false
+    /// The newest render: an older one finishing late must not touch the screen.
+    @State private var renderID = 0
     @State private var busy: String?
     @State private var message: String?
     @State private var failed = false
@@ -25,19 +32,37 @@ struct MapImageSheet: View {
     private var format: MapImageFormat { MapImageFormat(rawValue: formatRaw) ?? .png }
     private var spec: MapImageSpec { MapImageSpec(aspect: aspect, resolution: resolution) }
 
+    /// Only the track has days to colour; trips are coloured per trip.
+    private var showsColorByDay: Bool { store.contentKind == .track }
+
+    /// What the line depends on; a change fetches it again.
+    private var contentKey: String { showsColorByDay ? "\(colorByDay)" : "line" }
+
     /// What the preview depends on; a change renders it again.
-    private var previewKey: String { "\(aspectRaw)|\(showStats)|\(showEndpoints)|\(content != nil)" }
+    private var previewKey: String { "\(aspectRaw)|\(showStats)|\(showEndpoints)|\(contentVersion)" }
+
+    private var ratio: CGFloat { CGFloat(spec.widthPx) / CGFloat(spec.heightPx) }
+
+    /// As tall as the shape needs, without pushing the controls off the screen.
+    private var previewHeight: CGFloat {
+        let regular = sizeClass == .regular
+        let budget: CGFloat = regular ? 640 : 340
+        let tallest: CGFloat = regular ? 560 : 400
+        return max(200, min(tallest, budget / ratio))
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    previewView
+                    Color(.tertiarySystemFill)
+                        .aspectRatio(ratio, contentMode: .fit)
+                        .overlay { previewView }
+                        .clipShape(RoundedRectangle(cornerRadius: Design.controlRadius))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 340)
+                        .frame(height: previewHeight)
                         .listRowInsets(EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12))
-                } footer: {
-                    Text(L.f("map_image_size", spec.widthPx, spec.heightPx, format.label))
+                        .listRowBackground(Color.clear)
                 }
                 Section {
                     Picker(L.s("map_image_aspect"), selection: $aspectRaw) {
@@ -52,32 +77,21 @@ struct MapImageSheet: View {
                     }
                     Toggle(L.s("map_image_show_stats"), isOn: $showStats)
                     Toggle(L.s("map_image_show_endpoints"), isOn: $showEndpoints)
-                }
-                Section {
-                    Button {
-                        Task { await deliver(share: false) }
-                    } label: {
-                        Label(L.s("map_image_save"), systemImage: "square.and.arrow.down")
+                    if showsColorByDay {
+                        Toggle(L.s("map_color_by_day"), isOn: $colorByDay)
+                            .accessibilityIdentifier("mapImageColorByDay")
                     }
-                    .accessibilityIdentifier("mapImageSave")
-                    Button {
-                        Task { await deliver(share: true) }
-                    } label: {
-                        Label(L.s("map_image_share"), systemImage: "square.and.arrow.up")
-                    }
-                    .accessibilityIdentifier("mapImageShare")
                 } footer: {
-                    if let busy {
-                        HStack(spacing: 6) {
-                            ProgressView()
-                            Text(busy)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(L.f("map_image_size", spec.widthPx, spec.heightPx, format.label))
+                            .monospacedDigit()
+                        if showStats {
+                            Text(L.s("ios_map_image_distance_note"))
                         }
-                    } else if let message {
-                        Text(message).foregroundStyle(failed ? .red : .green)
                     }
                 }
-                .disabled(busy != nil || content == nil || failedToDraw)
             }
+            .safeAreaInset(edge: .bottom) { actionBar }
             .navigationTitle(L.s("map_image_title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -85,8 +99,11 @@ struct MapImageSheet: View {
                     Button(L.s("date_dialog_cancel")) { dismiss() }
                 }
             }
-            .task {
-                content = await store.mapImageContent()
+            .task(id: contentKey) {
+                let loaded = await store.mapImageContent(colorByDay: showsColorByDay ? colorByDay : nil)
+                guard !Task.isCancelled else { return }
+                content = loaded
+                contentVersion += 1
             }
             .task(id: previewKey) {
                 await renderPreview()
@@ -96,27 +113,72 @@ struct MapImageSheet: View {
 
     private var failedToDraw: Bool { content?.line.isEmpty ?? false }
 
+    /// Save first and largest; always on screen, whatever the Form's scroll.
+    private var actionBar: some View {
+        VStack(spacing: 8) {
+            if let busy {
+                HStack(spacing: 6) {
+                    ProgressView()
+                    Text(busy)
+                }
+                .font(.footnote)
+            } else if let message {
+                Text(message).font(.footnote).foregroundStyle(failed ? .red : .green)
+            }
+            HStack(spacing: 12) {
+                Button {
+                    Task { await deliver(share: true) }
+                } label: {
+                    Label(L.s("map_image_share"), systemImage: "square.and.arrow.up")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .accessibilityIdentifier("mapImageShare")
+                Button {
+                    Task { await deliver(share: false) }
+                } label: {
+                    Label(L.s("map_image_save"), systemImage: "square.and.arrow.down")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .accessibilityIdentifier("mapImageSave")
+            }
+            .disabled(busy != nil || content == nil || failedToDraw)
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 10)
+        .background(.bar)
+    }
+
+    /// The last picture only while it is the shape on screen: stretched into
+    /// another aspect ratio it would show a picture that will not be saved.
+    private func usable(_ image: UIImage) -> Bool {
+        guard image.size.height > 0 else { return false }
+        return abs(image.size.width / image.size.height - ratio) < 0.02
+    }
+
     @ViewBuilder private var previewView: some View {
         if let content, content.line.isEmpty {
-            Text(L.s("map_image_empty")).foregroundStyle(.secondary).multilineTextAlignment(.center)
-        } else if let preview {
+            Text(L.s("map_image_empty")).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
+        } else if let preview, usable(preview) {
             Image(uiImage: preview)
                 .resizable()
                 .scaledToFit()
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .shadow(radius: 2)
+                .opacity(rendering ? 0.55 : 1)
                 .overlay {
                     if rendering { ProgressView() }
                 }
                 .accessibilityLabel(L.s("map_image_preview_description"))
                 .accessibilityIdentifier(rendering ? "mapImagePreviewRendering" : "mapImagePreview")
-        } else if rendering || content == nil {
+        } else if renderFailed {
+            Text(L.s("map_image_error")).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
+        } else {
             VStack(spacing: 8) {
                 ProgressView()
                 Text(L.s("map_image_rendering")).font(.footnote).foregroundStyle(.secondary)
             }
-        } else {
-            Text(L.s("map_image_error")).foregroundStyle(.secondary).multilineTextAlignment(.center)
         }
     }
 
@@ -127,15 +189,24 @@ struct MapImageSheet: View {
     }
 
     /// The preview is always the Standard image: High is the same picture.
+    /// Waits a moment first, so flicking through the options renders once.
     private func renderPreview() async {
-        guard let request = request(MapImageSpec(aspect: aspect)) else { return }
+        guard content != nil else { return }
+        renderID &+= 1
+        let id = renderID
         rendering = true
-        defer { rendering = false }
+        renderFailed = false
+        defer { if id == renderID { rendering = false } }
+        try? await Task.sleep(for: .milliseconds(180))
+        guard !Task.isCancelled, let request = request(MapImageSpec(aspect: aspect)) else { return }
         do {
             let image = try await renderMapImage(request)
-            if !Task.isCancelled { preview = image }
+            guard !Task.isCancelled, id == renderID else { return }
+            preview = image
         } catch {
-            if !Task.isCancelled { preview = nil }
+            guard !Task.isCancelled, id == renderID else { return }
+            preview = nil
+            renderFailed = true
         }
     }
 

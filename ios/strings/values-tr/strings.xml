@@ -40,4 +40,18 @@
     <string name="pick_file_button">Zaman çizelgesi dosyası seç</string>
     <string name="error_not_timeline">Bu bir Google Haritalar Zaman çizelgesi dosyasına benzemiyor. Google Haritalar'dan kaydettiğiniz dosyayı seçin (genellikle location-history.json); adımlar Yardım'da.</string>
     <string name="language_settings_hint">iOS her uygulamanın dilini Ayarlar\'da tutar.</string>
+    <string name="ios_empty_title">Zaman çizelgenizi görün ve kaydedin</string>
+    <string name="ios_empty_body">Google Haritalar zaman çizelgesi dosyanızı açın, haritada görün ve GPX, KML, GeoJSON ya da CSV olarak kaydedin.</string>
+    <string name="ios_how_to_get_data">Zaman çizelgesi verileri nasıl alınır?</string>
+    <string name="ios_quick_step3_top">Buraya dönün ve **Zaman çizelgesi dosyası seç** seçeneğine dokunun.</string>
+    <string name="ios_export_run_save">%1$s kaydet</string>
+    <string name="ios_export_run_share">%1$s paylaş</string>
+    <string name="ios_map_image_entry_hint">Kaydetmek veya paylaşmak için bu rotanın görseli</string>
+    <string name="ios_map_image_distance_note">Kaydedilen mesafe bu görseldeki çizgiyi toplar, bu nedenle bir seyahatin kat edilen yolundan farklı olabilir.</string>
+    <string name="ios_map_status_loading">Harita yükleniyor…</string>
+    <string name="ios_map_status_tiles">Harita döşemeleri kullanılamıyor. Verileriniz gösterilmeye devam ediyor.</string>
+    <string name="ios_map_status_failed">Harita yüklenemedi.</string>
+    <string name="ios_trips_clear_marks">İşaretleri temizle</string>
+    <string name="ios_place_unnamed">Adsız yer</string>
+    <string name="ios_trip_on_map">Haritada gösteriliyor</string>
 </resources>

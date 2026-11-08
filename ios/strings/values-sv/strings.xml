@@ -40,4 +40,18 @@
     <string name="pick_file_button">Välj tidslinjefil</string>
     <string name="error_not_timeline">Det här ser inte ut som en tidslinjefil från Google Maps. Välj filen du sparade från Google Maps (oftast location-history.json) – stegen finns i Hjälp.</string>
     <string name="language_settings_hint">iOS ställer in varje apps språk i Inställningar.</string>
+    <string name="ios_empty_title">Se och spara din tidslinje</string>
+    <string name="ios_empty_body">Öppna din tidslinjefil från Google Maps för att se den på en karta och spara den som GPX, KML, GeoJSON eller CSV.</string>
+    <string name="ios_how_to_get_data">Hur får jag mina tidslinjedata?</string>
+    <string name="ios_quick_step3_top">Kom tillbaka hit och tryck på **Välj tidslinjefil**.</string>
+    <string name="ios_export_run_save">Spara %1$s</string>
+    <string name="ios_export_run_share">Dela %1$s</string>
+    <string name="ios_map_image_entry_hint">En bild av den här rutten att spara eller dela</string>
+    <string name="ios_map_image_distance_note">Registrerad sträcka summerar linjen på bilden och kan därför skilja sig från en resas färdväg.</string>
+    <string name="ios_map_status_loading">Läser in kartan…</string>
+    <string name="ios_map_status_tiles">Kartrutorna är inte tillgängliga. Dina data visas fortfarande.</string>
+    <string name="ios_map_status_failed">Det gick inte att läsa in kartan.</string>
+    <string name="ios_trips_clear_marks">Rensa markeringar</string>
+    <string name="ios_place_unnamed">Namnlös plats</string>
+    <string name="ios_trip_on_map">Visas på kartan</string>
 </resources>

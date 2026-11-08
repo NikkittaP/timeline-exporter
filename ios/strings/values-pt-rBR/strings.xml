@@ -40,4 +40,18 @@
     <string name="pick_file_button">Escolher arquivo da Linha do tempo</string>
     <string name="error_not_timeline">Isto não parece um arquivo da Linha do tempo do Google Maps. Escolha o arquivo que você salvou pelo Google Maps (normalmente location-history.json); a Ajuda mostra os passos.</string>
     <string name="language_settings_hint">O iOS define o idioma de cada app nos Ajustes.</string>
+    <string name="ios_empty_title">Veja e salve sua Linha do tempo</string>
+    <string name="ios_empty_body">Abra o arquivo da Linha do tempo do Google Maps para vê-la no mapa e salvá-la como GPX, KML, GeoJSON ou CSV.</string>
+    <string name="ios_how_to_get_data">Como obter os dados da Linha do tempo?</string>
+    <string name="ios_quick_step3_top">Volte aqui e toque em **Escolher arquivo da Linha do tempo**.</string>
+    <string name="ios_export_run_save">Salvar %1$s</string>
+    <string name="ios_export_run_share">Compartilhar %1$s</string>
+    <string name="ios_map_image_entry_hint">Uma imagem deste trajeto para salvar ou compartilhar</string>
+    <string name="ios_map_image_distance_note">A distância registrada soma a linha desta imagem, então pode ser diferente da distância percorrida de uma viagem.</string>
+    <string name="ios_map_status_loading">Carregando mapa…</string>
+    <string name="ios_map_status_tiles">Blocos do mapa indisponíveis. Seus dados continuam visíveis.</string>
+    <string name="ios_map_status_failed">Não foi possível carregar o mapa.</string>
+    <string name="ios_trips_clear_marks">Limpar marcações</string>
+    <string name="ios_place_unnamed">Lugar sem nome</string>
+    <string name="ios_trip_on_map">Exibida no mapa</string>
 </resources>

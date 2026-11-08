@@ -89,10 +89,15 @@ class MapTrack(
     val pieceStarts: IntArray,
     val pieceColors: List<String>,
     val sourcePoints: Int,
+    /** Each piece's local day (epoch day), or [MAP_NO_DAY] when not cut by day. */
+    val pieceDays: LongArray = LongArray(pieceStarts.size) { MAP_NO_DAY },
 ) {
     val pointCount: Int get() = latitudes.size
     val pieceCount: Int get() = pieceStarts.size
 }
+
+/** In [MapTrack.pieceDays]: the piece does not belong to one day. */
+const val MAP_NO_DAY = Long.MIN_VALUE
 
 /** A jump longer than this is a gap (a flight, a missing week), not a line. */
 const val MAP_GAP_METERS = 80_000.0
@@ -249,7 +254,7 @@ fun TimelineSession.mapTrips(spec: FilterSpec, keys: LongArray, budget: Int): Ma
     return buildMapTrack(trips.map { Run(it.points, it.color) }, budget)
 }
 
-internal class Run(val points: List<PathPoint>, val color: String)
+internal class Run(val points: List<PathPoint>, val color: String, val day: Long = MAP_NO_DAY)
 
 private fun TimelineSession.dayRuns(points: List<PathPoint>): List<Run> {
     val runs = ArrayList<Run>()
@@ -258,12 +263,12 @@ private fun TimelineSession.dayRuns(points: List<PathPoint>): List<Run> {
     for ((i, p) in points.withIndex()) {
         val d = p.trackEpochDay(zone)
         if (i > 0 && d != day) {
-            runs += Run(points.subList(start, i), trackDayColor(LocalDate.fromEpochDays(day)))
+            runs += Run(points.subList(start, i), trackDayColor(LocalDate.fromEpochDays(day)), day)
             start = i
         }
         day = d
     }
-    if (start < points.size) runs += Run(points.subList(start, points.size), trackDayColor(LocalDate.fromEpochDays(day)))
+    if (start < points.size) runs += Run(points.subList(start, points.size), trackDayColor(LocalDate.fromEpochDays(day)), day)
     return runs
 }
 
@@ -278,6 +283,7 @@ internal fun buildMapTrack(runs: List<Run>, budget: Int): MapTrack {
     val lons = ArrayList<Double>(lats.size)
     val starts = ArrayList<Int>()
     val colors = ArrayList<String>()
+    val days = ArrayList<Long>()
     for (run in runs) {
         val pts = run.points
         if (pts.isEmpty()) continue
@@ -286,6 +292,7 @@ internal fun buildMapTrack(runs: List<Run>, budget: Int): MapTrack {
         fun cut() {
             starts += lats.size
             colors += run.color
+            days += run.day
             pieceLength = 0
         }
         cut()
@@ -299,6 +306,7 @@ internal fun buildMapTrack(runs: List<Run>, budget: Int): MapTrack {
                     lons.subList(lons.size - pieceLength, lons.size).clear()
                     starts.removeAt(starts.lastIndex)
                     colors.removeAt(colors.lastIndex)
+                    days.removeAt(days.lastIndex)
                 }
                 cut()
             }
@@ -312,9 +320,10 @@ internal fun buildMapTrack(runs: List<Run>, budget: Int): MapTrack {
             lons.subList(lons.size - pieceLength, lons.size).clear()
             starts.removeAt(starts.lastIndex)
             colors.removeAt(colors.lastIndex)
+            days.removeAt(days.lastIndex)
         }
     }
-    return MapTrack(lats.toDoubleArray(), lons.toDoubleArray(), starts.toIntArray(), colors, total)
+    return MapTrack(lats.toDoubleArray(), lons.toDoubleArray(), starts.toIntArray(), colors, total, days.toLongArray())
 }
 
 /**

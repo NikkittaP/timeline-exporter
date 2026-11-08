@@ -40,4 +40,18 @@
     <string name="pick_file_button">Scegli file Timeline</string>
     <string name="error_not_timeline">Questo non sembra un file Timeline di Google Maps. Scegli il file salvato da Google Maps (di solito location-history.json): la Guida mostra i passaggi.</string>
     <string name="language_settings_hint">iOS imposta la lingua di ogni app in Impostazioni.</string>
+    <string name="ios_empty_title">Guarda e salva la tua Timeline</string>
+    <string name="ios_empty_body">Apri il file Timeline di Google Maps per vederlo su una mappa e salvarlo come GPX, KML, GeoJSON o CSV.</string>
+    <string name="ios_how_to_get_data">Come ottenere i dati di Timeline?</string>
+    <string name="ios_quick_step3_top">Torna qui e tocca **Scegli file Timeline**.</string>
+    <string name="ios_export_run_save">Salva %1$s</string>
+    <string name="ios_export_run_share">Condividi %1$s</string>
+    <string name="ios_map_image_entry_hint">Un’immagine di questo percorso da salvare o condividere</string>
+    <string name="ios_map_image_distance_note">La distanza registrata somma la linea di questa immagine, quindi può differire dalla distanza percorsa di un viaggio.</string>
+    <string name="ios_map_status_loading">Caricamento mappa…</string>
+    <string name="ios_map_status_tiles">Riquadri della mappa non disponibili. I tuoi dati restano visibili.</string>
+    <string name="ios_map_status_failed">Impossibile caricare la mappa.</string>
+    <string name="ios_trips_clear_marks">Togli i segni</string>
+    <string name="ios_place_unnamed">Luogo senza nome</string>
+    <string name="ios_trip_on_map">Mostrato sulla mappa</string>
 </resources>

@@ -17,9 +17,10 @@ struct MainView: View {
             ScrollViewReader { proxy in
                 Form {
                     if showsWelcome {
-                        WelcomeSections { info = .help }
+                        WelcomeSections(importing: $importing) { info = .help }
+                    } else {
+                        FileSection(importing: $importing)
                     }
-                    FileSection(importing: $importing)
                     if store.phase == .loaded, let core = store.timeline {
                         FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
                         PreviewSection()
@@ -37,6 +38,7 @@ struct MainView: View {
                 .modifier(ReadableColumn())
             }
             .navigationTitle(L.s("app_name"))
+            .navigationBarTitleDisplayMode(.inline)
             .fileImporter(isPresented: $importing, allowedContentTypes: [.json, .data]) { result in
                 if case .success(let url) = result {
                     Task { await store.open(url: url) }
@@ -52,6 +54,7 @@ struct MainView: View {
             }
             .exportPresenter()
             .toolbar {
+                ToolbarItem(placement: .principal) { brand }
                 ToolbarItem(placement: .topBarTrailing) { menu }
             }
             .sheet(item: $info) { sheet in
@@ -68,6 +71,23 @@ struct MainView: View {
             }
             .onAppear(perform: showWhatsNew)
         }
+    }
+
+    /// The root screen's identity; the one place the icon sits beside the name.
+    private var brand: some View {
+        HStack(spacing: 8) {
+            Image("BrandIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 22, height: 22)
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+                .accessibilityHidden(true)
+            Text(L.s("app_name"))
+                .font(.headline)
+                .lineLimit(1)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
     }
 
     /// The explanation stays until a file has opened: also after a wrong
@@ -141,61 +161,33 @@ private enum InfoSheet: Identifiable {
 
 // MARK: File
 
+/// Loading, then what was opened. Before that the welcome screen has the
+/// button, and after a failure it has the reason too.
 private struct FileSection: View {
     @Environment(TimelineStore.self) private var store
     @Binding var importing: Bool
 
     var body: some View {
-        Section(L.s("step_choose_file")) {
+        Section {
             switch store.phase {
-            case .idle:
-                pickButton(L.s("pick_file_button"))
-                sampleButton
             case .loading(let info):
                 LoadingRow(info: info)
             case .loaded:
                 if let core = store.timeline {
                     LoadedSummary(core: core)
                 }
-                pickButton(L.s("file_change_button"))
-            case .failed(let wrongFile, let errorClass, let message):
-                Label {
-                    Text(wrongFile
-                         ? L.s("error_not_timeline")
-                         : L.f("parse_error", errorClass, message ?? L.s("parse_error_no_message")))
-                } icon: {
-                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                Button {
+                    importing = true
+                } label: {
+                    Label(L.s("file_change_button"), systemImage: "doc.badge.plus")
                 }
-                pickButton(L.s("pick_file_button"))
-                sampleButton
+                .accessibilityIdentifier("pickFile")
+            case .idle, .failed:
+                EmptyView()
             }
+        } header: {
+            StepHeader(title: L.s("step_choose_file"))
         }
-    }
-
-    private func pickButton(_ title: String) -> some View {
-        Button {
-            importing = true
-        } label: {
-            Label(title, systemImage: "doc.badge.plus")
-                .font(.body.weight(.semibold))
-        }
-        .accessibilityIdentifier("pickFile")
-    }
-
-    /// Made-up history: what the app does, before the effort of an export.
-    private var sampleButton: some View {
-        Button {
-            Task { await store.openSample() }
-        } label: {
-            VStack(alignment: .leading, spacing: 2) {
-                Label(L.s("ios_try_sample_button"), systemImage: "wand.and.stars")
-                Text(L.s("ios_sample_hint"))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.leading, 34)
-            }
-        }
-        .accessibilityIdentifier("trySample")
     }
 }
 
@@ -236,34 +228,44 @@ private struct LoadedSummary: View {
     let core: CoreTimeline
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            if let name = store.fileName {
-                Label(name, systemImage: "doc.text").font(.headline).lineLimit(1).truncationMode(.middle)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 12) {
+                Image(systemName: "doc.text.fill")
+                    .font(.title3)
+                    .foregroundStyle(.tint)
+                    .frame(width: 40, height: 40)
+                    .background(
+                        Color.accentColor.opacity(Design.selectedRowOpacity),
+                        in: RoundedRectangle(cornerRadius: Design.controlRadius)
+                    )
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    if let name = store.fileName {
+                        Text(name).font(.headline).lineLimit(1).truncationMode(.middle)
+                    }
+                    Text(core.formatLabel).font(.footnote).foregroundStyle(.secondary)
+                    if let first = core.firstPoint, let last = core.lastPoint {
+                        Text(Fmt.dayRange(first, last))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                            .accessibilityLabel(L.s("metric_date_range") + " " + Fmt.dayRange(first, last))
+                    }
+                }
             }
-            Text(core.formatLabel).font(.footnote).foregroundStyle(.secondary)
-            HStack(alignment: .top) {
-                Metric(title: L.s("metric_points"), value: Fmt.grouped(core.pointCount))
-                Metric(title: L.s("metric_days"), value: Fmt.grouped(store.dayCount))
-                Metric(title: L.s("metric_distance"), value: Fmt.km(store.totalDistance))
-            }
-            if let first = core.firstPoint, let last = core.lastPoint {
-                Metric(title: L.s("metric_date_range"), value: Fmt.dayRange(first, last))
+            // Three across where they fit, one under another at the largest text.
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .top, spacing: 8) { tiles }
+                VStack(alignment: .leading, spacing: 8) { tiles }
             }
         }
         .padding(.vertical, 4)
     }
-}
 
-private struct Metric: View {
-    let title: String
-    let value: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title).font(.caption).foregroundStyle(.secondary)
-            Text(value).font(.body.weight(.semibold)).monospacedDigit()
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
+    @ViewBuilder private var tiles: some View {
+        MetricTile(title: L.s("metric_points"), value: Fmt.grouped(core.pointCount))
+        MetricTile(title: L.s("metric_days"), value: Fmt.grouped(store.dayCount))
+        MetricTile(title: L.s("metric_distance"), value: Fmt.km(store.totalDistance))
     }
 }
 
@@ -275,85 +277,77 @@ private struct FilterSection: View {
     @Binding var dateSheet: Bool
     @Binding var timeSheet: Bool
 
+    private static let presetDays = [7, 30, 90]
+
     var body: some View {
         Section {
-            dateRow
-            timeRow
-        } header: {
-            Text(L.s("step_filter"))
-        } footer: {
-            Text(L.f("filter_filtered_count", Fmt.grouped(store.filteredCount), Fmt.grouped(core.pointCount)))
-                .monospacedDigit()
-                .accessibilityIdentifier("filteredCount")
-        }
-
-        Section(L.s("filter_movement_title")) {
-            ForEach(store.availableMovements) { m in
-                MovementRow(movement: m, stat: store.breakdown.first { $0.movement == m })
-            }
-            Toggle(isOn: Binding(get: { store.filter.movingOnly }, set: { store.setMovingOnly($0) })) {
-                VStack(alignment: .leading) {
-                    Text(L.s("filter_moving_only"))
-                    Text(L.s("filter_moving_only_hint")).font(.caption).foregroundStyle(.secondary)
-                }
-            }
-            Toggle(isOn: Binding(get: { store.filter.dropRepeated }, set: { store.setDropRepeated($0) })) {
-                VStack(alignment: .leading) {
-                    Text(L.s("filter_drop_repeated"))
-                    Text(L.s("filter_drop_repeated_hint")).font(.caption).foregroundStyle(.secondary)
-                }
-            }
-        }
-    }
-
-    private var dateRow: some View {
-        HStack {
-            Button {
+            FilterValueRow(symbol: "calendar", title: L.s("metric_date_range"), value: rangeText, prominent: true) {
                 dateSheet = true
-            } label: {
-                LabeledContent {
-                    Text(rangeText).monospacedDigit()
-                } label: {
-                    Label(L.s("metric_date_range"), systemImage: "calendar")
-                }
             }
             .accessibilityIdentifier("dateRange")
-            if store.filter.range != nil {
-                clearButton { store.setRange(nil) }
-            }
-        }
-    }
-
-    private var timeRow: some View {
-        HStack {
-            Button {
+            presets
+            FilterValueRow(symbol: "clock", title: L.s("filter_time_any"), value: timeText) {
                 timeSheet = true
+            }
+            NavigationLink {
+                MovementFilterView()
             } label: {
-                LabeledContent {
-                    Text(timeText).monospacedDigit()
-                } label: {
-                    Label(L.s("filter_time_any"), systemImage: "clock")
+                Label {
+                    OptionLabel(title: L.s("filter_movement_title"), hint: store.movementSummary)
+                } icon: {
+                    Image(systemName: "figure.walk")
                 }
             }
-            if store.filter.timeOfDay != nil {
-                clearButton { store.setTimeOfDay(nil) }
+            .accessibilityIdentifier("movementFilters")
+            countRow
+        } header: {
+            StepHeader(title: L.s("step_filter"))
+        }
+    }
+
+    private var presets: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                PresetChip(title: L.s("date_preset_all_short"), selected: store.filter.range == nil) {
+                    store.setRange(nil)
+                }
+                ForEach(Self.presetDays, id: \.self) { days in
+                    PresetChip(title: L.plural("map_day_count", days), selected: isPreset(days)) {
+                        if let last = core.lastPoint {
+                            store.setRange(Calendar.current.lastDays(days, endingAt: last))
+                        }
+                    }
+                }
             }
         }
     }
 
-    private func clearButton(_ action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
-        }
-        .buttonStyle(.borderless)
-        .accessibilityLabel(L.s("filter_clear_button"))
+    private func isPreset(_ days: Int) -> Bool {
+        guard let range = store.filter.range, let last = core.lastPoint else { return false }
+        return range == Calendar.current.lastDays(days, endingAt: last)
     }
 
-    private var rangeText: String {
-        if let r = store.filter.range {
-            return Fmt.dayRange(r.lowerBound, r.upperBound)
+    /// What the filters leave, right under them, and the way back.
+    private var countRow: some View {
+        HStack {
+            Text(L.f("filter_filtered_count", Fmt.grouped(store.filteredCount), Fmt.grouped(core.pointCount)))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .monospacedDigit()
+                .accessibilityIdentifier("filteredCount")
+            Spacer(minLength: 8)
+            if !store.filter.isEmpty {
+                Button(L.s("filter_clear_button")) { store.resetFilters() }
+                    .buttonStyle(.borderless)
+                    .accessibilityIdentifier("resetFilters")
+            }
         }
-        return L.s("date_preset_all_short")
+    }
+
+    /// The dates in force: without a filter, the file's own.
+    private var rangeText: String {
+        guard let r = store.effectiveRange else { return L.s("date_preset_all_short") }
+        return Fmt.dayRange(r.lowerBound, r.upperBound)
     }
 
     private var timeText: String {
@@ -361,6 +355,58 @@ private struct FilterSection: View {
             return L.f("filter_time_range", Fmt.minuteOfDay(w.start), Fmt.minuteOfDay(w.end))
         }
         return L.s("time_preset_any")
+    }
+}
+
+/// A row that opens a filter's dialog, showing what is set.
+private struct FilterValueRow: View {
+    let symbol: String
+    let title: String
+    let value: String
+    var prominent = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            LabeledContent {
+                Text(value)
+                    .font(prominent ? Font.body.weight(.semibold) : Font.body)
+                    .foregroundStyle(prominent ? .primary : .secondary)
+                    .monospacedDigit()
+                    .multilineTextAlignment(.trailing)
+            } label: {
+                Label(title, systemImage: symbol).foregroundStyle(.primary)
+            }
+            .contentShape(Rectangle())
+        }
+    }
+}
+
+/// The movement switches, one level down so the main screen stays short.
+private struct MovementFilterView: View {
+    @Environment(TimelineStore.self) private var store
+
+    var body: some View {
+        Form {
+            Section {
+                ForEach(store.availableMovements) { m in
+                    MovementRow(movement: m, stat: store.breakdown.first { $0.movement == m })
+                }
+            } footer: {
+                Text(store.movementSummary).monospacedDigit()
+            }
+            Section {
+                Toggle(isOn: Binding(get: { store.filter.movingOnly }, set: { store.setMovingOnly($0) })) {
+                    OptionLabel(title: L.s("filter_moving_only"), hint: L.s("filter_moving_only_hint"))
+                }
+                Toggle(isOn: Binding(get: { store.filter.dropRepeated }, set: { store.setDropRepeated($0) })) {
+                    OptionLabel(title: L.s("filter_drop_repeated"), hint: L.s("filter_drop_repeated_hint"))
+                }
+            }
+        }
+        .navigationTitle(L.s("filter_movement_title"))
+        .navigationBarTitleDisplayMode(.inline)
+        .modifier(ReadableColumn())
     }
 }
 
@@ -391,26 +437,27 @@ private struct MovementRow: View {
 
 // MARK: Export
 
+/// What will be written, the format, Save or Share, and one button for it.
 private struct ExportSection: View {
     @Environment(TimelineStore.self) private var store
+    @AppStorage("export_format") private var formatRaw = ExportFormatChoice.gpx.rawValue
     @State private var mapImage = false
+
+    private var format: ExportFormatChoice { ExportFormatChoice(rawValue: formatRaw) ?? .gpx }
 
     var body: some View {
         @Bindable var store = store
         Section {
-            ForEach(ExportFormatChoice.allCases) { format in
-                Button {
-                    Task { await store.export(format) }
-                } label: {
-                    Label {
-                        Text(format.displayName)
-                    } icon: {
-                        Image(systemName: store.shareInstead ? "square.and.arrow.up" : "square.and.arrow.down")
-                    }
-                }
-                .disabled(store.exportState == .working)
-                .accessibilityIdentifier("export-\(format.rawValue)")
+            LabeledContent(L.s("export_writes_label")) {
+                Text(writesText).monospacedDigit().multilineTextAlignment(.trailing)
             }
+            .accessibilityIdentifier("exportWrites")
+            Picker(L.s("map_image_format"), selection: $formatRaw) {
+                ForEach(ExportFormatChoice.allCases) { Text($0.displayName).tag($0.rawValue) }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .accessibilityIdentifier("exportFormat")
             Picker(selection: $store.shareInstead) {
                 Text(L.s("export_action_save")).tag(false)
                 Text(L.s("export_action_share")).tag(true)
@@ -418,28 +465,63 @@ private struct ExportSection: View {
                 EmptyView()
             }
             .pickerStyle(.segmented)
+            Button {
+                Task { await store.export(format) }
+            } label: {
+                Label(
+                    L.f(store.shareInstead ? "ios_export_run_share" : "ios_export_run_save", format.displayName),
+                    systemImage: store.shareInstead ? "square.and.arrow.up" : "square.and.arrow.down"
+                )
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .disabled(store.exportState == .working)
+            .accessibilityIdentifier("exportRun")
             .id("export")
-            if store.contentKind == .track {
-                Toggle(L.s("map_color_by_day"), isOn: $store.colorByDay)
-            }
-            if store.contentKind != .places {
-                Button {
-                    mapImage = true
-                } label: {
-                    Label(L.s("map_image_export_entry"), systemImage: "photo")
-                }
-                .disabled(!store.canMakeMapImage)
-                .accessibilityIdentifier("mapImage")
-                .id("mapImage")
-                // On the row, not the Section: from there the sheet never showed.
-                .sheet(isPresented: $mapImage) {
-                    MapImageSheet()
-                }
-            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets())
         } header: {
-            Text(title)
+            StepHeader(title: title)
         } footer: {
             status
+        }
+
+        if store.contentKind != .places {
+            Section {
+                mapImageRow
+            }
+        }
+    }
+
+    /// A feature of its own, not a fifth file format.
+    private var mapImageRow: some View {
+        Button {
+            mapImage = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "photo")
+                    .font(.title3)
+                    .foregroundStyle(.tint)
+                    .frame(width: 32)
+                    .accessibilityHidden(true)
+                OptionLabel(title: L.s("map_image_export_entry"), hint: L.s("ios_map_image_entry_hint"))
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.forward")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+                    .accessibilityHidden(true)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(!store.canMakeMapImage)
+        .opacity(store.canMakeMapImage ? 1 : 0.5)
+        .accessibilityIdentifier("mapImage")
+        .id("mapImage")
+        // On the row, not the Section: from there the sheet never showed.
+        .sheet(isPresented: $mapImage) {
+            MapImageSheet()
         }
     }
 
@@ -448,6 +530,21 @@ private struct ExportSection: View {
         case .track: L.s("step_export_track")
         case .trips: store.exportTripKeys.count == 1 ? L.s("step_export_trip") : L.s("step_export_trips")
         case .places: L.s("step_export_places")
+        }
+    }
+
+    private var writesText: String {
+        switch store.contentKind {
+        case .track:
+            return L.f("export_writes_value", L.s("content_track"), L.plural("points_count", store.filteredCount))
+        case .trips:
+            // Nothing ticked writes every visible trip.
+            let marked = store.exportTripKeys.count
+            let count = marked == 0 ? store.visibleTrips.count : marked
+            return L.f("export_writes_value", L.s(count == 1 ? "content_trip" : "content_trips"),
+                       L.plural("trips_count", count))
+        case .places:
+            return L.f("export_writes_value", L.s("content_places"), L.plural("places_count", store.places.count))
         }
     }
 
