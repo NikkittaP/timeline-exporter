@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">Effacer les coches</string>
     <string name="ios_place_unnamed">Lieu sans nom</string>
     <string name="ios_trip_on_map">Affiché sur la carte</string>
+    <string name="ios_trips_none_selected">Aucun voyage sélectionné — les %1$s seront exportés.</string>
 </resources>

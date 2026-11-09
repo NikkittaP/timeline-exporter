@@ -58,12 +58,14 @@ struct PreviewSection: View {
             .pickerStyle(.segmented)
             .accessibilityIdentifier("contentKind")
             .id("preview")
+            .listRowSeparator(.hidden)
 
             // On the row: a Form hands a Section's modifiers to each of its
             // rows, and the cover never showed from there.
             map
                 .frame(height: sizeClass == .regular ? Design.mapHeightRegular : Design.mapHeightCompact)
                 .listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden, edges: .top)
                 .fullScreenCover(isPresented: $expanded, onDismiss: { restoreToken += 1 }) {
                     ExpandedMap()
                 }
@@ -74,6 +76,7 @@ struct PreviewSection: View {
             }
             if store.showsDayLegend {
                 DayLegend()
+                    .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                     .listRowInsets(EdgeInsets())
             }
         } header: {
@@ -110,6 +113,7 @@ private struct StoreMap: View {
     @Environment(TimelineStore.self) private var store
     let fitToken: Int
     var restoreToken = 0
+    var bottomOverlay: CGFloat? = nil
     @Binding var status: MapStatus
 
     var body: some View {
@@ -118,6 +122,7 @@ private struct StoreMap: View {
             fitToken: fitToken,
             restoreToken: restoreToken,
             memory: store.mapCamera,
+            bottomOverlay: bottomOverlay,
             onStatus: { status = $0 },
             onSelectPlace: { store.selectPlace($0) }
         )
@@ -184,25 +189,32 @@ private struct ExpandedMap: View {
     @Environment(\.dismiss) private var dismiss
     @State private var fitToken = 0
     @State private var status = MapStatus.loading
+    /// The day strip with the gap under it, as laid out.
+    @State private var stripHeight: CGFloat = 0
 
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack(alignment: .top) {
-                StoreMap(fitToken: fitToken, status: $status)
-                    .ignoresSafeArea(edges: store.showsDayLegend ? [.top, .horizontal] : .all)
-                HStack(alignment: .top) {
-                    MapStatusChip(status: status)
-                    Spacer(minLength: 8)
-                    VStack(spacing: 8) {
-                        MapButton(symbol: "xmark", label: L.s("map_exit_fullscreen")) { dismiss() }
-                        MapButton(symbol: "scope", label: L.s("map_recenter")) { fitToken += 1 }
-                    }
+        ZStack(alignment: .bottom) {
+            StoreMap(fitToken: fitToken, bottomOverlay: store.showsDayLegend ? stripHeight : 0, status: $status)
+                .ignoresSafeArea()
+            HStack(alignment: .top) {
+                MapStatusChip(status: status)
+                Spacer(minLength: 8)
+                VStack(spacing: 8) {
+                    MapButton(symbol: "xmark", label: L.s("map_exit_fullscreen")) { dismiss() }
+                    MapButton(symbol: "scope", label: L.s("map_recenter")) { fitToken += 1 }
                 }
-                .padding()
             }
+            .padding()
+            .frame(maxHeight: .infinity, alignment: .top)
             if store.showsDayLegend {
                 DayLegend()
-                    .background(.bar)
+                    .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: Design.cardRadius))
+                    .frame(maxWidth: Design.dayStripMaxWidth)
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 8)
+                    .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { stripHeight = $0 }
             }
         }
     }
@@ -212,27 +224,41 @@ private struct ExpandedMap: View {
 /// map and frames it; picking it again goes back to all of them.
 private struct DayLegend: View {
     @Environment(TimelineStore.self) private var store
+    @ScaledMetric(relativeTo: .footnote) private var textLine: CGFloat = 18
+
+    /// A height of its own: a horizontal ScrollView otherwise takes all it
+    /// is offered, half the screen in a full-screen layout.
+    private var rowHeight: CGFloat { max(Design.minTarget, textLine + 14) }
 
     var body: some View {
         let days = store.mapLine.days
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 8) {
-                Text(L.plural("map_day_count", days.count))
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-                if store.selectedDay != nil {
-                    Button(L.s("map_show_all_days")) { store.selectDay(nil) }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
-                        .accessibilityIdentifier("mapShowAllDays")
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                // Lazy: a history coloured by day can have hundreds of days.
+                LazyHStack(spacing: 8) {
+                    Text(L.plural("map_day_count", days.count))
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                    if store.selectedDay != nil {
+                        Button(L.s("map_show_all_days")) { store.selectDay(nil) }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                            .lineLimit(1)
+                            .accessibilityIdentifier("mapShowAllDays")
+                    }
+                    ForEach(days) { day in
+                        dayChip(day).id(day.epochDay)
+                    }
                 }
-                ForEach(days) { day in
-                    dayChip(day)
-                }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
-            .frame(minHeight: Design.minTarget)
+            .frame(height: rowHeight)
+            .onAppear {
+                // A day picked on the page may be far along the strip.
+                if let day = store.selectedDay { proxy.scrollTo(day, anchor: .center) }
+            }
         }
         .accessibilityIdentifier("dayLegend")
     }
@@ -246,15 +272,21 @@ private struct DayLegend: View {
                 Circle()
                     .fill(Color(hex: day.color))
                     .frame(width: 10, height: 10)
+                    .overlay {
+                        // The day's own colour has to stand off the filled chip.
+                        if selected { Circle().strokeBorder(.white, lineWidth: 1.5) }
+                    }
                     .accessibilityHidden(true)
                 Text(Fmt.date(day.date))
                     .font(.footnote.weight(selected ? .semibold : .regular))
                     .monospacedDigit()
+                    .lineLimit(1)
             }
+            .foregroundStyle(selected ? Color.white : Color.primary)
             .padding(.horizontal, 10)
             .frame(minHeight: 32)
             .background(
-                selected ? Color.accentColor.opacity(0.18) : Color(.tertiarySystemFill),
+                selected ? Color.accentColor : Color(.tertiarySystemFill),
                 in: RoundedRectangle(cornerRadius: Design.controlRadius)
             )
             .frame(minHeight: Design.minTarget)
@@ -343,7 +375,12 @@ struct TripsSection: View {
 
     private func checkedText(_ trips: [TripItem]) -> String {
         let checked = store.exportTripKeys.count
-        if checked == 0 { return L.s("trips_checked_none") }
+        if checked == 0 {
+            // As export does it: nothing ticked writes every visible trip.
+            return trips.count == 1
+                ? L.s("trips_checked_none")
+                : L.f("ios_trips_none_selected", L.plural("trips_count", trips.count))
+        }
         return L.f("trips_checked", Fmt.grouped(checked), Fmt.grouped(trips.count))
     }
 }
@@ -381,7 +418,7 @@ private struct TripRow: View {
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 3) {
                         Text(Fmt.dayRange(trip.startDay, trip.endDay))
-                            .font(.body.weight(selected ? .semibold : .regular))
+                            .font(.body.weight(selected ? .semibold : checked ? .medium : .regular))
                             .monospacedDigit()
                         Text(reach).font(.caption).foregroundStyle(.secondary).monospacedDigit()
                         if !covered.isEmpty {
@@ -408,7 +445,12 @@ private struct TripRow: View {
             .accessibilityValue(selected ? L.s("ios_trip_on_map") : "")
             .accessibilityAddTraits(selected ? .isSelected : [])
         }
-        .listRowBackground(selected ? Color.accentColor.opacity(Design.selectedRowOpacity) : nil)
+        .listRowBackground(rowTint(selected: selected, checked: checked))
+    }
+
+    private func rowTint(selected: Bool, checked: Bool) -> Color? {
+        if selected { return Color.accentColor.opacity(Design.previewedRowOpacity) }
+        return checked ? Color.accentColor.opacity(Design.markedRowOpacity) : nil
     }
 
     private var reach: String {
@@ -506,6 +548,8 @@ private struct PlaceRow: View {
     @Environment(TimelineStore.self) private var store
     let place: PlaceItem
     let rename: () -> Void
+    /// One width for every symbol, so the titles start in one column.
+    @ScaledMetric(relativeTo: .body) private var iconColumn: CGFloat = 26
 
     var body: some View {
         let selected = store.selectedPlace == place.key
@@ -517,10 +561,10 @@ private struct PlaceRow: View {
                 // The first tap finds the place on the map, the second names it.
                 if selected { rename() } else { store.selectPlace(place.key) }
             } label: {
-                HStack(alignment: .top, spacing: 10) {
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
                     Image(systemName: place.isHome ? "house.fill" : place.isWork ? "briefcase.fill" : "mappin.circle.fill")
                         .foregroundStyle(selected ? Color.accentColor : Color(hex: Design.placeColorHex))
-                        .padding(.top, 2)
+                        .frame(width: iconColumn)
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 3) {
                         HStack(spacing: 6) {
@@ -540,13 +584,19 @@ private struct PlaceRow: View {
                         } else if unnamed {
                             Text(place.coordinates).font(.caption).foregroundStyle(.tertiary).monospacedDigit()
                         }
-                        Text(visitsText).font(.caption).foregroundStyle(.secondary).monospacedDigit()
-                        Text(L.f("place_last_visit", Fmt.date(place.lastVisit)))
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .monospacedDigit()
+                        Text(stayText).font(.caption).foregroundStyle(.secondary).monospacedDigit()
                     }
-                    Spacer(minLength: 0)
+                    Spacer(minLength: 8)
+                    VStack(alignment: .trailing, spacing: 0) {
+                        Text(Fmt.grouped(place.visits))
+                            .font(.title3.weight(.semibold))
+                            .monospacedDigit()
+                        Text(L.s("places_visits_label"))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    .lineLimit(1)
+                    .fixedSize()
                 }
                 .contentShape(Rectangle())
             }
@@ -572,15 +622,13 @@ private struct PlaceRow: View {
         return role == name ? nil : role
     }
 
-    private var visitsText: String {
+    /// How long in all and when last; the visit count has a column of its own.
+    private var stayText: String {
         let hours = Double(place.totalSeconds) / 3600
         let duration = hours < 48
             ? L.f("place_duration_hours", hours.formatted(.number.precision(.fractionLength(hours < 10 ? 1 : 0))))
-            : L.f("place_duration_days", (hours / 24).formatted(.number.precision(.fractionLength(0))))
-        return [
-            Fmt.grouped(place.visits) + " " + L.s("places_visits_label"),
-            duration,
-        ].joined(separator: " · ")
+            : L.plural("map_day_count", Int((hours / 24).rounded()))
+        return [duration, L.f("place_last_visit", Fmt.date(place.lastVisit))].joined(separator: " · ")
     }
 }
 

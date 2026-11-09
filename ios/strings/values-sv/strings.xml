@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">Rensa markeringar</string>
     <string name="ios_place_unnamed">Namnlös plats</string>
     <string name="ios_trip_on_map">Visas på kartan</string>
+    <string name="ios_trips_none_selected">Inga resor valda — alla %1$s exporteras.</string>
 </resources>

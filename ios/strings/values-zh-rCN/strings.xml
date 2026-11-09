@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">清除标记</string>
     <string name="ios_place_unnamed">未命名地点</string>
     <string name="ios_trip_on_map">已显示在地图上</string>
+    <string name="ios_trips_none_selected">未选择旅行 — 将全部导出:%1$s</string>
 </resources>

@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">표시 지우기</string>
     <string name="ios_place_unnamed">이름 없는 장소</string>
     <string name="ios_trip_on_map">지도에 표시됨</string>
+    <string name="ios_trips_none_selected">선택한 여행 없음 — 모두 내보냅니다: %1$s</string>
 </resources>

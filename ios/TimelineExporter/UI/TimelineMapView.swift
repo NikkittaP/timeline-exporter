@@ -53,6 +53,10 @@ struct TimelineMapView: UIViewRepresentable {
     let fitToken: Int
     let restoreToken: Int
     let memory: MapCameraMemory
+    /// A map drawn edge to edge: how much floats over its bottom, above the
+    /// safe area. Framing keeps clear of that and of the safe area, and the
+    /// attribution sits above it. nil is a map inside the page.
+    var bottomOverlay: CGFloat? = nil
     let onStatus: (MapStatus) -> Void
     let onSelectPlace: (String?) -> Void
 
@@ -81,6 +85,8 @@ struct TimelineMapView: UIViewRepresentable {
         c.scheme = colorScheme
         c.fitToken = fitToken
         c.restoreToken = restoreToken
+        c.bottomOverlay = bottomOverlay
+        placeAttribution(on: map)
         // The map started loading in its initialiser, before it had a delegate.
         c.beginLoading()
         c.keepCamera = c.restoreCamera(for: content, on: map)
@@ -92,6 +98,8 @@ struct TimelineMapView: UIViewRepresentable {
         let c = context.coordinator
         c.onSelectPlace = onSelectPlace
         c.onStatus = onStatus
+        c.bottomOverlay = bottomOverlay
+        placeAttribution(on: map)
         if c.scheme != colorScheme {
             c.scheme = colorScheme
             // A new style drops the sources; didFinishLoading puts them back.
@@ -105,6 +113,12 @@ struct TimelineMapView: UIViewRepresentable {
             c.restoreToken = restoreToken
             _ = c.restoreCamera(for: content, on: map)
         }
+    }
+
+    /// MapLibre's default margin, plus whatever floats over the map's bottom.
+    private func placeAttribution(on map: MLNMapView) {
+        let margins = CGPoint(x: 8, y: 8 + (bottomOverlay ?? 0))
+        if map.attributionButtonMargins != margins { map.attributionButtonMargins = margins }
     }
 
     static func dismantleUIView(_ map: MLNMapView, coordinator: Coordinator) {
@@ -123,6 +137,7 @@ struct TimelineMapView: UIViewRepresentable {
         var scheme: ColorScheme?
         var fitToken = 0
         var restoreToken = 0
+        var bottomOverlay: CGFloat?
         private let memory: MapCameraMemory
         private var shown: MapContent?
         private var wanted = MapContent()
@@ -338,9 +353,11 @@ struct TimelineMapView: UIViewRepresentable {
             layer.lineJoin = NSExpression(forConstantValue: "round")
         }
 
-        /// Thin over a country, wide over a street.
-        private static let lineWidths: [(Double, Double)] = [(2, 1.2), (6, 2), (10, 3), (14, 4.5), (18, 7)]
-        private static let casingWidths: [(Double, Double)] = [(2, 2.2), (6, 3.5), (10, 5), (14, 6.5), (18, 9.5)]
+        /// Thin over a country, wide over a street. The lift is largest zoomed
+        /// out, where a route has to read as a line at all, and small over a
+        /// street. Only the on-screen maps: MapImageRenderer has its own widths.
+        private static let lineWidths: [(Double, Double)] = [(2, 1.8), (6, 2.8), (10, 4), (14, 5.5), (18, 8)]
+        private static let casingWidths: [(Double, Double)] = [(2, 3), (6, 4.4), (10, 6), (14, 7.8), (18, 10.8)]
 
         private static func zoomWidth(_ stops: [(Double, Double)]) -> NSExpression {
             var json: [Any] = ["interpolate", ["linear"], ["zoom"]]
@@ -413,7 +430,14 @@ struct TimelineMapView: UIViewRepresentable {
             guard let minLat = lats.min(), let maxLat = lats.max(),
                   let minLon = lons.min(), let maxLon = lons.max() else { return }
             // A little more at the bottom: the attribution sits there.
-            let pad = UIEdgeInsets(top: 40, left: 40, bottom: 48, right: 40)
+            var pad = UIEdgeInsets(top: 40, left: 40, bottom: 48, right: 40)
+            if let bottomOverlay {
+                let safe = map.safeAreaInsets
+                pad.top += safe.top
+                pad.left += safe.left
+                pad.right += safe.right
+                pad.bottom += safe.bottom + bottomOverlay
+            }
             if maxLat - minLat < 0.002 && maxLon - minLon < 0.002 {
                 let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2, longitude: (minLon + maxLon) / 2)
                 map.setCenter(center, zoomLevel: 14, animated: false)

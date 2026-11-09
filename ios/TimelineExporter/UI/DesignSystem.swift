@@ -11,6 +11,12 @@ enum Design {
     static let mapHeightCompact: CGFloat = 340
     static let mapHeightRegular: CGFloat = 460
     static let selectedRowOpacity = 0.12
+    /// A trip ticked for export: a hint of tint, the filled mark says the rest.
+    static let markedRowOpacity = 0.07
+    /// The trip shown on the map, a step stronger than a ticked one.
+    static let previewedRowOpacity = 0.16
+    /// The map's floating day strip on a wide screen.
+    static let dayStripMaxWidth: CGFloat = 640
     static let placeColorHex = "#D55E00"
     static let selectedPlaceHex = "#0072B2"
 }

@@ -85,7 +85,10 @@ struct MainView: View {
             Text(L.s("app_name"))
                 .font(.headline)
                 .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
+        // Clear of the menu at the largest text, as a system title would be.
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isHeader)
     }
@@ -375,7 +378,13 @@ private struct FilterValueRow: View {
                     .monospacedDigit()
                     .multilineTextAlignment(.trailing)
             } label: {
-                Label(title, systemImage: symbol).foregroundStyle(.primary)
+                // On the Text and a real colour: the row is a Button, and it
+                // tinted the title through a style set on the Label.
+                Label {
+                    Text(title).foregroundStyle(Color(.label))
+                } icon: {
+                    Image(systemName: symbol)
+                }
             }
             .contentShape(Rectangle())
         }

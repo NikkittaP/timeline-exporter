@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">İşaretleri temizle</string>
     <string name="ios_place_unnamed">Adsız yer</string>
     <string name="ios_trip_on_map">Haritada gösteriliyor</string>
+    <string name="ios_trips_none_selected">Seyahat seçilmedi — tümü dışa aktarılacak: %1$s</string>
 </resources>

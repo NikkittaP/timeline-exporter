@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">Снять отметки</string>
     <string name="ios_place_unnamed">Место без названия</string>
     <string name="ios_trip_on_map">Показана на карте</string>
+    <string name="ios_trips_none_selected">Поездки не отмечены — экспортируются все: %1$s</string>
 </resources>

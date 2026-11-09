@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">Markeringen wissen</string>
     <string name="ios_place_unnamed">Naamloze plek</string>
     <string name="ios_trip_on_map">Op de kaart getoond</string>
+    <string name="ios_trips_none_selected">Geen reizen geselecteerd — alle %1$s worden geëxporteerd.</string>
 </resources>

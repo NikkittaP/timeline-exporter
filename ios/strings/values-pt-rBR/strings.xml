@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">Limpar marcações</string>
     <string name="ios_place_unnamed">Lugar sem nome</string>
     <string name="ios_trip_on_map">Exibida no mapa</string>
+    <string name="ios_trips_none_selected">Nenhuma viagem selecionada: todas as %1$s serão exportadas.</string>
 </resources>

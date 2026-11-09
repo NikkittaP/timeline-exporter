@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">إلغاء التحديد</string>
     <string name="ios_place_unnamed">مكان بلا اسم</string>
     <string name="ios_trip_on_map">معروضة على الخريطة</string>
+    <string name="ios_trips_none_selected">لم تُحدَّد أي رحلة — سيتم تصدير الكل: %1$s</string>
 </resources>

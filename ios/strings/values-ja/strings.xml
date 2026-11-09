@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">チェックを解除</string>
     <string name="ios_place_unnamed">名前のない場所</string>
     <string name="ios_trip_on_map">地図に表示中</string>
+    <string name="ios_trips_none_selected">旅行が選択されていません — すべて書き出します:%1$s</string>
 </resources>

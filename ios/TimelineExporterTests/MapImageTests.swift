@@ -100,4 +100,17 @@ final class MapImageLayoutTests: XCTestCase {
                        "timeline-route-2026-05-12.jpg")
         XCTAssertEqual(MapImageText.filename(firstDay: nil, lastDay: nil, format: .png), "timeline-route.png")
     }
+
+    func testThePreviewKeepsItsShapeInsideTheSheet() {
+        let phone = CGSize(width: 390, height: 780)
+        // Portrait: the height share is what limits it.
+        let portrait = MapImagePreviewFrame.size(ratio: 9.0 / 16.0, sheet: phone, heightShare: 0.5)
+        XCTAssertEqual(portrait.height, 390, accuracy: 0.001)
+        XCTAssertEqual(portrait.width / portrait.height, 9.0 / 16.0, accuracy: 0.001)
+
+        // Landscape: the column's width is.
+        let landscape = MapImagePreviewFrame.size(ratio: 16.0 / 9.0, sheet: phone, heightShare: 0.5)
+        XCTAssertEqual(landscape.width, 390 - MapImagePreviewFrame.sideMargins, accuracy: 0.001)
+        XCTAssertEqual(landscape.width / landscape.height, 16.0 / 9.0, accuracy: 0.001)
+    }
 }

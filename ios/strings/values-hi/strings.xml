@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">निशान हटाएँ</string>
     <string name="ios_place_unnamed">बिना नाम की जगह</string>
     <string name="ios_trip_on_map">मैप पर दिख रही है</string>
+    <string name="ios_trips_none_selected">कोई यात्रा नहीं चुनी गई — सभी एक्सपोर्ट होंगी: %1$s</string>
 </resources>

@@ -54,4 +54,5 @@
     <string name="ios_trips_clear_marks">Wyczyść oznaczenia</string>
     <string name="ios_place_unnamed">Miejsce bez nazwy</string>
     <string name="ios_trip_on_map">Widoczna na mapie</string>
+    <string name="ios_trips_none_selected">Nie zaznaczono podróży — zostaną wyeksportowane wszystkie: %1$s</string>
 </resources>

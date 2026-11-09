@@ -43,26 +43,31 @@ struct MapImageSheet: View {
 
     private var ratio: CGFloat { CGFloat(spec.widthPx) / CGFloat(spec.heightPx) }
 
-    /// As tall as the shape needs, without pushing the controls off the screen.
-    private var previewHeight: CGFloat {
-        let regular = sizeClass == .regular
-        let budget: CGFloat = regular ? 640 : 340
-        let tallest: CGFloat = regular ? 560 : 400
-        return max(200, min(tallest, budget / ratio))
+    /// The whole sheet, as laid out: from outside the action bar, so a status
+    /// line appearing in the bar does not resize the picture.
+    @State private var sheetSize = CGSize(width: 390, height: 700)
+
+    private var previewSize: CGSize {
+        MapImagePreviewFrame.size(ratio: ratio, sheet: sheetSize, heightShare: sizeClass == .regular ? 0.7 : 0.48)
     }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    Color(.tertiarySystemFill)
-                        .aspectRatio(ratio, contentMode: .fit)
-                        .overlay { previewView }
-                        .clipShape(RoundedRectangle(cornerRadius: Design.controlRadius))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: previewHeight)
-                        .listRowInsets(EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12))
-                        .listRowBackground(Color.clear)
+                    VStack(spacing: 6) {
+                        Color(.tertiarySystemFill)
+                            .overlay { previewView }
+                            .clipShape(RoundedRectangle(cornerRadius: Design.controlRadius))
+                            .frame(width: previewSize.width, height: previewSize.height)
+                        Text(L.f("map_image_size", spec.widthPx, spec.heightPx, format.label))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
                 }
                 Section {
                     Picker(L.s("map_image_aspect"), selection: $aspectRaw) {
@@ -82,15 +87,13 @@ struct MapImageSheet: View {
                             .accessibilityIdentifier("mapImageColorByDay")
                     }
                 } footer: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(L.f("map_image_size", spec.widthPx, spec.heightPx, format.label))
-                            .monospacedDigit()
-                        if showStats {
-                            Text(L.s("ios_map_image_distance_note"))
-                        }
+                    if showStats {
+                        Text(L.s("ios_map_image_distance_note"))
                     }
                 }
             }
+            .listSectionSpacing(.compact)
+            .contentMargins(.top, 8, for: .scrollContent)
             .safeAreaInset(edge: .bottom) { actionBar }
             .navigationTitle(L.s("map_image_title"))
             .navigationBarTitleDisplayMode(.inline)
@@ -109,6 +112,7 @@ struct MapImageSheet: View {
                 await renderPreview()
             }
         }
+        .onGeometryChange(for: CGSize.self, of: { $0.size }) { sheetSize = $0 }
     }
 
     private var failedToDraw: Bool { content?.line.isEmpty ?? false }
@@ -125,31 +129,48 @@ struct MapImageSheet: View {
             } else if let message {
                 Text(message).font(.footnote).foregroundStyle(failed ? .red : .green)
             }
-            HStack(spacing: 12) {
-                Button {
-                    Task { await deliver(share: true) }
-                } label: {
-                    Label(L.s("map_image_share"), systemImage: "square.and.arrow.up")
-                        .frame(maxWidth: .infinity)
+            // Side by side where the words fit, Save on top where they do not.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 12) {
+                    shareButton
+                    saveButton
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
-                .accessibilityIdentifier("mapImageShare")
-                Button {
-                    Task { await deliver(share: false) }
-                } label: {
-                    Label(L.s("map_image_save"), systemImage: "square.and.arrow.down")
-                        .frame(maxWidth: .infinity)
+                VStack(spacing: 8) {
+                    saveButton
+                    shareButton
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-                .accessibilityIdentifier("mapImageSave")
             }
             .disabled(busy != nil || content == nil || failedToDraw)
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
         .background(.bar)
+    }
+
+    private var shareButton: some View {
+        Button {
+            Task { await deliver(share: true) }
+        } label: {
+            Label(L.s("map_image_share"), systemImage: "square.and.arrow.up")
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .accessibilityIdentifier("mapImageShare")
+    }
+
+    private var saveButton: some View {
+        Button {
+            Task { await deliver(share: false) }
+        } label: {
+            Label(L.s("map_image_save"), systemImage: "square.and.arrow.down")
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.large)
+        .accessibilityIdentifier("mapImageSave")
     }
 
     /// The last picture only while it is the shape on screen: stretched into
@@ -247,6 +268,18 @@ struct MapImageSheet: View {
     private func fail(_ key: String) {
         failed = true
         message = L.s(key)
+    }
+}
+
+/// How big the picture is shown: as wide as the Form's column, and no taller
+/// than its share of the sheet, so the settings stay within reach on any phone.
+enum MapImagePreviewFrame {
+    /// The Form's margins on both sides together.
+    static let sideMargins: CGFloat = 40
+
+    static func size(ratio: CGFloat, sheet: CGSize, heightShare: CGFloat) -> CGSize {
+        let width = min(max(0, sheet.width - sideMargins), sheet.height * heightShare * ratio)
+        return CGSize(width: width, height: width / ratio)
     }
 }
 
