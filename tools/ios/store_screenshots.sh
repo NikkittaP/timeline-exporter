@@ -72,12 +72,15 @@ udid="$(xcrun simctl create "$name" "$devtype" "$runtime")" || fail "simctl crea
 echo "Simulator: $udid ($devtype, $runtime)"
 trap 'xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true; xcrun simctl delete "$udid" >/dev/null 2>&1 || true' EXIT
 
-xcrun simctl boot "$udid"
-xcrun simctl bootstatus "$udid" -b >/dev/null
-xcrun simctl ui "$udid" appearance light
-# The status bar every store screenshot shows.
-xcrun simctl status_bar "$udid" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 \
-  --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
+boot_simulator() {
+  xcrun simctl boot "$udid" &&
+    xcrun simctl bootstatus "$udid" -b >/dev/null &&
+    xcrun simctl ui "$udid" appearance light &&
+    # The status bar every store screenshot shows.
+    xcrun simctl status_bar "$udid" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 \
+      --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100
+}
+boot_simulator || fail "the simulator $udid did not boot"
 
 # --- build once.
 derived="$root/build/ios/screens-$kind"
@@ -97,13 +100,31 @@ for locale in "${list[@]}"; do
 done
 suffix="${SHARD:+-${SHARD/\//of}}"
 log="$logs/screens-$kind$suffix.log"
-status=0
-(cd ios && TEST_RUNNER_SCREENSHOT_DIR="$root/fastlane/screenshots_raw" TEST_RUNNER_SCREENSHOT_KIND="$shots"     TEST_RUNNER_SCREENSHOT_ORIENTATION="${ORIENTATION:-}" \
-    TEST_RUNNER_SCREENSHOT_LOCALES="$pairs" TEST_RUNNER_SCREENSHOT_SCENES="$scenes" \
-    xcodebuild test-without-building -project TimelineExporter.xcodeproj -scheme StoreScreenshots \
-    -destination "platform=iOS Simulator,id=$udid" -derivedDataPath "$derived" \
-    -only-testing:TimelineExporterUITests/StoreScreenshots \
-    -resultBundlePath "$root/build/ios/screens-$kind$suffix.xcresult") > "$log" 2>&1 || status=$?
+bundle="$root/build/ios/screens-$kind$suffix.xcresult"
+# The macOS image can lose the simulator before the test runner is installed:
+# SimLaunchHost crashes (SIGBUS in dyld) and takes the booted device with it,
+# and xcodebuild reports "Mach error -308 - (ipc/mig) server died". Nothing has
+# been captured at that point, so a fresh boot and another run lose nothing.
+attempts=3
+for ((attempt = 1; ; attempt++)); do
+  status=0
+  (cd ios && TEST_RUNNER_SCREENSHOT_DIR="$root/fastlane/screenshots_raw" TEST_RUNNER_SCREENSHOT_KIND="$shots"     TEST_RUNNER_SCREENSHOT_ORIENTATION="${ORIENTATION:-}" \
+      TEST_RUNNER_SCREENSHOT_LOCALES="$pairs" TEST_RUNNER_SCREENSHOT_SCENES="$scenes" \
+      xcodebuild test-without-building -project TimelineExporter.xcodeproj -scheme StoreScreenshots \
+      -destination "platform=iOS Simulator,id=$udid" -derivedDataPath "$derived" \
+      -only-testing:TimelineExporterUITests/StoreScreenshots \
+      -resultBundlePath "$bundle") > "$log" 2>&1 || status=$?
+  ((status)) && ((attempt < attempts)) && grep -q "Failed to install or launch the test runner" "$log" || break
+
+  echo "::warning title=Screenshots ($kind)::attempt $attempt of $attempts: the test runner could not be installed, the simulator went down; booting it again"
+  # Kept for the logs artifact, and xcodebuild refuses an existing bundle path.
+  mv "$log" "${log%.log}-attempt$attempt.log"
+  mv "$bundle" "${bundle%.xcresult}-attempt$attempt.xcresult" 2>/dev/null || true
+  xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
+  # CoreSimulatorService needs about 20 s to reconnect to a new SimLaunchHost.
+  sleep 30
+  boot_simulator || fail "the simulator $udid did not boot again after attempt $attempt"
+done
 
 for locale in "${list[@]}"; do
   # A run that died early leaves folders missing, and pipefail must not stop
