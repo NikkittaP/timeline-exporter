@@ -94,7 +94,7 @@ struct PreviewSection: View {
                     .padding(.trailing, Design.minTarget + 16)
             }
             .overlay(alignment: .topTrailing) {
-                VStack(spacing: 8) {
+                MapButtonColumn {
                     MapButton(symbol: "arrow.up.left.and.arrow.down.right", label: L.s("map_expand")) {
                         expanded = true
                     }
@@ -199,7 +199,7 @@ private struct ExpandedMap: View {
             HStack(alignment: .top) {
                 MapStatusChip(status: status)
                 Spacer(minLength: 8)
-                VStack(spacing: 8) {
+                MapButtonColumn {
                     MapButton(symbol: "xmark", label: L.s("map_exit_fullscreen")) { dismiss() }
                     MapButton(symbol: "scope", label: L.s("map_recenter")) { fitToken += 1 }
                 }
@@ -209,8 +209,10 @@ private struct ExpandedMap: View {
             if store.showsDayLegend {
                 DayLegend()
                     .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-                    .background(.regularMaterial)
+                    // One surface for the strip, none per chip; clipped first
+                    // so the days scroll away inside its corners.
                     .clipShape(RoundedRectangle(cornerRadius: Design.cardRadius))
+                    .mapControlSurface(cornerRadius: Design.cardRadius)
                     .frame(maxWidth: Design.dayStripMaxWidth)
                     .padding(.horizontal, 12)
                     .padding(.bottom, 8)
@@ -307,11 +309,29 @@ private struct MapButton: View {
             Image(systemName: symbol)
                 .font(.body.weight(.semibold))
                 .frame(width: Design.minTarget, height: Design.minTarget)
-                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: Design.controlRadius))
+                .mapControlSurface(cornerRadius: Design.controlRadius, interactive: true)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(label)
+    }
+}
+
+/// The map's buttons, one above the other. Their glass is rendered together;
+/// the container's spacing is under the gap, so they stay two separate buttons.
+private struct MapButtonColumn<Content: View>: View {
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        if #available(iOS 26, *) {
+            GlassEffectContainer(spacing: 4) { column }
+        } else {
+            column
+        }
+    }
+
+    private var column: some View {
+        VStack(spacing: 8) { content }
     }
 }
 

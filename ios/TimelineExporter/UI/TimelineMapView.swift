@@ -153,7 +153,12 @@ struct TimelineMapView: UIViewRepresentable {
         private static let selectedSource = "timeline-selected"
         private static let placeLayer = "timeline-places"
         private static let dayLayer = "timeline-day-highlight"
+        private static let gapSource = "timeline-gaps"
+        private static let gapLayer = "timeline-gaps"
         static let trackColor = "#1565C0"
+        /// Android's MapPalette.gap, light and dark.
+        static let gapColorLight = "#4C3BD6"
+        static let gapColorDark = "#8FA3B5"
         /// Without a network the style's TileJSON never arrives and MapLibre
         /// says nothing, so a map not ready by then is reported as such.
         private static let loadingTimeout: TimeInterval = 12
@@ -287,7 +292,10 @@ struct TimelineMapView: UIViewRepresentable {
                 if let layer = style.layer(withIdentifier: id) { style.removeLayer(layer) }
             }
             lineLayers = []
-            if let old = style.source(withIdentifier: Self.lineSource) { style.removeSource(old) }
+            if let old = style.layer(withIdentifier: Self.gapLayer) { style.removeLayer(old) }
+            for id in [Self.lineSource, Self.gapSource] {
+                if let old = style.source(withIdentifier: id) { style.removeSource(old) }
+            }
             guard !line.isEmpty else { return }
 
             var features: [MLNPolylineFeature] = []
@@ -310,6 +318,17 @@ struct TimelineMapView: UIViewRepresentable {
             casing.lineWidth = Self.zoomWidth(Self.casingWidths)
             Self.round(casing)
             insert(casing, below: below, style: style)
+
+            // Between the casing and the line, so the two meet at the shared
+            // endpoints. Not in lineLayers: picking a day dims the days, and
+            // a connector is nobody's day (Android leaves it alone too).
+            if !line.gaps.isEmpty {
+                let gapSource = MLNShapeSource(identifier: Self.gapSource, features: line.gapFeatures(), options: nil)
+                style.addSource(gapSource)
+                let gaps = MLNLineStyleLayer(identifier: Self.gapLayer, source: gapSource)
+                gaps.styleAsGap(color: scheme == .dark ? Self.gapColorDark : Self.gapColorLight, width: 1.2, opacity: 0.35)
+                if let below { style.insertLayer(gaps, below: below) } else { style.addLayer(gaps) }
+            }
 
             let colors = Array(Set(features.compactMap { $0.attributes["color"] as? String })).sorted()
             for color in colors {
@@ -414,8 +433,8 @@ struct TimelineMapView: UIViewRepresentable {
         private func fit(_ map: MLNMapView) {
             memory.clear()
             let line = wanted.line
-            var lats = line.latitudes
-            var lons = line.longitudes
+            var lats = line.framedLatitudes
+            var lons = line.framedLongitudes
             if let day = wanted.selectedDay {
                 let ranges = line.pieces.filter { $0.day == day }.map(\.range)
                 if !ranges.isEmpty {
@@ -459,6 +478,29 @@ struct TimelineMapView: UIViewRepresentable {
             let key = hit.first?.attribute(forKey: "key") as? String
             onSelectPlace(key)
         }
+    }
+}
+
+extension MapLine {
+    /// The connectors as map features, for the live map and the Map image.
+    func gapFeatures() -> [MLNPolylineFeature] {
+        gaps.map { gap in
+            var coords = [gap.from, gap.to].map {
+                CLLocationCoordinate2D(latitude: $0.latitude, longitude: $0.longitude)
+            }
+            return MLNPolylineFeature(coordinates: &coords, count: UInt(coords.count))
+        }
+    }
+}
+
+extension MLNLineStyleLayer {
+    /// A thin broken line, the dash and cap of the Android connector.
+    func styleAsGap(color: String, width: Double, opacity: Double) {
+        lineColor = NSExpression(forConstantValue: UIColor(hex: color) ?? .systemGray)
+        lineWidth = NSExpression(forConstantValue: width)
+        lineOpacity = NSExpression(forConstantValue: opacity)
+        lineDashPattern = NSExpression(forConstantValue: [1.5, 3])
+        lineCap = NSExpression(forConstantValue: "butt")
     }
 }
 

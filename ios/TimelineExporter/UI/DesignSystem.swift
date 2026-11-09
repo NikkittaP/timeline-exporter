@@ -21,6 +21,21 @@ enum Design {
     static let selectedPlaceHex = "#0072B2"
 }
 
+extension View {
+    /// The surface of a control floating over the map: Liquid Glass where the
+    /// system has it, which also answers Reduce Transparency and Increase
+    /// Contrast by itself, and the blur it replaces where it does not.
+    @ViewBuilder
+    func mapControlSurface(cornerRadius: CGFloat, interactive: Bool = false) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius)
+        if #available(iOS 26, *) {
+            glassEffect(Glass.regular.interactive(interactive), in: shape)
+        } else {
+            background(.regularMaterial, in: shape)
+        }
+    }
+}
+
 /// A step's heading in the Form: readable as a heading, not a grey caption.
 struct StepHeader: View {
     let title: String

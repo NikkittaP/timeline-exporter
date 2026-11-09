@@ -27,8 +27,8 @@ private let brandName = "Timeline Exporter"
 @MainActor
 func renderMapImage(_ request: MapImageRequest) async throws -> UIImage {
     let spec = request.spec
-    guard let extent = MapImageGeometry.trackExtent(latitudes: request.line.latitudes,
-                                                    longitudes: request.line.longitudes) else {
+    guard let extent = MapImageGeometry.trackExtent(latitudes: request.line.framedLatitudes,
+                                                    longitudes: request.line.framedLongitudes) else {
         throw MapImageError.nothingToDraw
     }
     let showStats = request.showStats && request.stats != nil
@@ -71,11 +71,13 @@ func encodeMapImage(_ image: UIImage, format: MapImageFormat) -> Data? {
 
 extension MapLine {
     var firstCoordinate: CLLocationCoordinate2D? {
+        if let start { return CLLocationCoordinate2D(latitude: start.latitude, longitude: start.longitude) }
         guard let i = pieces.first?.range.lowerBound ?? (latitudes.isEmpty ? nil : 0) else { return nil }
         return CLLocationCoordinate2D(latitude: latitudes[i], longitude: longitudes[i])
     }
 
     var lastCoordinate: CLLocationCoordinate2D? {
+        if let end { return CLLocationCoordinate2D(latitude: end.latitude, longitude: end.longitude) }
         guard let i = pieces.last.map({ $0.range.upperBound - 1 }) ?? (latitudes.isEmpty ? nil : latitudes.count - 1)
         else { return nil }
         return CLLocationCoordinate2D(latitude: latitudes[i], longitude: longitudes[i])
@@ -158,14 +160,26 @@ private final class SnapshotJob: NSObject, MLNMapSnapshotterDelegate {
             f.attributes = ["color": piece.color.isEmpty ? TimelineMapView.Coordinator.trackColor : piece.color]
             features.append(f)
         }
-        guard !features.isEmpty else { return }
-        let source = MLNShapeSource(identifier: "image-line", features: features, options: nil)
-        style.addSource(source)
         let firstLabel = style.layers.first { $0 is MLNSymbolStyleLayer }
 
         func add(_ layer: MLNStyleLayer) {
             if let firstLabel { style.insertLayer(layer, below: firstLabel) } else { style.addLayer(layer) }
         }
+        func addGaps() {
+            guard !line.gaps.isEmpty else { return }
+            let gapSource = MLNShapeSource(identifier: "image-gaps", features: line.gapFeatures(), options: nil)
+            style.addSource(gapSource)
+            let gaps = MLNLineStyleLayer(identifier: "image-gaps", source: gapSource)
+            // A touch stronger than on screen: no finger to zoom in with.
+            gaps.styleAsGap(color: TimelineMapView.Coordinator.gapColorLight, width: 1.6, opacity: 0.6)
+            add(gaps)
+        }
+        guard !features.isEmpty else {
+            addGaps()
+            return
+        }
+        let source = MLNShapeSource(identifier: "image-line", features: features, options: nil)
+        style.addSource(source)
         // A pale band under the line, so it reads over roads and water.
         let casing = MLNLineStyleLayer(identifier: "image-casing", source: source)
         casing.lineColor = NSExpression(forConstantValue: UIColor.white)
@@ -174,6 +188,7 @@ private final class SnapshotJob: NSObject, MLNMapSnapshotterDelegate {
         casing.lineCap = NSExpression(forConstantValue: "round")
         casing.lineJoin = NSExpression(forConstantValue: "round")
         add(casing)
+        addGaps()
 
         let colors = Array(Set(features.compactMap { $0.attributes["color"] as? String })).sorted()
         for color in colors {

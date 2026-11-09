@@ -114,6 +114,15 @@ final class MainScreenModelTests: XCTestCase {
         XCTAssertNil(store.selectedDay)
     }
 
+    func testAFlightAloneIsStillSomethingToShowAndFrame() {
+        var line = MapLine()
+        XCTAssertTrue(line.isEmpty)
+        line.gaps = [MapLine.Gap(from: .init(latitude: 48, longitude: 2), to: .init(latitude: 52, longitude: 13))]
+        XCTAssertFalse(line.isEmpty)
+        XCTAssertEqual(line.framedLatitudes, [48, 52])
+        XCTAssertEqual(line.framedLongitudes, [2, 13])
+    }
+
     func testCameraMemoryIsOnlyForTheSameContent() {
         var line = MapLine()
         line.latitudes = [1, 2]

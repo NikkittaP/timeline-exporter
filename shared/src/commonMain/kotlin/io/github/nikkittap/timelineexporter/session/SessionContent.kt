@@ -91,9 +91,18 @@ class MapTrack(
     val sourcePoints: Int,
     /** Each piece's local day (epoch day), or [MAP_NO_DAY] when not cut by day. */
     val pieceDays: LongArray = LongArray(pieceStarts.size) { MAP_NO_DAY },
+    /**
+     * The dashed connectors: four numbers each, latitude and longitude of the
+     * sample before a jump and of the sample after it. Neither has to be among
+     * [latitudes]: the far side of a jump may be a sample with no line.
+     */
+    val gapCoordinates: DoubleArray = DoubleArray(0),
+    /** First latitude, longitude, last latitude, longitude; empty for no track. */
+    val endpoints: DoubleArray = DoubleArray(0),
 ) {
     val pointCount: Int get() = latitudes.size
     val pieceCount: Int get() = pieceStarts.size
+    val gapCount: Int get() = gapCoordinates.size / 4
 }
 
 /** In [MapTrack.pieceDays]: the piece does not belong to one day. */
@@ -240,7 +249,7 @@ fun TimelineSession.exportPlacesResult(
 fun TimelineSession.mapTrack(spec: FilterSpec, colorByDay: Boolean, budget: Int): MapTrack {
     val points = filteredPoints(spec)
     val runs = if (colorByDay) dayRuns(points) else listOf(Run(points, ""))
-    return buildMapTrack(runs, budget)
+    return buildMapTrack(runs, budget, journeys = listOf(points))
 }
 
 /**
@@ -274,9 +283,14 @@ private fun TimelineSession.dayRuns(points: List<PathPoint>): List<Run> {
 
 /**
  * Thin [runs] to about [budget] points (every n-th, each piece's ends kept)
- * and cut them further wherever consecutive points are a gap apart.
+ * and cut them further wherever consecutive samples are a gap apart. [journeys]
+ * are the unbroken tracks the runs were cut from, which the connectors follow.
  */
-internal fun buildMapTrack(runs: List<Run>, budget: Int): MapTrack {
+internal fun buildMapTrack(
+    runs: List<Run>,
+    budget: Int,
+    journeys: List<List<PathPoint>> = runs.map { it.points },
+): MapTrack {
     val total = runs.sumOf { it.points.size }
     val stride = if (budget > 0 && total > budget) (total + budget - 1) / budget else 1
     val lats = ArrayList<Double>(minOf(total, budget.coerceAtLeast(1) + runs.size * 2))
@@ -287,7 +301,6 @@ internal fun buildMapTrack(runs: List<Run>, budget: Int): MapTrack {
     for (run in runs) {
         val pts = run.points
         if (pts.isEmpty()) continue
-        var prev: PathPoint? = null
         var pieceLength = 0
         fun cut() {
             starts += lats.size
@@ -295,35 +308,76 @@ internal fun buildMapTrack(runs: List<Run>, budget: Int): MapTrack {
             days += run.day
             pieceLength = 0
         }
-        cut()
-        for ((i, p) in pts.withIndex()) {
-            if (i % stride != 0 && i != pts.lastIndex) continue
-            val last = prev
-            if (last != null && haversineMeters(last.latitude, last.longitude, p.latitude, p.longitude) > MAP_GAP_METERS) {
-                if (pieceLength < 2) {
-                    // A piece of one point draws nothing; drop it.
-                    lats.subList(lats.size - pieceLength, lats.size).clear()
-                    lons.subList(lons.size - pieceLength, lons.size).clear()
-                    starts.removeAt(starts.lastIndex)
-                    colors.removeAt(colors.lastIndex)
-                    days.removeAt(days.lastIndex)
-                }
-                cut()
-            }
-            lats += p.latitude
-            lons += p.longitude
-            pieceLength++
-            prev = p
-        }
-        if (pieceLength < 2) {
+        /** A piece of one point draws nothing; drop it. */
+        fun dropLonePiece() {
+            if (pieceLength >= 2) return
             lats.subList(lats.size - pieceLength, lats.size).clear()
             lons.subList(lons.size - pieceLength, lons.size).clear()
             starts.removeAt(starts.lastIndex)
             colors.removeAt(colors.lastIndex)
             days.removeAt(days.lastIndex)
         }
+        cut()
+        // Jumps are measured on the samples as recorded, as on Android: every
+        // 100th point of a motorway is 100 km apart without being a gap, and
+        // the two samples a jump runs between have to survive the thinning.
+        var jumpBefore = false
+        for ((i, p) in pts.withIndex()) {
+            val jumpAfter = i < pts.lastIndex && isMapGap(p, pts[i + 1])
+            if (i % stride == 0 || i == pts.lastIndex || jumpBefore || jumpAfter) {
+                if (jumpBefore) {
+                    dropLonePiece()
+                    cut()
+                }
+                lats += p.latitude
+                lons += p.longitude
+                pieceLength++
+            }
+            jumpBefore = jumpAfter
+        }
+        dropLonePiece()
     }
-    return MapTrack(lats.toDoubleArray(), lons.toDoubleArray(), starts.toIntArray(), colors, total, days.toLongArray())
+    return MapTrack(
+        lats.toDoubleArray(),
+        lons.toDoubleArray(),
+        starts.toIntArray(),
+        colors,
+        total,
+        days.toLongArray(),
+        mapGaps(journeys),
+        mapEndpoints(journeys),
+    )
+}
+
+private fun isMapGap(a: PathPoint, b: PathPoint): Boolean =
+    haversineMeters(a.latitude, a.longitude, b.latitude, b.longitude) > MAP_GAP_METERS
+
+/**
+ * Inside each journey only, so two trips that both leave from home are two
+ * lines, and over whole journeys rather than day pieces, so a flight across
+ * midnight keeps its connector.
+ */
+private fun mapGaps(journeys: List<List<PathPoint>>): DoubleArray {
+    val out = ArrayList<Double>()
+    for (journey in journeys) {
+        for (i in 1 until journey.size) {
+            val a = journey[i - 1]
+            val b = journey[i]
+            if (isMapGap(a, b)) {
+                out += a.latitude
+                out += a.longitude
+                out += b.latitude
+                out += b.longitude
+            }
+        }
+    }
+    return out.toDoubleArray()
+}
+
+private fun mapEndpoints(journeys: List<List<PathPoint>>): DoubleArray {
+    val first = journeys.firstOrNull { it.isNotEmpty() }?.first() ?: return DoubleArray(0)
+    val last = journeys.last { it.isNotEmpty() }.last()
+    return doubleArrayOf(first.latitude, first.longitude, last.latitude, last.longitude)
 }
 
 /**

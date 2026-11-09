@@ -12,6 +12,8 @@
 #            Secrets: APPSTORE_KEY_ID, APPSTORE_ISSUER_ID, APPSTORE_PRIVATE_KEY,
 #            IOS_BUNDLE_ID. Never touches the listing text or the binary, never
 #            submits for review. Runs only from master.
+# Orientation landscape is for looking at the layout: raw PNGs only, in
+# <locale>/<kind>-landscape, no framing and no upload.
 # Failures are annotations (readable through the public check-runs API).
 name: iOS screenshots
 
@@ -23,6 +25,11 @@ on:
         type: choice
         options: [both, iphone, ipad]
         default: both
+      orientation:
+        description: "Landscape gives raw layout shots only: no framing, no upload"
+        type: choice
+        options: [portrait, landscape]
+        default: portrait
       locales:
         description: "Comma list of tools/store_shots locales (en-US,ru-RU,...). Empty - all 18"
         type: string
@@ -54,6 +61,7 @@ jobs:
         env:
           DEVICES: ${{ inputs.devices }}
           UPLOAD: ${{ inputs.upload }}
+          ORIENTATION: ${{ inputs.orientation }}
           HAS_KEY: ${{ secrets.APPSTORE_KEY_ID != '' && secrets.APPSTORE_ISSUER_ID != '' && secrets.APPSTORE_PRIVATE_KEY != '' }}
         run: |
           set -euo pipefail
@@ -63,6 +71,10 @@ jobs:
             *) echo 'devices=["iphone","ipad"]' ;;
           esac >> "$GITHUB_OUTPUT"
           if [[ "$UPLOAD" == true ]]; then
+            if [[ "$ORIENTATION" == landscape ]]; then
+              echo "::error title=upload::landscape shots are not a store set"
+              exit 1
+            fi
             if [[ "$GITHUB_REF" != refs/heads/master ]]; then
               echo "::error title=upload::uploads run only from master"
               exit 1
@@ -126,6 +138,7 @@ jobs:
         env:
           LOCALES: ${{ inputs.locales }}
           SHARD: ${{ matrix.shard }}/2
+          ORIENTATION: ${{ inputs.orientation == 'landscape' && 'landscape' || '' }}
         run: bash tools/ios/store_screenshots.sh "${{ matrix.device }}" "$LOCALES"
 
       - name: Upload raw screenshots
@@ -152,6 +165,7 @@ jobs:
   frame:
     name: Frame
     needs: [plan, capture]
+    if: inputs.orientation != 'landscape'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:

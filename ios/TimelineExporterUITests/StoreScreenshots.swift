@@ -11,6 +11,7 @@ import XCTest
 ///   SCREENSHOT_KIND      iphone or ipad
 ///   SCREENSHOT_LOCALES   comma list of locale=language, e.g. en-US=en,zh-CN=zh-Hans
 ///   SCREENSHOT_SCENES    optional, a comma list of scenes to take
+///   SCREENSHOT_ORIENTATION  optional, "landscape" to turn the device first
 ///
 /// Every language runs in this one test: a test run per language cost about
 /// a minute and a half of xcodebuild start-up each. Failures name the locale
@@ -53,6 +54,9 @@ final class StoreScreenshots: XCTestCase {
             }
         XCTAssertFalse(locales.isEmpty, "SCREENSHOT_LOCALES has no locale=language pair")
         let only = Self.list(env["SCREENSHOT_SCENES"])
+        if env["SCREENSHOT_ORIENTATION"] == "landscape" {
+            XCUIDevice.shared.orientation = .landscapeLeft
+        }
 
         for (locale, language) in locales {
             let dir = "\(root)/\(locale)/\(kind)"

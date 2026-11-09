@@ -7,6 +7,8 @@
 # SCENES   comma list of ScreenshotMode scenes (map,days,...); empty = all
 # SHARD    environment, optional "i/n": take every n-th locale from the i-th
 #          (1-based), so n runners share the languages
+# ORIENTATION  environment, optional "landscape": turns the simulator and writes
+#          to <locale>/<kind>-landscape, apart from the store set
 #
 # One xcodebuild test run takes every language: a run per language spent
 # about a minute and a half each on start-up and the result bundle.
@@ -24,6 +26,7 @@ root="$(pwd)"
 config="$root/tools/store_shots/config.json"
 logs="${LOGS:-$root/build/ios/logs}"
 mkdir -p "$logs"
+shots="$kind${ORIENTATION:+-$ORIENTATION}"
 
 fail() {
   echo "::error title=Screenshots ($kind)::$1"
@@ -90,12 +93,12 @@ fi
 # --- run once: every language in one test.
 IFS=',' read -r -a list <<< "$locales"
 for locale in "${list[@]}"; do
-  rm -rf "$root/fastlane/screenshots_raw/$locale/$kind"
+  rm -rf "$root/fastlane/screenshots_raw/$locale/$shots"
 done
 suffix="${SHARD:+-${SHARD/\//of}}"
 log="$logs/screens-$kind$suffix.log"
 status=0
-(cd ios && TEST_RUNNER_SCREENSHOT_DIR="$root/fastlane/screenshots_raw" TEST_RUNNER_SCREENSHOT_KIND="$kind" \
+(cd ios && TEST_RUNNER_SCREENSHOT_DIR="$root/fastlane/screenshots_raw" TEST_RUNNER_SCREENSHOT_KIND="$shots"     TEST_RUNNER_SCREENSHOT_ORIENTATION="${ORIENTATION:-}" \
     TEST_RUNNER_SCREENSHOT_LOCALES="$pairs" TEST_RUNNER_SCREENSHOT_SCENES="$scenes" \
     xcodebuild test-without-building -project TimelineExporter.xcodeproj -scheme StoreScreenshots \
     -destination "platform=iOS Simulator,id=$udid" -derivedDataPath "$derived" \
@@ -105,11 +108,11 @@ status=0
 for locale in "${list[@]}"; do
   # A run that died early leaves folders missing, and pipefail must not stop
   # the script here: the reason is reported below.
-  n="$({ find "$root/fastlane/screenshots_raw/$locale/$kind" -name '*.png' 2>/dev/null || true; } | wc -l | tr -d ' ')"
+  n="$({ find "$root/fastlane/screenshots_raw/$locale/$shots" -name '*.png' 2>/dev/null || true; } | wc -l | tr -d ' ')"
   echo "== $locale: $n shot(s)"
 done
-count="$({ find "$root/fastlane/screenshots_raw" -path "*/$kind/*.png" 2>/dev/null || true; } | wc -l | tr -d ' ')"
-echo "$count raw $kind screenshot(s)"
+count="$({ find "$root/fastlane/screenshots_raw" -path "*/$shots/*.png" 2>/dev/null || true; } | wc -l | tr -d ' ')"
+echo "$count raw $shots screenshot(s)"
 
 if ((status)); then
   # The test's messages read "[de-DE] 03_map_fullscreen: the map never appeared".

@@ -280,12 +280,33 @@ struct MapLine: Equatable {
         var date: Date { CoreTimeline.localDay(epochDay) }
     }
 
+    /// A position, Equatable where CLLocationCoordinate2D is not.
+    struct Position: Equatable {
+        let latitude: Double
+        let longitude: Double
+    }
+
+    /// A jump between two samples (a flight, a stretch with location off):
+    /// a dashed connector, not part of the recorded line.
+    struct Gap: Equatable {
+        let from: Position
+        let to: Position
+    }
+
     var latitudes: [Double] = []
     var longitudes: [Double] = []
     var pieces: [Piece] = []
     /// Each day once, in track order; empty unless coloured by day.
     var days: [Day] = []
-    var isEmpty: Bool { latitudes.isEmpty }
+    var gaps: [Gap] = []
+    /// The first and last sample, which a line need not start or end at.
+    var start: Position?
+    var end: Position?
+    var isEmpty: Bool { latitudes.isEmpty && gaps.isEmpty }
+
+    /// Everything drawn, connector ends included: what framing has to show.
+    var framedLatitudes: [Double] { latitudes + gaps.flatMap { [$0.from.latitude, $0.to.latitude] } }
+    var framedLongitudes: [Double] { longitudes + gaps.flatMap { [$0.from.longitude, $0.to.longitude] } }
 }
 
 extension CoreTimeline {
@@ -401,6 +422,18 @@ extension CoreTimeline {
             if let day, seenDays.insert(day).inserted {
                 line.days.append(MapLine.Day(epochDay: day, color: t.pieceColors[i]))
             }
+        }
+        let c = t.gapCoordinates
+        for i in 0..<t.gapCount {
+            line.gaps.append(MapLine.Gap(
+                from: MapLine.Position(latitude: c.get(index: 4 * i), longitude: c.get(index: 4 * i + 1)),
+                to: MapLine.Position(latitude: c.get(index: 4 * i + 2), longitude: c.get(index: 4 * i + 3))
+            ))
+        }
+        let ends = t.endpoints
+        if ends.size == 4 {
+            line.start = MapLine.Position(latitude: ends.get(index: 0), longitude: ends.get(index: 1))
+            line.end = MapLine.Position(latitude: ends.get(index: 2), longitude: ends.get(index: 3))
         }
         return line
     }

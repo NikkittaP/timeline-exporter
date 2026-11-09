@@ -142,13 +142,19 @@ struct NumberedSteps: View {
 
 /// Keeps the one-column Form readable on an iPad: a centred column instead of
 /// lines the width of a 13" screen. Phones are narrower than the limit.
+///
+/// Margins inside the scroll view rather than a narrower one: the system bar
+/// over a scrolled page is as wide as the scroll view, and a 720 pt one showed
+/// as a hard-edged box in the middle of the window.
 struct ReadableColumn: ViewModifier {
     static let maxWidth: CGFloat = 720
 
+    @State private var width: CGFloat = 0
+
     func body(content: Content) -> some View {
         content
-            .frame(maxWidth: Self.maxWidth)
-            .frame(maxWidth: .infinity)
+            .contentMargins(.horizontal, max(0, (width - Self.maxWidth) / 2), for: .scrollContent)
+            .onGeometryChange(for: CGFloat.self, of: { $0.size.width }) { width = $0 }
             .background(Color(.systemGroupedBackground).ignoresSafeArea())
     }
 }
