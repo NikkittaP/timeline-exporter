@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Tests for strings_to_xcstrings.py. Run: python3 tools/ios/test_strings_to_xcstrings.py"""
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -84,6 +85,20 @@ class Committed(unittest.TestCase):
         self.assertEqual(18, len(langs), sorted(langs))
         self.assertIn("zh-Hans", langs)
         self.assertIn("pt-BR", langs)
+
+    def test_swift_counts_only_plural_strings(self):
+        """L.plural passes an Int: into a plain "%1$@" string that is a crash."""
+        ios = os.path.normpath(os.path.join(os.path.dirname(s2x.OUT), "..", ".."))
+        strings = s2x.build()["strings"]
+        used = set()
+        for folder, _, names in os.walk(ios):
+            for name in names:
+                if name.endswith(".swift"):
+                    with open(os.path.join(folder, name), encoding="utf-8") as f:
+                        used.update(re.findall(r'\bL\.plural\(\s*"([^"]+)"', f.read()))
+        self.assertTrue(used)
+        wrong = sorted(k for k in used if "variations" not in strings[k]["localizations"]["en"])
+        self.assertEqual([], wrong, "not plurals in the catalog: use L.f with a formatted number")
 
 
 if __name__ == "__main__":

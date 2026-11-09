@@ -536,7 +536,7 @@ private struct ExportSection: View {
     private var writesText: String {
         switch store.contentKind {
         case .track:
-            return L.f("export_writes_value", L.s("content_track"), L.plural("points_count", store.filteredCount))
+            return L.f("export_writes_value", L.s("content_track"), L.f("points_count", Fmt.grouped(store.filteredCount)))
         case .trips:
             // Nothing ticked writes every visible trip.
             let marked = store.exportTripKeys.count
