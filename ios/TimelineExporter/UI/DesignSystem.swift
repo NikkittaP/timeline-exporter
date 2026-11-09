@@ -21,6 +21,26 @@ enum Design {
     static let selectedPlaceHex = "#0072B2"
 }
 
+/// When the loaded page puts its map in a pane of its own beside the steps.
+/// Decided on the width the window has, so a narrow Stage Manager or Split
+/// View window stacks like a phone. The size class keeps out the widest
+/// phones; a 13" iPad upright (1032 pt) stays stacked too.
+enum PageLayout {
+    /// As wide as a large phone: every row already fits that.
+    static let sidebarMinWidth: CGFloat = 420
+    static let sidebarMaxWidth: CGFloat = 500
+    static let mapMinWidth: CGFloat = 620
+    static let sidebarShare: CGFloat = 0.36
+
+    static func isSplit(width: CGFloat, sizeClass: UserInterfaceSizeClass?) -> Bool {
+        sizeClass == .regular && width >= sidebarMinWidth + mapMinWidth
+    }
+
+    static func sidebarWidth(pageWidth: CGFloat) -> CGFloat {
+        min(sidebarMaxWidth, max(sidebarMinWidth, pageWidth * sidebarShare))
+    }
+}
+
 extension View {
     /// The surface of a control floating over the map: Liquid Glass where the
     /// system has it, which also answers Reduce Transparency and Increase

@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 @testable import TimelineExporter
 
@@ -112,5 +113,19 @@ final class MapImageLayoutTests: XCTestCase {
         let landscape = MapImagePreviewFrame.size(ratio: 16.0 / 9.0, sheet: phone, heightShare: 0.5)
         XCTAssertEqual(landscape.width, 390 - MapImagePreviewFrame.sideMargins, accuracy: 0.001)
         XCTAssertEqual(landscape.width / landscape.height, 16.0 / 9.0, accuracy: 0.001)
+    }
+
+    func testOnlyAWideWindowAsksForTheWideSheet() throws {
+        let landscape = CGSize(width: 1376, height: 950)
+        let sheet = try XCTUnwrap(MapImagePreviewFrame.wideSheet(window: landscape, sizeClass: .regular))
+        XCTAssertEqual(sheet.width, 1080, accuracy: 0.001)
+        XCTAssertEqual(sheet.height, 860, accuracy: 0.001)
+        XCTAssertGreaterThanOrEqual(sheet.width, MapImagePreviewFrame.twoColumnMinWidth)
+
+        XCTAssertNil(MapImagePreviewFrame.wideSheet(window: CGSize(width: 1032, height: 1300), sizeClass: .regular),
+                     "upright keeps the one column")
+        XCTAssertNil(MapImagePreviewFrame.wideSheet(window: CGSize(width: 800, height: 700), sizeClass: .regular),
+                     "a narrow window keeps the one column")
+        XCTAssertNil(MapImagePreviewFrame.wideSheet(window: landscape, sizeClass: .compact))
     }
 }

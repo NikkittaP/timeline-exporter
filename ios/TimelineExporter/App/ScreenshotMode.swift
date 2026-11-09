@@ -27,6 +27,13 @@ enum ScreenshotMode {
         case days
         /// The Map image screen for the same week.
         case mapimage
+        // Layout checks, not store shots: taken only when asked for or turned.
+        /// Trips, one ticked for export and the one next to it on the map.
+        case tripPreview
+        /// Places, one picked on the map.
+        case placeSelected
+        /// The Map image screen; the UI test sets the 16:9 shape.
+        case mapimageLandscape
     }
 
     static let scene: Scene? = {
@@ -45,8 +52,8 @@ enum ScreenshotMode {
     static var anchor: (id: String, bottom: Bool)? {
         switch scene {
         case .formats: ("export", true)
-        case .mapimage: ("mapImage", true)
-        case .places, .trip, .trips, .map, .days: ("preview", false)
+        case .mapimage, .mapimageLandscape: ("mapImage", true)
+        case .places, .trip, .trips, .map, .days, .tripPreview, .placeSelected: ("preview", false)
         default: nil
         }
     }
@@ -79,7 +86,21 @@ enum ScreenshotMode {
                 store.setTrip(trip.key, checked: true)
                 store.selectTrip(trip.key)
             }
-        case .days, .mapimage:
+        case .tripPreview:
+            store.setContentKind(.trips)
+            let trips = store.visibleTrips
+            if let day = cal.date(from: focusTrip),
+               let index = trips.firstIndex(where: { cal.isDate($0.startDay, inSameDayAs: day) }) {
+                store.setTrip(trips[index].key, checked: true)
+                if index + 1 < trips.count {
+                    store.selectTrip(trips[index + 1].key)
+                } else if index > 0 {
+                    store.selectTrip(trips[index - 1].key)
+                }
+            }
+        case .placeSelected:
+            store.setContentKind(.places)
+        case .days, .mapimage, .mapimageLandscape:
             // The demo ends on a seven-day road trip with a road of its own every day.
             if let last = core.lastPoint {
                 store.setRange(cal.lastDays(7, endingAt: last))
@@ -89,5 +110,9 @@ enum ScreenshotMode {
             break
         }
         await store.recount()
+        // The places exist only once counted.
+        if scene == .placeSelected, let place = store.places.first {
+            store.selectPlace(place.key)
+        }
     }
 }
