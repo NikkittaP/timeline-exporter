@@ -103,17 +103,20 @@ status=0
     -resultBundlePath "$root/build/ios/screens-$kind$suffix.xcresult") > "$log" 2>&1 || status=$?
 
 for locale in "${list[@]}"; do
-  n="$(find "$root/fastlane/screenshots_raw/$locale/$kind" -name '*.png' 2>/dev/null | wc -l | tr -d ' ')"
+  # A run that died early leaves folders missing, and pipefail must not stop
+  # the script here: the reason is reported below.
+  n="$({ find "$root/fastlane/screenshots_raw/$locale/$kind" -name '*.png' 2>/dev/null || true; } | wc -l | tr -d ' ')"
   echo "== $locale: $n shot(s)"
 done
-count="$(find "$root/fastlane/screenshots_raw" -path "*/$kind/*.png" | wc -l | tr -d ' ')"
+count="$({ find "$root/fastlane/screenshots_raw" -path "*/$kind/*.png" 2>/dev/null || true; } | wc -l | tr -d ' ')"
 echo "$count raw $kind screenshot(s)"
 
 if ((status)); then
   # The test's messages read "[de-DE] 03_map_fullscreen: the map never appeared".
   errors="$(grep -oE "failed - \[[^]]+\] .*|error: .*" "$log" | sed 's/^failed - //' | sort -u || true)"
   echo "$errors" | head -n 40
-  echo "$errors" | grep -E '^\[' | head -n 20 | while read -r line; do
+  # No "[locale]" line at all is the case to explain: the test runner crashed.
+  { echo "$errors" | grep -E '^\[' || true; } | head -n 20 | while read -r line; do
     echo "::warning title=Screenshots ($kind)::$line"
   done
   bad="$(echo "$errors" | grep -oE '^\[[^]]+\]' | tr -d '[]' | sort -u | tr '\n' ' ' || true)"
