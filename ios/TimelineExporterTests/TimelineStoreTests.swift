@@ -138,6 +138,34 @@ final class TimelineStoreTests: XCTestCase {
         XCTAssertEqual(store.exportState, .nothing(.trips))
         XCTAssertNil(store.pendingExport)
     }
+
+    /// Previewing a trip and marking trips for export are two states: one never sets the other.
+    func testPreviewingATripIsNotMarkingItAndAHiddenTripIsNotPreviewed() async throws {
+        let bundled = try XCTUnwrap(Bundle.main.url(forResource: "timeline_demo", withExtension: "json"))
+        let store = TimelineStore(settings: InMemorySettingsStore())
+        await store.open(url: bundled)
+        store.setContentKind(.trips)
+        await store.recount()
+        let trips = store.visibleTrips
+        guard trips.count >= 2 else { throw XCTSkip("the demo has fewer than two trips") }
+        let newest = trips[0]
+        let older = trips[1]
+
+        store.setTrip(newest.key, checked: true)
+        store.selectTrip(older.key)
+        XCTAssertEqual(store.previewedTrip, older.key)
+        XCTAssertEqual(store.exportTripKeys, [newest.key], "previewing marks nothing")
+
+        // A range that lists only the newest trip: the older one leaves the map too.
+        store.setRange(Calendar.current.dayRange(from: newest.startDay, to: newest.endDay))
+        await store.recount()
+        if !store.visibleTrips.contains(where: { $0.key == older.key }) {
+            XCTAssertNil(store.previewedTrip)
+        }
+
+        store.clearCheckedTrips()
+        XCTAssertTrue(store.exportTripKeys.isEmpty, "no marks: every visible trip is exported")
+    }
 }
 
 final class PlaceLabelsTests: XCTestCase {
@@ -205,33 +233,5 @@ final class SettingsTests: XCTestCase {
         let r = cal.lastDays(7, endingAt: anchor)
         XCTAssertEqual(cal.component(.day, from: r.lowerBound), 24)
         XCTAssertEqual(cal.component(.day, from: r.upperBound), 30)
-    }
-
-    /// Previewing a trip and marking trips for export are two states: one never sets the other.
-    func testPreviewingATripIsNotMarkingItAndAHiddenTripIsNotPreviewed() async throws {
-        let bundled = try XCTUnwrap(Bundle.main.url(forResource: "timeline_demo", withExtension: "json"))
-        let store = TimelineStore(settings: InMemorySettingsStore())
-        await store.open(url: bundled)
-        store.setContentKind(.trips)
-        await store.recount()
-        let trips = store.visibleTrips
-        guard trips.count >= 2 else { throw XCTSkip("the demo has fewer than two trips") }
-        let newest = trips[0]
-        let older = trips[1]
-
-        store.setTrip(newest.key, checked: true)
-        store.selectTrip(older.key)
-        XCTAssertEqual(store.previewedTrip, older.key)
-        XCTAssertEqual(store.exportTripKeys, [newest.key], "previewing marks nothing")
-
-        // A range that lists only the newest trip: the older one leaves the map too.
-        store.setRange(Calendar.current.dayRange(from: newest.startDay, to: newest.endDay))
-        await store.recount()
-        if !store.visibleTrips.contains(where: { $0.key == older.key }) {
-            XCTAssertNil(store.previewedTrip)
-        }
-
-        store.clearCheckedTrips()
-        XCTAssertTrue(store.exportTripKeys.isEmpty, "no marks: every visible trip is exported")
     }
 }
