@@ -1,3 +1,6 @@
+---
+layout: privacy
+---
 # Privacy Policy — Timeline Exporter
 
 **Last updated:** 2026-11-07

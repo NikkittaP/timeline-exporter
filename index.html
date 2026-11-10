@@ -126,33 +126,44 @@ details p{margin:0 0 16px; color:var(--muted)}
 footer{padding:40px 0 60px; text-align:center; color:var(--muted); font-size:.9rem}
 .priv{display:inline-flex; gap:8px; align-items:center; color:var(--accent-2); font-weight:600; margin-top:14px}
 @media(max-width:640px){ h1{font-size:1.7rem} .grid{grid-template-columns:1fr} }
-</style>
-</head>
-<body>
 
-<header>
+</style>
+  <link rel="stylesheet" href="assets/studio.css?v=2">
+  <link rel="stylesheet" href="assets/product.css?v=2">
+  <script src="assets/studio.js?v=2" defer></script>
+</head>
+<body class="project-page project-timeline" id="top">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="studio-bar"><div class="studio-bar-inner">
+  <a class="studio-brand" href="/" data-local="nikkittap.github.io/index.html" aria-label="Nikita Petrov Apps home">Nikita Petrov Apps</a>
+  <nav class="studio-nav" aria-label="Studio navigation"><a href="/#projects" data-local="nikkittap.github.io/index.html#projects">All projects</a><a class="studio-youtube" href="https://www.youtube.com/@NikitaPetrovApps">YouTube</a></nav>
+</div></div>
+
+<header class="product-hero">
   <div class="wrap">
-    <span class="badge-pill">100% on-device · no upload · open source</span>
-    <h1>Convert your <span class="grad">Google Maps Timeline</span> to GPX, KML, GeoJSON &amp; CSV — on your phone</h1>
-    <p class="sub">Since late 2024, Google Maps Timeline lives only on your device as a single <code>Timeline.json</code>. Timeline Exporter is the free Android app that turns it into open GPS formats — without uploading your location history anywhere.</p>
+    <p class="product-identity"><img src="assets/app-icon.png" width="32" height="32" alt="">Android · Location data utility</p>
+    <span class="badge-pill">Free · Open source · On-device conversion</span>
+    <h1>Timeline Exporter</h1>
+    <p class="sub">Open your Google Maps <code>Timeline.json</code>, choose a date range, and export to GPX, KML, GeoJSON or CSV. Everything is processed on your phone.</p>
     <div class="cta-row">
-      <a class="cta" href="https://play.google.com/store/apps/details?id=io.github.nikkittap.timelineexporter">▶ Get it on Google Play</a>
-      <a class="ghost" href="https://github.com/NikkittaP/timeline-exporter">★ View source on GitHub</a>
+      <a class="cta" href="https://play.google.com/store/apps/details?id=io.github.nikkittap.timelineexporter">Get it on Google Play</a>
+      <a class="ghost" href="https://github.com/NikkittaP/timeline-exporter">Source code on GitHub</a>
     </div>
-    <div><span class="priv">🔒 Your data never leaves the phone</span></div>
+    <div><span class="priv">Location data is processed on your device.</span></div>
   </div>
+
 </header>
 
-<main class="wrap">
+<main id="main" class="wrap">
 
   <section id="why">
-    <h2>The problem this solves</h2>
-    <p>Google moved Maps Timeline <strong>on-device only</strong> in late 2024 — there's no web view, no Google Takeout export for new data, and older history was deleted unless you backed it up. So your whole location history now sits in a <code>Timeline.json</code> file on your phone with no easy way out.</p>
-    <p>Most converters are <strong>websites that ask you to upload your entire location history to a stranger's server</strong>, or desktop Python scripts. Timeline Exporter does the conversion <strong>right on the device where the file already lives</strong> — nothing is uploaded, ever.</p>
+    <h2>Overview</h2>
+    <p>A Google Maps Timeline export contains visits and journeys in JSON format. To use that history in a GPS application, GIS tool, or spreadsheet, it needs to be converted to a supported format.</p>
+    <p>Timeline Exporter reads and converts the file on your phone. You can filter the dates, preview the track, and save the result without uploading your location history.</p>
   </section>
 
   <section id="formats">
-    <h2>Export to anything that reads GPS tracks</h2>
+    <h2>Supported export formats</h2>
     <div class="formats">
       <span>GPX → Strava, Garmin, Komoot, OsmAnd</span>
       <span>KML → Google Earth</span>
@@ -172,12 +183,12 @@ footer{padding:40px 0 60px; text-align:center; color:var(--muted); font-size:.9r
   </section>
 
   <section id="features">
-    <h2>Why Timeline Exporter</h2>
+    <h2>Features</h2>
     <div class="grid">
       <div class="card"><h3>Private by design</h3><p>No servers, no account, no analytics, no ads. The only network use is map tiles for the preview.</p></div>
-      <div class="card"><h3>Every Google format</h3><p>Current on-device export, the iOS variant, older Semantic Location History, and Records.json.</p></div>
+      <div class="card"><h3>Supported input formats</h3><p>Current on-device export, the iOS variant, older Semantic Location History, and Records.json.</p></div>
       <div class="card"><h3>Date filtering</h3><p>Quick presets (last 7 / 30 / 90 days, all data) so you export exactly the range you need.</p></div>
-      <div class="card"><h3>Free &amp; open source</h3><p>MIT-licensed, no catch. Inspect the code, file issues, request features on GitHub.</p></div>
+      <div class="card"><h3>Free &amp; open source</h3><p>MIT-licensed. Source code, issue reports, and feature requests are on GitHub.</p></div>
     </div>
   </section>
 
@@ -208,8 +219,8 @@ footer{padding:40px 0 60px; text-align:center; color:var(--muted); font-size:.9r
   <section id="get">
     <h2>Get the app</h2>
     <div class="cta-row">
-      <a class="cta" href="https://play.google.com/store/apps/details?id=io.github.nikkittap.timelineexporter">▶ Get it on Google Play</a>
-      <a class="ghost" href="https://github.com/NikkittaP/timeline-exporter">★ Source on GitHub</a>
+      <a class="cta" href="https://play.google.com/store/apps/details?id=io.github.nikkittap.timelineexporter">Get it on Google Play</a>
+      <a class="ghost" href="https://github.com/NikkittaP/timeline-exporter">Source code on GitHub</a>
     </div>
   </section>
 
@@ -217,9 +228,10 @@ footer{padding:40px 0 60px; text-align:center; color:var(--muted); font-size:.9r
 
 <footer>
   <div class="wrap">
-    <p>Timeline Exporter · free &amp; open source (MIT) · <a href="https://github.com/NikkittaP/timeline-exporter">GitHub</a> · <a href="PRIVACY">Privacy</a></p>
+    <p>Timeline Exporter · free &amp; open source (MIT) · <a href="https://github.com/NikkittaP/timeline-exporter">GitHub</a> · <a href="PRIVACY.html">Privacy</a></p>
     <p>Map data © OpenStreetMap contributors · tiles by OpenFreeMap · not affiliated with Google.</p>
   </div>
+  <p class="studio-footer-link"><a href="/" data-local="nikkittap.github.io/index.html">Nikita Petrov Apps</a></p>
 </footer>
 
 </body>

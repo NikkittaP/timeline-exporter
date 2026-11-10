@@ -1,0 +1,30 @@
+:root {
+  --studio-font: "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  --studio-ink: #202832;
+  --studio-muted: #626d7a;
+  --studio-line: #dce1e8;
+  --studio-accent: #245ea5;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 24px; }
+body { font-family: var(--studio-font); }
+a:focus-visible, summary:focus-visible, button:focus-visible { outline: 2px solid var(--studio-accent); outline-offset: 4px; }
+.skip-link { position: absolute; left: 20px; top: -100px; z-index: 10; background: #202832; color: #fff; padding: 12px 18px; border-radius: 3px; }
+.skip-link:focus { top: 12px; }
+.studio-bar { padding: 0 28px; border-bottom: 1px solid var(--studio-line); }
+.studio-bar-inner { max-width: 1080px; margin: 0 auto; min-height: 70px; display: flex; align-items: center; justify-content: space-between; gap: 25px; }
+.studio-brand { color: var(--studio-ink); font-family: var(--studio-font); font-size: 16px; font-weight: 650; line-height: 1.3; text-decoration: none; letter-spacing: -.02em; flex-shrink: 0; }
+.studio-nav { display: flex; align-items: center; gap: 25px; font-size: 13px; }
+.studio-nav a { color: var(--studio-muted); text-decoration: none; padding: 12px 0; white-space: nowrap; }
+.studio-nav a:hover { color: var(--studio-accent); text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 600px) {
+  .studio-bar { padding: 0 20px; }
+  .studio-bar-inner { min-height: 66px; gap: 12px; flex-wrap: wrap; padding-block: 12px; }
+  .studio-brand { font-size: 15px; }
+  .studio-nav { gap: 18px; font-size: 12px; }
+  .studio-nav a { padding: 5px 0; }
+}
+@media (max-width: 410px) { .studio-nav { gap: 15px; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
