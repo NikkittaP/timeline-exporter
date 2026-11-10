@@ -81,12 +81,17 @@ struct MapImageSheet: View {
 
     /// The left column of a wide sheet: all the room there is, at the
     /// picture's own shape, whichever aspect ratio is picked.
+    /// The picture and its size caption stay together, centred as one: a
+    /// 16:9 picture no longer floats mid-pane with its caption at the bottom.
     private var previewPane: some View {
-        VStack(spacing: 10) {
-            previewBox
-                .aspectRatio(ratio, contentMode: .fit)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            sizeCaption
+        GeometryReader { geo in
+            let room = MapImagePreviewFrame.paneFit(ratio: ratio, pane: geo.size)
+            VStack(spacing: MapImagePreviewFrame.captionSpacing) {
+                previewBox
+                    .frame(width: room.width, height: room.height)
+                sizeCaption
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .padding(20)
         .background(Color(.systemGroupedBackground))
@@ -326,6 +331,18 @@ enum MapImagePreviewFrame {
     /// A sheet at least this wide puts the picture beside the settings.
     static let twoColumnMinWidth: CGFloat = 760
     static let controlsWidth: CGFloat = 360
+
+    static let captionSpacing: CGFloat = 10
+    /// The footnote caption's line, with room for a larger text size.
+    static let captionHeight: CGFloat = 28
+
+    /// The picture's size in the wide sheet's preview pane: as large as the
+    /// pane holds at the picture's own shape, with the caption below it.
+    static func paneFit(ratio: CGFloat, pane: CGSize) -> CGSize {
+        let height = max(0, pane.height - captionHeight - captionSpacing)
+        let width = max(0, min(pane.width, height * ratio))
+        return CGSize(width: width, height: ratio > 0 ? width / ratio : 0)
+    }
 
     static func size(ratio: CGFloat, sheet: CGSize, heightShare: CGFloat) -> CGSize {
         let width = min(max(0, sheet.width - sideMargins), sheet.height * heightShare * ratio)

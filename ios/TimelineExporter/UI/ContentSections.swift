@@ -411,7 +411,7 @@ struct TripsSection: View {
                 } label: {
                     Text(checkedText(trips)).monospacedDigit()
                 }
-                if store.selectedTrip != nil {
+                if store.previewedTrip != nil {
                     Button {
                         store.selectTrip(nil)
                     } label: {
@@ -463,7 +463,7 @@ private struct TripRow: View {
 
     var body: some View {
         let checked = store.checkedTrips.contains(trip.key)
-        let selected = store.selectedTrip == trip.key
+        let selected = store.previewedTrip == trip.key
         HStack(spacing: 4) {
             // The mark is for export; the rest of the row is for the map.
             Button {
@@ -490,7 +490,7 @@ private struct TripRow: View {
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 3) {
                         Text(Fmt.dayRange(trip.startDay, trip.endDay))
-                            .font(.body.weight(selected ? .semibold : checked ? .medium : .regular))
+                            .font(.body.weight(selected ? .semibold : .regular))
                             .monospacedDigit()
                         Text(reach).font(.caption).foregroundStyle(.secondary).monospacedDigit()
                         if !covered.isEmpty {
@@ -499,17 +499,17 @@ private struct TripRow: View {
                         if !flags.isEmpty {
                             Text(flags).font(.caption).foregroundStyle(.orange)
                         }
-                    }
-                    Spacer(minLength: 0)
-                    VStack(alignment: .trailing, spacing: 6) {
-                        TransportIcons(modes: trip.transport)
+                        // Said in words, not only by the row's tint: the
+                        // trip on the map need not be one marked for export.
                         if selected {
-                            Image(systemName: "map.fill")
-                                .font(.caption)
+                            Label(L.s("ios_trip_on_map"), systemImage: "map.fill")
+                                .font(.caption.weight(.semibold))
                                 .foregroundStyle(.tint)
                                 .accessibilityHidden(true)
                         }
                     }
+                    Spacer(minLength: 0)
+                    TransportIcons(modes: trip.transport)
                 }
                 .contentShape(Rectangle())
             }
@@ -517,12 +517,9 @@ private struct TripRow: View {
             .accessibilityValue(selected ? L.s("ios_trip_on_map") : "")
             .accessibilityAddTraits(selected ? .isSelected : [])
         }
-        .listRowBackground(rowTint(selected: selected, checked: checked))
-    }
-
-    private func rowTint(selected: Bool, checked: Bool) -> Color? {
-        if selected { return Color.accentColor.opacity(Design.previewedRowOpacity) }
-        return checked ? Color.accentColor.opacity(Design.markedRowOpacity) : nil
+        // Only the previewed row is tinted: a marked one says so with its
+        // filled mark alone, so the two never look alike.
+        .listRowBackground(selected ? Color.accentColor.opacity(Design.previewedRowOpacity) : nil)
     }
 
     private var reach: String {

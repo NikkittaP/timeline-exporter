@@ -356,34 +356,40 @@ private struct OverlayPainter {
         let value = font(u(54 * k), .bold)
         let label = font(u(29 * k), .regular)
         let rangeText = Fmt.dayRange(CoreTimeline.localDay(stats.firstDay), CoreTimeline.localDay(stats.lastDay))
-        let natural = columns.map { max(width($0.0, value), width($0.1, label)) }
+        // Rounded up: a card cut to the exact measured width can come out a
+        // hair narrower than its text once placed.
+        let natural = columns.map { ceil(max(width($0.0, value), width($0.1, label))) }
         let figuresWidth = natural.reduce(0, +) + gap * CGFloat(max(columns.count - 1, 0))
 
         let maxWidth = CGFloat(spec.statsMaxWidthPx)
         let cardWidth = spec.compactStats
-            ? min(max(figuresWidth, width(rangeText, header)) + inner * 2, maxWidth)
+            ? min(ceil(max(figuresWidth, width(rangeText, header))) + inner * 2, maxWidth)
             : maxWidth
         let card = rect(spec.statsBox(rtl: rtl, width: Double(cardWidth)))
         surface(card, corner: u(32 * k), alpha: 250.0 / 255, shadow: true)
 
-        let contentLeft = card.minX + inner
-        let contentRight = card.maxX - inner
-        let contentWidth = contentRight - contentLeft
+        // From the width asked for, not the placed rect's edges, whose
+        // subtraction can lose the last fraction of a pixel.
+        let contentWidth = cardWidth - inner * 2
+        let contentLeft = rtl ? card.maxX - inner - contentWidth : card.minX + inner
+        let contentRight = contentLeft + contentWidth
         draw(rangeText, font: header, color: ink, x: rtl ? contentRight : contentLeft,
              baseline: card.minY + inner + header.ascender, maxWidth: contentWidth, alignEnd: rtl)
 
-        let labelBaseline = card.maxY - inner + label.descender
-        let valueBaseline = labelBaseline - label.ascender - u(10 * k) + value.descender
-        let widths = figuresWidth <= contentWidth ? natural
-            : Array(repeating: (contentWidth - gap * CGFloat(columns.count - 1)) / CGFloat(max(columns.count, 1)),
-                    count: columns.count)
+        let fit = StatsColumnsFit.fit(natural: natural.map(Double.init), gap: Double(gap), available: Double(contentWidth))
+        let s = CGFloat(fit.scale)
+        let valueFont = s < 1 ? font(value.pointSize * s, .bold) : value
+        let labelFont = s < 1 ? font(label.pointSize * s, .regular) : label
+        let labelBaseline = card.maxY - inner + labelFont.descender
+        let valueBaseline = labelBaseline - labelFont.ascender - u(10 * k) + valueFont.descender
         var cursor: CGFloat = 0
         for (i, column) in columns.enumerated() {
-            let w = widths[i]
+            // A column at its natural width never cuts its own text.
+            let w = CGFloat(fit.widths[i]) + (fit.scale == 1 ? 1 : 0)
             let x = rtl ? contentRight - cursor : contentLeft + cursor
-            draw(column.0, font: value, color: ink, x: x, baseline: valueBaseline, maxWidth: w, alignEnd: rtl)
-            draw(column.1, font: label, color: muted, x: x, baseline: labelBaseline, maxWidth: w, alignEnd: rtl)
-            cursor += w + gap
+            draw(column.0, font: valueFont, color: ink, x: x, baseline: valueBaseline, maxWidth: w, alignEnd: rtl)
+            draw(column.1, font: labelFont, color: muted, x: x, baseline: labelBaseline, maxWidth: w, alignEnd: rtl)
+            cursor += CGFloat(fit.widths[i]) + CGFloat(fit.gap)
         }
     }
 

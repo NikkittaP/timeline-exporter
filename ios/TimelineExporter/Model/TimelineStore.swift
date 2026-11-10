@@ -346,9 +346,16 @@ final class TimelineStore {
         visibleTrips.map(\.key).filter { checkedTrips.contains($0) }.sorted()
     }
 
-    /// The selected trip alone, or what step 3 will write.
+    /// The trip shown on the map: the selected one while the date range still
+    /// lists it. A trip filtered out of the list is not left drawn on the map.
+    var previewedTrip: Int64? {
+        guard let key = selectedTrip, visibleTrips.contains(where: { $0.key == key }) else { return nil }
+        return key
+    }
+
+    /// The previewed trip alone, or what step 3 will write.
     private var mapTripKeys: [Int64] {
-        if let key = selectedTrip { return [key] }
+        if let key = previewedTrip { return [key] }
         return exportTripKeys
     }
 
@@ -360,12 +367,12 @@ final class TimelineStore {
     func setTrip(_ key: Int64, checked: Bool) {
         if checked { checkedTrips.insert(key) } else { checkedTrips.remove(key) }
         exportState = .idle
-        if selectedTrip == nil { scheduleRecount() }
+        if previewedTrip == nil { scheduleRecount() }
     }
 
     func clearCheckedTrips() {
         checkedTrips = []
-        if selectedTrip == nil { scheduleRecount() }
+        if previewedTrip == nil { scheduleRecount() }
     }
 
     func selectPlace(_ key: String?) {
