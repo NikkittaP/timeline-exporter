@@ -44,6 +44,18 @@ final class MapCameraMemory {
     }
 }
 
+/// MLNMapView answers accessibilityValue itself ("Zoom 2x."), so a value set
+/// on it never reaches the UI test. Store screenshots read "busy" / "idle"
+/// from here instead; everywhere else the map says what MapLibre says.
+final class ScreenshotMapView: MLNMapView {
+    var screenshotState: String?
+
+    override var accessibilityValue: String? {
+        get { screenshotState ?? super.accessibilityValue }
+        set { super.accessibilityValue = newValue }
+    }
+}
+
 /// The preview map: MapLibre with the app's OpenFreeMap styles. Lines are
 /// drawn one layer per colour (at most the 21 day colours), places as
 /// circles sized by visits. Bumping [fitToken] frames everything again;
@@ -67,7 +79,7 @@ struct TimelineMapView: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> MLNMapView {
-        let map = MLNMapView(frame: .zero, styleURL: Self.styleURL(colorScheme))
+        let map = ScreenshotMapView(frame: .zero, styleURL: Self.styleURL(colorScheme))
         map.delegate = context.coordinator
         map.logoView.isHidden = true
         map.isRotateEnabled = false
@@ -244,7 +256,7 @@ struct TimelineMapView: UIViewRepresentable {
         // content drawn, the tiles in) instead of a fixed pause.
         func mapViewDidBecomeIdle(_ mapView: MLNMapView) {
             guard ScreenshotMode.isActive, let shown, shown == wanted else { return }
-            mapView.accessibilityValue = "idle"
+            (mapView as? ScreenshotMapView)?.screenshotState = "idle"
         }
 
         func mapView(_ mapView: MLNMapView, regionWillChangeAnimated animated: Bool) {
@@ -258,7 +270,7 @@ struct TimelineMapView: UIViewRepresentable {
         }
 
         private func markBusy(_ map: MLNMapView) {
-            if ScreenshotMode.isActive { map.accessibilityValue = "busy" }
+            if ScreenshotMode.isActive { (map as? ScreenshotMapView)?.screenshotState = "busy" }
         }
 
         // MARK: Drawing
