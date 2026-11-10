@@ -45,6 +45,9 @@ final class StoreScreenshots: XCTestCase {
     /// "idle" once they are in (TimelineMapView), this is the most it waits.
     private static let mapIdleWait: TimeInterval = 20
 
+    /// A turned iPad: the loaded page has its map in a pane beside the steps.
+    private var expectsSplit = false
+
     override func setUp() {
         continueAfterFailure = true
     }
@@ -66,6 +69,7 @@ final class StoreScreenshots: XCTestCase {
         if turned {
             XCUIDevice.shared.orientation = .landscapeLeft
         }
+        expectsSplit = turned && kind == "ipad"
         let scenes = only != nil || turned ? Self.scenes + Self.layoutScenes : Self.scenes
 
         for (locale, language) in locales {
@@ -125,6 +129,14 @@ final class StoreScreenshots: XCTestCase {
             ok = map.waitForExistence(timeout: 30)
             XCTAssertTrue(ok, "\(tag): the map never appeared")
             let fullScreen = scene == "map" || scene == "days"
+            if ok, !fullScreen, expectsSplit {
+                // By area, which a turn cannot swap: the pane is about 60% of
+                // the screen, the map in the page about a quarter.
+                let screen = app.windows.firstMatch.frame
+                let share = (map.frame.width * map.frame.height) / max(1, screen.width * screen.height)
+                XCTAssertGreaterThan(share, 0.4,
+                                     "\(tag): the map is in the page, not beside it (\(map.frame) in \(screen))")
+            }
             if ok, fullScreen {
                 ok = tap(app, "mapExpand", tag: tag)
             }

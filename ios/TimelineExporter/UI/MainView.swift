@@ -12,54 +12,59 @@ struct MainView: View {
     @State private var info: InfoSheet?
     @AppStorage(WhatsNew.seenKey) private var whatsNewSeen: String?
     @Environment(\.horizontalSizeClass) private var sizeClass
-    /// The window's room for the page, as laid out.
-    @State private var pageSize = CGSize.zero
     @State private var mapState = PreviewMapState()
 
     /// One map either way, in the page or beside it. Also for the Track, so
     /// the Track / Trips / Places switch does not tear the map down and move
     /// everything; the sections themselves stay in the same Form.
-    private var splitMap: Bool {
+    private func splitsMap(_ pageSize: CGSize) -> Bool {
         store.phase == .loaded && PageLayout.isSplit(width: pageSize.width, sizeClass: sizeClass)
     }
 
     var body: some View {
         NavigationStack {
-            ScrollViewReader { proxy in
-                HStack(spacing: 0) {
-                    Form {
-                        if showsWelcome {
-                            WelcomeSections(importing: $importing) { info = .help }
-                        } else {
-                            FileSection(importing: $importing)
-                        }
-                        if store.phase == .loaded, let core = store.timeline {
-                            FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
-                            PreviewSection(mapState: $mapState, showsMap: !splitMap)
-                            switch store.contentKind {
-                            case .track: EmptyView()
-                            case .trips: TripsSection()
-                            case .places: PlacesSection()
+            // Read in the layout pass itself: a size kept in @State from
+            // onGeometryChange never reached the landscape width on an iPad
+            // launched turned, so the page stayed stacked and the Map image
+            // sheet narrow.
+            GeometryReader { geometry in
+                let pageSize = geometry.size
+                let splitMap = splitsMap(pageSize)
+                ScrollViewReader { proxy in
+                    HStack(spacing: 0) {
+                        Form {
+                            if showsWelcome {
+                                WelcomeSections(importing: $importing) { info = .help }
+                            } else {
+                                FileSection(importing: $importing)
                             }
-                            ExportSection(wideMapImage: MapImagePreviewFrame.wideSheet(window: pageSize, sizeClass: sizeClass))
+                            if store.phase == .loaded, let core = store.timeline {
+                                FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
+                                PreviewSection(mapState: $mapState, showsMap: !splitMap)
+                                switch store.contentKind {
+                                case .track: EmptyView()
+                                case .trips: TripsSection()
+                                case .places: PlacesSection()
+                                }
+                                ExportSection(wideMapImage: MapImagePreviewFrame.wideSheet(window: pageSize, sizeClass: sizeClass))
+                            }
+                        }
+                        .task(id: store.phase == .loaded) {
+                            await frameScreenshot(proxy)
+                        }
+                        .modifier(ReadableColumn())
+                        // The Form stays this one view when the width changes,
+                        // so its scroll position and row state survive a turn.
+                        .frame(width: splitMap ? PageLayout.sidebarWidth(pageWidth: pageSize.width) : nil)
+
+                        if splitMap {
+                            Divider().ignoresSafeArea(.container, edges: .bottom)
+                            MapPane(state: $mapState)
+                                .frame(maxWidth: .infinity)
                         }
                     }
-                    .task(id: store.phase == .loaded) {
-                        await frameScreenshot(proxy)
-                    }
-                    .modifier(ReadableColumn())
-                    // The Form stays this one view when the width changes,
-                    // so its scroll position and row state survive a turn.
-                    .frame(width: splitMap ? PageLayout.sidebarWidth(pageWidth: pageSize.width) : nil)
-
-                    if splitMap {
-                        Divider().ignoresSafeArea(.container, edges: .bottom)
-                        MapPane(state: $mapState)
-                            .frame(maxWidth: .infinity)
-                    }
+                    .expandableMap($mapState)
                 }
-                .onGeometryChange(for: CGSize.self, of: { $0.size }) { pageSize = $0 }
-                .expandableMap($mapState)
             }
             .navigationTitle(L.s("app_name"))
             .navigationBarTitleDisplayMode(.inline)
