@@ -36,14 +36,33 @@ extension TimelineStore {
 
 // MARK: Preview: the map and the Track / Trips / Places switch
 
+/// The preview map's controls. Kept above the views that draw it: the map moves
+/// between the page and its pane when the window's width changes, and turning
+/// the iPad must not close the full-screen map.
+struct PreviewMapState {
+    var fitToken = 0
+    var restoreToken = 0
+    var status = MapStatus.loading
+    var expanded = false
+}
+
+extension View {
+    /// Presents the full-screen map. Not for a Section: a Form hands a
+    /// Section's modifiers to each of its rows, and the cover never showed.
+    func expandableMap(_ state: Binding<PreviewMapState>) -> some View {
+        fullScreenCover(isPresented: state.expanded, onDismiss: { state.wrappedValue.restoreToken += 1 }) {
+            ExpandedMap()
+        }
+    }
+}
+
 struct PreviewSection: View {
     @Environment(TimelineStore.self) private var store
     /// Regular on an iPad: a taller map in the wider column.
     @Environment(\.horizontalSizeClass) private var sizeClass
-    @State private var fitToken = 0
-    @State private var restoreToken = 0
-    @State private var status = MapStatus.loading
-    @State private var expanded = false
+    @Binding var mapState: PreviewMapState
+    /// False when the map has a pane of its own beside the page.
+    let showsMap: Bool
 
     var body: some View {
         @Bindable var store = store
@@ -60,21 +79,18 @@ struct PreviewSection: View {
             .id("preview")
             .listRowSeparator(.hidden)
 
-            // On the row: a Form hands a Section's modifiers to each of its
-            // rows, and the cover never showed from there.
-            map
-                .frame(height: sizeClass == .regular ? Design.mapHeightRegular : Design.mapHeightCompact)
-                .listRowInsets(EdgeInsets())
-                .listRowSeparator(.hidden, edges: .top)
-                .fullScreenCover(isPresented: $expanded, onDismiss: { restoreToken += 1 }) {
-                    ExpandedMap()
-                }
+            if showsMap {
+                PreviewMap(state: $mapState)
+                    .frame(height: sizeClass == .regular ? Design.mapHeightRegular : Design.mapHeightCompact)
+                    .listRowInsets(EdgeInsets())
+                    .listRowSeparator(.hidden, edges: .top)
+            }
 
             if store.contentKind == .track {
                 Toggle(L.s("map_color_by_day"), isOn: $store.colorByDay)
                     .accessibilityIdentifier("colorByDay")
             }
-            if store.showsDayLegend {
+            if showsMap && store.showsDayLegend {
                 DayLegend()
                     .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                     .listRowInsets(EdgeInsets())
@@ -83,12 +99,38 @@ struct PreviewSection: View {
             StepHeader(title: L.s("step_preview"))
         }
     }
+}
 
-    private var map: some View {
-        StoreMap(fitToken: fitToken, restoreToken: restoreToken, status: $status)
+/// The map beside the page on a wide window: the same map and buttons as in
+/// the page, and the day strip floating over it as on the full-screen map.
+struct MapPane: View {
+    @Environment(TimelineStore.self) private var store
+    @Binding var state: PreviewMapState
+    /// The day strip with the gap under it, as laid out.
+    @State private var stripHeight: CGFloat = 0
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            PreviewMap(state: $state, bottomOverlay: store.showsDayLegend ? stripHeight : 0)
+                .ignoresSafeArea(.container, edges: .bottom)
+            if store.showsDayLegend {
+                FloatingDayStrip(height: $stripHeight)
+            }
+        }
+    }
+}
+
+/// The preview map with its status and its buttons, wherever it is drawn.
+private struct PreviewMap: View {
+    @Binding var state: PreviewMapState
+    var bottomOverlay: CGFloat? = nil
+
+    var body: some View {
+        StoreMap(fitToken: state.fitToken, restoreToken: state.restoreToken, bottomOverlay: bottomOverlay,
+                 status: $state.status)
             .overlay(alignment: .topLeading) {
                 // Clear of the buttons in the other corner.
-                MapStatusChip(status: status)
+                MapStatusChip(status: state.status)
                     .padding(.leading, 8)
                     .padding(.top, 8)
                     .padding(.trailing, Design.minTarget + 16)
@@ -96,11 +138,11 @@ struct PreviewSection: View {
             .overlay(alignment: .topTrailing) {
                 MapButtonColumn {
                     MapButton(symbol: "arrow.up.left.and.arrow.down.right", label: L.s("map_expand")) {
-                        expanded = true
+                        state.expanded = true
                     }
                     .accessibilityIdentifier("mapExpand")
                     MapButton(symbol: "scope", label: L.s("map_recenter")) {
-                        fitToken += 1
+                        state.fitToken += 1
                     }
                 }
                 .padding(8)
@@ -207,18 +249,28 @@ private struct ExpandedMap: View {
             .padding()
             .frame(maxHeight: .infinity, alignment: .top)
             if store.showsDayLegend {
-                DayLegend()
-                    .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-                    // One surface for the strip, none per chip; clipped first
-                    // so the days scroll away inside its corners.
-                    .clipShape(RoundedRectangle(cornerRadius: Design.cardRadius))
-                    .mapControlSurface(cornerRadius: Design.cardRadius)
-                    .frame(maxWidth: Design.dayStripMaxWidth)
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 8)
-                    .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { stripHeight = $0 }
+                FloatingDayStrip(height: $stripHeight)
             }
         }
+    }
+}
+
+/// The day legend as a control floating over a map, reporting how much of the
+/// map it covers.
+private struct FloatingDayStrip: View {
+    @Binding var height: CGFloat
+
+    var body: some View {
+        DayLegend()
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+            // One surface for the strip, none per chip; clipped first
+            // so the days scroll away inside its corners.
+            .clipShape(RoundedRectangle(cornerRadius: Design.cardRadius))
+            .mapControlSurface(cornerRadius: Design.cardRadius)
+            .frame(maxWidth: Design.dayStripMaxWidth)
+            .padding(.horizontal, 12)
+            .padding(.bottom, 8)
+            .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { height = $0 }
     }
 }
 
@@ -359,7 +411,7 @@ struct TripsSection: View {
                 } label: {
                     Text(checkedText(trips)).monospacedDigit()
                 }
-                if store.selectedTrip != nil {
+                if store.previewedTrip != nil {
                     Button {
                         store.selectTrip(nil)
                     } label: {
@@ -411,7 +463,7 @@ private struct TripRow: View {
 
     var body: some View {
         let checked = store.checkedTrips.contains(trip.key)
-        let selected = store.selectedTrip == trip.key
+        let selected = store.previewedTrip == trip.key
         HStack(spacing: 4) {
             // The mark is for export; the rest of the row is for the map.
             Button {
@@ -438,7 +490,7 @@ private struct TripRow: View {
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 3) {
                         Text(Fmt.dayRange(trip.startDay, trip.endDay))
-                            .font(.body.weight(selected ? .semibold : checked ? .medium : .regular))
+                            .font(.body.weight(selected ? .semibold : .regular))
                             .monospacedDigit()
                         Text(reach).font(.caption).foregroundStyle(.secondary).monospacedDigit()
                         if !covered.isEmpty {
@@ -447,17 +499,17 @@ private struct TripRow: View {
                         if !flags.isEmpty {
                             Text(flags).font(.caption).foregroundStyle(.orange)
                         }
-                    }
-                    Spacer(minLength: 0)
-                    VStack(alignment: .trailing, spacing: 6) {
-                        TransportIcons(modes: trip.transport)
+                        // Said in words, not only by the row's tint: the
+                        // trip on the map need not be one marked for export.
                         if selected {
-                            Image(systemName: "map.fill")
-                                .font(.caption)
+                            Label(L.s("ios_trip_on_map"), systemImage: "map.fill")
+                                .font(.caption.weight(.semibold))
                                 .foregroundStyle(.tint)
                                 .accessibilityHidden(true)
                         }
                     }
+                    Spacer(minLength: 0)
+                    TransportIcons(modes: trip.transport)
                 }
                 .contentShape(Rectangle())
             }
@@ -465,12 +517,9 @@ private struct TripRow: View {
             .accessibilityValue(selected ? L.s("ios_trip_on_map") : "")
             .accessibilityAddTraits(selected ? .isSelected : [])
         }
-        .listRowBackground(rowTint(selected: selected, checked: checked))
-    }
-
-    private func rowTint(selected: Bool, checked: Bool) -> Color? {
-        if selected { return Color.accentColor.opacity(Design.previewedRowOpacity) }
-        return checked ? Color.accentColor.opacity(Design.markedRowOpacity) : nil
+        // Only the previewed row is tinted: a marked one says so with its
+        // filled mark alone, so the two never look alike.
+        .listRowBackground(selected ? Color.accentColor.opacity(Design.previewedRowOpacity) : nil)
     }
 
     private var reach: String {

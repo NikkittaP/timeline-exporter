@@ -167,6 +167,38 @@ struct MapImageSpec: Equatable {
     }
 }
 
+/// How the statistics figures share the card's row. They keep their natural
+/// widths when they fit; otherwise the figures' type shrinks, down to
+/// [minScale], before any value is cut, and a cut column keeps a share of the
+/// room in proportion to what it needs, never an equal slice.
+struct StatsColumnsFit: Equatable {
+    /// Of the value and label fonts and of the gap between columns.
+    let scale: Double
+    let widths: [Double]
+    let gap: Double
+
+    static let minScale = 0.72
+    /// Measured widths are not exact: a row that misses by less still fits.
+    static let tolerance = 0.5
+
+    static func fit(natural: [Double], gap: Double, available: Double) -> StatsColumnsFit {
+        let gaps = gap * Double(max(natural.count - 1, 0))
+        let total = natural.reduce(0, +) + gaps
+        guard total > available + tolerance, total > 0 else {
+            return StatsColumnsFit(scale: 1, widths: natural, gap: gap)
+        }
+        let scale = max(available / total, minScale)
+        let scaledGaps = gaps * scale
+        let scaled = natural.map { $0 * scale }
+        let scaledSum = scaled.reduce(0, +)
+        if scaledSum + scaledGaps <= available + tolerance || scaledSum <= 0 {
+            return StatsColumnsFit(scale: scale, widths: scaled, gap: gap * scale)
+        }
+        let share = max(available - scaledGaps, 0) / scaledSum
+        return StatsColumnsFit(scale: scale, widths: scaled.map { $0 * share }, gap: gap * scale)
+    }
+}
+
 /// Where to point the camera, in MapLibre's terms.
 struct MapImageCamera: Equatable {
     let latitude: Double

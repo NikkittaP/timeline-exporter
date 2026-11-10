@@ -7,6 +7,17 @@ struct MapImageSheet: View {
     @Environment(TimelineStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
+    /// The size to ask for on a wide window; nil keeps the system's sheet.
+    /// Decided by the page: a sheet's own size class says little about the iPad.
+    private let wide: CGSize?
+
+    init(wide: CGSize?) {
+        self.wide = wide
+        // Laid out for the size it is about to get, not as a column first.
+        if #available(iOS 18, *), let wide {
+            _sheetSize = State(initialValue: wide)
+        }
+    }
 
     @AppStorage("map_image_aspect") private var aspectRaw = MapImageAspect.portrait.rawValue
     @AppStorage("map_image_resolution") private var resolutionRaw = MapImageResolution.standard.rawValue
@@ -51,50 +62,90 @@ struct MapImageSheet: View {
         MapImagePreviewFrame.size(ratio: ratio, sheet: sheetSize, heightShare: sizeClass == .regular ? 0.7 : 0.48)
     }
 
+    /// From the sheet's real width: where the system keeps a narrow sheet
+    /// (portrait, iOS 17), this stays the one familiar column.
+    private var twoColumns: Bool { sheetSize.width >= MapImagePreviewFrame.twoColumnMinWidth }
+
+    private var previewBox: some View {
+        Color(.tertiarySystemFill)
+            .overlay { previewView }
+            .clipShape(RoundedRectangle(cornerRadius: Design.controlRadius))
+    }
+
+    private var sizeCaption: some View {
+        Text(L.f("map_image_size", spec.widthPx, spec.heightPx, format.label))
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+            .monospacedDigit()
+    }
+
+    /// The left column of a wide sheet: all the room there is, at the
+    /// picture's own shape, whichever aspect ratio is picked.
+    /// The picture and its size caption stay together, centred as one: a
+    /// 16:9 picture no longer floats mid-pane with its caption at the bottom.
+    private var previewPane: some View {
+        GeometryReader { geo in
+            let room = MapImagePreviewFrame.paneFit(ratio: ratio, pane: geo.size)
+            VStack(spacing: MapImagePreviewFrame.captionSpacing) {
+                previewBox
+                    .frame(width: room.width, height: room.height)
+                sizeCaption
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .padding(20)
+        .background(Color(.systemGroupedBackground))
+    }
+
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    VStack(spacing: 6) {
-                        Color(.tertiarySystemFill)
-                            .overlay { previewView }
-                            .clipShape(RoundedRectangle(cornerRadius: Design.controlRadius))
-                            .frame(width: previewSize.width, height: previewSize.height)
-                        Text(L.f("map_image_size", spec.widthPx, spec.heightPx, format.label))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .monospacedDigit()
-                    }
-                    .frame(maxWidth: .infinity)
-                    .listRowInsets(EdgeInsets())
-                    .listRowBackground(Color.clear)
+            HStack(spacing: 0) {
+                if twoColumns {
+                    previewPane
+                    Divider().ignoresSafeArea(.container, edges: .bottom)
                 }
-                Section {
-                    Picker(L.s("map_image_aspect"), selection: $aspectRaw) {
-                        ForEach(MapImageAspect.allCases) { Text(L.s($0.labelKey)).tag($0.rawValue) }
+                Form {
+                    if !twoColumns {
+                        Section {
+                            VStack(spacing: 6) {
+                                previewBox
+                                    .frame(width: previewSize.width, height: previewSize.height)
+                                sizeCaption
+                            }
+                            .frame(maxWidth: .infinity)
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                        }
                     }
-                    Picker(L.s("map_image_resolution"), selection: $resolutionRaw) {
-                        Text(L.s("map_image_res_standard")).tag(MapImageResolution.standard.rawValue)
-                        Text(L.s("map_image_res_high")).tag(MapImageResolution.high.rawValue)
-                    }
-                    Picker(L.s("map_image_format"), selection: $formatRaw) {
-                        ForEach(MapImageFormat.allCases) { Text($0.label).tag($0.rawValue) }
-                    }
-                    Toggle(L.s("map_image_show_stats"), isOn: $showStats)
-                    Toggle(L.s("map_image_show_endpoints"), isOn: $showEndpoints)
-                    if showsColorByDay {
-                        Toggle(L.s("map_color_by_day"), isOn: $colorByDay)
-                            .accessibilityIdentifier("mapImageColorByDay")
-                    }
-                } footer: {
-                    if showStats {
-                        Text(L.s("ios_map_image_distance_note"))
+                    Section {
+                        Picker(L.s("map_image_aspect"), selection: $aspectRaw) {
+                            ForEach(MapImageAspect.allCases) { Text(L.s($0.labelKey)).tag($0.rawValue) }
+                        }
+                        Picker(L.s("map_image_resolution"), selection: $resolutionRaw) {
+                            Text(L.s("map_image_res_standard")).tag(MapImageResolution.standard.rawValue)
+                            Text(L.s("map_image_res_high")).tag(MapImageResolution.high.rawValue)
+                        }
+                        Picker(L.s("map_image_format"), selection: $formatRaw) {
+                            ForEach(MapImageFormat.allCases) { Text($0.label).tag($0.rawValue) }
+                        }
+                        Toggle(L.s("map_image_show_stats"), isOn: $showStats)
+                        Toggle(L.s("map_image_show_endpoints"), isOn: $showEndpoints)
+                        if showsColorByDay {
+                            Toggle(L.s("map_color_by_day"), isOn: $colorByDay)
+                                .accessibilityIdentifier("mapImageColorByDay")
+                        }
+                    } footer: {
+                        if showStats {
+                            Text(L.s("ios_map_image_distance_note"))
+                        }
                     }
                 }
+                .frame(width: twoColumns ? MapImagePreviewFrame.controlsWidth : nil)
+                .listSectionSpacing(.compact)
+                .contentMargins(.top, 8, for: .scrollContent)
+                // Under the settings: never on top of them, and in both layouts.
+                .safeAreaInset(edge: .bottom) { actionBar }
             }
-            .listSectionSpacing(.compact)
-            .contentMargins(.top, 8, for: .scrollContent)
-            .safeAreaInset(edge: .bottom) { actionBar }
             .navigationTitle(L.s("map_image_title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -113,6 +164,7 @@ struct MapImageSheet: View {
             }
         }
         .onGeometryChange(for: CGSize.self, of: { $0.size }) { sheetSize = $0 }
+        .modifier(MapImageSheetSizing(wide: wide))
     }
 
     private var failedToDraw: Bool { content?.line.isEmpty ?? false }
@@ -276,10 +328,57 @@ struct MapImageSheet: View {
 enum MapImagePreviewFrame {
     /// The Form's margins on both sides together.
     static let sideMargins: CGFloat = 40
+    /// A sheet at least this wide puts the picture beside the settings.
+    static let twoColumnMinWidth: CGFloat = 760
+    static let controlsWidth: CGFloat = 360
+
+    static let captionSpacing: CGFloat = 10
+    /// The footnote caption's line, with room for a larger text size.
+    static let captionHeight: CGFloat = 28
+
+    /// The picture's size in the wide sheet's preview pane: as large as the
+    /// pane holds at the picture's own shape, with the caption below it.
+    static func paneFit(ratio: CGFloat, pane: CGSize) -> CGSize {
+        let height = max(0, pane.height - captionHeight - captionSpacing)
+        let width = max(0, min(pane.width, height * ratio))
+        return CGSize(width: width, height: ratio > 0 ? width / ratio : 0)
+    }
 
     static func size(ratio: CGFloat, sheet: CGSize, heightShare: CGFloat) -> CGSize {
         let width = min(max(0, sheet.width - sideMargins), sheet.height * heightShare * ratio)
         return CGSize(width: width, height: width / ratio)
+    }
+
+    /// The sheet to ask for on a window wider than tall with room to spare;
+    /// nil keeps the system's own, as upright and in narrow windows.
+    static func wideSheet(window: CGSize, sizeClass: UserInterfaceSizeClass?) -> CGSize? {
+        guard sizeClass == .regular, window.width >= 960, window.width > window.height else { return nil }
+        return CGSize(width: min(1080, window.width - 96), height: min(860, window.height - 48))
+    }
+}
+
+/// Asks for [wide] as the sheet's size. Always the same modifier, so a turn of
+/// the iPad resizes the sheet instead of rebuilding what is inside it. iOS 17
+/// has no way to ask: there the sheet stays the system's, in one column.
+private struct MapImageSheetSizing: ViewModifier {
+    let wide: CGSize?
+
+    func body(content: Content) -> some View {
+        if #available(iOS 18, *) {
+            content.presentationSizing(MapImagePresentationSizing(wide: wide))
+        } else {
+            content
+        }
+    }
+}
+
+@available(iOS 18, *)
+private struct MapImagePresentationSizing: PresentationSizing {
+    let wide: CGSize?
+
+    func proposedSize(for root: PresentationSizingRoot, context: PresentationSizingContext) -> ProposedViewSize {
+        if let wide { return ProposedViewSize(wide) }
+        return AutomaticPresentationSizing.automatic.proposedSize(for: root, context: context)
     }
 }
 

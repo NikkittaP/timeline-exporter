@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 @testable import TimelineExporter
 
@@ -22,6 +23,40 @@ final class MapImageLayoutTests: XCTestCase {
                       "x=\(p.x) for \(lat),\(lon)", line: line)
             XCTAssert(p.y >= Double(s.topPaddingPx) - 1 && p.y <= bottomLimit + 1, "y=\(p.y) for \(lat),\(lon)", line: line)
         }
+    }
+
+    func testStatsFiguresKeepTheirWidthsWhenTheyFitEvenByAHair() {
+        let natural = [212.0, 61.0, 83.0]
+        let exact = natural.reduce(0, +) + 47 * 2
+        // The 16:9 card is cut to its figures: what is left inside it can come
+        // back a fraction short, which once squeezed "3,229 km" into "3,2…".
+        let fit = StatsColumnsFit.fit(natural: natural, gap: 47, available: exact - 1e-9)
+        XCTAssertEqual(fit.scale, 1)
+        XCTAssertEqual(fit.widths, natural)
+        XCTAssertEqual(fit.gap, 47)
+    }
+
+    func testStatsFiguresShrinkBeforeAnyValueIsCut() {
+        let natural = [400.0, 100.0, 100.0]
+        let fit = StatsColumnsFit.fit(natural: natural, gap: 50, available: 600)
+        XCTAssertEqual(fit.scale, 600.0 / 700, accuracy: 1e-9)
+        XCTAssertEqual(fit.widths[0], 400 * fit.scale, accuracy: 1e-9, "shrunk, not cut")
+        XCTAssertEqual(fit.widths.reduce(0, +) + fit.gap * 2, 600, accuracy: 1e-6)
+    }
+
+    func testStatsFiguresCutInProportionWhenShrinkingIsNotEnough() {
+        let natural = [600.0, 100.0, 100.0]
+        let fit = StatsColumnsFit.fit(natural: natural, gap: 50, available: 400)
+        XCTAssertEqual(fit.scale, StatsColumnsFit.minScale)
+        XCTAssertEqual(fit.widths.reduce(0, +) + fit.gap * 2, 400, accuracy: 1e-6)
+        XCTAssertEqual(fit.widths[0] / fit.widths[1], 6, accuracy: 1e-9, "never an equal slice")
+    }
+
+    func testTheLandscapeStatsCardHasRoomForLargeFigures() {
+        // "12,345 km" and a long label at the landscape scale: well inside the card's cap.
+        let s = MapImageSpec(aspect: .landscape)
+        XCTAssertGreaterThan(s.statsMaxWidthPx, 900)
+        XCTAssertLessThanOrEqual(s.statsBox(rtl: false).right, Double(s.widthPx) - s.marginPx)
     }
 
     func testThePortraitIsExactlyItsSizeAndTheLogicalSizeMultipliesBack() {
@@ -112,5 +147,31 @@ final class MapImageLayoutTests: XCTestCase {
         let landscape = MapImagePreviewFrame.size(ratio: 16.0 / 9.0, sheet: phone, heightShare: 0.5)
         XCTAssertEqual(landscape.width, 390 - MapImagePreviewFrame.sideMargins, accuracy: 0.001)
         XCTAssertEqual(landscape.width / landscape.height, 16.0 / 9.0, accuracy: 0.001)
+    }
+
+    func testOnlyAWideWindowAsksForTheWideSheet() throws {
+        let landscape = CGSize(width: 1376, height: 950)
+        let sheet = try XCTUnwrap(MapImagePreviewFrame.wideSheet(window: landscape, sizeClass: .regular))
+        XCTAssertEqual(sheet.width, 1080, accuracy: 0.001)
+        XCTAssertEqual(sheet.height, 860, accuracy: 0.001)
+        XCTAssertGreaterThanOrEqual(sheet.width, MapImagePreviewFrame.twoColumnMinWidth)
+
+        XCTAssertNil(MapImagePreviewFrame.wideSheet(window: CGSize(width: 1032, height: 1300), sizeClass: .regular),
+                     "upright keeps the one column")
+        XCTAssertNil(MapImagePreviewFrame.wideSheet(window: CGSize(width: 800, height: 700), sizeClass: .regular),
+                     "a narrow window keeps the one column")
+        XCTAssertNil(MapImagePreviewFrame.wideSheet(window: landscape, sizeClass: .compact))
+    }
+
+    func testTheWidePaneKeepsThePictureShapeAndRoomForItsCaption() {
+        let pane = CGSize(width: 640, height: 760)
+        for aspect in MapImageAspect.allCases {
+            let ratio = CGFloat(aspect.widthPx) / CGFloat(aspect.heightPx)
+            let fit = MapImagePreviewFrame.paneFit(ratio: ratio, pane: pane)
+            XCTAssertEqual(fit.width / fit.height, ratio, accuracy: 0.001, "\(aspect)")
+            XCTAssertLessThanOrEqual(fit.width, pane.width + 0.001)
+            XCTAssertLessThanOrEqual(fit.height + MapImagePreviewFrame.captionHeight + MapImagePreviewFrame.captionSpacing,
+                                     pane.height + 0.001)
+        }
     }
 }

@@ -33,9 +33,20 @@ final class StoreScreenshots: XCTestCase {
         ("overview", "02_overview"),
     ]
 
+    /// Layout checks for the iPad's two panes, never framed for the store:
+    /// taken only when named in SCREENSHOT_SCENES or on a turned device.
+    private static let layoutScenes: [(scene: String, name: String)] = [
+        ("tripPreview", "20_trip_previewed"),
+        ("placeSelected", "21_place_selected"),
+        ("mapimageLandscape", "22_map_image_16x9"),
+    ]
+
     /// The map draws OpenFreeMap tiles off the network; the app reports
     /// "idle" once they are in (TimelineMapView), this is the most it waits.
     private static let mapIdleWait: TimeInterval = 20
+
+    /// A turned iPad: the loaded page has its map in a pane beside the steps.
+    private var expectsSplit = false
 
     override func setUp() {
         continueAfterFailure = true
@@ -54,14 +65,17 @@ final class StoreScreenshots: XCTestCase {
             }
         XCTAssertFalse(locales.isEmpty, "SCREENSHOT_LOCALES has no locale=language pair")
         let only = Self.list(env["SCREENSHOT_SCENES"])
-        if env["SCREENSHOT_ORIENTATION"] == "landscape" {
+        let turned = env["SCREENSHOT_ORIENTATION"] == "landscape"
+        if turned {
             XCUIDevice.shared.orientation = .landscapeLeft
         }
+        expectsSplit = turned && kind == "ipad"
+        let scenes = only != nil || turned ? Self.scenes + Self.layoutScenes : Self.scenes
 
         for (locale, language) in locales {
             let dir = "\(root)/\(locale)/\(kind)"
             try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
-            for (scene, name) in Self.scenes where only?.contains(scene) ?? true {
+            for (scene, name) in scenes where only?.contains(scene) ?? true {
                 XCTContext.runActivity(named: "\(locale) \(name)") { _ in
                     capture(scene: scene, name: name, locale: locale, language: language, dir: dir)
                 }
@@ -78,6 +92,10 @@ final class StoreScreenshots: XCTestCase {
             "-AppleLanguages", "(\(language))",
             "-AppleLocale", Self.locale(language),
         ]
+        if scene == "mapimageLandscape" {
+            // In the argument domain: for this launch only, the setting stays.
+            app.launchArguments += ["-map_image_aspect", "landscape"]
+        }
         app.launch()
         defer { app.terminate() }
 
@@ -89,11 +107,16 @@ final class StoreScreenshots: XCTestCase {
             XCTAssertTrue(ok, "\(tag): no start screen")
             sleep(1)
         case "overview":
-            // The top of the loaded page: the map is below the fold, not loaded.
+            // The top of the loaded page: the map is below the fold, not loaded,
+            // unless the window is wide enough to have it beside the page.
             ok = app.buttons["pickFile"].waitForExistence(timeout: 30)
             XCTAssertTrue(ok, "\(tag): the file never loaded")
             sleep(3)
-        case "mapimage":
+            if ok, app.descendants(matching: .any)["map"].exists {
+                _ = waitForIdleMap(app, fullScreen: false)
+                sleep(1)
+            }
+        case "mapimage", "mapimageLandscape":
             ok = tap(app, "mapImage", tag: tag)
             if ok {
                 // Any element type: with its overlay the picture is not always an "image".
@@ -106,6 +129,14 @@ final class StoreScreenshots: XCTestCase {
             ok = map.waitForExistence(timeout: 30)
             XCTAssertTrue(ok, "\(tag): the map never appeared")
             let fullScreen = scene == "map" || scene == "days"
+            if ok, !fullScreen, expectsSplit {
+                // By area, which a turn cannot swap: the pane is about 60% of
+                // the screen, the map in the page about a quarter.
+                let screen = app.windows.firstMatch.frame
+                let share = (map.frame.width * map.frame.height) / max(1, screen.width * screen.height)
+                XCTAssertGreaterThan(share, 0.4,
+                                     "\(tag): the map is in the page, not beside it (\(map.frame) in \(screen))")
+            }
             if ok, fullScreen {
                 ok = tap(app, "mapExpand", tag: tag)
             }
@@ -153,15 +184,17 @@ final class StoreScreenshots: XCTestCase {
     }
 
     /// Polls for a map whose value is "idle"; in the full-screen scenes it
-    /// has to be the big one, the small map in the list goes idle first.
+    /// has to be the big one: the map in the list goes idle first, and the
+    /// pane beside a wide page is as tall as the screen but not as wide.
     @MainActor
     private func waitForIdleMap(_ app: XCUIApplication, fullScreen: Bool) -> Bool {
         let deadline = Date().addingTimeInterval(Self.mapIdleWait)
-        let screen = app.windows.firstMatch.frame.height
+        let screen = app.windows.firstMatch.frame
         let maps = app.descendants(matching: .any).matching(identifier: "map")
         while Date() < deadline {
             for map in maps.allElementsBoundByIndex where map.exists {
-                if map.value as? String == "idle", !fullScreen || map.frame.height > screen * 0.7 {
+                let big = map.frame.height > screen.height * 0.7 && map.frame.width > screen.width * 0.9
+                if map.value as? String == "idle", !fullScreen || big {
                     return true
                 }
             }

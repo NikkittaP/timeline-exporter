@@ -11,14 +11,33 @@ enum Design {
     static let mapHeightCompact: CGFloat = 340
     static let mapHeightRegular: CGFloat = 460
     static let selectedRowOpacity = 0.12
-    /// A trip ticked for export: a hint of tint, the filled mark says the rest.
-    static let markedRowOpacity = 0.07
-    /// The trip shown on the map, a step stronger than a ticked one.
+    /// The trip shown on the map. A trip marked for export has no tint: its
+    /// filled mark says so, and the two states must not look alike.
     static let previewedRowOpacity = 0.16
     /// The map's floating day strip on a wide screen.
     static let dayStripMaxWidth: CGFloat = 640
     static let placeColorHex = "#D55E00"
     static let selectedPlaceHex = "#0072B2"
+}
+
+/// When the loaded page puts its map in a pane of its own beside the steps.
+/// Decided on the width the window has, so a narrow Stage Manager or Split
+/// View window stacks like a phone. The size class keeps out the widest
+/// phones; a 13" iPad upright (1032 pt) stays stacked too.
+enum PageLayout {
+    /// As wide as a large phone: every row already fits that.
+    static let sidebarMinWidth: CGFloat = 420
+    static let sidebarMaxWidth: CGFloat = 500
+    static let mapMinWidth: CGFloat = 620
+    static let sidebarShare: CGFloat = 0.36
+
+    static func isSplit(width: CGFloat, sizeClass: UserInterfaceSizeClass?) -> Bool {
+        sizeClass == .regular && width >= sidebarMinWidth + mapMinWidth
+    }
+
+    static func sidebarWidth(pageWidth: CGFloat) -> CGFloat {
+        min(sidebarMaxWidth, max(sidebarMinWidth, pageWidth * sidebarShare))
+    }
 }
 
 extension View {

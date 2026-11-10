@@ -433,6 +433,7 @@ jobs:
           if ! xcodebuild test -project TimelineExporter.xcodeproj -scheme TimelineExporter \
               -configuration Debug -destination "platform=iOS Simulator,id=$udid" \
               -resultBundlePath "$RUNNER_TEMP/tests.xcresult" \
+              TEST_RUNNER_MAP_IMAGE_SAMPLES="$RUNNER_TEMP/map-image-samples" \
               CODE_SIGNING_ALLOWED=NO > "$log" 2>&1; then
             grep -E "error:|Test Case .* failed|\*\* TEST" "$log" | head -n 60 || true
             echo "--- last 30 lines of $log ---"
@@ -440,6 +441,17 @@ jobs:
             exit 1
           fi
           grep -E "Test Case .*(passed|failed)|Executed|\*\* TEST" "$log" || true
+
+      # The real Map image files of MapImageRenderTests: every aspect ratio at
+      # Standard and High, to look at the pixels and not only the preview.
+      - name: Upload Map image samples
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: map-image-samples
+          path: ${{ runner.temp }}/map-image-samples/
+          retention-days: 7
+          if-no-files-found: ignore
 
       # The store screenshots' UI test (ios-screens.yml) is compiled on every
       # run, so a break shows up here and not on the day the shots are wanted.

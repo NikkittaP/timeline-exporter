@@ -11,31 +11,60 @@ struct MainView: View {
     @State private var timeSheet = false
     @State private var info: InfoSheet?
     @AppStorage(WhatsNew.seenKey) private var whatsNewSeen: String?
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    @State private var mapState = PreviewMapState()
+
+    /// One map either way, in the page or beside it. Also for the Track, so
+    /// the Track / Trips / Places switch does not tear the map down and move
+    /// everything; the sections themselves stay in the same Form.
+    private func splitsMap(_ pageSize: CGSize) -> Bool {
+        store.phase == .loaded && PageLayout.isSplit(width: pageSize.width, sizeClass: sizeClass)
+    }
 
     var body: some View {
         NavigationStack {
-            ScrollViewReader { proxy in
-                Form {
-                    if showsWelcome {
-                        WelcomeSections(importing: $importing) { info = .help }
-                    } else {
-                        FileSection(importing: $importing)
-                    }
-                    if store.phase == .loaded, let core = store.timeline {
-                        FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
-                        PreviewSection()
-                        switch store.contentKind {
-                        case .track: EmptyView()
-                        case .trips: TripsSection()
-                        case .places: PlacesSection()
+            // Read in the layout pass itself: a size kept in @State from
+            // onGeometryChange never reached the landscape width on an iPad
+            // launched turned, so the page stayed stacked and the Map image
+            // sheet narrow.
+            GeometryReader { geometry in
+                let pageSize = geometry.size
+                let splitMap = splitsMap(pageSize)
+                ScrollViewReader { proxy in
+                    HStack(spacing: 0) {
+                        Form {
+                            if showsWelcome {
+                                WelcomeSections(importing: $importing) { info = .help }
+                            } else {
+                                FileSection(importing: $importing)
+                            }
+                            if store.phase == .loaded, let core = store.timeline {
+                                FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
+                                PreviewSection(mapState: $mapState, showsMap: !splitMap)
+                                switch store.contentKind {
+                                case .track: EmptyView()
+                                case .trips: TripsSection()
+                                case .places: PlacesSection()
+                                }
+                                ExportSection(wideMapImage: MapImagePreviewFrame.wideSheet(window: pageSize, sizeClass: sizeClass))
+                            }
                         }
-                        ExportSection()
+                        .task(id: store.phase == .loaded) {
+                            await frameScreenshot(proxy)
+                        }
+                        .modifier(ReadableColumn())
+                        // The Form stays this one view when the width changes,
+                        // so its scroll position and row state survive a turn.
+                        .frame(width: splitMap ? PageLayout.sidebarWidth(pageWidth: pageSize.width) : nil)
+
+                        if splitMap {
+                            Divider().ignoresSafeArea(.container, edges: .bottom)
+                            MapPane(state: $mapState)
+                                .frame(maxWidth: .infinity)
+                        }
                     }
+                    .expandableMap($mapState)
                 }
-                .task(id: store.phase == .loaded) {
-                    await frameScreenshot(proxy)
-                }
-                .modifier(ReadableColumn())
             }
             .navigationTitle(L.s("app_name"))
             .navigationBarTitleDisplayMode(.inline)
@@ -451,6 +480,8 @@ private struct ExportSection: View {
     @Environment(TimelineStore.self) private var store
     @AppStorage("export_format") private var formatRaw = ExportFormatChoice.gpx.rawValue
     @State private var mapImage = false
+    /// The size for the Map image sheet on a wide window.
+    let wideMapImage: CGSize?
 
     private var format: ExportFormatChoice { ExportFormatChoice(rawValue: formatRaw) ?? .gpx }
 
@@ -530,7 +561,7 @@ private struct ExportSection: View {
         .id("mapImage")
         // On the row, not the Section: from there the sheet never showed.
         .sheet(isPresented: $mapImage) {
-            MapImageSheet()
+            MapImageSheet(wide: wideMapImage)
         }
     }
 

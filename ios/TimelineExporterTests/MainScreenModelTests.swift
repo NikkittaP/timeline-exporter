@@ -1,4 +1,5 @@
 import CoreLocation
+import SwiftUI
 import XCTest
 @testable import TimelineExporter
 
@@ -39,6 +40,22 @@ final class MainScreenModelTests: XCTestCase {
         XCTAssertEqual(years[0].trips.map(\.key), [4, 3])
         XCTAssertEqual(years[1].trips.map(\.key), [2])
         XCTAssertEqual(years[2].trips.map(\.key), [1])
+    }
+
+    func testTheMapGoesBesideThePageOnlyWhereBothHaveRoom() {
+        XCTAssertTrue(PageLayout.isSplit(width: 1376, sizeClass: .regular), "13-inch iPad, landscape")
+        XCTAssertTrue(PageLayout.isSplit(width: 1133, sizeClass: .regular), "iPad mini, landscape")
+        XCTAssertFalse(PageLayout.isSplit(width: 1032, sizeClass: .regular), "13-inch iPad, upright")
+        XCTAssertFalse(PageLayout.isSplit(width: 700, sizeClass: .regular), "a narrow window")
+        XCTAssertFalse(PageLayout.isSplit(width: 1376, sizeClass: .compact))
+        XCTAssertFalse(PageLayout.isSplit(width: 956, sizeClass: .regular), "the widest phone, sideways")
+    }
+
+    func testTheSidebarLeavesTheMapItsRoom() {
+        XCTAssertEqual(PageLayout.sidebarWidth(pageWidth: 1040), PageLayout.sidebarMinWidth)
+        XCTAssertEqual(PageLayout.sidebarWidth(pageWidth: 2000), PageLayout.sidebarMaxWidth)
+        let narrowest = PageLayout.sidebarMinWidth + PageLayout.mapMinWidth
+        XCTAssertGreaterThanOrEqual(narrowest - PageLayout.sidebarWidth(pageWidth: narrowest), PageLayout.mapMinWidth)
     }
 
     func testNoTripsNoYears() {
