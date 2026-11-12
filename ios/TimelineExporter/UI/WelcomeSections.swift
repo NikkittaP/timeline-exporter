@@ -63,19 +63,21 @@ struct WelcomeSections: View {
                 importing = true
             } label: {
                 Label(L.s("pick_file_button"), systemImage: "doc.badge.plus")
-                    .frame(maxWidth: .infinity)
+                    .actionLabelWidth()
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
             .accessibilityIdentifier("pickFile")
             Button(action: showHelp) {
                 Label(L.s("ios_how_to_get_data"), systemImage: "questionmark.circle")
-                    .frame(maxWidth: .infinity)
+                    .actionLabelWidth()
             }
             .buttonStyle(.bordered)
             .controlSize(.large)
             .accessibilityIdentifier("fullGuide")
         }
+        // The text and the buttons keep the margin of the cards below.
+        .padding(.horizontal, 16)
         .frame(maxWidth: .infinity)
     }
 

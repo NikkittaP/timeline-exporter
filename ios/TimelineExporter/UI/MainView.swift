@@ -13,6 +13,8 @@ struct MainView: View {
     @AppStorage(WhatsNew.seenKey) private var whatsNewSeen: String?
     @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var mapState = PreviewMapState()
+    @State private var journey: JourneyScene?
+    @State private var titleTaps = TapSequence(count: 7, window: 4)
 
     /// One map either way, in the page or beside it. Also for the Track, so
     /// the Track / Trips / Places switch does not tear the map down and move
@@ -36,7 +38,7 @@ struct MainView: View {
                             if showsWelcome {
                                 WelcomeSections(importing: $importing) { info = .help }
                             } else {
-                                FileSection(importing: $importing)
+                                FileSection(importing: $importing) { journey = $0 }
                             }
                             if store.phase == .loaded, let core = store.timeline {
                                 FilterSection(core: core, dateSheet: $dateSheet, timeSheet: $timeSheet)
@@ -98,6 +100,7 @@ struct MainView: View {
                 case .history: WhatsNewSheet(entries: history, title: L.s("whats_new_history_title"))
                 }
             }
+            .sheet(item: $journey) { JourneySheet(scene: $0) }
             .onAppear(perform: showWhatsNew)
         }
     }
@@ -111,10 +114,14 @@ struct MainView: View {
                 .frame(width: 22, height: 22)
                 .clipShape(RoundedRectangle(cornerRadius: 5))
                 .accessibilityHidden(true)
+                // The snail, as a long press on the Android icon.
+                .onLongPressGesture { journey = .traveler }
             Text(L.s("app_name"))
                 .font(.headline)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
+                // The postcard, after seven quick taps on the name.
+                .onTapGesture { if titleTaps.tap() { journey = .postcard } }
         }
         // Clear of the menu at the largest text, as a system title would be.
         .dynamicTypeSize(...DynamicTypeSize.xxLarge)
@@ -198,6 +205,7 @@ private enum InfoSheet: Identifiable {
 private struct FileSection: View {
     @Environment(TimelineStore.self) private var store
     @Binding var importing: Bool
+    let onJourney: (JourneyScene) -> Void
 
     var body: some View {
         Section {
@@ -206,7 +214,7 @@ private struct FileSection: View {
                 LoadingRow(info: info)
             case .loaded:
                 if let core = store.timeline {
-                    LoadedSummary(core: core)
+                    LoadedSummary(core: core, onJourney: onJourney)
                 }
                 Button {
                     importing = true
@@ -258,6 +266,8 @@ private struct LoadingRow: View {
 private struct LoadedSummary: View {
     @Environment(TimelineStore.self) private var store
     let core: CoreTimeline
+    let onJourney: (JourneyScene) -> Void
+    @State private var distanceTaps = TapSequence(count: 5, window: 3)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -298,6 +308,12 @@ private struct LoadedSummary: View {
         MetricTile(title: L.s("metric_points"), value: Fmt.grouped(core.pointCount))
         MetricTile(title: L.s("metric_days"), value: Fmt.grouped(store.dayCount))
         MetricTile(title: L.s("metric_distance"), value: Fmt.km(store.totalDistance))
+            .contentShape(Rectangle())
+            // How many times round the Earth, after five quick taps.
+            .onTapGesture {
+                let meters = store.totalDistance
+                if distanceTaps.tap(), meters.isFinite, meters > 0 { onJourney(.distance(meters: meters)) }
+            }
     }
 }
 
@@ -512,12 +528,14 @@ private struct ExportSection: View {
                     L.f(store.shareInstead ? "ios_export_run_share" : "ios_export_run_save", format.displayName),
                     systemImage: store.shareInstead ? "square.and.arrow.up" : "square.and.arrow.down"
                 )
-                .frame(maxWidth: .infinity)
+                .actionLabelWidth()
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
             .disabled(store.exportState == .working)
             .accessibilityIdentifier("exportRun")
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 4)
             .id("export")
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets())
@@ -539,19 +557,24 @@ private struct ExportSection: View {
         Button {
             mapImage = true
         } label: {
-            HStack(spacing: 12) {
-                Image(systemName: "photo")
-                    .font(.title3)
-                    .foregroundStyle(.tint)
-                    .frame(width: 32)
+            HStack(spacing: 14) {
+                MapImageThumbnail()
+                    .frame(width: 60, height: 60)
                     .accessibilityHidden(true)
-                OptionLabel(title: L.s("map_image_export_entry"), hint: L.s("ios_map_image_entry_hint"))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(L.s("map_image_export_entry"))
+                        .font(.headline)
+                    Text(L.s("ios_map_image_entry_hint"))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
                 Spacer(minLength: 0)
                 Image(systemName: "chevron.forward")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(.tertiary)
                     .accessibilityHidden(true)
             }
+            .padding(.vertical, 6)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
