@@ -41,6 +41,33 @@ enum PageLayout {
     static func sidebarWidth(pageWidth: CGFloat) -> CGFloat {
         min(sidebarMaxWidth, max(sidebarMinWidth, pageWidth * sidebarShare))
     }
+
+    /// Where the map is while a list is on screen.
+    enum Mode: Equatable {
+        /// A wide window: the lists in a pane, the map beside them.
+        case split
+        /// A tall regular window (an iPad upright): the map over the list.
+        case stacked
+        /// A phone: the list has the screen, a trip or a place opens its own
+        /// page with the map.
+        case compact
+    }
+
+    /// The least height that fits a map over a list worth scrolling.
+    static let stackedMinHeight: CGFloat = 700
+    /// Under this the header is one row: a phone on its side.
+    static let condensedMaxHeight: CGFloat = 520
+
+    static func mode(size: CGSize, sizeClass: UserInterfaceSizeClass?) -> Mode {
+        if isSplit(width: size.width, sizeClass: sizeClass) { return .split }
+        if sizeClass == .regular && size.height >= stackedMinHeight { return .stacked }
+        return .compact
+    }
+
+    /// The map over the list of a stacked page.
+    static func stackedMapHeight(pageHeight: CGFloat) -> CGFloat {
+        min(520, max(280, pageHeight * 0.42))
+    }
 }
 
 extension View {

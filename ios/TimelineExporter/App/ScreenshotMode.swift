@@ -15,9 +15,9 @@ enum ScreenshotMode {
         case overview
         /// The full-screen map, all of the history.
         case map
-        /// Scrolled to the export buttons.
+        /// The Export sheet: the data file's formats.
         case formats
-        /// Places: the dots on the map over the list.
+        /// Places: the list, with the dots on the map where one is beside it.
         case places
         /// Trips, the Norway holiday picked and ticked.
         case trip
@@ -46,15 +46,21 @@ enum ScreenshotMode {
 
     static var isActive: Bool { scene != nil }
 
-    /// The Form row the shot is framed on, and where it sits on screen. The
-    /// full-screen map and Map image scenes scroll to the button the UI test
-    /// then taps.
-    static var anchor: (id: String, bottom: Bool)? {
+    /// Scenes shot with the Export sheet open: the formats, and the Map image
+    /// row the UI test then taps.
+    static var opensExport: Bool {
         switch scene {
-        case .formats: ("export", true)
-        case .mapimage, .mapimageLandscape: ("mapImage", true)
-        case .places, .trip, .trips, .map, .days, .tripPreview, .placeSelected: ("preview", false)
-        default: nil
+        case .formats, .mapimage, .mapimageLandscape: true
+        default: false
+        }
+    }
+
+    /// Scenes that, on a phone, show the picked trip or place on its own page:
+    /// there the list has no map beside it.
+    static var opensDetail: Bool {
+        switch scene {
+        case .trip, .tripPreview, .placeSelected: true
+        default: false
         }
     }
 

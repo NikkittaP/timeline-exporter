@@ -63,6 +63,11 @@ struct FilterState: Equatable {
     var isEmpty: Bool {
         range == nil && movements == nil && !movingOnly && !dropRepeated && timeOfDay == nil
     }
+
+    /// How many of the filters are set: the number on the Filter button.
+    var activeCount: Int {
+        [range != nil, movements != nil, movingOnly, dropRepeated, timeOfDay != nil].filter { $0 }.count
+    }
 }
 
 /// The collapsed Movement row's text. Names whichever side is shorter, so

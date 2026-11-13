@@ -58,6 +58,56 @@ final class MainScreenModelTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(narrowest - PageLayout.sidebarWidth(pageWidth: narrowest), PageLayout.mapMinWidth)
     }
 
+    func testTheListGetsAMapOnlyWhereTheWindowFitsBoth() {
+        let wide = CGSize(width: 1376, height: 1032)
+        XCTAssertEqual(PageLayout.mode(size: wide, sizeClass: .regular), .split, "13-inch iPad, landscape")
+        XCTAssertEqual(PageLayout.mode(size: CGSize(width: 1133, height: 744), sizeClass: .regular), .split,
+                       "iPad mini, landscape")
+        XCTAssertEqual(PageLayout.mode(size: CGSize(width: 1032, height: 1376), sizeClass: .regular), .stacked,
+                       "13-inch iPad, upright")
+        XCTAssertEqual(PageLayout.mode(size: CGSize(width: 744, height: 1133), sizeClass: .regular), .stacked,
+                       "iPad mini, upright")
+        XCTAssertEqual(PageLayout.mode(size: CGSize(width: 440, height: 956), sizeClass: .compact), .compact,
+                       "the largest phone")
+        XCTAssertEqual(PageLayout.mode(size: CGSize(width: 956, height: 440), sizeClass: .regular), .compact,
+                       "the largest phone, sideways: too low for a map over a list")
+        XCTAssertEqual(PageLayout.mode(size: CGSize(width: 500, height: 1000), sizeClass: .compact), .compact,
+                       "a narrow iPad window")
+    }
+
+    func testTheStackedMapLeavesTheListMostOfThePage() {
+        for height: CGFloat in [700, 1000, 1133, 1376, 2000] {
+            let map = PageLayout.stackedMapHeight(pageHeight: height)
+            XCTAssertGreaterThanOrEqual(map, 280)
+            XCTAssertLessThanOrEqual(map, 520)
+            XCTAssertLessThan(map, height / 2, "at \(height)")
+        }
+    }
+
+    func testTheFilterButtonCountsWhatIsSet() {
+        var filter = FilterState()
+        XCTAssertEqual(filter.activeCount, 0)
+        filter.movingOnly = true
+        filter.timeOfDay = TimeWindow(start: 60, end: 120)
+        XCTAssertEqual(filter.activeCount, 2)
+        filter.movements = []
+        filter.dropRepeated = true
+        filter.range = Date(timeIntervalSince1970: 0)...Date(timeIntervalSince1970: 86_400)
+        XCTAssertEqual(filter.activeCount, 5)
+        XCTAssertFalse(filter.isEmpty)
+    }
+
+    func testSelectAllMarksEveryVisibleTripAndClearTakesThemOff() async throws {
+        let store = try await sampleStore()
+        store.setContentKind(.trips)
+        let keys = Set(store.visibleTrips.map(\.key))
+        store.checkAllTrips()
+        XCTAssertEqual(store.checkedTrips, keys)
+        XCTAssertEqual(Set(store.exportTripKeys), keys)
+        store.clearCheckedTrips()
+        XCTAssertTrue(store.exportTripKeys.isEmpty, "no marks: every visible trip is exported")
+    }
+
     func testNoTripsNoYears() {
         XCTAssertTrue(TripYear.group([]).isEmpty)
     }

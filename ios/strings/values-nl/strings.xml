@@ -55,4 +55,7 @@
     <string name="ios_place_unnamed">Naamloze plek</string>
     <string name="ios_trip_on_map">Op de kaart getoond</string>
     <string name="ios_trips_none_selected">Geen reizen geselecteerd — alle %1$s worden geëxporteerd.</string>
+    <string name="ios_select_all">Alles selecteren</string>
+    <string name="ios_search_places">Plaatsen zoeken</string>
+    <string name="ios_export_data_file">Gegevensbestand</string>
 </resources>

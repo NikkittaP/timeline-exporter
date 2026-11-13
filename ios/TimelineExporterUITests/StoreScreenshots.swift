@@ -45,8 +45,12 @@ final class StoreScreenshots: XCTestCase {
     /// "idle" once they are in (TimelineMapView), this is the most it waits.
     private static let mapIdleWait: TimeInterval = 20
 
-    /// A turned iPad: the loaded page has its map in a pane beside the steps.
+    /// A turned iPad: the loaded page has its map in a pane beside the lists.
     private var expectsSplit = false
+
+    /// A phone: the Trips and Places lists fill the screen, with no map; a
+    /// picked trip or place is on a page of its own, which has one.
+    private var listOnly = false
 
     override func setUp() {
         continueAfterFailure = true
@@ -70,6 +74,7 @@ final class StoreScreenshots: XCTestCase {
             XCUIDevice.shared.orientation = .landscapeLeft
         }
         expectsSplit = turned && kind == "ipad"
+        listOnly = kind == "iphone"
         let scenes = only != nil || turned ? Self.scenes + Self.layoutScenes : Self.scenes
 
         for (locale, language) in locales {
@@ -107,16 +112,26 @@ final class StoreScreenshots: XCTestCase {
             XCTAssertTrue(ok, "\(tag): no start screen")
             sleep(1)
         case "overview":
-            // The top of the loaded page: the map is below the fold, not loaded,
-            // unless the window is wide enough to have it beside the page.
-            ok = app.buttons["pickFile"].waitForExistence(timeout: 30)
+            // The loaded file on its Track: the header, the map, the Export bar.
+            // Any element type: the file button is a menu.
+            ok = app.descendants(matching: .any)["pickFile"].waitForExistence(timeout: 30)
             XCTAssertTrue(ok, "\(tag): the file never loaded")
             sleep(3)
             if ok, app.descendants(matching: .any)["map"].exists {
                 _ = waitForIdleMap(app, fullScreen: false)
                 sleep(1)
             }
+        case "formats":
+            // The app opens the Export sheet itself (ScreenshotMode.opensExport).
+            ok = app.buttons["exportRun"].waitForExistence(timeout: 30)
+            XCTAssertTrue(ok, "\(tag): the Export sheet never opened")
+            sleep(2)
+        case "trips" where listOnly, "places" where listOnly:
+            ok = app.descendants(matching: .any)["modeTitle"].waitForExistence(timeout: 30)
+            XCTAssertTrue(ok, "\(tag): the list never appeared")
+            sleep(2)
         case "mapimage", "mapimageLandscape":
+            // The row is in the Export sheet, which the app opens itself.
             ok = tap(app, "mapImage", tag: tag)
             if ok {
                 // Any element type: with its overlay the picture is not always an "image".
@@ -163,8 +178,8 @@ final class StoreScreenshots: XCTestCase {
         }
     }
 
-    /// Taps the button the scene scrolled to (ScreenshotMode.anchor), once
-    /// it is there and enabled and the scene has had a moment to settle.
+    /// Taps a button once it is there and enabled and the scene has had a
+    /// moment to settle.
     @MainActor
     private func tap(_ app: XCUIApplication, _ id: String, tag: String) -> Bool {
         let button = app.buttons[id]

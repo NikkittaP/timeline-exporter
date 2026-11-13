@@ -28,16 +28,22 @@ extension TimelineStore {
         }
     }
 
+    /// The trip drawn alone on the map, while the Trips list has it.
+    var previewedTripItem: TripItem? {
+        guard contentKind == .trips, let key = previewedTrip else { return nil }
+        return visibleTrips.first { $0.key == key }
+    }
+
     /// One day alone has nothing to tell apart.
     var showsDayLegend: Bool {
         contentKind == .track && colorByDay && mapLine.days.count > 1
     }
 }
 
-// MARK: Preview: the map and the Track / Trips / Places switch
+// MARK: The map
 
 /// The preview map's controls. Kept above the views that draw it: the map moves
-/// between the page and its pane when the window's width changes, and turning
+/// between the column and its pane when the window's width changes, and turning
 /// the iPad must not close the full-screen map.
 struct PreviewMapState {
     var fitToken = 0
@@ -47,8 +53,7 @@ struct PreviewMapState {
 }
 
 extension View {
-    /// Presents the full-screen map. Not for a Section: a Form hands a
-    /// Section's modifiers to each of its rows, and the cover never showed.
+    /// Presents the full-screen map.
     func expandableMap(_ state: Binding<PreviewMapState>) -> some View {
         fullScreenCover(isPresented: state.expanded, onDismiss: { state.wrappedValue.restoreToken += 1 }) {
             ExpandedMap()
@@ -56,74 +61,44 @@ extension View {
     }
 }
 
-struct PreviewSection: View {
-    @Environment(TimelineStore.self) private var store
-    /// Regular on an iPad: a taller map in the wider column.
-    @Environment(\.horizontalSizeClass) private var sizeClass
-    @Binding var mapState: PreviewMapState
-    /// False when the map has a pane of its own beside the page.
-    let showsMap: Bool
-
-    var body: some View {
-        @Bindable var store = store
-        Section {
-            Picker(selection: Binding(get: { store.contentKind }, set: { store.setContentKind($0) })) {
-                ForEach(ContentKind.allCases) { kind in
-                    Text(kind.label).tag(kind)
-                }
-            } label: {
-                EmptyView()
-            }
-            .pickerStyle(.segmented)
-            .accessibilityIdentifier("contentKind")
-            .id("preview")
-            .listRowSeparator(.hidden)
-
-            if showsMap {
-                PreviewMap(state: $mapState)
-                    .frame(height: sizeClass == .regular ? Design.mapHeightRegular : Design.mapHeightCompact)
-                    .listRowInsets(EdgeInsets())
-                    .listRowSeparator(.hidden, edges: .top)
-            }
-
-            if store.contentKind == .track {
-                Toggle(L.s("map_color_by_day"), isOn: $store.colorByDay)
-                    .accessibilityIdentifier("colorByDay")
-            }
-            if showsMap && store.showsDayLegend {
-                DayLegend()
-                    .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-                    .listRowInsets(EdgeInsets())
-            }
-        } header: {
-            StepHeader(title: L.s("step_preview"))
-        }
-    }
-}
-
-/// The map beside the page on a wide window: the same map and buttons as in
-/// the page, and the day strip floating over it as on the full-screen map.
+/// The map with what floats over it: beside the lists on a wide window, in
+/// the column otherwise. The day strip, or the trip being shown, sits along
+/// its bottom edge as on the full-screen map.
 struct MapPane: View {
     @Environment(TimelineStore.self) private var store
     @Binding var state: PreviewMapState
-    /// The day strip with the gap under it, as laid out.
-    @State private var stripHeight: CGFloat = 0
+    /// The pane of a wide window runs to the screen's bottom edge; in the
+    /// column the Export bar is under the map.
+    var underBottomEdge = false
+    /// Colour by day as a button on the map, where no pane has the switch.
+    var colorToggle = false
+    /// The strip or the card with the gap under it, as laid out.
+    @State private var overlayHeight: CGFloat = 0
 
     var body: some View {
+        let trip = store.previewedTripItem
         ZStack(alignment: .bottom) {
-            PreviewMap(state: $state, bottomOverlay: store.showsDayLegend ? stripHeight : 0)
-                .ignoresSafeArea(.container, edges: .bottom)
+            PreviewMap(
+                state: $state,
+                bottomOverlay: store.showsDayLegend || trip != nil ? overlayHeight : 0,
+                colorToggle: colorToggle
+            )
+            .ignoresSafeArea(.container, edges: underBottomEdge ? .bottom : [])
             if store.showsDayLegend {
-                FloatingDayStrip(height: $stripHeight)
+                FloatingDayStrip(height: $overlayHeight)
+            } else if let trip {
+                TripPreviewCard(trip: trip, height: $overlayHeight)
             }
         }
     }
 }
 
 /// The preview map with its status and its buttons, wherever it is drawn.
-private struct PreviewMap: View {
+struct PreviewMap: View {
+    @Environment(TimelineStore.self) private var store
     @Binding var state: PreviewMapState
     var bottomOverlay: CGFloat? = nil
+    var colorToggle = false
 
     var body: some View {
         StoreMap(fitToken: state.fitToken, restoreToken: state.restoreToken, bottomOverlay: bottomOverlay,
@@ -144,9 +119,88 @@ private struct PreviewMap: View {
                     MapButton(symbol: "scope", label: L.s("map_recenter")) {
                         state.fitToken += 1
                     }
+                    if colorToggle && store.contentKind == .track {
+                        ColorByDayButton()
+                            .accessibilityIdentifier("colorByDay")
+                    }
                 }
                 .padding(8)
             }
+    }
+}
+
+/// Colour by day, as one of the map's own buttons.
+private struct ColorByDayButton: View {
+    @Environment(TimelineStore.self) private var store
+
+    var body: some View {
+        MapButton(
+            symbol: store.colorByDay ? "paintpalette.fill" : "paintpalette",
+            label: L.s("map_color_by_day"),
+            active: store.colorByDay
+        ) {
+            store.colorByDay.toggle()
+        }
+    }
+}
+
+/// The trip on the map, said over the map itself: which one it is, and the
+/// way back to all of them.
+private struct TripPreviewCard: View {
+    @Environment(TimelineStore.self) private var store
+    let trip: TripItem
+    @Binding var height: CGFloat
+
+    var body: some View {
+        let covered = TripText.covered(trip)
+        HStack(alignment: .top, spacing: 10) {
+            Circle()
+                .fill(Color(hex: trip.color))
+                .frame(width: 10, height: 10)
+                .padding(.top, 5)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(Fmt.dayRange(trip.startDay, trip.endDay))
+                    .font(.subheadline.weight(.semibold))
+                    .monospacedDigit()
+                Text(TripText.reach(trip))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                if !covered.isEmpty {
+                    Text(covered)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+            }
+            .accessibilityElement(children: .combine)
+            Spacer(minLength: 8)
+            TransportIcons(modes: trip.transport)
+                .padding(.top, 3)
+            Button {
+                store.selectTrip(nil)
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title3)
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(.secondary)
+                    .frame(width: 32, height: 32)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(store.checkedTrips.isEmpty ? L.s("trip_show_all_on_map") : L.s("trip_show_checked_on_map"))
+            .accessibilityIdentifier("tripPreviewClose")
+        }
+        .padding(.leading, 14)
+        .padding(.trailing, 8)
+        .padding(.vertical, 10)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+        .mapControlSurface(cornerRadius: Design.cardRadius)
+        .frame(maxWidth: 440)
+        .padding(.horizontal, 12)
+        .padding(.bottom, 8)
+        .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { height = $0 }
     }
 }
 
@@ -244,6 +298,9 @@ private struct ExpandedMap: View {
                 MapButtonColumn {
                     MapButton(symbol: "xmark", label: L.s("map_exit_fullscreen")) { dismiss() }
                     MapButton(symbol: "scope", label: L.s("map_recenter")) { fitToken += 1 }
+                    if store.contentKind == .track {
+                        ColorByDayButton()
+                    }
                 }
             }
             .padding()
@@ -354,18 +411,22 @@ private struct DayLegend: View {
 private struct MapButton: View {
     let symbol: String
     let label: String
+    /// A switch that is on: tinted, and said so to VoiceOver.
+    var active = false
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.body.weight(.semibold))
+                .foregroundStyle(active ? Color.accentColor : Color.primary)
                 .frame(width: Design.minTarget, height: Design.minTarget)
                 .mapControlSurface(cornerRadius: Design.controlRadius, interactive: true)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(label)
+        .accessibilityAddTraits(active ? .isSelected : [])
     }
 }
 
@@ -384,376 +445,5 @@ private struct MapButtonColumn<Content: View>: View {
 
     private var column: some View {
         VStack(spacing: 8) { content }
-    }
-}
-
-// MARK: Trips
-
-struct TripsSection: View {
-    @Environment(TimelineStore.self) private var store
-
-    var body: some View {
-        let trips = store.visibleTrips
-        Section {
-            if store.tripList.noHome {
-                Text(L.s("trips_no_home")).foregroundStyle(.secondary)
-            } else if store.tripList.trips.isEmpty {
-                Text(L.s("trips_none")).foregroundStyle(.secondary)
-            } else if trips.isEmpty {
-                Text(L.s("trips_none_filtered")).foregroundStyle(.secondary)
-            } else {
-                LabeledContent {
-                    if !store.checkedTrips.isEmpty {
-                        Button(L.s("ios_trips_clear_marks")) { store.clearCheckedTrips() }
-                            .buttonStyle(.borderless)
-                            .accessibilityIdentifier("clearTripMarks")
-                    }
-                } label: {
-                    Text(checkedText(trips)).monospacedDigit()
-                }
-                if store.previewedTrip != nil {
-                    Button {
-                        store.selectTrip(nil)
-                    } label: {
-                        Label(store.checkedTrips.isEmpty ? L.s("trip_show_all_on_map") : L.s("trip_show_checked_on_map"),
-                              systemImage: "map")
-                    }
-                }
-            }
-        } header: {
-            StepHeader(title: L.plural("trips_count", trips.count))
-        } footer: {
-            if !trips.isEmpty {
-                Text(L.s("trips_hint"))
-            }
-        }
-
-        ForEach(TripYear.group(trips)) { group in
-            Section {
-                ForEach(group.trips) { trip in
-                    TripRow(trip: trip)
-                }
-            } header: {
-                HStack {
-                    Text(group.year.formatted(.number.grouping(.never)))
-                    Spacer()
-                    Text(L.plural("trips_count", group.trips.count))
-                }
-                .textCase(nil)
-                .monospacedDigit()
-            }
-        }
-    }
-
-    private func checkedText(_ trips: [TripItem]) -> String {
-        let checked = store.exportTripKeys.count
-        if checked == 0 {
-            // As export does it: nothing ticked writes every visible trip.
-            return trips.count == 1
-                ? L.s("trips_checked_none")
-                : L.f("ios_trips_none_selected", L.plural("trips_count", trips.count))
-        }
-        return L.f("trips_checked", Fmt.grouped(checked), Fmt.grouped(trips.count))
-    }
-}
-
-private struct TripRow: View {
-    @Environment(TimelineStore.self) private var store
-    let trip: TripItem
-
-    var body: some View {
-        let checked = store.checkedTrips.contains(trip.key)
-        let selected = store.previewedTrip == trip.key
-        HStack(spacing: 4) {
-            // The mark is for export; the rest of the row is for the map.
-            Button {
-                store.setTrip(trip.key, checked: !checked)
-            } label: {
-                Image(systemName: checked ? "checkmark.circle.fill" : "circle")
-                    .font(.title3)
-                    .foregroundStyle(checked ? Color.accentColor : .secondary)
-                    .frame(width: Design.minTarget, height: Design.minTarget)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.borderless)
-            .accessibilityLabel(L.s("trip_export_checkbox"))
-            .accessibilityAddTraits(checked ? .isSelected : [])
-
-            Button {
-                store.selectTrip(selected ? nil : trip.key)
-            } label: {
-                HStack(alignment: .top, spacing: 10) {
-                    Circle()
-                        .fill(Color(hex: trip.color))
-                        .frame(width: 10, height: 10)
-                        .padding(.top, 6)
-                        .accessibilityHidden(true)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(Fmt.dayRange(trip.startDay, trip.endDay))
-                            .font(.body.weight(selected ? .semibold : .regular))
-                            .monospacedDigit()
-                        Text(reach).font(.caption).foregroundStyle(.secondary).monospacedDigit()
-                        if !covered.isEmpty {
-                            Text(covered).font(.caption).foregroundStyle(.secondary).monospacedDigit()
-                        }
-                        if !flags.isEmpty {
-                            Text(flags).font(.caption).foregroundStyle(.orange)
-                        }
-                        // Said in words, not only by the row's tint: the
-                        // trip on the map need not be one marked for export.
-                        if selected {
-                            Label(L.s("ios_trip_on_map"), systemImage: "map.fill")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.tint)
-                                .accessibilityHidden(true)
-                        }
-                    }
-                    Spacer(minLength: 0)
-                    TransportIcons(modes: trip.transport)
-                }
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityValue(selected ? L.s("ios_trip_on_map") : "")
-            .accessibilityAddTraits(selected ? .isSelected : [])
-        }
-        // Only the previewed row is tinted: a marked one says so with its
-        // filled mark alone, so the two never look alike.
-        .listRowBackground(selected ? Color.accentColor.opacity(Design.previewedRowOpacity) : nil)
-    }
-
-    private var reach: String {
-        [
-            L.plural("map_day_count", trip.dayCount),
-            L.f("trip_far_from_home", Fmt.km(trip.maxDistanceMeters)),
-        ].joined(separator: " · ")
-    }
-
-    private var covered: String {
-        var parts: [String] = []
-        if trip.travelledMeters > 0 {
-            parts.append((trip.travelledEstimated ? "≈" : "") + Fmt.km(trip.travelledMeters) + " " + L.s("trip_travelled_label"))
-        }
-        if trip.placeCount > 0 {
-            parts.append(L.plural("places_count", trip.placeCount))
-        }
-        return parts.joined(separator: " · ")
-    }
-
-    private var flags: String {
-        var parts: [String] = []
-        if trip.openStart { parts.append(L.s("trip_open_start")) }
-        if trip.openEnd { parts.append(L.s("trip_open_end")) }
-        if trip.longAbsence { parts.append(L.s("trip_long_absence")) }
-        return parts.joined(separator: " · ")
-    }
-}
-
-private struct TransportIcons: View {
-    let modes: [String]
-
-    var body: some View {
-        HStack(spacing: 2) {
-            ForEach(modes.prefix(3), id: \.self) { mode in
-                Image(systemName: Self.symbol(mode)).font(.caption).foregroundStyle(.secondary)
-            }
-        }
-    }
-
-    static func symbol(_ mode: String) -> String {
-        switch mode {
-        case "FLIGHT": "airplane"
-        case "CAR": "car.fill"
-        case "TRAIN": "tram.fill"
-        case "BUS": "bus.fill"
-        case "BOAT": "ferry.fill"
-        case "BICYCLE": "bicycle"
-        default: "figure.walk"
-        }
-    }
-}
-
-// MARK: Places
-
-struct PlacesSection: View {
-    @Environment(TimelineStore.self) private var store
-    @State private var showAll = false
-    @State private var naming: PlaceItem?
-
-    private static let shortList = 50
-
-    var body: some View {
-        @Bindable var store = store
-        let places = store.places
-        Section {
-            Toggle(isOn: $store.includeContainers) {
-                OptionLabel(title: L.s("places_include_containers"), hint: L.s("places_include_containers_hint"))
-            }
-            if places.isEmpty {
-                Text(store.filter.range == nil ? L.s("places_none") : L.s("places_none_filtered"))
-                    .foregroundStyle(.secondary)
-            } else {
-                ForEach(showAll ? places : Array(places.prefix(Self.shortList))) { place in
-                    PlaceRow(place: place) { naming = place }
-                }
-                if !showAll && places.count > Self.shortList {
-                    Button(L.f("places_show_all", Fmt.grouped(places.count))) { showAll = true }
-                }
-            }
-        } header: {
-            StepHeader(title: L.plural("places_count", places.count))
-        } footer: {
-            if !places.isEmpty {
-                Text(L.s("place_unnamed_hint"))
-            }
-        }
-        .sheet(item: $naming) { place in
-            PlaceNameSheet(place: place)
-        }
-    }
-}
-
-private struct PlaceRow: View {
-    @Environment(TimelineStore.self) private var store
-    let place: PlaceItem
-    let rename: () -> Void
-    /// One width for every symbol, so the titles start in one column.
-    @ScaledMetric(relativeTo: .body) private var iconColumn: CGFloat = 26
-
-    var body: some View {
-        let selected = store.selectedPlace == place.key
-        let name = store.displayName(place)
-        // A place with no name is shown by its coordinates: say so in words.
-        let unnamed = name == place.coordinates
-        HStack(spacing: 4) {
-            Button {
-                // The first tap finds the place on the map, the second names it.
-                if selected { rename() } else { store.selectPlace(place.key) }
-            } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Image(systemName: place.isHome ? "house.fill" : place.isWork ? "briefcase.fill" : "mappin.circle.fill")
-                        .foregroundStyle(selected ? Color.accentColor : Color(hex: Design.placeColorHex))
-                        .frame(width: iconColumn)
-                        .accessibilityHidden(true)
-                    VStack(alignment: .leading, spacing: 3) {
-                        HStack(spacing: 6) {
-                            Text(unnamed ? L.s("ios_place_unnamed") : name)
-                                .font(.body.weight(selected ? .semibold : .regular))
-                                .lineLimit(2)
-                            if let badge = badge(for: name) {
-                                Text(badge)
-                                    .font(.caption2.weight(.semibold))
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Color.accentColor.opacity(Design.selectedRowOpacity), in: Capsule())
-                            }
-                        }
-                        if let address = place.address, !address.isEmpty {
-                            Text(address).font(.caption).foregroundStyle(.secondary).lineLimit(1)
-                        } else if unnamed {
-                            Text(place.coordinates).font(.caption).foregroundStyle(.tertiary).monospacedDigit()
-                        }
-                        Text(stayText).font(.caption).foregroundStyle(.secondary).monospacedDigit()
-                    }
-                    Spacer(minLength: 8)
-                    VStack(alignment: .trailing, spacing: 0) {
-                        Text(Fmt.grouped(place.visits))
-                            .font(.title3.weight(.semibold))
-                            .monospacedDigit()
-                        Text(L.s("places_visits_label"))
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    .lineLimit(1)
-                    .fixedSize()
-                }
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityAddTraits(selected ? .isSelected : [])
-
-            if selected {
-                Button(action: rename) {
-                    Image(systemName: "pencil")
-                        .frame(width: Design.minTarget, height: Design.minTarget)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.borderless)
-                .accessibilityLabel(L.s("place_dialog_title"))
-            }
-        }
-        .listRowBackground(selected ? Color.accentColor.opacity(Design.selectedRowOpacity) : nil)
-    }
-
-    /// Home or Work beside a place that has a name of its own.
-    private func badge(for name: String) -> String? {
-        let role: String? = place.isHome ? L.s("place_home") : place.isWork ? L.s("place_work") : nil
-        return role == name ? nil : role
-    }
-
-    /// How long in all and when last; the visit count has a column of its own.
-    private var stayText: String {
-        let hours = Double(place.totalSeconds) / 3600
-        let duration = hours < 48
-            ? L.f("place_duration_hours", hours.formatted(.number.precision(.fractionLength(hours < 10 ? 1 : 0))))
-            : L.plural("map_day_count", Int((hours / 24).rounded()))
-        return [duration, L.f("place_last_visit", Fmt.date(place.lastVisit))].joined(separator: " · ")
-    }
-}
-
-private struct PlaceNameSheet: View {
-    @Environment(TimelineStore.self) private var store
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
-    let place: PlaceItem
-    @State private var text = ""
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    TextField(L.s("place_dialog_field"), text: $text)
-                        .textInputAutocapitalization(.sentences)
-                        .submitLabel(.done)
-                        .onSubmit(save)
-                } footer: {
-                    Text([place.name, place.address, place.coordinates].compactMap { $0 }.joined(separator: "\n"))
-                }
-                if let url = place.mapsURL {
-                    Section {
-                        Button {
-                            openURL(url)
-                        } label: {
-                            Label(L.s("place_dialog_maps"), systemImage: "map")
-                        }
-                    }
-                }
-                if store.labels[place.key] != nil {
-                    Section {
-                        Button(L.s("place_dialog_remove"), role: .destructive) {
-                            store.rename(place.key, to: nil)
-                            dismiss()
-                        }
-                    }
-                }
-            }
-            .navigationTitle(L.s("place_dialog_title"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L.s("date_dialog_cancel")) { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(L.s("place_dialog_save"), action: save)
-                }
-            }
-            .onAppear { text = store.labels[place.key] ?? place.name ?? "" }
-        }
-        .presentationDetents([.medium])
-    }
-
-    private func save() {
-        store.rename(place.key, to: text)
-        dismiss()
     }
 }

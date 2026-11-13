@@ -55,4 +55,7 @@
     <string name="ios_place_unnamed">未命名地點</string>
     <string name="ios_trip_on_map">已顯示在地圖上</string>
     <string name="ios_trips_none_selected">未選擇旅行 — 將全部匯出:%1$s</string>
+    <string name="ios_select_all">全選</string>
+    <string name="ios_search_places">搜尋地點</string>
+    <string name="ios_export_data_file">資料檔案</string>
 </resources>

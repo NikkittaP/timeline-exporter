@@ -55,4 +55,7 @@
     <string name="ios_place_unnamed">이름 없는 장소</string>
     <string name="ios_trip_on_map">지도에 표시됨</string>
     <string name="ios_trips_none_selected">선택한 여행 없음 — 모두 내보냅니다: %1$s</string>
+    <string name="ios_select_all">모두 선택</string>
+    <string name="ios_search_places">장소 검색</string>
+    <string name="ios_export_data_file">데이터 파일</string>
 </resources>

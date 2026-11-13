@@ -55,4 +55,7 @@
     <string name="ios_place_unnamed">Unbenannter Ort</string>
     <string name="ios_trip_on_map">Auf der Karte angezeigt</string>
     <string name="ios_trips_none_selected">Keine Reisen ausgewählt — alle %1$s werden exportiert.</string>
+    <string name="ios_select_all">Alle auswählen</string>
+    <string name="ios_search_places">Orte suchen</string>
+    <string name="ios_export_data_file">Datendatei</string>
 </resources>

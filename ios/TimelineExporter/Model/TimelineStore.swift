@@ -370,6 +370,14 @@ final class TimelineStore {
         if previewedTrip == nil { scheduleRecount() }
     }
 
+    /// Ticks every trip in the list. It writes what no tick writes; the marks
+    /// are there to take a few off again.
+    func checkAllTrips() {
+        checkedTrips.formUnion(visibleTrips.map(\.key))
+        exportState = .idle
+        if previewedTrip == nil { scheduleRecount() }
+    }
+
     func clearCheckedTrips() {
         checkedTrips = []
         if previewedTrip == nil { scheduleRecount() }

@@ -55,4 +55,7 @@
     <string name="ios_place_unnamed">Unnamed place</string>
     <string name="ios_trip_on_map">Shown on the map</string>
     <string name="ios_trips_none_selected">No trips selected — all %1$s will be exported.</string>
+    <string name="ios_select_all">Select all</string>
+    <string name="ios_search_places">Search places</string>
+    <string name="ios_export_data_file">Data file</string>
 </resources>

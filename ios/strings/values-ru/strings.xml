@@ -55,4 +55,7 @@
     <string name="ios_place_unnamed">Место без названия</string>
     <string name="ios_trip_on_map">Показана на карте</string>
     <string name="ios_trips_none_selected">Поездки не отмечены — экспортируются все: %1$s</string>
+    <string name="ios_select_all">Выбрать все</string>
+    <string name="ios_search_places">Поиск мест</string>
+    <string name="ios_export_data_file">Файл данных</string>
 </resources>

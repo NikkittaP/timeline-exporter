@@ -55,4 +55,7 @@
     <string name="ios_place_unnamed">Namnlös plats</string>
     <string name="ios_trip_on_map">Visas på kartan</string>
     <string name="ios_trips_none_selected">Inga resor valda — alla %1$s exporteras.</string>
+    <string name="ios_select_all">Markera alla</string>
+    <string name="ios_search_places">Sök platser</string>
+    <string name="ios_export_data_file">Datafil</string>
 </resources>
