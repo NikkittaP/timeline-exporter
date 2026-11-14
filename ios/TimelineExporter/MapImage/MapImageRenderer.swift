@@ -10,6 +10,8 @@ struct MapImageRequest {
     var spec: MapImageSpec
     var showStats: Bool
     var showEndpoints: Bool
+    /// The dark map style, with the overlays on matching dark surfaces.
+    var darkMap: Bool = false
 }
 
 enum MapImageError: Error {
@@ -21,7 +23,7 @@ enum MapImageError: Error {
 private let brandName = "Timeline Exporter"
 
 /// Render [request] to an opaque image of exactly spec.widthPx x spec.heightPx:
-/// a MapLibre snapshot of the light style with the line drawn under the
+/// a MapLibre snapshot of the light or dark style with the line drawn under the
 /// labels, then the branding, the statistics card, the S/E markers and the
 /// map attribution painted on top with Core Graphics.
 @MainActor
@@ -41,10 +43,11 @@ func renderMapImage(_ request: MapImageRequest) async throws -> UIImage {
     let size = CGSize(width: spec.widthPx, height: spec.heightPx)
     let rtl = UIView.userInterfaceLayoutDirection(for: .unspecified) == .rightToLeft
     return UIGraphicsImageRenderer(size: size, format: format).image { ctx in
-        UIColor.white.setFill()
+        // Whatever the style leaves transparent becomes the map's own ground.
+        (request.darkMap ? MapImageTheme.darkGround : UIColor.white).setFill()
         ctx.fill(CGRect(origin: .zero, size: size))
         shot.image.draw(in: CGRect(origin: .zero, size: size))
-        let painter = OverlayPainter(spec: spec, rtl: rtl, cg: ctx.cgContext)
+        let painter = OverlayPainter(spec: spec, rtl: rtl, cg: ctx.cgContext, theme: MapImageTheme(dark: request.darkMap))
         if request.showEndpoints, let first = request.line.firstCoordinate, let last = request.line.lastCoordinate {
             painter.drawEndpoints(
                 start: MapImageGeometry.project(camera, spec: spec, latitude: first.latitude, longitude: first.longitude),
@@ -106,7 +109,7 @@ private final class SnapshotJob: NSObject, MLNMapSnapshotterDelegate {
 
     @MainActor func run() async throws -> Shot {
         let spec = request.spec
-        guard let styleURL = Bundle.main.url(forResource: "map_style_light", withExtension: "json") else {
+        guard let styleURL = TimelineMapView.styleURL(request.darkMap ? .dark : .light) else {
             throw MapImageError.snapshot("No map style")
         }
         // The altitude is ignored: zoomLevel below wins.
@@ -157,7 +160,7 @@ private final class SnapshotJob: NSObject, MLNMapSnapshotterDelegate {
                 CLLocationCoordinate2D(latitude: line.latitudes[$0], longitude: line.longitudes[$0])
             }
             let f = MLNPolylineFeature(coordinates: &coords, count: UInt(coords.count))
-            f.attributes = ["color": piece.color.isEmpty ? TimelineMapView.Coordinator.trackColor : piece.color]
+            f.attributes = ["color": piece.color.isEmpty ? TimelineMapView.Coordinator.trackColor(dark: request.darkMap) : piece.color]
             features.append(f)
         }
         let firstLabel = style.layers.first { $0 is MLNSymbolStyleLayer }
@@ -171,7 +174,9 @@ private final class SnapshotJob: NSObject, MLNMapSnapshotterDelegate {
             style.addSource(gapSource)
             let gaps = MLNLineStyleLayer(identifier: "image-gaps", source: gapSource)
             // A touch stronger than on screen: no finger to zoom in with.
-            gaps.styleAsGap(color: TimelineMapView.Coordinator.gapColorLight, width: 1.6, opacity: 0.6)
+            gaps.styleAsGap(color: request.darkMap ? TimelineMapView.Coordinator.gapColorDark
+                                                   : TimelineMapView.Coordinator.gapColorLight,
+                            width: 1.6, opacity: 0.6)
             add(gaps)
         }
         guard !features.isEmpty else {
@@ -180,9 +185,9 @@ private final class SnapshotJob: NSObject, MLNMapSnapshotterDelegate {
         }
         let source = MLNShapeSource(identifier: "image-line", features: features, options: nil)
         style.addSource(source)
-        // A pale band under the line, so it reads over roads and water.
+        // A band in the ground colour under the line, so it reads over roads and water.
         let casing = MLNLineStyleLayer(identifier: "image-casing", source: source)
-        casing.lineColor = NSExpression(forConstantValue: UIColor.white)
+        casing.lineColor = NSExpression(forConstantValue: request.darkMap ? MapImageTheme.darkGround : UIColor.white)
         casing.lineOpacity = NSExpression(forConstantValue: 0.9)
         casing.lineWidth = NSExpression(forConstantValue: 6.4)
         casing.lineCap = NSExpression(forConstantValue: "round")
@@ -215,16 +220,41 @@ private final class SnapshotJob: NSObject, MLNMapSnapshotterDelegate {
 
 // MARK: Overlays
 
+/// The overlay colours of one map style; Android's OverlayPainter uses the same.
+struct MapImageTheme {
+    /// The dark style's background layer.
+    static let darkGround = UIColor(hex: "#191D23")!
+
+    let ink: UIColor
+    let muted: UIColor
+    let attributionInk: UIColor
+    /// White on the light map; a shade lifted off the ground on the dark one.
+    let surface: UIColor
+    let shadowAlpha: CGFloat
+    /// Android's MapPalette start and end fills.
+    let start: UIColor
+    let end: UIColor
+
+    init(dark: Bool) {
+        ink = UIColor(hex: dark ? "#EAF1F8" : "#1F1D1A")!
+        muted = UIColor(hex: dark ? "#9AA7B4" : "#6B675F")!
+        attributionInk = UIColor(hex: dark ? "#B7C2CD" : "#4A4740")!
+        surface = dark ? UIColor(hex: "#262C34")! : .white
+        shadowAlpha = dark ? 90.0 / 255 : 40.0 / 255
+        start = UIColor(hex: dark ? "#2FD3A5" : "#0E9F86")!
+        end = UIColor(hex: dark ? "#FF6B57" : "#E5533D")!
+    }
+}
+
 /// The overlays, in output pixels: every size is a design unit through spec.u.
 private struct OverlayPainter {
     let spec: MapImageSpec
     let rtl: Bool
     let cg: CGContext
+    let theme: MapImageTheme
 
-    private let ink = UIColor(hex: "#1F1D1A")!
-    private let muted = UIColor(hex: "#6B675F")!
-    private static let startColor = UIColor(hex: "#0E9F86")!
-    private static let endColor = UIColor(hex: "#E5533D")!
+    private var ink: UIColor { theme.ink }
+    private var muted: UIColor { theme.muted }
 
     private func u(_ v: Double) -> CGFloat { CGFloat(spec.u(v)) }
 
@@ -232,14 +262,14 @@ private struct OverlayPainter {
         CGRect(x: CGFloat(b.left), y: CGFloat(b.top), width: CGFloat(b.width), height: CGFloat(b.height))
     }
 
-    /// The same quiet white surface under the branding, the card and the attribution.
+    /// The same quiet surface under the branding, the card and the attribution.
     private func surface(_ r: CGRect, corner: CGFloat, alpha: CGFloat, shadow: Bool) {
         cg.saveGState()
         if shadow {
             cg.setShadow(offset: CGSize(width: 0, height: u(4)), blur: u(18),
-                         color: UIColor.black.withAlphaComponent(40.0 / 255).cgColor)
+                         color: UIColor.black.withAlphaComponent(theme.shadowAlpha).cgColor)
         }
-        UIColor.white.withAlphaComponent(alpha).setFill()
+        theme.surface.withAlphaComponent(alpha).setFill()
         UIBezierPath(roundedRect: r, cornerRadius: corner).fill()
         cg.restoreGState()
     }
@@ -289,8 +319,8 @@ private struct OverlayPainter {
             sx -= ux * push; sy -= uy * push
             ex += ux * push; ey += uy * push
         }
-        marker(x: sx, y: sy, radius: radius, color: Self.startColor, letter: "S")
-        marker(x: ex, y: ey, radius: radius, color: Self.endColor, letter: "E")
+        marker(x: sx, y: sy, radius: radius, color: theme.start, letter: "S")
+        marker(x: ex, y: ey, radius: radius, color: theme.end, letter: "E")
     }
 
     private func marker(x: Double, y: Double, radius: Double, color: UIColor, letter: String) {
@@ -337,7 +367,7 @@ private struct OverlayPainter {
         draw(brandName, font: nameFont, color: ink, x: textX, baseline: baseline, alignEnd: rtl)
     }
 
-    /// A white card along the bottom: the date range, then up to three figures.
+    /// A card along the bottom: the date range, then up to three figures.
     func drawStats(_ stats: ImageStats, placeCount: Int?) {
         var columns: [(String, String)] = []
         if stats.distanceMeters >= 50 {
@@ -412,7 +442,7 @@ private struct OverlayPainter {
         let right = rtl ? margin + w + padH * 2 : CGFloat(spec.widthPx) - margin
         let pill = CGRect(x: right - w - padH * 2, y: bottom - h, width: w + padH * 2, height: h)
         surface(pill, corner: h / 2, alpha: 215.0 / 255, shadow: false)
-        draw(shown, font: f, color: UIColor(hex: "#4A4740")!, x: pill.minX + padH,
+        draw(shown, font: f, color: theme.attributionInk, x: pill.minX + padH,
              baseline: pill.maxY - padV + f.descender)
     }
 }

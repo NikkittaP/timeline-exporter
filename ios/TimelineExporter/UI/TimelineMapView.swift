@@ -167,7 +167,13 @@ struct TimelineMapView: UIViewRepresentable {
         private static let dayLayer = "timeline-day-highlight"
         private static let gapSource = "timeline-gaps"
         private static let gapLayer = "timeline-gaps"
-        static let trackColor = "#1565C0"
+        /// One colour for the whole line: a deep blue on the light map, the
+        /// cyan of Android's dark MapPalette on the dark one, where the blue
+        /// all but disappears into the ground.
+        static func trackColor(dark: Bool) -> String { dark ? "#4FC3E8" : "#1565C0" }
+        /// The dark style's ground: the casing and the place rings on the dark map.
+        static let darkGroundColor = "#191D23"
+        private var dark: Bool { scheme == .dark }
         /// Android's MapPalette.gap, light and dark.
         static let gapColorLight = "#4C3BD6"
         static let gapColorDark = "#8FA3B5"
@@ -316,7 +322,7 @@ struct TimelineMapView: UIViewRepresentable {
                     CLLocationCoordinate2D(latitude: line.latitudes[$0], longitude: line.longitudes[$0])
                 }
                 let f = MLNPolylineFeature(coordinates: &coords, count: UInt(coords.count))
-                var attributes: [String: Any] = ["color": piece.color.isEmpty ? Self.trackColor : piece.color]
+                var attributes: [String: Any] = ["color": piece.color.isEmpty ? Self.trackColor(dark: dark) : piece.color]
                 if let day = piece.day { attributes["day"] = NSNumber(value: Int(day)) }
                 f.attributes = attributes
                 features.append(f)
@@ -326,7 +332,10 @@ struct TimelineMapView: UIViewRepresentable {
 
             let below = style.layer(withIdentifier: Self.placeLayer)
             let casing = MLNLineStyleLayer(identifier: "timeline-casing", source: source)
-            casing.lineColor = NSExpression(forConstantValue: UIColor.white.withAlphaComponent(0.85))
+            // The ground colour: white on the light map, but on the dark one a
+            // white band would outshine the line it is meant to set off.
+            let ground = dark ? UIColor(hex: Self.darkGroundColor)! : UIColor.white
+            casing.lineColor = NSExpression(forConstantValue: ground.withAlphaComponent(0.85))
             casing.lineWidth = Self.zoomWidth(Self.casingWidths)
             Self.round(casing)
             insert(casing, below: below, style: style)
@@ -423,7 +432,7 @@ struct TimelineMapView: UIViewRepresentable {
             circles.circleRadius = NSExpression(forKeyPath: "radius")
             circles.circleColor = NSExpression(forConstantValue: UIColor(hex: Design.placeColorHex))
             circles.circleOpacity = NSExpression(forConstantValue: 0.8)
-            circles.circleStrokeColor = NSExpression(forConstantValue: UIColor.white)
+            circles.circleStrokeColor = NSExpression(forConstantValue: dark ? UIColor(hex: Self.darkGroundColor)! : UIColor.white)
             circles.circleStrokeWidth = NSExpression(forConstantValue: 1.5)
             style.addLayer(circles)
 

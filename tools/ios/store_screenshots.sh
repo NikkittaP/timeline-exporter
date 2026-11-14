@@ -9,6 +9,8 @@
 #          (1-based), so n runners share the languages
 # ORIENTATION  environment, optional "landscape": turns the simulator and writes
 #          to <locale>/<kind>-landscape, apart from the store set
+# APPEARANCE  environment, optional "dark": the simulator in dark mode, to
+#          check the dark theme; writes to <locale>/<kind>[-landscape]-dark
 #
 # One xcodebuild test run takes every language: a run per language spent
 # about a minute and a half each on start-up and the result bundle.
@@ -26,7 +28,11 @@ root="$(pwd)"
 config="$root/tools/store_shots/config.json"
 logs="${LOGS:-$root/build/ios/logs}"
 mkdir -p "$logs"
+appearance="${APPEARANCE:-light}"
+[[ "$appearance" == light || "$appearance" == dark ]] || { echo "APPEARANCE must be light or dark, got '$appearance'"; exit 1; }
+# Dark shots check the dark theme; like landscape, they are kept apart from the store set.
 shots="$kind${ORIENTATION:+-$ORIENTATION}"
+[[ "$appearance" == dark ]] && shots="$shots-dark"
 
 fail() {
   echo "::error title=Screenshots ($kind)::$1"
@@ -75,7 +81,7 @@ trap 'xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true; xcrun simctl delete
 boot_simulator() {
   xcrun simctl boot "$udid" &&
     xcrun simctl bootstatus "$udid" -b >/dev/null &&
-    xcrun simctl ui "$udid" appearance light &&
+    xcrun simctl ui "$udid" appearance "$appearance" &&
     # The status bar every store screenshot shows.
     xcrun simctl status_bar "$udid" override --time "9:41" --dataNetwork wifi --wifiMode active --wifiBars 3 \
       --cellularMode active --cellularBars 4 --batteryState charged --batteryLevel 100

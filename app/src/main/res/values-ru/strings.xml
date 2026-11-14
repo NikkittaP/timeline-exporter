@@ -259,6 +259,7 @@
     <string name="map_image_size">%1$d × %2$d · %3$s</string>
     <string name="map_image_show_stats">Показывать статистику</string>
     <string name="map_image_show_endpoints">Показывать метки начала и конца</string>
+    <string name="map_image_dark_map">Тёмная карта</string>
     <string name="map_image_save">Сохранить изображение</string>
     <string name="map_image_share">Поделиться</string>
     <string name="map_image_rendering">Рисуем карту…</string>

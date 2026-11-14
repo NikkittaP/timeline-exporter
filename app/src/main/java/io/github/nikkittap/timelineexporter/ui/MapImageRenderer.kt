@@ -57,6 +57,8 @@ internal data class MapImageOptions(
     val showStats: Boolean = true,
     val showEndpoints: Boolean = true,
     val colorByDay: Boolean = true,
+    /** The dark Clean Map style, with the overlays in matching dark surfaces. */
+    val darkMap: Boolean = false,
 )
 
 /**
@@ -113,6 +115,7 @@ internal suspend fun renderMapImage(context: Context, request: MapImageRequest):
         val stats = mapImageStats(request.points, request.journeys, request.fallbackZone, request.placeCount)
         val style = MapImageStyle.prepare(
             appContext, request.points, request.journeys, options.colorByDay, request.fallbackZone, camera.zoom,
+            dark = options.darkMap,
         )
         Prepared(camera, stats, style)
     }
@@ -130,7 +133,7 @@ internal suspend fun renderMapImage(context: Context, request: MapImageRequest):
         }
         val canvas = Canvas(bitmap)
         val rtl = isRtl()
-        val painter = OverlayPainter(context, spec, rtl)
+        val painter = OverlayPainter(context, spec, rtl, options.darkMap)
         if (options.showEndpoints) {
             val first = request.points.first()
             val last = request.points.last()
@@ -144,8 +147,12 @@ internal suspend fun renderMapImage(context: Context, request: MapImageRequest):
         painter.drawAttribution(canvas, shot.attribution, showStats = card != null)
         painter.drawBranding(canvas)
         // Fully opaque, whatever the encoder: anything the style left
-        // transparent becomes paper white rather than JPEG's black.
-        canvas.drawColor(Color.WHITE, PorterDuff.Mode.DST_OVER)
+        // transparent becomes the map's ground (paper white, or the dark
+        // style's own) rather than JPEG's black.
+        canvas.drawColor(
+            if (options.darkMap) MapImageStyle.groundColor(dark = true).toColorInt() else Color.WHITE,
+            PorterDuff.Mode.DST_OVER,
+        )
         bitmap.setHasAlpha(false)
         bitmap
     }
@@ -249,17 +256,25 @@ private const val FALLBACK_ATTRIBUTION = "© OpenMapTiles © OpenStreetMap contr
  * [MapImageSpec.u], not dp: the image is the same file on every phone, and
  * the same composition at every size.
  */
-private class OverlayPainter(private val context: Context, private val spec: MapImageSpec, private val rtl: Boolean) {
-    private val ink = "#1F1D1A".toColorInt()
-    private val muted = "#6B675F".toColorInt()
+private class OverlayPainter(
+    private val context: Context,
+    private val spec: MapImageSpec,
+    private val rtl: Boolean,
+    private val dark: Boolean,
+) {
+    private val ink = (if (dark) "#EAF1F8" else "#1F1D1A").toColorInt()
+    private val muted = (if (dark) "#9AA7B4" else "#6B675F").toColorInt()
+    private val attributionInk = (if (dark) "#B7C2CD" else "#4A4740").toColorInt()
+    /** White on the light map; a shade lifted off the dark ground on the dark one. */
+    private val surfaceColor = (if (dark) "#262C34" else "#FFFFFF").toColorInt()
     private val medium = Typeface.create("sans-serif-medium", Typeface.NORMAL)
 
     private fun u(v: Float) = spec.u(v)
 
-    /** The same quiet white surface under the branding, the card and the attribution. */
+    /** The same quiet surface under the branding, the card and the attribution. */
     private fun surface(alpha: Int, shadow: Boolean) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(alpha, 255, 255, 255)
-        if (shadow) setShadowLayer(u(18f), 0f, u(4f), Color.argb(40, 0, 0, 0))
+        color = Color.argb(alpha, Color.red(surfaceColor), Color.green(surfaceColor), Color.blue(surfaceColor))
+        if (shadow) setShadowLayer(u(18f), 0f, u(4f), Color.argb(if (dark) 90 else 40, 0, 0, 0))
     }
 
     fun drawEndpoints(canvas: Canvas, start: Pair<Float, Float>, end: Pair<Float, Float>) {
@@ -277,8 +292,8 @@ private class OverlayPainter(private val context: Context, private val spec: Map
             sx -= ux * push; sy -= uy * push
             ex += ux * push; ey += uy * push
         }
-        drawMarker(canvas, sx, sy, radius, MapImageStyle.startColor, "S")
-        drawMarker(canvas, ex, ey, radius, MapImageStyle.endColor, "E")
+        drawMarker(canvas, sx, sy, radius, MapImageStyle.startColor(dark), "S")
+        drawMarker(canvas, ex, ey, radius, MapImageStyle.endColor(dark), "E")
     }
 
     private fun drawMarker(canvas: Canvas, x: Float, y: Float, radius: Float, color: String, letter: String) {
@@ -340,7 +355,7 @@ private class OverlayPainter(private val context: Context, private val spec: Map
     }
 
     /**
-     * A white card along the bottom: the date range on top, then up to three
+     * A card along the bottom: the date range on top, then up to three
      * figures. Only figures that are actually known are shown. Full width on
      * the tall shapes; on landscape a compact card no wider than its content.
      * Returns where it went.
@@ -427,7 +442,7 @@ private class OverlayPainter(private val context: Context, private val spec: Map
     fun drawAttribution(canvas: Canvas, attribution: String, showStats: Boolean) {
         val text = withOsmCredit(attribution.ifBlank { FALLBACK_ATTRIBUTION })
         val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = "#4A4740".toColorInt()
+            color = attributionInk
             textSize = u(25f)
         }
         val padH = u(16f)

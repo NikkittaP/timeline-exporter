@@ -13,6 +13,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -151,7 +152,11 @@ private fun MapImageExportContent(
     var showStats by rememberSaveable { mutableStateOf(true) }
     var showEndpoints by rememberSaveable { mutableStateOf(true) }
     var colorByDay by rememberSaveable { mutableStateOf(true) }
-    val options = MapImageOptions(showStats, showEndpoints, colorByDay)
+    // Starts as the app's own theme: someone reading in the dark most
+    // likely wants a dark picture, and either way it is one switch away.
+    val systemDark = isSystemInDarkTheme()
+    var darkMap by rememberSaveable { mutableStateOf(systemDark) }
+    val options = MapImageOptions(showStats, showEndpoints, colorByDay, darkMap)
 
     // What this device can render, read once off the main thread. Until it
     // is known, High stays off rather than being offered on a guess.
@@ -340,6 +345,7 @@ private fun MapImageExportContent(
                 OptionRow(stringResource(R.string.map_image_show_stats), showStats, enabled) { showStats = it }
                 OptionRow(stringResource(R.string.map_image_show_endpoints), showEndpoints, enabled) { showEndpoints = it }
                 OptionRow(stringResource(R.string.map_color_by_day), colorByDay, enabled) { colorByDay = it }
+                OptionRow(stringResource(R.string.map_image_dark_map), darkMap, enabled) { darkMap = it }
 
                 StatusLine(state = state, status = status)
 

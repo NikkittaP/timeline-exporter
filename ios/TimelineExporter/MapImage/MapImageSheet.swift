@@ -7,6 +7,7 @@ struct MapImageSheet: View {
     @Environment(TimelineStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.colorScheme) private var colorScheme
     /// The size to ask for on a wide window; nil keeps the system's sheet.
     /// Decided by the page: a sheet's own size class says little about the iPad.
     private let wide: CGSize?
@@ -25,6 +26,15 @@ struct MapImageSheet: View {
     @AppStorage("map_image_show_stats") private var showStats = true
     @AppStorage("map_image_show_endpoints") private var showEndpoints = true
     @AppStorage("map_image_color_by_day") private var colorByDay = true
+    /// "1" or "0" once chosen; until then the picture follows the appearance:
+    /// someone reading in the dark most likely wants a dark map.
+    @AppStorage("map_image_dark_map") private var darkMapRaw = ""
+
+    private var darkMap: Bool { darkMapRaw.isEmpty ? colorScheme == .dark : darkMapRaw == "1" }
+
+    private var darkMapBinding: Binding<Bool> {
+        Binding(get: { darkMap }, set: { darkMapRaw = $0 ? "1" : "0" })
+    }
 
     @State private var content: (line: MapLine, stats: ImageStats?, placeCount: Int?)?
     /// Bumped each time [content] arrives, so the preview follows it.
@@ -50,7 +60,7 @@ struct MapImageSheet: View {
     private var contentKey: String { showsColorByDay ? "\(colorByDay)" : "line" }
 
     /// What the preview depends on; a change renders it again.
-    private var previewKey: String { "\(aspectRaw)|\(showStats)|\(showEndpoints)|\(contentVersion)" }
+    private var previewKey: String { "\(aspectRaw)|\(showStats)|\(showEndpoints)|\(darkMap)|\(contentVersion)" }
 
     private var ratio: CGFloat { CGFloat(spec.widthPx) / CGFloat(spec.heightPx) }
 
@@ -134,6 +144,8 @@ struct MapImageSheet: View {
                             Toggle(L.s("map_color_by_day"), isOn: $colorByDay)
                                 .accessibilityIdentifier("mapImageColorByDay")
                         }
+                        Toggle(L.s("map_image_dark_map"), isOn: darkMapBinding)
+                            .accessibilityIdentifier("mapImageDarkMap")
                     } footer: {
                         if showStats {
                             Text(L.s("ios_map_image_distance_note"))
@@ -258,7 +270,7 @@ struct MapImageSheet: View {
     private func request(_ spec: MapImageSpec) -> MapImageRequest? {
         guard let content, !content.line.isEmpty else { return nil }
         return MapImageRequest(line: content.line, stats: content.stats, placeCount: content.placeCount,
-                               spec: spec, showStats: showStats, showEndpoints: showEndpoints)
+                               spec: spec, showStats: showStats, showEndpoints: showEndpoints, darkMap: darkMap)
     }
 
     /// The preview is always the Standard image: High is the same picture.

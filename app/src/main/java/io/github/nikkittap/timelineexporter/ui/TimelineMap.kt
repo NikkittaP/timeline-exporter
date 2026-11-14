@@ -373,6 +373,8 @@ private data class MapPalette(
     val endFill: String,
     /** Ring around the endpoint dots — the basemap ground color. */
     val markerStroke: String,
+    /** The halo under the exported image's track: paper white, or the dark ground. */
+    val exportCasing: String,
     /** Places, when the map is showing those instead of a track. */
     val placeFill: String,
     /** Ring around the one place the list and the map both have selected. */
@@ -389,6 +391,7 @@ private val LightPalette = MapPalette(
     startFill = "#0E9F86",
     endFill = "#E5533D",
     markerStroke = "#F5F4F1",
+    exportCasing = "#FFFFFF",
     placeFill = "#4C3BD6",
     placeSelected = "#E5533D",
     placeLabelText = "#33302B",
@@ -402,6 +405,7 @@ private val DarkPalette = MapPalette(
     startFill = "#2FD3A5",
     endFill = "#FF6B57",
     markerStroke = "#191D23",
+    exportCasing = "#191D23",
     placeFill = "#4FC3E8",
     placeSelected = "#FF6B57",
     placeLabelText = "#EAF1F8",
@@ -2008,12 +2012,14 @@ private class BuilderSink(
 }
 
 /**
- * The basemap and the track the map image is rendered from: the light Clean
- * Map style with the track drawn through the same [prepareTrackGeometry] and
- * [renderTrack] the on-screen map uses.
+ * The basemap and the track the map image is rendered from: the light or the
+ * dark Clean Map style with the track drawn through the same
+ * [prepareTrackGeometry] and [renderTrack] the on-screen map uses, in that
+ * style's own palette.
  *
  * The differences are deliberate and limited to what a still image needs: a
- * light halo under the line so it holds up over roads and water, and no
+ * halo in the ground colour under the line so it holds up over roads and
+ * water, and no
  * endpoint dots, because the image draws its own lettered S/E markers on top.
  * [zoom] is the camera the image will be taken at, which picks the detail
  * level the same way a settled camera does on screen.
@@ -2023,6 +2029,7 @@ internal class MapImageStyle private constructor(
     private val firstLabelLayerId: String?,
     private val overlay: MapOverlay.Track?,
     private val colorByDay: Boolean,
+    private val palette: MapPalette,
 ) {
     /**
      * The snapshotter's style. Main thread only: MapLibre's sources and
@@ -2038,7 +2045,7 @@ internal class MapImageStyle private constructor(
         if (overlay != null) {
             renderTrack(
                 BuilderSink(builder, firstLabelLayerId),
-                overlay, LightPalette, pixelRatio, colorByDay,
+                overlay, palette, pixelRatio, colorByDay,
                 casing = true,
                 endpoints = false,
             )
@@ -2048,8 +2055,13 @@ internal class MapImageStyle private constructor(
 
     companion object {
         /** The start and end colours the live map uses for its endpoint dots. */
-        val startColor: String get() = LightPalette.startFill
-        val endColor: String get() = LightPalette.endFill
+        fun startColor(dark: Boolean): String = paletteFor(dark).startFill
+        fun endColor(dark: Boolean): String = paletteFor(dark).endFill
+
+        /** The basemap's ground: what anything the style leaves transparent becomes. */
+        fun groundColor(dark: Boolean): String = paletteFor(dark).markerStroke
+
+        private fun paletteFor(dark: Boolean) = if (dark) DarkPalette else LightPalette
 
         /**
          * Everything that costs time in proportion to the track - reading
@@ -2063,15 +2075,16 @@ internal class MapImageStyle private constructor(
             colorByDay: Boolean,
             fallbackZone: ZoneId,
             zoom: Double,
+            dark: Boolean,
         ): MapImageStyle {
-            val palette = LightPalette
+            val palette = paletteFor(dark)
             val json = context.readAsset(palette.styleAsset)
             val overlay = if (points.isEmpty()) null else {
                 val geometry = prepareTrackGeometry(points, runs, colorByDay, fallbackZone)
                 val level = nextDrawLevel(null, trackDetailLevel(zoom), devicePointBudget(context), geometry::pointsAt)
                 geometry.overlay(geometry.lines(level, palette))
             }
-            return MapImageStyle("asset://${palette.styleAsset}", firstSymbolLayerId(json), overlay, colorByDay)
+            return MapImageStyle("asset://${palette.styleAsset}", firstSymbolLayerId(json), overlay, colorByDay, palette)
         }
     }
 }
@@ -2086,13 +2099,12 @@ private fun firstSymbolLayerId(styleJson: String): String? {
     return null
 }
 
-/** Light ring drawn under the exported track so it reads over any ground. */
+/** Ring drawn under the exported track so it reads over any ground ([MapPalette.exportCasing]). */
 private const val LAYER_TRACK_CASING = "track-casing"
 private const val EXPORT_MIN_LINE_WIDTH = 2.2f
 private const val EXPORT_MIN_LINE_OPACITY = 0.85f
 private const val EXPORT_GAP_WIDTH = 1.6f
 private const val EXPORT_GAP_OPACITY = 0.6f
-private const val CASING_COLOR = "#FFFFFF"
 private const val CASING_EXTRA_WIDTH = 3.2f
 
 /** Attach the prepared track to the style: one source, four layers of paint. */
@@ -2141,7 +2153,7 @@ private fun renderTrack(
         if (casing) {
             addBelowLabels(
                 LineLayer(LAYER_TRACK_CASING, SOURCE_TRACK).withProperties(
-                    lineColor(CASING_COLOR),
+                    lineColor(palette.exportCasing),
                     lineWidth(zoomScaledWidth(coreWidth + CASING_EXTRA_WIDTH, exportWidthFloor + CASING_EXTRA_WIDTH)),
                     lineOpacity(zoomScaledOpacity(minOf(coreOpacity * 1.1f, 0.9f), exportOpacityFloor)),
                     lineCap(Property.LINE_CAP_ROUND),

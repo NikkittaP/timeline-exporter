@@ -253,6 +253,7 @@
     <string name="map_image_size">%1$d × %2$d · %3$s</string>
     <string name="map_image_show_stats">顯示統計</string>
     <string name="map_image_show_endpoints">顯示起點/終點標記</string>
+    <string name="map_image_dark_map">深色地圖</string>
     <string name="map_image_save">儲存圖片</string>
     <string name="map_image_share">分享圖片</string>
     <string name="map_image_rendering">正在繪製地圖…</string>

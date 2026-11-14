@@ -36,6 +36,14 @@ characters each; the same text is the app's own 1.10.2 notes
 fit-to-data button) and the journey scenes behind the logo and title are
 left out of the store text on purpose.
 
+## Dark map image (after versionCode 29, not in it)
+
+- A **"Dark map"** switch on the Map image screen: the dark Clean Map
+  style, the track in the dark map's palette with a dark halo, and the
+  badge, stats card and attribution on dark surfaces. It starts as the
+  app's own theme. Asked for by a 1.10.2 user (feedback 2026-11-14).
+- Needs a new versionCode and store text; 29 is already on internal.
+
 ## What's new popup and version history
 
 - The first launch after an update shows what changed since the last

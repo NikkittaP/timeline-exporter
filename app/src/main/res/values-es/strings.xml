@@ -257,6 +257,7 @@
     <string name="map_image_size">%1$d × %2$d · %3$s</string>
     <string name="map_image_show_stats">Mostrar estadísticas</string>
     <string name="map_image_show_endpoints">Mostrar marcadores de inicio y fin</string>
+    <string name="map_image_dark_map">Mapa oscuro</string>
     <string name="map_image_save">Guardar imagen</string>
     <string name="map_image_share">Compartir imagen</string>
     <string name="map_image_rendering">Dibujando el mapa…</string>

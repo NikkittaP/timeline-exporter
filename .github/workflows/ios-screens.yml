@@ -30,6 +30,11 @@ on:
         type: choice
         options: [portrait, landscape]
         default: portrait
+      appearance:
+        description: "Dark gives raw shots in dark mode only, to check the dark theme: no framing, no upload"
+        type: choice
+        options: [light, dark]
+        default: light
       locales:
         description: "Comma list of tools/store_shots locales (en-US,ru-RU,...). Empty - all 18"
         type: string
@@ -62,6 +67,7 @@ jobs:
           DEVICES: ${{ inputs.devices }}
           UPLOAD: ${{ inputs.upload }}
           ORIENTATION: ${{ inputs.orientation }}
+          APPEARANCE: ${{ inputs.appearance }}
           HAS_KEY: ${{ secrets.APPSTORE_KEY_ID != '' && secrets.APPSTORE_ISSUER_ID != '' && secrets.APPSTORE_PRIVATE_KEY != '' }}
         run: |
           set -euo pipefail
@@ -73,6 +79,10 @@ jobs:
           if [[ "$UPLOAD" == true ]]; then
             if [[ "$ORIENTATION" == landscape ]]; then
               echo "::error title=upload::landscape shots are not a store set"
+              exit 1
+            fi
+            if [[ "$APPEARANCE" == dark ]]; then
+              echo "::error title=upload::dark-mode shots are not a store set"
               exit 1
             fi
             if [[ "$GITHUB_REF" != refs/heads/master ]]; then
@@ -139,6 +149,7 @@ jobs:
           LOCALES: ${{ inputs.locales }}
           SHARD: ${{ matrix.shard }}/2
           ORIENTATION: ${{ inputs.orientation == 'landscape' && 'landscape' || '' }}
+          APPEARANCE: ${{ inputs.appearance }}
         run: bash tools/ios/store_screenshots.sh "${{ matrix.device }}" "$LOCALES"
 
       - name: Upload raw screenshots
@@ -165,7 +176,7 @@ jobs:
   frame:
     name: Frame
     needs: [plan, capture]
-    if: inputs.orientation != 'landscape'
+    if: inputs.orientation != 'landscape' && inputs.appearance != 'dark'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
