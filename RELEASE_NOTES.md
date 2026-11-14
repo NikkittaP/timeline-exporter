@@ -23,10 +23,50 @@ Where things go at release time:
 
 ---
 
-# Unreleased — everything since v1.9.2
+# Unreleased — everything since v1.10.2
 
-To ship as **1.10.2 (versionCode 29)**: Map image and the What's new
-popup. 1.10.0 (27) and 1.10.1 (28) went to internal testing only; 28
+To ship as **1.11.0 (versionCode 30)**: the Dark map switch on Map image
+and the language fix after Play billing, on top of the shared core.
+Minor rather than patch because the parser underneath every import was
+replaced. Store text, two items:
+`fastlane/metadata/android/<locale>/changelogs/30.txt` and
+`F:\Timeline\Whats_New_v1.11.0_tagged.txt`, 18 locales, 99–338
+characters each; the same text is the app's own 1.11.0 notes
+(`tools/whats_new.py`). The shared core is left out of the store text:
+nothing about it should be visible.
+
+## Dark map image
+
+- A **"Dark map"** switch on the Map image screen: the dark Clean Map
+  style, the track in the dark map's palette with a dark halo, and the
+  badge, stats card and attribution on dark surfaces. It starts as the
+  app's own theme. Asked for by a 1.10.2 user (feedback 2026-11-14).
+
+## In-app language kept after Play billing
+
+- On Android 12 and older, opening the tip sheet and backing out reset
+  dates, grouped numbers and distances to the system language until a
+  restart. MainActivity re-applies the chosen locale in onResume and
+  onConfigurationChanged.
+
+## Shared core (Kotlin Multiplatform)
+
+- Parser, filters, exporters and trips moved to the `shared` module so
+  the iOS app uses the same code. Golden hashes pin every export format
+  across the move.
+- Timeline files are parsed by the project's own streaming `JsonReader`
+  instead of Jackson. It reads UTF-8, UTF-16 and UTF-32 (with or without
+  a BOM), and caps nesting at 1000 levels, numbers at 1000 characters and
+  strings at 20,000,000 characters, as Jackson's constraints did.
+
+---
+
+# Released
+
+## v1.10.2 (versionCode 29) — released by 14 November 2026
+
+Map image and the What's new popup. 1.10.0 (27) and 1.10.1 (28) went to
+internal testing only; 28
 added the app bar title shrinking to fit on narrow screens, 29 the Map
 image screen's landscape layout, and both carry the same store text.
 Store text, two items: `fastlane/metadata/android/<locale>/changelogs/29.txt`
@@ -35,14 +75,6 @@ characters each; the same text is the app's own 1.10.2 notes
 (`tools/whats_new.py`). The hidden route animation (long press on the
 fit-to-data button) and the journey scenes behind the logo and title are
 left out of the store text on purpose.
-
-## Dark map image (after versionCode 29, not in it)
-
-- A **"Dark map"** switch on the Map image screen: the dark Clean Map
-  style, the track in the dark map's palette with a dark halo, and the
-  badge, stats card and attribution on dark surfaces. It starts as the
-  app's own theme. Asked for by a 1.10.2 user (feedback 2026-11-14).
-- Needs a new versionCode and store text; 29 is already on internal.
 
 ## What's new popup and version history
 
@@ -79,10 +111,6 @@ left out of the store text on purpose.
 - The overlay that follows the route animation is read in the draw
   phase only, so the map composable no longer recomposes 60 times a
   second while it plays. Checked on the Mi 5s: no slow frames.
-
----
-
-# Released
 
 ## v1.9.2 (versionCode 26) — released by 5 November 2026
 

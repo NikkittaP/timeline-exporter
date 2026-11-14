@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_0">Novità: Mappa scura per l\'Immagine della mappa. Attivala per avere il percorso su una mappa scura, con una scheda statistiche scura. Parte con il tema del telefono.\nCorretto: su Android 12 e versioni precedenti, date e numeri non passano più alla lingua di sistema dopo la schermata di supporto.</string>
     <string name="whats_new_1_10_2">Novità: Immagine della mappa. Trasforma il tuo percorso in un\'immagine da salvare o condividere: verticale, per post, quadrata o orizzontale, con date, distanza e luoghi. La trovi sulla mappa e nel passaggio 4.\nDopo un aggiornamento l\'app ora mostra le novità. Tocca il numero di versione in basso per vedere tutte le modifiche precedenti.</string>
     <string name="whats_new_1_9_2">L\'app ora funziona anche su Android 8 e 9.\nAggiornamenti interni per le versioni più recenti di Android.</string>
     <string name="whats_new_1_9_1">Ora puoi digitare le date. Apri «Periodo» nel passaggio 2 e tocca la matita per inserirle con la tastiera; l\'icona del calendario ti riporta al calendario.</string>

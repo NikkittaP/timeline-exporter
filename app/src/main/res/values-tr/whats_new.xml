@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_0">Yeni: Harita görüntüsü için Koyu harita. Rotanızı koyu istatistik kartıyla koyu bir haritada görmek için açın. Başlangıçta telefonunuzun temasını izler.\nDüzeltildi: Android 12 ve öncesinde tarihler ve sayılar, destek ekranından sonra artık sistem diline geçmiyor.</string>
     <string name="whats_new_1_10_2">Yeni: Harita görüntüsü. Rotanızı kaydetmek veya paylaşmak için bir resme dönüştürün: dikey, gönderi, kare veya yatay; tarihleriniz, mesafeniz ve yerlerinizle. Haritada ve 4. adımda bulunur.\nGüncellemeden sonra uygulama artık yenilikleri gösteriyor. Önceki tüm değişiklikleri görmek için alttaki sürüm numarasına dokunun.</string>
     <string name="whats_new_1_9_2">Uygulama artık Android 8 ve 9\'da da çalışıyor.\nYeni Android sürümleri için iç güncellemeler.</string>
     <string name="whats_new_1_9_1">Tarihler artık yazılabiliyor. 2. adımda \"Tarih aralığı\"nı açın ve klavyeyle girmek için kaleme dokunun; takvim simgesi sizi takvime geri götürür.</string>

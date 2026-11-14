@@ -439,8 +439,15 @@ android {
         //   versionCode=29, versionName="1.10.2" -> 28 is on internal testing;
         //       adds the Map image screen putting the picture beside its
         //       settings in landscape. changelogs/29.txt is 28.txt as is.
-        versionCode = 29
-        versionName = "1.10.2"
+        //   versionCode=29, versionName="1.10.2" is released.
+        //   versionCode=30, versionName="1.11.0" -> the Dark map switch on
+        //       Map image, the in-app language kept for numbers and dates
+        //       after Play billing (Android 12 and older), and the core moved
+        //       to the shared KMP module (own JsonReader instead of Jackson,
+        //       UTF-16/32 files, JSON size limits). Minor: a new feature and
+        //       a new parser. changelogs/30.txt covers everything since 29.
+        versionCode = 30
+        versionName = "1.11.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
