@@ -451,7 +451,11 @@ android {
         //       on Map image (400-8192 px per side, long side at most 3x the
         //       short one). Patch: one small addition to an existing screen.
         //       changelogs/31.txt covers everything since 30.
-        versionCode = 31
+        //   versionCode=32, versionName="1.11.1" -> 31 plus the custom-size
+        //       note naming the one rule that is broken (for a too narrow
+        //       size, how long the long side may be). Same versionName: 1.11.1
+        //       has not reached a store reader. changelogs/32.txt is 31.txt.
+        versionCode = 32
         versionName = "1.11.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

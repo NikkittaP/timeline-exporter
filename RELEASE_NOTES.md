@@ -25,9 +25,11 @@ Where things go at release time:
 
 # Unreleased — everything since v1.11.0
 
-To ship as **1.11.1 (versionCode 31)**: a custom size on Map image.
-Patch rather than minor: one small addition to an existing screen.
-Store text, one item: `fastlane/metadata/android/<locale>/changelogs/31.txt`
+To ship as **1.11.1 (versionCode 32)**: a custom size on Map image.
+Patch rather than minor: one small addition to an existing screen. 31 was
+built with the first version of the custom-size note; 32 adds the note
+naming the broken rule and carries the same store text.
+Store text, one item: `fastlane/metadata/android/<locale>/changelogs/32.txt`
 and `F:\Timeline\Whats_New_v1.11.1_tagged.txt`, 18 locales, 58–182
 characters each; the same text is the app's own 1.11.1 notes
 (`tools/whats_new.py`).
