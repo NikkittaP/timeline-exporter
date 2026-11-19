@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_1">Nuevo: Tamaño personalizado para la Imagen del mapa. Escribe el ancho y el alto en píxeles, de 400 a 8192 por lado, y obtén la imagen exactamente de ese tamaño.</string>
     <string name="whats_new_1_11_0">Nuevo: Mapa oscuro para la Imagen del mapa. Actívalo para ver tu ruta sobre un mapa oscuro, con una tarjeta de estadísticas oscura. Empieza con el tema de tu teléfono.\nCorregido: en Android 12 y anteriores, las fechas y los números ya no cambian al idioma del sistema tras abrir la pantalla de apoyo.</string>
     <string name="whats_new_1_10_2">Nuevo: Imagen del mapa. Convierte tu ruta en una imagen para guardarla o compartirla: vertical, para publicación, cuadrada u horizontal, con tus fechas, distancia y lugares. Está en el mapa y en el paso 4.\nTras una actualización, la app ahora muestra las novedades. Toca el número de versión abajo para ver todos los cambios anteriores.</string>
     <string name="whats_new_1_9_2">La app ahora también funciona en Android 8 y 9.\nActualizaciones internas para las versiones más recientes de Android.</string>

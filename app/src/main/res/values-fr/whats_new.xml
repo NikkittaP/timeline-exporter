@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_1">Nouveau : Taille personnalisée pour l\'Image de la carte. Saisissez la largeur et la hauteur en pixels, de 400 à 8192 par côté, et obtenez l\'image exactement à cette taille.</string>
     <string name="whats_new_1_11_0">Nouveau : Carte sombre pour l\'Image de la carte. Activez-la pour obtenir votre trajet sur une carte sombre, avec une carte de statistiques sombre. Elle suit d\'abord le thème de votre téléphone.\nCorrigé : sous Android 12 et versions antérieures, les dates et les nombres ne passent plus à la langue du système après l\'écran de soutien.</string>
     <string name="whats_new_1_10_2">Nouveau : Image de la carte. Transformez votre trajet en image à enregistrer ou partager – portrait, publication, carré ou paysage, avec vos dates, la distance et vos lieux. Disponible sur la carte et à l\'étape 4.\nAprès une mise à jour, l\'app affiche désormais les nouveautés. Touchez le numéro de version en bas pour voir tous les changements précédents.</string>
     <string name="whats_new_1_9_2">L\'application fonctionne désormais aussi sous Android 8 et 9.\nMises à jour internes pour les versions récentes d\'Android.</string>

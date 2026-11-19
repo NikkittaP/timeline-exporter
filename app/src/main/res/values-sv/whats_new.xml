@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_1">Nytt: Egen storlek för Kartbild. Skriv bredd och höjd i pixlar, 400 till 8192 per sida, och få bilden i exakt den storleken.</string>
     <string name="whats_new_1_11_0">Nytt: Mörk karta för Kartbild. Slå på den för att få din rutt på en mörk karta, med ett mörkt statistikkort. Den startar i telefonens tema.\nÅtgärdat: på Android 12 och äldre byter datum och siffror inte längre till systemspråket efter stödskärmen.</string>
     <string name="whats_new_1_10_2">Nytt: Kartbild. Gör din rutt till en bild att spara eller dela – stående, som inlägg, kvadratisk eller liggande, med datum, sträcka och platser. Finns på kartan och i steg 4.\nEfter en uppdatering visar appen nu vad som är nytt. Tryck på versionsnumret längst ned för att se alla tidigare ändringar.</string>
     <string name="whats_new_1_9_2">Appen fungerar nu även på Android 8 och 9.\nInterna uppdateringar för nyare Android-versioner.</string>

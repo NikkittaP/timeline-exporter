@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_1">Nieuw: Aangepast formaat voor de Kaartafbeelding. Typ de breedte en hoogte in pixels, 400 tot 8192 per zijde, en krijg de afbeelding precies op dat formaat.</string>
     <string name="whats_new_1_11_0">Nieuw: Donkere kaart voor de Kaartafbeelding. Zet hem aan voor je route op een donkere kaart, met een donkere statistiekenkaart. Hij begint in het thema van je telefoon.\nOpgelost: op Android 12 en ouder wisselen datums en getallen na het steunscherm niet meer naar de systeemtaal.</string>
     <string name="whats_new_1_10_2">Nieuw: Kaartafbeelding. Maak van je route een afbeelding om op te slaan of te delen – staand, als post, vierkant of liggend, met je data, afstand en plaatsen. Te vinden op de kaart en in stap 4.\nNa een update laat de app nu zien wat er nieuw is. Tik onderaan op het versienummer om alle eerdere wijzigingen te zien.</string>
     <string name="whats_new_1_9_2">De app werkt nu ook op Android 8 en 9.\nInterne updates voor nieuwere Android-versies.</string>

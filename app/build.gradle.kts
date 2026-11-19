@@ -446,8 +446,13 @@ android {
         //       to the shared KMP module (own JsonReader instead of Jackson,
         //       UTF-16/32 files, JSON size limits). Minor: a new feature and
         //       a new parser. changelogs/30.txt covers everything since 29.
-        versionCode = 30
-        versionName = "1.11.0"
+        //   versionCode=30, versionName="1.11.0" is released.
+        //   versionCode=31, versionName="1.11.1" -> a Custom width x height
+        //       on Map image (400-8192 px per side, long side at most 3x the
+        //       short one). Patch: one small addition to an existing screen.
+        //       changelogs/31.txt covers everything since 30.
+        versionCode = 31
+        versionName = "1.11.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

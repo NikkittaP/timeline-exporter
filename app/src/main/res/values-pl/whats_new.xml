@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_1">Nowość: Własny rozmiar Obrazu mapy. Wpisz szerokość i wysokość w pikselach, od 400 do 8192 na bok, i otrzymaj obraz dokładnie w tym rozmiarze.</string>
     <string name="whats_new_1_11_0">Nowość: Ciemna mapa dla Obrazu mapy. Włącz ją, aby mieć trasę na ciemnej mapie z ciemną kartą statystyk. Domyślnie zgodnie z motywem telefonu.\nNaprawiono: na Androidzie 12 i starszych daty i liczby nie przełączają się już na język systemu po ekranie wsparcia.</string>
     <string name="whats_new_1_10_2">Nowość: Obraz mapy. Zamień trasę w obraz do zapisania lub udostępnienia – pionowy, do posta, kwadratowy lub poziomy, z datami, dystansem i miejscami. Znajdziesz go na mapie i w kroku 4.\nPo aktualizacji aplikacja pokazuje teraz, co nowego. Stuknij numer wersji na dole, aby zobaczyć wszystkie wcześniejsze zmiany.</string>
     <string name="whats_new_1_9_2">Aplikacja działa teraz także na Androidzie 8 i 9.\nWewnętrzne aktualizacje dla nowszych wersji Androida.</string>

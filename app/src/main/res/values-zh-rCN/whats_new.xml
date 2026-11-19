@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_1">新功能：地图图片的自定义尺寸。输入以像素为单位的宽度和高度（每边 400–8192），即可得到正好这个尺寸的图片。</string>
     <string name="whats_new_1_11_0">新功能：地图图片的深色地图。开启后，路线会显示在深色地图上，统计卡片也为深色。默认跟随手机主题。\n修复：在 Android 12 及更早版本中，打开支持页面后，日期和数字不再切换为系统语言。</string>
     <string name="whats_new_1_10_2">新功能：地图图片。将路线生成图片，保存或分享——竖版、帖子、方形或横版，并附上日期、距离和地点。在地图上和第 4 步中均可找到。\n更新后，应用现在会显示新功能。点按底部的版本号即可查看以往的所有更改。</string>
     <string name="whats_new_1_9_2">应用现在也支持 Android 8 和 9。\n针对较新 Android 版本的内部更新。</string>

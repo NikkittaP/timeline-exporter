@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_1">新機能：地図画像のカスタムサイズ。幅と高さをピクセルで入力すると（各辺 400～8192）、その通りのサイズで画像を作成します。</string>
     <string name="whats_new_1_11_0">新機能：地図画像のダークマップ。オンにすると、ルートが暗い地図と暗い統計カードで表示されます。最初はスマートフォンのテーマに合わせます。\n修正：Android 12 以前で、サポート画面を開いた後に日付と数字がシステムの言語に切り替わらなくなりました。</string>
     <string name="whats_new_1_10_2">新機能：地図画像。ルートを画像にして保存・共有できます。縦長、投稿用、正方形、横長から選べ、期間・距離・場所も入ります。地図上とステップ4にあります。\nアップデート後、新機能をお知らせするようになりました。下部のバージョン番号をタップすると、これまでの変更をすべて確認できます。</string>
     <string name="whats_new_1_9_2">Android 8 と 9 でも使えるようになりました。\n新しい Android バージョンに向けた内部の更新。</string>

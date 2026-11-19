@@ -3,6 +3,7 @@
      One string per release, one line per item. Edit, then keep the
      other locales in step; or rerun the tool. -->
 <resources>
+    <string name="whats_new_1_11_1">Neu: Eigene Größe für das Kartenbild. Gib Breite und Höhe in Pixeln ein, 400 bis 8192 pro Seite, und erhalte das Bild genau in dieser Größe.</string>
     <string name="whats_new_1_11_0">Neu: Dunkle Karte für das Kartenbild. Schalte sie ein, um deine Route auf einer dunklen Karte mit dunkler Statistikkarte zu bekommen. Sie startet im Design deines Handys.\nBehoben: Unter Android 12 und älter wechseln Datum und Zahlen nach dem Unterstützen-Bildschirm nicht mehr in die Systemsprache.</string>
     <string name="whats_new_1_10_2">Neu: Kartenbild. Mach aus deiner Route ein Bild zum Speichern oder Teilen – hoch, als Post, quadratisch oder quer, mit Zeitraum, Strecke und Orten. Du findest es auf der Karte und in Schritt 4.\nNach einem Update zeigt die App jetzt, was neu ist. Tippe unten auf die Versionsnummer, um alle früheren Änderungen zu sehen.</string>
     <string name="whats_new_1_9_2">Die App läuft jetzt auch unter Android 8 und 9.\nInterne Aktualisierungen für neuere Android-Versionen.</string>

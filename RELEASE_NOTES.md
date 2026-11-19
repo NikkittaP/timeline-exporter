@@ -23,9 +23,36 @@ Where things go at release time:
 
 ---
 
-# Unreleased — everything since v1.10.2
+# Unreleased — everything since v1.11.0
 
-To ship as **1.11.0 (versionCode 30)**: the Dark map switch on Map image
+To ship as **1.11.1 (versionCode 31)**: a custom size on Map image.
+Patch rather than minor: one small addition to an existing screen.
+Store text, one item: `fastlane/metadata/android/<locale>/changelogs/31.txt`
+and `F:\Timeline\Whats_New_v1.11.1_tagged.txt`, 18 locales, 58–182
+characters each; the same text is the app's own 1.11.1 notes
+(`tools/whats_new.py`).
+
+## Custom size on Map image
+
+- A **"Custom"** choice after the four shapes, on Android and iOS: Width
+  and Height in pixels, prefilled with the size the image would have had.
+  Each side 400–8192 px, the long side at most 3× the short one; outside
+  that the fields turn red with the rule underneath and Save / Share stay
+  off. The device's GPU limit and free memory are checked as for High, and
+  a size the device cannot make is refused with the reason, never written
+  smaller. The Standard/High switch is hidden: the typed pixels are the
+  output.
+- The layout is the nearest preset shape's, scaled by the short side, so
+  a custom 1080×1920 is exactly Portrait. The preview is a scaled-down
+  render with the same framing; the file is rendered at full size.
+
+---
+
+# Released
+
+## v1.11.0 (versionCode 30) — released by 19 November 2026
+
+The Dark map switch on Map image
 and the language fix after Play billing, on top of the shared core.
 Minor rather than patch because the parser underneath every import was
 replaced. Store text, two items:
@@ -59,9 +86,6 @@ nothing about it should be visible.
   a BOM), and caps nesting at 1000 levels, numbers at 1000 characters and
   strings at 20,000,000 characters, as Jackson's constraints did.
 
----
-
-# Released
 
 ## v1.10.2 (versionCode 29) — released by 14 November 2026
 
