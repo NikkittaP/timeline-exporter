@@ -4,6 +4,7 @@ import io.github.nikkittap.timelineexporter.parser.PathPoint
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.atan
 import kotlin.math.exp
 import kotlin.math.ln
@@ -34,6 +35,15 @@ internal enum class MapImageAspect(val widthPx: Int, val heightPx: Int, val layo
      * the attribution beside it rather than under it.
      */
     Landscape(1920, 1080, AspectLayout(statsScale = 0.84f, compactStats = true, brandScale = 0.88f, sidePadding = 96f)),
+    ;
+
+    companion object {
+        /** The shape closest to [width] x [height] in proportion, compared on a log scale. */
+        fun nearest(width: Int, height: Int): MapImageAspect {
+            val ratio = ln(width.toDouble() / height)
+            return entries.minBy { abs(ln(it.widthPx.toDouble() / it.heightPx) - ratio) }
+        }
+    }
 }
 
 /** How one [MapImageAspect] arranges its overlays, in design units (see [MapImageSpec.unit]). */
@@ -84,12 +94,12 @@ internal data class ImageBox(val left: Float, val top: Float, val right: Float, 
  * reading, and High is the same framing as Standard with twice the pixels.
  */
 internal data class MapImageSpec(
-    val aspect: MapImageAspect,
-    val resolution: MapImageResolution = MapImageResolution.Standard,
+    val widthPx: Int,
+    val heightPx: Int,
+    private val layout: AspectLayout,
 ) {
-    val widthPx: Int get() = aspect.widthPx * resolution.factor
-    val heightPx: Int get() = aspect.heightPx * resolution.factor
-    private val layout: AspectLayout get() = aspect.layout
+    constructor(aspect: MapImageAspect, resolution: MapImageResolution = MapImageResolution.Standard) :
+        this(aspect.widthPx * resolution.factor, aspect.heightPx * resolution.factor, aspect.layout)
 
     /** Output pixels per design unit. */
     val unit: Float get() = min(widthPx, heightPx) / DESIGN_SHORT_SIDE
@@ -178,7 +188,53 @@ internal data class MapImageSpec(
         const val COMPACT_STATS_SHARE = 0.48f
 
         val CleanPortrait = MapImageSpec(MapImageAspect.Portrait)
+
+        /** Bounds of a custom size: below this the overlays crowd the map out. */
+        const val CUSTOM_MIN_SIDE = 400
+        /** Above this no phone GPU renders it; the device check is usually stricter. */
+        const val CUSTOM_MAX_SIDE = 8192
+        /** Longest side over shortest; past it the overlays leave no map. */
+        const val CUSTOM_MAX_RATIO = 3
+
+        /** Largest the preview of a custom size gets: Standard's own sizes. */
+        private const val PREVIEW_SHORT_SIDE = 1600
+        private const val PREVIEW_LONG_SIDE = 1920
+
+        /**
+         * A size the user typed, laid out like the preset shape nearest to
+         * it in proportion: a picture wider than about 4:3 gets landscape's
+         * compact card, anything else the full-width one.
+         */
+        fun custom(widthPx: Int, heightPx: Int): MapImageSpec =
+            MapImageSpec(widthPx, heightPx, MapImageAspect.nearest(widthPx, heightPx).layout)
     }
+
+    /**
+     * The same picture small enough to preview quickly and safely: the same
+     * proportions and so, since the logical short side is fixed, the same
+     * framing, type and markers - only fewer pixels. Itself when already that small.
+     */
+    fun preview(): MapImageSpec {
+        val scale = minOf(
+            1.0,
+            PREVIEW_SHORT_SIDE.toDouble() / min(widthPx, heightPx),
+            PREVIEW_LONG_SIDE.toDouble() / max(widthPx, heightPx),
+        )
+        if (scale >= 1.0) return this
+        return copy(widthPx = (widthPx * scale).roundToInt(), heightPx = (heightPx * scale).roundToInt())
+    }
+}
+
+/** Why a typed custom size cannot be used, before the device is asked. */
+internal enum class CustomSizeProblem { Missing, OutOfRange, TooElongated }
+
+/** Null when [width] x [height] is a size the layout can draw. */
+internal fun customSizeProblem(width: Int?, height: Int?): CustomSizeProblem? {
+    if (width == null || height == null) return CustomSizeProblem.Missing
+    val range = MapImageSpec.CUSTOM_MIN_SIDE..MapImageSpec.CUSTOM_MAX_SIDE
+    if (width !in range || height !in range) return CustomSizeProblem.OutOfRange
+    if (max(width, height) > min(width, height) * MapImageSpec.CUSTOM_MAX_RATIO) return CustomSizeProblem.TooElongated
+    return null
 }
 
 /** Whether the High resolution of one shape can be rendered on this device. */

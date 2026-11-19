@@ -47,6 +47,15 @@ enum MapImageAspect: String, CaseIterable, Identifiable {
         case .landscape: "map_image_aspect_landscape"
         }
     }
+
+    /// The shape closest to width x height in proportion, compared on a log scale.
+    static func nearest(width: Int, height: Int) -> MapImageAspect {
+        let ratio = log(Double(width) / Double(height))
+        return allCases.min { a, b in
+            abs(log(Double(a.widthPx) / Double(a.heightPx)) - ratio)
+                < abs(log(Double(b.widthPx) / Double(b.heightPx)) - ratio)
+        }!
+    }
 }
 
 /// How one aspect arranges its overlays, in design units.
@@ -90,17 +99,53 @@ struct ImageBox: Equatable {
 /// [unit], which grows with the shorter side. MapLibre renders at the logical
 /// size with [pixelRatio]; the shorter logical side is always 432.
 struct MapImageSpec: Equatable {
-    var aspect: MapImageAspect
-    var resolution: MapImageResolution = .standard
+    let widthPx: Int
+    let heightPx: Int
+    private let layout: AspectLayout
+
+    init(widthPx: Int, heightPx: Int, layout: AspectLayout) {
+        self.widthPx = widthPx
+        self.heightPx = heightPx
+        self.layout = layout
+    }
+
+    init(aspect: MapImageAspect, resolution: MapImageResolution = .standard) {
+        self.init(widthPx: aspect.widthPx * resolution.factor, heightPx: aspect.heightPx * resolution.factor,
+                  layout: aspect.layout)
+    }
+
+    /// A size the user typed, laid out like the preset shape nearest to it in
+    /// proportion: wider than about 4:3 gets landscape's compact card.
+    static func custom(widthPx: Int, heightPx: Int) -> MapImageSpec {
+        MapImageSpec(widthPx: widthPx, heightPx: heightPx,
+                     layout: MapImageAspect.nearest(width: widthPx, height: heightPx).layout)
+    }
+
+    /// Bounds of a custom size: below the minimum the overlays crowd the map
+    /// out, past the ratio they leave no map at all.
+    static let customMinSide = 400
+    static let customMaxSide = 8192
+    static let customMaxRatio = 3
+
+    /// Largest the preview of a custom size gets: Standard's own sizes.
+    private static let previewShortSide = 1600.0
+    private static let previewLongSide = 1920.0
+
+    /// The same picture with fewer pixels: the logical short side is fixed,
+    /// so the framing, type and markers match. Itself when already that small.
+    func preview() -> MapImageSpec {
+        let scale = min(1, Self.previewShortSide / Double(min(widthPx, heightPx)),
+                        Self.previewLongSide / Double(max(widthPx, heightPx)))
+        guard scale < 1 else { return self }
+        return MapImageSpec(widthPx: Int((Double(widthPx) * scale).rounded()),
+                            heightPx: Int((Double(heightPx) * scale).rounded()), layout: layout)
+    }
 
     static let designShortSide = 1080.0
     static let logicalShortSide = 432.0
     /// A compact card never takes more than this share of the width.
     static let compactStatsShare = 0.48
 
-    var widthPx: Int { aspect.widthPx * resolution.factor }
-    var heightPx: Int { aspect.heightPx * resolution.factor }
-    private var layout: AspectLayout { aspect.layout }
     private var shortSide: Double { Double(min(widthPx, heightPx)) }
 
     var unit: Double { shortSide / Self.designShortSide }
@@ -165,6 +210,30 @@ struct MapImageSpec: Equatable {
             : min(H - (attributionBandPx - pillHeight) / 2, H - attributionBottomMarginPx)
         return (bottom, maxWidth)
     }
+}
+
+/// Why a typed custom size cannot be used.
+enum CustomSizeProblem: Equatable {
+    case missing, outOfRange, tooElongated
+
+    /// Nil when width x height is a size the layout can draw.
+    static func of(width: Int?, height: Int?) -> CustomSizeProblem? {
+        guard let width, let height else { return .missing }
+        let range = MapImageSpec.customMinSide...MapImageSpec.customMaxSide
+        guard range.contains(width), range.contains(height) else { return .outOfRange }
+        guard max(width, height) <= min(width, height) * MapImageSpec.customMaxRatio else { return .tooElongated }
+        return nil
+    }
+}
+
+/// Whether there is memory for a render of [spec] right now: the snapshot,
+/// the composed image and the encoded file at its peak, with room to spare.
+/// [available] is os_proc_available_memory(), which is 0 where it is not
+/// known (the simulator); that is not taken as "none".
+func mapImageFitsMemory(_ spec: MapImageSpec, available: Int) -> Bool {
+    guard available > 0 else { return true }
+    let bytes = spec.widthPx * spec.heightPx * 4
+    return available >= bytes * 3 + 96 * 1024 * 1024
 }
 
 /// How the statistics figures share the card's row. They keep their natural

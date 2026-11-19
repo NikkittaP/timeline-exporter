@@ -271,6 +271,14 @@
     <string name="map_image_aspect_post">Inlägg</string>
     <string name="map_image_aspect_square">Kvadrat</string>
     <string name="map_image_aspect_landscape">Liggande</string>
+    <string name="map_image_aspect_custom">Egen</string>
+    <string name="map_image_custom_width">Bredd, px</string>
+    <string name="map_image_custom_height">Höjd, px</string>
+    <string name="map_image_custom_range">Varje sida %1$d–%2$d px, den långa högst %3$d× den korta.</string>
+    <string name="map_image_custom_gpu">Storleken är större än vad enhetens grafik kan rendera: högst %1$d px per sida.</string>
+    <string name="map_image_custom_memory">Inte tillräckligt med ledigt minne för den här storleken just nu. Prova en mindre.</string>
+    <string name="map_image_custom_error">Kunde inte rendera bilden i den här storleken. Inget sparades; prova en mindre.</string>
+    <string name="map_image_rendering_full">Renderar i full storlek…</string>
     <string name="map_image_format">Format</string>
     <string name="map_image_resolution">Upplösning</string>
     <string name="map_image_res_standard">Standard</string>

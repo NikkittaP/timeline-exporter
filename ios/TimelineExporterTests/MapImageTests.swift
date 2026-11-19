@@ -72,6 +72,42 @@ final class MapImageLayoutTests: XCTestCase {
         }
     }
 
+    func testACustomSizeIsExactlyTheTypedPixelsWithTheNearestShapesLayout() {
+        for (w, h) in [(400, 400), (3000, 2000), (1200, 3600), (5000, 1667), (8192, 4096), (2560, 1080)] {
+            let s = MapImageSpec.custom(widthPx: w, heightPx: h)
+            XCTAssertEqual(s.widthPx, w)
+            XCTAssertEqual(s.heightPx, h)
+            XCTAssertEqual(min(s.logicalWidth, s.logicalHeight), 432)
+            XCTAssertEqual(Double(s.logicalWidth) * s.pixelRatio, Double(w), accuracy: s.pixelRatio / 2 + 0.01)
+            XCTAssertGreaterThan(s.heightPx - s.reservedBottomPx(showStats: true) - s.bottomGapPx, s.topPaddingPx)
+            let preview = s.preview()
+            XCTAssertLessThanOrEqual(min(preview.widthPx, preview.heightPx), 1600)
+            XCTAssertLessThanOrEqual(max(preview.widthPx, preview.heightPx), 1920)
+            XCTAssertEqual(preview.compactStats, s.compactStats)
+            XCTAssertEqual(Double(w) / Double(h), Double(preview.widthPx) / Double(preview.heightPx), accuracy: 0.01)
+        }
+        XCTAssertEqual(MapImageAspect.nearest(width: 3000, height: 1500), .landscape)
+        XCTAssertEqual(MapImageAspect.nearest(width: 1200, height: 1000), .square)
+        XCTAssertEqual(MapImageAspect.nearest(width: 2400, height: 3000), .socialPost)
+        for aspect in MapImageAspect.allCases {
+            XCTAssertEqual(MapImageSpec.custom(widthPx: aspect.widthPx, heightPx: aspect.heightPx), MapImageSpec(aspect: aspect))
+        }
+        XCTAssertEqual(MapImageSpec.custom(widthPx: 800, heightPx: 600).preview(), MapImageSpec.custom(widthPx: 800, heightPx: 600))
+    }
+
+    func testCustomSizesOutsideTheBoundsAreRefused() {
+        XCTAssertNil(CustomSizeProblem.of(width: 3000, height: 2000))
+        XCTAssertNil(CustomSizeProblem.of(width: 400, height: 1200))
+        XCTAssertEqual(CustomSizeProblem.of(width: nil, height: 2000), .missing)
+        XCTAssertEqual(CustomSizeProblem.of(width: 399, height: 1000), .outOfRange)
+        XCTAssertEqual(CustomSizeProblem.of(width: 8193, height: 4000), .outOfRange)
+        XCTAssertEqual(CustomSizeProblem.of(width: 400, height: 1201), .tooElongated)
+        let big = MapImageSpec.custom(widthPx: 8000, heightPx: 6000)
+        XCTAssertFalse(mapImageFitsMemory(big, available: 300 * 1024 * 1024))
+        XCTAssertTrue(mapImageFitsMemory(big, available: 2 * 1024 * 1024 * 1024))
+        XCTAssertTrue(mapImageFitsMemory(big, available: 0), "unknown is not none")
+    }
+
     func testACityRouteFitsAboveTheStatisticsAndFillsOneDimension() {
         let route = [(52.37, 4.88), (52.40, 4.90), (52.35, 4.95), (52.38, 4.85)]
         assertInsideUsableArea(route, showStats: true)

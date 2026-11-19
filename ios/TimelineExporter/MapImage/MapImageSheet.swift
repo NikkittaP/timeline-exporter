@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import os
 
 /// The Map image screen: a preview of the picture and its choices, then
 /// Save (Files) or Share (which also offers Save Image to Photos).
@@ -22,6 +23,9 @@ struct MapImageSheet: View {
 
     @AppStorage("map_image_aspect") private var aspectRaw = MapImageAspect.portrait.rawValue
     @AppStorage("map_image_resolution") private var resolutionRaw = MapImageResolution.standard.rawValue
+    /// Digits as typed; "" until Custom is first picked.
+    @AppStorage("map_image_custom_width") private var customWidth = ""
+    @AppStorage("map_image_custom_height") private var customHeight = ""
     @AppStorage("map_image_format") private var formatRaw = MapImageFormat.png.rawValue
     @AppStorage("map_image_show_stats") private var showStats = true
     @AppStorage("map_image_show_endpoints") private var showEndpoints = true
@@ -48,10 +52,33 @@ struct MapImageSheet: View {
     @State private var message: String?
     @State private var failed = false
 
+    /// The aspect picker's tag for a typed size.
+    private static let customTag = "custom"
+    private var custom: Bool { aspectRaw == Self.customTag }
     private var aspect: MapImageAspect { MapImageAspect(rawValue: aspectRaw) ?? .portrait }
     private var resolution: MapImageResolution { MapImageResolution(rawValue: resolutionRaw) ?? .standard }
     private var format: MapImageFormat { MapImageFormat(rawValue: formatRaw) ?? .png }
-    private var spec: MapImageSpec { MapImageSpec(aspect: aspect, resolution: resolution) }
+
+    private var customProblem: CustomSizeProblem? {
+        custom ? CustomSizeProblem.of(width: Int(customWidth), height: Int(customHeight)) : nil
+    }
+    private var customSpec: MapImageSpec? {
+        guard custom, customProblem == nil, let w = Int(customWidth), let h = Int(customHeight) else { return nil }
+        return .custom(widthPx: w, heightPx: h)
+    }
+
+    /// What Save and Share write: exactly the typed size for Custom, never
+    /// less; nil while that size cannot be drawn.
+    private var spec: MapImageSpec? {
+        custom ? customSpec : MapImageSpec(aspect: aspect, resolution: resolution)
+    }
+    /// What the preview renders: Standard, or a custom size scaled down to
+    /// about Standard's pixels with the same framing.
+    private var previewSpec: MapImageSpec? {
+        custom ? customSpec?.preview() : MapImageSpec(aspect: aspect)
+    }
+    /// The frame's shape, kept while a typed size is not yet usable.
+    private var frameSpec: MapImageSpec { previewSpec ?? MapImageSpec(aspect: aspect) }
 
     /// Only the track has days to colour; trips are coloured per trip.
     private var showsColorByDay: Bool { store.contentKind == .track }
@@ -60,9 +87,12 @@ struct MapImageSheet: View {
     private var contentKey: String { showsColorByDay ? "\(colorByDay)" : "line" }
 
     /// What the preview depends on; a change renders it again.
-    private var previewKey: String { "\(aspectRaw)|\(showStats)|\(showEndpoints)|\(darkMap)|\(contentVersion)" }
+    private var previewKey: String {
+        let size = previewSpec.map { "\($0.widthPx)x\($0.heightPx)" } ?? "none"
+        return "\(aspectRaw)|\(size)|\(showStats)|\(showEndpoints)|\(darkMap)|\(contentVersion)"
+    }
 
-    private var ratio: CGFloat { CGFloat(spec.widthPx) / CGFloat(spec.heightPx) }
+    private var ratio: CGFloat { CGFloat(frameSpec.widthPx) / CGFloat(frameSpec.heightPx) }
 
     /// The whole sheet, as laid out: from outside the action bar, so a status
     /// line appearing in the bar does not resize the picture.
@@ -83,7 +113,7 @@ struct MapImageSheet: View {
     }
 
     private var sizeCaption: some View {
-        Text(L.f("map_image_size", spec.widthPx, spec.heightPx, format.label))
+        Text(spec.map { L.f("map_image_size", $0.widthPx, $0.heightPx, format.label) } ?? " ")
             .font(.footnote)
             .foregroundStyle(.secondary)
             .monospacedDigit()
@@ -128,12 +158,18 @@ struct MapImageSheet: View {
                         }
                     }
                     Section {
-                        Picker(L.s("map_image_aspect"), selection: $aspectRaw) {
+                        Picker(L.s("map_image_aspect"), selection: aspectBinding) {
                             ForEach(MapImageAspect.allCases) { Text(L.s($0.labelKey)).tag($0.rawValue) }
+                            Text(L.s("map_image_aspect_custom")).tag(Self.customTag)
                         }
-                        Picker(L.s("map_image_resolution"), selection: $resolutionRaw) {
-                            Text(L.s("map_image_res_standard")).tag(MapImageResolution.standard.rawValue)
-                            Text(L.s("map_image_res_high")).tag(MapImageResolution.high.rawValue)
+                        if custom {
+                            customSizeFields
+                        } else {
+                            // A custom size is its own resolution.
+                            Picker(L.s("map_image_resolution"), selection: $resolutionRaw) {
+                                Text(L.s("map_image_res_standard")).tag(MapImageResolution.standard.rawValue)
+                                Text(L.s("map_image_res_high")).tag(MapImageResolution.high.rawValue)
+                            }
                         }
                         Picker(L.s("map_image_format"), selection: $formatRaw) {
                             ForEach(MapImageFormat.allCases) { Text($0.label).tag($0.rawValue) }
@@ -147,8 +183,13 @@ struct MapImageSheet: View {
                         Toggle(L.s("map_image_dark_map"), isOn: darkMapBinding)
                             .accessibilityIdentifier("mapImageDarkMap")
                     } footer: {
-                        if showStats {
-                            Text(L.s("ios_map_image_distance_note"))
+                        VStack(alignment: .leading, spacing: 6) {
+                            if let note = customNote {
+                                Text(note.text).foregroundStyle(note.error ? .red : .secondary)
+                            }
+                            if showStats {
+                                Text(L.s("ios_map_image_distance_note"))
+                            }
                         }
                     }
                 }
@@ -204,7 +245,7 @@ struct MapImageSheet: View {
                     shareButton
                 }
             }
-            .disabled(busy != nil || content == nil || failedToDraw)
+            .disabled(busy != nil || content == nil || failedToDraw || spec == nil)
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
@@ -237,6 +278,52 @@ struct MapImageSheet: View {
         .accessibilityIdentifier("mapImageSave")
     }
 
+    /// Picking Custom starts from the size on show, so it is one edit away.
+    private var aspectBinding: Binding<String> {
+        Binding(get: { aspectRaw }, set: { new in
+            if new == Self.customTag, customWidth.isEmpty || customHeight.isEmpty {
+                let from = spec ?? MapImageSpec(aspect: aspect)
+                customWidth = String(from.widthPx)
+                customHeight = String(from.heightPx)
+            }
+            aspectRaw = new
+        })
+    }
+
+    private var customSizeFields: some View {
+        HStack(spacing: 8) {
+            sizeField(L.s("map_image_custom_width"), text: $customWidth)
+            Text(verbatim: "\u{00D7}").foregroundStyle(.secondary)
+            sizeField(L.s("map_image_custom_height"), text: $customHeight)
+        }
+    }
+
+    private func sizeField(_ label: String, text: Binding<String>) -> some View {
+        TextField(label, text: Binding(get: { text.wrappedValue }, set: { new in
+            text.wrappedValue = String(new.filter { $0.isASCII && $0.isNumber }.prefix(5))
+        }))
+        .keyboardType(.numberPad)
+        .multilineTextAlignment(.center)
+        .monospacedDigit()
+        .textFieldStyle(.roundedBorder)
+        .foregroundStyle(customProblem == nil || customProblem == .missing ? Color.primary : Color.red)
+        .accessibilityLabel(label)
+    }
+
+    /// Under the fields: the bounds when the typed size is outside them, or
+    /// why this device cannot render it now.
+    private var customNote: (text: String, error: Bool)? {
+        guard custom else { return nil }
+        if let problem = customProblem {
+            return (L.f("map_image_custom_range", MapImageSpec.customMinSide, MapImageSpec.customMaxSide,
+                        MapImageSpec.customMaxRatio), problem != .missing)
+        }
+        if let customSpec, !mapImageFitsMemory(customSpec, available: os_proc_available_memory()) {
+            return (L.s("map_image_custom_memory"), true)
+        }
+        return nil
+    }
+
     /// The last picture only while it is the shape on screen: stretched into
     /// another aspect ratio it would show a picture that will not be saved.
     private func usable(_ image: UIImage) -> Bool {
@@ -247,6 +334,8 @@ struct MapImageSheet: View {
     @ViewBuilder private var previewView: some View {
         if let content, content.line.isEmpty {
             Text(L.s("map_image_empty")).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
+        } else if previewSpec == nil {
+            Color.clear
         } else if let preview, usable(preview) {
             Image(uiImage: preview)
                 .resizable()
@@ -282,8 +371,9 @@ struct MapImageSheet: View {
         rendering = true
         renderFailed = false
         defer { if id == renderID { rendering = false } }
-        try? await Task.sleep(for: .milliseconds(180))
-        guard !Task.isCancelled, let request = request(MapImageSpec(aspect: aspect)) else { return }
+        // Longer while typing a size, so a half-typed number is not rendered.
+        try? await Task.sleep(for: .milliseconds(custom ? 700 : 180))
+        guard !Task.isCancelled, let previewSpec, let request = request(previewSpec) else { return }
         do {
             let image = try await renderMapImage(request)
             guard !Task.isCancelled, id == renderID else { return }
@@ -296,16 +386,21 @@ struct MapImageSheet: View {
     }
 
     private func deliver(share: Bool) async {
-        guard let request = request(spec) else { return }
+        guard let spec, let request = request(spec) else { return }
         message = nil
         failed = false
-        busy = resolution == .high ? L.s("map_image_rendering_high") : L.s("map_image_rendering")
+        if custom, !mapImageFitsMemory(spec, available: os_proc_available_memory()) {
+            fail("map_image_custom_memory")
+            return
+        }
+        busy = custom ? L.s("map_image_rendering_full")
+            : resolution == .high ? L.s("map_image_rendering_high") : L.s("map_image_rendering")
         let image: UIImage
         do {
             image = try await renderMapImage(request)
         } catch {
             busy = nil
-            fail(resolution == .high ? "map_image_high_error" : "map_image_error")
+            fail(custom ? "map_image_custom_error" : resolution == .high ? "map_image_high_error" : "map_image_error")
             return
         }
         busy = L.s("map_image_saving")

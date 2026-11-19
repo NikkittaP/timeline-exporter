@@ -273,6 +273,14 @@
     <string name="map_image_aspect_post">Publicación</string>
     <string name="map_image_aspect_square">Cuadrado</string>
     <string name="map_image_aspect_landscape">Horizontal</string>
+    <string name="map_image_aspect_custom">Personalizado</string>
+    <string name="map_image_custom_width">Ancho, px</string>
+    <string name="map_image_custom_height">Alto, px</string>
+    <string name="map_image_custom_range">Cada lado entre %1$d y %2$d px; el largo, como máximo %3$d× el corto.</string>
+    <string name="map_image_custom_gpu">Este tamaño supera lo que puede renderizar la gráfica de este dispositivo: como máximo %1$d px por lado.</string>
+    <string name="map_image_custom_memory">Ahora no hay suficiente memoria libre para este tamaño. Prueba uno más pequeño.</string>
+    <string name="map_image_custom_error">No se pudo renderizar la imagen con este tamaño. No se ha guardado nada; prueba uno más pequeño.</string>
+    <string name="map_image_rendering_full">Renderizando a tamaño completo…</string>
     <string name="map_image_format">Formato</string>
     <string name="map_image_resolution">Resolución</string>
     <string name="map_image_res_standard">Estándar</string>

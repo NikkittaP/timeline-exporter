@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +35,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,6 +43,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -67,6 +70,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -93,11 +98,20 @@ private const val TAG = "MapImageExport"
  */
 private const val PREVIEW_DEBOUNCE_MS = 250L
 
+/** Typing a custom size waits longer, so a half-typed number is not rendered. */
+private const val CUSTOM_DEBOUNCE_MS = 700L
+
+/** Digits a custom side may have: enough for [MapImageSpec.CUSTOM_MAX_SIDE]. */
+private const val CUSTOM_SIDE_DIGITS = 5
+
 /** Where the preview is, for the current shape and switches. */
 private sealed interface RenderState {
     data object Empty : RenderState
+    /** A custom size that cannot be drawn; the note under the fields says why. */
+    data object NoSize : RenderState
     data object Rendering : RenderState
-    data class Ready(val bitmap: Bitmap, val aspect: MapImageAspect, val options: MapImageOptions) : RenderState
+    /** [spec] is the preview's own size: Standard, or a custom size scaled down. */
+    data class Ready(val bitmap: Bitmap, val spec: MapImageSpec, val options: MapImageOptions) : RenderState
     data object Failed : RenderState
 }
 
@@ -149,6 +163,9 @@ private fun MapImageExportContent(
     var aspect by rememberSaveable { mutableStateOf(MapImageAspect.Portrait) }
     var format by rememberSaveable { mutableStateOf(MapImageFormat.Png) }
     var resolution by rememberSaveable { mutableStateOf(MapImageResolution.Standard) }
+    var custom by rememberSaveable { mutableStateOf(false) }
+    var customWidth by rememberSaveable { mutableStateOf("") }
+    var customHeight by rememberSaveable { mutableStateOf("") }
     var showStats by rememberSaveable { mutableStateOf(true) }
     var showEndpoints by rememberSaveable { mutableStateOf(true) }
     var colorByDay by rememberSaveable { mutableStateOf(true) }
@@ -162,14 +179,26 @@ private fun MapImageExportContent(
     // is known, High stays off rather than being offered on a guess.
     var limits by remember { mutableStateOf<MapImageDeviceLimits?>(null) }
     LaunchedEffect(Unit) { limits = withContext(Dispatchers.Default) { MapImageDeviceLimits.read(context) } }
-    val highSupport = limits?.support(MapImageSpec(aspect, MapImageResolution.High))
+    val highSupport = if (custom) null else limits?.support(MapImageSpec(aspect, MapImageResolution.High))
     val highAvailable = highSupport == HighResolutionSupport.Supported
     // The size the file will really have. If High is not possible for this
     // shape the label below the preview says Standard's size, so the choice
     // never quietly shrinks.
     val effectiveResolution = if (resolution == MapImageResolution.High && highAvailable) resolution
     else MapImageResolution.Standard
-    val outputSpec = MapImageSpec(aspect, effectiveResolution)
+
+    // A custom size is exactly what was typed - there is no resolution
+    // switch - and is never written smaller than that: one the device
+    // cannot render leaves Save and Share off, with the reason.
+    val customProblem = if (custom) customSizeProblem(customWidth.toIntOrNull(), customHeight.toIntOrNull()) else null
+    val customSpec = if (custom && customProblem == null) {
+        MapImageSpec.custom(customWidth.toInt(), customHeight.toInt())
+    } else null
+    val customSupport = customSpec?.let { limits?.support(it) }
+
+    val outputSpec: MapImageSpec? = if (custom) customSpec?.takeIf { customSupport == HighResolutionSupport.Supported }
+    else MapImageSpec(aspect, effectiveResolution)
+    val previewSpec: MapImageSpec? = if (custom) customSpec?.preview() else MapImageSpec(aspect)
 
     var attempt by remember { mutableIntStateOf(0) }
     var state by remember { mutableStateOf<RenderState>(if (points.isEmpty()) RenderState.Empty else RenderState.Rendering) }
@@ -184,19 +213,23 @@ private fun MapImageExportContent(
 
     // The preview is always the Standard render: the same framing, type and
     // markers as High (see MapImageSpec), and it doubles as the Standard file.
-    // Format and resolution therefore never re-render it.
-    LaunchedEffect(points, journeys, aspect, options, attempt) {
+    // Format and resolution therefore never re-render it. A custom size
+    // previews scaled down to about Standard's size, with the same framing.
+    LaunchedEffect(points, journeys, previewSpec, options, attempt) {
         if (points.isEmpty()) {
             state = RenderState.Empty
             return@LaunchedEffect
         }
+        val spec = previewSpec ?: run {
+            state = RenderState.NoSize
+            return@LaunchedEffect
+        }
         state = RenderState.Rendering
         if (!status.busy) status = OutputStatus.None
-        delay(PREVIEW_DEBOUNCE_MS)
-        val spec = MapImageSpec(aspect, MapImageResolution.Standard)
+        delay(if (custom) CUSTOM_DEBOUNCE_MS else PREVIEW_DEBOUNCE_MS)
         state = try {
             val bitmap = renderMapImage(context, MapImageRequest(points, journeys, placeCount, zone, options, spec))
-            RenderState.Ready(bitmap, aspect, options).also { shown = it }
+            RenderState.Ready(bitmap, spec, options).also { shown = it }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
@@ -205,17 +238,18 @@ private fun MapImageExportContent(
         }
     }
 
-    val ready = (state as? RenderState.Ready)?.takeIf { it.aspect == aspect && it.options == options }
+    val ready = (state as? RenderState.Ready)?.takeIf { it.spec == previewSpec && it.options == options }
 
     /**
-     * The bitmap to write: the preview itself for Standard, a fresh render
-     * at the full size for High. Null, with [status] saying why, when High
-     * cannot be made - never a smaller picture in its place. The flag says
-     * whether the caller owns the bitmap and should recycle it.
+     * The bitmap to write: the preview itself when it already is the output
+     * size (Standard, or a small custom size), otherwise a fresh render at
+     * the full size. Null, with [status] saying why, when that cannot be
+     * made - never a smaller picture in its place. The flag says whether the
+     * caller owns the bitmap and should recycle it.
      */
     suspend fun produce(spec: MapImageSpec): Pair<Bitmap, Boolean>? {
         val preview = ready ?: return null
-        if (spec.resolution == MapImageResolution.Standard) return preview.bitmap to false
+        if (spec == preview.spec) return preview.bitmap to false
         // Memory may have changed since the screen opened.
         val fresh = withContext(Dispatchers.Default) { MapImageDeviceLimits.read(context) }
         if (fresh.support(spec) != HighResolutionSupport.Supported) {
@@ -243,7 +277,7 @@ private fun MapImageExportContent(
         if (uri != null) {
             val spec = outputSpec
             scope.launch {
-                val (bitmap, owned) = produce(spec) ?: run {
+                val (bitmap, owned) = spec?.let { produce(it) } ?: run {
                     runCatching { DocumentsContract.deleteDocument(context.contentResolver, uri) }
                     return@launch
                 }
@@ -276,20 +310,23 @@ private fun MapImageExportContent(
                         contentAlignment = Alignment.Center,
                     ) {
                         // The frame is the picture's exact shape, as large as fits.
-                        val ratio = aspect.widthPx.toFloat() / aspect.heightPx
+                        val frameSpec = previewSpec ?: MapImageSpec(aspect)
+                        val ratio = frameSpec.widthPx.toFloat() / frameSpec.heightPx
                         val (frameW, frameH) = if (maxWidth / maxHeight > ratio) maxHeight * ratio to maxHeight
                         else maxWidth to maxWidth / ratio
                         PreviewFrame(
                             width = frameW,
                             height = frameH,
                             state = state,
-                            shown = shown?.takeIf { it.aspect == aspect }?.bitmap,
+                            shown = shown?.takeIf { it.spec == previewSpec }?.bitmap,
                             onRetry = { attempt++ },
                         )
                     }
 
+                    val sizeSpec = if (custom) customSpec else outputSpec
                     Text(
-                        text = stringResource(R.string.map_image_size, outputSpec.widthPx, outputSpec.heightPx, format.label),
+                        text = sizeSpec?.let { stringResource(R.string.map_image_size, it.widthPx, it.heightPx, format.label) }
+                            .orEmpty(),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -300,7 +337,51 @@ private fun MapImageExportContent(
 
             val controls: @Composable ColumnScope.() -> Unit = {
                 val enabled = state !is RenderState.Empty && !status.busy
-                AspectChooser(selected = aspect, enabled = enabled, onSelect = { aspect = it })
+                AspectChooser(
+                    selected = aspect.takeUnless { custom },
+                    customRatio = customSpec?.let { it.widthPx.toFloat() / it.heightPx },
+                    enabled = enabled,
+                    onSelect = {
+                        aspect = it
+                        custom = false
+                    },
+                    onCustom = {
+                        // Starts from the size on show, so it is one edit away.
+                        if (customWidth.isEmpty() || customHeight.isEmpty()) {
+                            val from = outputSpec ?: MapImageSpec(aspect)
+                            customWidth = from.widthPx.toString()
+                            customHeight = from.heightPx.toString()
+                        }
+                        custom = true
+                    },
+                )
+                if (custom) {
+                    CustomSizeFields(
+                        width = customWidth,
+                        height = customHeight,
+                        error = customProblem != null && customProblem != CustomSizeProblem.Missing,
+                        enabled = !status.busy,
+                        onWidth = { customWidth = it },
+                        onHeight = { customHeight = it },
+                    )
+                    when {
+                        customProblem != null -> Note(
+                            stringResource(
+                                R.string.map_image_custom_range,
+                                MapImageSpec.CUSTOM_MIN_SIDE,
+                                MapImageSpec.CUSTOM_MAX_SIDE,
+                                MapImageSpec.CUSTOM_MAX_RATIO,
+                            ),
+                            error = customProblem != CustomSizeProblem.Missing,
+                        )
+                        customSupport == HighResolutionSupport.ExceedsGpu -> Note(
+                            stringResource(R.string.map_image_custom_gpu, limits?.maxRenderSizePx ?: 0),
+                            error = true,
+                        )
+                        customSupport == HighResolutionSupport.InsufficientMemory ->
+                            Note(stringResource(R.string.map_image_custom_memory), error = true)
+                    }
+                }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                     val formatLabel = stringResource(R.string.map_image_format)
@@ -317,22 +398,25 @@ private fun MapImageExportContent(
                             ) { ButtonLabel(entry.label) }
                         }
                     }
-                    val resolutionLabel = stringResource(R.string.map_image_resolution)
-                    SingleChoiceSegmentedButtonRow(
-                        modifier = Modifier.weight(1.25f).semantics { contentDescription = resolutionLabel },
-                    ) {
-                        MapImageResolution.entries.forEachIndexed { i, entry ->
-                            val text = when (entry) {
-                                MapImageResolution.Standard -> stringResource(R.string.map_image_res_standard)
-                                MapImageResolution.High -> stringResource(R.string.map_image_res_high)
+                    // A custom size is its own resolution.
+                    if (!custom) {
+                        val resolutionLabel = stringResource(R.string.map_image_resolution)
+                        SingleChoiceSegmentedButtonRow(
+                            modifier = Modifier.weight(1.25f).semantics { contentDescription = resolutionLabel },
+                        ) {
+                            MapImageResolution.entries.forEachIndexed { i, entry ->
+                                val text = when (entry) {
+                                    MapImageResolution.Standard -> stringResource(R.string.map_image_res_standard)
+                                    MapImageResolution.High -> stringResource(R.string.map_image_res_high)
+                                }
+                                SegmentedButton(
+                                    selected = effectiveResolution == entry,
+                                    onClick = { resolution = entry },
+                                    enabled = enabled && (entry == MapImageResolution.Standard || highAvailable),
+                                    shape = SegmentedButtonDefaults.itemShape(i, MapImageResolution.entries.size),
+                                    icon = {},
+                                ) { ButtonLabel(text) }
                             }
-                            SegmentedButton(
-                                selected = effectiveResolution == entry,
-                                onClick = { resolution = entry },
-                                enabled = enabled && (entry == MapImageResolution.Standard || highAvailable),
-                                shape = SegmentedButtonDefaults.itemShape(i, MapImageResolution.entries.size),
-                                icon = {},
-                            ) { ButtonLabel(text) }
                         }
                     }
                 }
@@ -347,12 +431,12 @@ private fun MapImageExportContent(
                 OptionRow(stringResource(R.string.map_color_by_day), colorByDay, enabled) { colorByDay = it }
                 OptionRow(stringResource(R.string.map_image_dark_map), darkMap, enabled) { darkMap = it }
 
-                StatusLine(state = state, status = status)
+                StatusLine(state = state, status = status, custom = custom)
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedButton(
                         onClick = {
-                            val spec = outputSpec
+                            val spec = outputSpec ?: return@OutlinedButton
                             val fileFormat = format
                             val name = filename
                             scope.launch {
@@ -363,7 +447,7 @@ private fun MapImageExportContent(
                                 if (!ok) status = OutputStatus.ShareFailed
                             }
                         },
-                        enabled = ready != null && !status.busy,
+                        enabled = ready != null && outputSpec != null && !status.busy,
                         shape = MaterialTheme.shapes.small,
                         modifier = Modifier.weight(1f),
                     ) {
@@ -376,7 +460,7 @@ private fun MapImageExportContent(
                                 MapImageFormat.Jpeg -> saveJpeg.launch(filename)
                             }
                         },
-                        enabled = ready != null && !status.busy,
+                        enabled = ready != null && outputSpec != null && !status.busy,
                         shape = MaterialTheme.shapes.small,
                         modifier = Modifier.weight(1f),
                     ) {
@@ -422,9 +506,18 @@ private fun MapImageExportContent(
     }
 }
 
-/** The four shapes as a row of chips, each with a small outline of its proportions. */
+/**
+ * The four shapes and Custom as a row of chips, each with a small outline of
+ * its proportions. [selected] is null while Custom is.
+ */
 @Composable
-private fun AspectChooser(selected: MapImageAspect, enabled: Boolean, onSelect: (MapImageAspect) -> Unit) {
+private fun AspectChooser(
+    selected: MapImageAspect?,
+    customRatio: Float?,
+    enabled: Boolean,
+    onSelect: (MapImageAspect) -> Unit,
+    onCustom: () -> Unit,
+) {
     val groupLabel = stringResource(R.string.map_image_aspect)
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -446,17 +539,64 @@ private fun AspectChooser(selected: MapImageAspect, enabled: Boolean, onSelect: 
                 onClick = { onSelect(entry) },
                 enabled = enabled,
                 label = { Text("$name · $ratio", maxLines = 1) },
-                leadingIcon = { AspectGlyph(entry) },
+                leadingIcon = { AspectGlyph(entry.widthPx.toFloat() / entry.heightPx) },
             )
         }
+        FilterChip(
+            selected = selected == null,
+            onClick = onCustom,
+            enabled = enabled,
+            label = { Text(stringResource(R.string.map_image_aspect_custom), maxLines = 1) },
+            leadingIcon = { AspectGlyph(customRatio ?: CUSTOM_GLYPH_RATIO) },
+        )
     }
 }
 
-/** A small rectangle in the shape's own proportions. */
+/** The Custom chip's outline before a size is typed: a 3:2 photo. */
+private const val CUSTOM_GLYPH_RATIO = 1.5f
+
+/** Width and height in pixels, digits only. */
 @Composable
-private fun AspectGlyph(aspect: MapImageAspect) {
+private fun CustomSizeFields(
+    width: String,
+    height: String,
+    error: Boolean,
+    enabled: Boolean,
+    onWidth: (String) -> Unit,
+    onHeight: (String) -> Unit,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        SizeField(width, stringResource(R.string.map_image_custom_width), error, enabled, ImeAction.Next, onWidth)
+        Text("×", style = MaterialTheme.typography.titleMedium)
+        SizeField(height, stringResource(R.string.map_image_custom_height), error, enabled, ImeAction.Done, onHeight)
+    }
+}
+
+@Composable
+private fun RowScope.SizeField(
+    value: String,
+    label: String,
+    error: Boolean,
+    enabled: Boolean,
+    imeAction: ImeAction,
+    onChange: (String) -> Unit,
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = { onChange(it.filter(Char::isDigit).take(CUSTOM_SIDE_DIGITS)) },
+        label = { Text(label, maxLines = 1) },
+        singleLine = true,
+        isError = error,
+        enabled = enabled,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = imeAction),
+        modifier = Modifier.weight(1f),
+    )
+}
+
+/** A small rectangle in the given width-to-height proportions. */
+@Composable
+private fun AspectGlyph(ratio: Float) {
     val longSide = 16f
-    val ratio = aspect.widthPx.toFloat() / aspect.heightPx
     val (w, h) = if (ratio < 1f) longSide * ratio to longSide else longSide to longSide / ratio
     Box(modifier = Modifier.size(18.dp), contentAlignment = Alignment.Center) {
         Box(
@@ -479,7 +619,7 @@ private fun PreviewFrame(width: Dp, height: Dp, state: RenderState, shown: Bitma
             .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape),
         contentAlignment = Alignment.Center,
     ) {
-        val bitmap = if (state is RenderState.Empty) null else shown
+        val bitmap = if (state is RenderState.Empty || state is RenderState.NoSize) null else shown
         if (bitmap != null) {
             Image(
                 bitmap = bitmap.asImageBitmap(),
@@ -511,17 +651,17 @@ private fun PreviewFrame(width: Dp, height: Dp, state: RenderState, shown: Bitma
                 Spacer(Modifier.size(8.dp))
                 TextButton(onClick = onRetry) { Text(stringResource(R.string.tipjar_retry)) }
             }
-            is RenderState.Ready -> Unit
+            RenderState.NoSize, is RenderState.Ready -> Unit
         }
     }
 }
 
 @Composable
-private fun Note(text: String) {
+private fun Note(text: String, error: Boolean = false) {
     Text(
         text = text,
         style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        color = if (error) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
 
@@ -546,8 +686,11 @@ private fun OptionRow(label: String, checked: Boolean, enabled: Boolean, onChang
 }
 
 @Composable
-private fun StatusLine(state: RenderState, status: OutputStatus) {
+private fun StatusLine(state: RenderState, status: OutputStatus, custom: Boolean) {
     val (text, error) = when {
+        status == OutputStatus.RenderingHigh && custom -> stringResource(R.string.map_image_rendering_full) to false
+        status == OutputStatus.HighFailed && custom -> stringResource(R.string.map_image_custom_error) to true
+        status == OutputStatus.HighUnavailable && custom -> stringResource(R.string.map_image_custom_memory) to true
         status == OutputStatus.RenderingHigh -> stringResource(R.string.map_image_rendering_high) to false
         state is RenderState.Rendering -> stringResource(R.string.map_image_rendering) to false
         status == OutputStatus.Saving -> stringResource(R.string.map_image_saving) to false

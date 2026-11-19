@@ -273,6 +273,14 @@
     <string name="map_image_aspect_post">Publication</string>
     <string name="map_image_aspect_square">Carré</string>
     <string name="map_image_aspect_landscape">Paysage</string>
+    <string name="map_image_aspect_custom">Personnalisé</string>
+    <string name="map_image_custom_width">Largeur, px</string>
+    <string name="map_image_custom_height">Hauteur, px</string>
+    <string name="map_image_custom_range">Chaque côté entre %1$d et %2$d px, le grand au plus %3$d× le petit.</string>
+    <string name="map_image_custom_gpu">Cette taille dépasse ce que le processeur graphique de l\'appareil peut rendre : au plus %1$d px par côté.</string>
+    <string name="map_image_custom_memory">Pas assez de mémoire libre pour cette taille pour le moment. Essayez plus petit.</string>
+    <string name="map_image_custom_error">Impossible de rendre l\'image à cette taille. Rien n\'a été enregistré ; essayez plus petit.</string>
+    <string name="map_image_rendering_full">Rendu en taille réelle…</string>
     <string name="map_image_format">Format</string>
     <string name="map_image_resolution">Résolution</string>
     <string name="map_image_res_standard">Standard</string>

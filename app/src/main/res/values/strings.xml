@@ -339,6 +339,14 @@
     <string name="map_image_aspect_post">Post</string>
     <string name="map_image_aspect_square">Square</string>
     <string name="map_image_aspect_landscape">Landscape</string>
+    <string name="map_image_aspect_custom">Custom</string>
+    <string name="map_image_custom_width">Width, px</string>
+    <string name="map_image_custom_height">Height, px</string>
+    <string name="map_image_custom_range">Each side %1$d–%2$d px, the long side at most %3$d× the short one.</string>
+    <string name="map_image_custom_gpu">This size is larger than this device\'s graphics can render: at most %1$d px per side.</string>
+    <string name="map_image_custom_memory">Not enough free memory for this size right now. Try a smaller one.</string>
+    <string name="map_image_custom_error">Couldn\'t render the image at this size. Nothing was saved; try a smaller one.</string>
+    <string name="map_image_rendering_full">Rendering full size…</string>
     <string name="map_image_format">Format</string>
     <string name="map_image_resolution">Resolution</string>
     <string name="map_image_res_standard">Standard</string>

@@ -269,6 +269,14 @@
     <string name="map_image_aspect_post">帖子</string>
     <string name="map_image_aspect_square">方形</string>
     <string name="map_image_aspect_landscape">横屏</string>
+    <string name="map_image_aspect_custom">自定义</string>
+    <string name="map_image_custom_width">宽度（px）</string>
+    <string name="map_image_custom_height">高度（px）</string>
+    <string name="map_image_custom_range">每边 %1$d–%2$d px，长边不超过短边的 %3$d 倍。</string>
+    <string name="map_image_custom_gpu">此尺寸超出了本设备图形处理器的渲染上限：每边最多 %1$d px。</string>
+    <string name="map_image_custom_memory">当前可用内存不足以生成此尺寸。请尝试更小的尺寸。</string>
+    <string name="map_image_custom_error">无法以此尺寸渲染图片。未保存任何内容；请尝试更小的尺寸。</string>
+    <string name="map_image_rendering_full">正在以完整尺寸渲染…</string>
     <string name="map_image_format">格式</string>
     <string name="map_image_resolution">分辨率</string>
     <string name="map_image_res_standard">标准</string>

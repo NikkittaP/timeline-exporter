@@ -271,6 +271,14 @@
     <string name="map_image_aspect_post">Gönderi</string>
     <string name="map_image_aspect_square">Kare</string>
     <string name="map_image_aspect_landscape">Yatay</string>
+    <string name="map_image_aspect_custom">Özel</string>
+    <string name="map_image_custom_width">Genişlik, px</string>
+    <string name="map_image_custom_height">Yükseklik, px</string>
+    <string name="map_image_custom_range">Her kenar %1$d–%2$d px, uzun kenar kısa kenarın en fazla %3$d katı.</string>
+    <string name="map_image_custom_gpu">Bu boyut, cihazın grafik biriminin işleyebileceğinden büyük: kenar başına en fazla %1$d px.</string>
+    <string name="map_image_custom_memory">Şu anda bu boyut için yeterli boş bellek yok. Daha küçük bir boyut deneyin.</string>
+    <string name="map_image_custom_error">Görüntü bu boyutta oluşturulamadı. Hiçbir şey kaydedilmedi; daha küçük bir boyut deneyin.</string>
+    <string name="map_image_rendering_full">Tam boyutta oluşturuluyor…</string>
     <string name="map_image_format">Biçim</string>
     <string name="map_image_resolution">Çözünürlük</string>
     <string name="map_image_res_standard">Standart</string>

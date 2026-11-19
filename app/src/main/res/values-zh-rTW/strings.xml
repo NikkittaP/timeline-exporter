@@ -269,6 +269,14 @@
     <string name="map_image_aspect_post">貼文</string>
     <string name="map_image_aspect_square">正方形</string>
     <string name="map_image_aspect_landscape">橫向</string>
+    <string name="map_image_aspect_custom">自訂</string>
+    <string name="map_image_custom_width">寬度（px）</string>
+    <string name="map_image_custom_height">高度（px）</string>
+    <string name="map_image_custom_range">每邊 %1$d–%2$d px，長邊不超過短邊的 %3$d 倍。</string>
+    <string name="map_image_custom_gpu">此尺寸超出本裝置圖形處理器的算繪上限：每邊最多 %1$d px。</string>
+    <string name="map_image_custom_memory">目前可用記憶體不足以產生此尺寸。請嘗試較小的尺寸。</string>
+    <string name="map_image_custom_error">無法以此尺寸算繪圖片。未儲存任何內容；請嘗試較小的尺寸。</string>
+    <string name="map_image_rendering_full">正在以完整尺寸算繪…</string>
     <string name="map_image_format">格式</string>
     <string name="map_image_resolution">解析度</string>
     <string name="map_image_res_standard">標準</string>

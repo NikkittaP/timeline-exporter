@@ -271,6 +271,14 @@
     <string name="map_image_aspect_post">Beitrag</string>
     <string name="map_image_aspect_square">Quadrat</string>
     <string name="map_image_aspect_landscape">Querformat</string>
+    <string name="map_image_aspect_custom">Eigene</string>
+    <string name="map_image_custom_width">Breite, px</string>
+    <string name="map_image_custom_height">Höhe, px</string>
+    <string name="map_image_custom_range">Jede Seite %1$d–%2$d px, die lange höchstens %3$d× so lang wie die kurze.</string>
+    <string name="map_image_custom_gpu">Diese Größe übersteigt, was die Grafik dieses Geräts rendern kann: höchstens %1$d px pro Seite.</string>
+    <string name="map_image_custom_memory">Gerade nicht genug freier Speicher für diese Größe. Versuche eine kleinere.</string>
+    <string name="map_image_custom_error">Das Bild konnte in dieser Größe nicht gerendert werden. Nichts wurde gespeichert; versuche eine kleinere.</string>
+    <string name="map_image_rendering_full">Volle Größe wird gerendert…</string>
     <string name="map_image_format">Format</string>
     <string name="map_image_resolution">Auflösung</string>
     <string name="map_image_res_standard">Standard</string>

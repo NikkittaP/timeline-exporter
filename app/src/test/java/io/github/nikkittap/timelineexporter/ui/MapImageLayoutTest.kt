@@ -287,6 +287,88 @@ class MapImageLayoutTest {
         assertEquals(HighResolutionSupport.ExceedsGpu, resolutionSupport(square, 3000, plenty, false))
     }
 
+    private val customSizes = listOf(400 to 400, 3000 to 2000, 2000 to 3000, 4000 to 4000, 1200 to 3600, 5000 to 1667, 8192 to 4096, 2560 to 1080)
+    private val customSpecs = customSizes.map { (w, h) -> MapImageSpec.custom(w, h) }
+
+    @Test fun `a custom size is exactly the typed pixels`() {
+        for ((w, h) in customSizes) {
+            val s = MapImageSpec.custom(w, h)
+            assertEquals(w to h, s.widthPx to s.heightPx)
+            assertEquals("$s", MapImageSpec.LOGICAL_SHORT_SIDE, minOf(s.logicalWidth, s.logicalHeight))
+            // MapLibre's rounding of the logical size stays inside half a logical pixel.
+            assertEquals("$s", w.toFloat(), s.logicalWidth * s.pixelRatio, s.pixelRatio / 2 + 0.01f)
+            assertEquals("$s", h.toFloat(), s.logicalHeight * s.pixelRatio, s.pixelRatio / 2 + 0.01f)
+        }
+    }
+
+    @Test fun `a custom size borrows the layout of the nearest shape`() {
+        assertEquals(MapImageAspect.Landscape, MapImageAspect.nearest(3000, 1500))
+        assertEquals(MapImageAspect.Square, MapImageAspect.nearest(1200, 1000))
+        assertEquals(MapImageAspect.SocialPost, MapImageAspect.nearest(2400, 3000))
+        assertEquals(MapImageAspect.Portrait, MapImageAspect.nearest(1000, 3000))
+        assertTrue(MapImageSpec.custom(2560, 1080).compactStats)
+        assertFalse(MapImageSpec.custom(1000, 1000).compactStats)
+        // Every preset is its own nearest shape, so custom at a preset size is that preset.
+        for (aspect in MapImageAspect.entries) {
+            assertEquals(MapImageSpec(aspect), MapImageSpec.custom(aspect.widthPx, aspect.heightPx))
+            assertEquals(MapImageSpec(aspect, MapImageResolution.High), MapImageSpec.custom(aspect.widthPx * 2, aspect.heightPx * 2))
+        }
+    }
+
+    @Test fun `custom sizes keep the overlays clear of each other and the route`() {
+        for (s in customSpecs) for (rtl in listOf(false, true)) for (showStats in listOf(true, false)) {
+            val brand = s.brandBox(rtl)
+            val stats = s.statsBox(rtl)
+            assertTrue("$s", s.topPaddingPx - s.markerRadiusPx >= brand.bottom)
+            if (showStats) assertTrue("$s", s.heightPx - s.reservedBottomPx(true) - s.bottomGapPx + s.markerRadiusPx <= stats.top)
+            // The route still has room left between the top and bottom overlays.
+            assertTrue("$s", s.heightPx - s.reservedBottomPx(showStats) - s.bottomGapPx > s.topPaddingPx)
+            assertTrue("$s", s.widthPx - 2 * s.sidePaddingPx > 0)
+            assertFalse("$s", brand.intersects(stats))
+            val pill = s.u(48f)
+            val (bottom, maxWidth) = s.attributionSlot(showStats, pill)
+            assertTrue("$s", maxWidth > 0)
+            val attribution = if (rtl) ImageBox(s.marginPx, bottom - pill, s.marginPx + maxWidth, bottom)
+            else ImageBox(s.widthPx - s.marginPx - maxWidth, bottom - pill, s.widthPx - s.marginPx, bottom)
+            assertFalse("$s", attribution.intersects(brand))
+            if (showStats) assertFalse("$s", attribution.intersects(stats))
+        }
+    }
+
+    @Test fun `a custom preview is the same framing with fewer pixels`() {
+        val route = listOf(p(52.37, 4.88), p(52.40, 4.90), p(52.35, 4.95))
+        for (s in customSpecs) {
+            val preview = s.preview()
+            assertTrue("$preview", minOf(preview.widthPx, preview.heightPx) <= 1600)
+            assertTrue("$preview", maxOf(preview.widthPx, preview.heightPx) <= 1920)
+            assertEquals("$s", s.widthPx.toFloat() / s.heightPx, preview.widthPx.toFloat() / preview.heightPx, 0.01f)
+            assertEquals("$s", s.compactStats, preview.compactStats)
+            val a = fitMapImageCamera(trackExtent(route)!!, s, true)
+            val b = fitMapImageCamera(trackExtent(route)!!, preview, true)
+            assertEquals("$s", a.zoom, b.zoom, 0.02)
+        }
+        // Already small: previewed as is, so Save reuses it.
+        assertEquals(MapImageSpec.custom(800, 600), MapImageSpec.custom(800, 600).preview())
+        assertEquals(MapImageSpec(MapImageAspect.Square), MapImageSpec(MapImageAspect.Square).preview())
+    }
+
+    @Test fun `custom sizes outside the bounds are refused before rendering`() {
+        assertEquals(null, customSizeProblem(3000, 2000))
+        assertEquals(null, customSizeProblem(400, 1200))
+        assertEquals(null, customSizeProblem(8192, 8192))
+        assertEquals(CustomSizeProblem.Missing, customSizeProblem(null, 2000))
+        assertEquals(CustomSizeProblem.Missing, customSizeProblem(3000, null))
+        assertEquals(CustomSizeProblem.OutOfRange, customSizeProblem(399, 1000))
+        assertEquals(CustomSizeProblem.OutOfRange, customSizeProblem(8193, 4000))
+        assertEquals(CustomSizeProblem.OutOfRange, customSizeProblem(0, 0))
+        assertEquals(CustomSizeProblem.TooElongated, customSizeProblem(400, 1201))
+        assertEquals(CustomSizeProblem.TooElongated, customSizeProblem(6000, 1000))
+        // The device check applies to the typed size, like High's.
+        val plenty = 2L * 1024 * 1024 * 1024
+        assertEquals(HighResolutionSupport.ExceedsGpu, resolutionSupport(MapImageSpec.custom(6000, 4000), 4096, plenty, false))
+        assertEquals(HighResolutionSupport.Supported, resolutionSupport(MapImageSpec.custom(4000, 3000), 4096, plenty, false))
+    }
+
     @Test fun `filename extension and MIME type follow the format`() {
         val range = MapImageStats(LocalDate.parse("2026-05-12"), LocalDate.parse("2026-05-23"), 4, 1.0, null)
         assertEquals("timeline-route-2026-05-12_2026-05-23.jpg", mapImageFilename(range, MapImageFormat.Jpeg))

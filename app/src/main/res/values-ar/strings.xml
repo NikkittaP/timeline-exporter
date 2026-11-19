@@ -279,6 +279,14 @@
     <string name="map_image_aspect_post">منشور</string>
     <string name="map_image_aspect_square">مربع</string>
     <string name="map_image_aspect_landscape">أفقي</string>
+    <string name="map_image_aspect_custom">مخصص</string>
+    <string name="map_image_custom_width">العرض، px</string>
+    <string name="map_image_custom_height">الارتفاع، px</string>
+    <string name="map_image_custom_range">كل ضلع بين %1$d و%2$d px، والطويل لا يتجاوز %3$d أضعاف القصير.</string>
+    <string name="map_image_custom_gpu">هذا الحجم أكبر مما يستطيع معالج رسومات الجهاز عرضه: %1$d px كحد أقصى لكل ضلع.</string>
+    <string name="map_image_custom_memory">لا تتوفر ذاكرة كافية لهذا الحجم الآن. جرّب حجمًا أصغر.</string>
+    <string name="map_image_custom_error">تعذّر إنشاء الصورة بهذا الحجم. لم يُحفظ شيء؛ جرّب حجمًا أصغر.</string>
+    <string name="map_image_rendering_full">جارٍ الإنشاء بالحجم الكامل…</string>
     <string name="map_image_format">التنسيق</string>
     <string name="map_image_resolution">الدقة</string>
     <string name="map_image_res_standard">قياسية</string>

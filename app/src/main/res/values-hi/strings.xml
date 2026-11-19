@@ -271,6 +271,14 @@
     <string name="map_image_aspect_post">पोस्ट</string>
     <string name="map_image_aspect_square">वर्गाकार</string>
     <string name="map_image_aspect_landscape">लैंडस्केप</string>
+    <string name="map_image_aspect_custom">कस्टम</string>
+    <string name="map_image_custom_width">चौड़ाई, px</string>
+    <string name="map_image_custom_height">ऊँचाई, px</string>
+    <string name="map_image_custom_range">हर भुजा %1$d–%2$d px, लंबी भुजा छोटी से अधिकतम %3$d गुना।</string>
+    <string name="map_image_custom_gpu">यह आकार इस डिवाइस के ग्राफ़िक्स की क्षमता से बड़ा है: हर भुजा अधिकतम %1$d px।</string>
+    <string name="map_image_custom_memory">अभी इस आकार के लिए पर्याप्त खाली मेमोरी नहीं है। छोटा आकार आज़माएँ।</string>
+    <string name="map_image_custom_error">इस आकार में इमेज नहीं बन सकी। कुछ भी सहेजा नहीं गया; छोटा आकार आज़माएँ।</string>
+    <string name="map_image_rendering_full">पूरे आकार में बन रही है…</string>
     <string name="map_image_format">फ़ॉर्मैट</string>
     <string name="map_image_resolution">रिज़ॉल्यूशन</string>
     <string name="map_image_res_standard">मानक</string>

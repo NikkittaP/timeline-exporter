@@ -269,6 +269,14 @@
     <string name="map_image_aspect_post">게시물</string>
     <string name="map_image_aspect_square">정사각형</string>
     <string name="map_image_aspect_landscape">가로</string>
+    <string name="map_image_aspect_custom">사용자 지정</string>
+    <string name="map_image_custom_width">너비(px)</string>
+    <string name="map_image_custom_height">높이(px)</string>
+    <string name="map_image_custom_range">각 변 %1$d~%2$d px, 긴 변은 짧은 변의 %3$d배 이하.</string>
+    <string name="map_image_custom_gpu">이 크기는 기기의 그래픽이 렌더링할 수 있는 한도를 넘습니다(한 변 최대 %1$d px).</string>
+    <string name="map_image_custom_memory">지금은 이 크기에 필요한 여유 메모리가 부족합니다. 더 작은 크기를 사용해 보세요.</string>
+    <string name="map_image_custom_error">이 크기로 이미지를 렌더링하지 못했습니다. 저장된 것은 없습니다. 더 작은 크기를 사용해 보세요.</string>
+    <string name="map_image_rendering_full">전체 크기로 렌더링 중…</string>
     <string name="map_image_format">형식</string>
     <string name="map_image_resolution">해상도</string>
     <string name="map_image_res_standard">표준</string>

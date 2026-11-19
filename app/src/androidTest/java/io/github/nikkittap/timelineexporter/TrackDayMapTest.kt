@@ -30,7 +30,8 @@ import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
 import java.io.File
-import java.time.Instant
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -42,7 +43,7 @@ class TrackDayMapTest {
     private fun threeDays() = (0..2).flatMap { day ->
         listOf(17.9, 18.1).mapIndexed { index, lon ->
             PathPoint(
-                Instant.parse("2026-09-01T09:00:00Z").plusSeconds(day * 86400L + index * 600),
+                Instant.parse("2026-09-01T09:00:00Z") + (day * 86400L + index * 600).seconds,
                 59.3 + day * 2, lon, 120,
             )
         }
@@ -173,7 +174,7 @@ class TrackDayMapTest {
         val points = (0..5).flatMap { day ->
             (0..20).map { step ->
                 PathPoint(
-                    Instant.parse("2026-09-01T09:00:00Z").plusSeconds(day * 86400L + step * 60L),
+                    Instant.parse("2026-09-01T09:00:00Z") + (day * 86400L + step * 60L).seconds,
                     59.32 + day * 0.004 + kotlin.math.sin(step / 4.0) * 0.003,
                     18.03 + step * 0.002,
                     120,

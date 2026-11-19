@@ -275,6 +275,14 @@
     <string name="map_image_aspect_post">Допис</string>
     <string name="map_image_aspect_square">Квадрат</string>
     <string name="map_image_aspect_landscape">Альбом</string>
+    <string name="map_image_aspect_custom">Свій</string>
+    <string name="map_image_custom_width">Ширина, px</string>
+    <string name="map_image_custom_height">Висота, px</string>
+    <string name="map_image_custom_range">Кожна сторона %1$d–%2$d px, довга не більше ніж у %3$d рази довша за коротку.</string>
+    <string name="map_image_custom_gpu">Цей розмір більший, ніж може відобразити графіка пристрою: не більше %1$d px по стороні.</string>
+    <string name="map_image_custom_memory">Зараз бракує вільної пам\'яті для цього розміру. Спробуйте менший.</string>
+    <string name="map_image_custom_error">Не вдалося відобразити зображення такого розміру. Нічого не збережено; спробуйте менший.</string>
+    <string name="map_image_rendering_full">Відображення в повному розмірі…</string>
     <string name="map_image_format">Формат</string>
     <string name="map_image_resolution">Роздільність</string>
     <string name="map_image_res_standard">Стандартна</string>

@@ -37,6 +37,7 @@ import java.util.Locale
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.hypot
 import kotlin.math.max
 import kotlin.math.min
@@ -217,12 +218,14 @@ private suspend fun snapshot(context: Context, spec: MapImageSpec, prepared: Pre
 /**
  * The snapshot as a mutable bitmap of exactly the output size. MapLibre
  * rounds the logical size, so a ratio that does not divide the width evenly
- * can come back a pixel short; that pixel is stretched in. A snapshot further
- * off than that is refused rather than scaled up into a file that claims a
- * resolution it does not have.
+ * can come back a pixel short - up to half a logical pixel, which at a large
+ * custom size is several output pixels; that is stretched in. A snapshot
+ * further off than that is refused rather than scaled up into a file that
+ * claims a resolution it does not have.
  */
 private fun toOutputBitmap(source: Bitmap, spec: MapImageSpec): Bitmap {
-    if (abs(source.width - spec.widthPx) > SIZE_TOLERANCE_PX || abs(source.height - spec.heightPx) > SIZE_TOLERANCE_PX) {
+    val tolerance = max(SIZE_TOLERANCE_PX, ceil(spec.pixelRatio).toInt())
+    if (abs(source.width - spec.widthPx) > tolerance || abs(source.height - spec.heightPx) > tolerance) {
         throw MapImageException(
             "Renderer returned ${source.width}x${source.height} for ${spec.widthPx}x${spec.heightPx}",
         )
