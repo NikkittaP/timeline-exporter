@@ -23331,6 +23331,232 @@
         }
       }
     },
+    "map_image_custom_ratio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مستطيلة أكثر من اللازم: لا يتجاوز الضلع الطويل %1$lld أضعاف القصير، أي حتى %2$lld px هنا."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu lang und schmal: Die lange Seite darf höchstens %1$lld× so lang wie die kurze sein, hier also bis %2$lld px."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too long and narrow: the long side can be at most %1$lld× the short one, so up to %2$lld px here."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demasiado alargada: el lado largo puede ser como máximo %1$lld× el corto, aquí hasta %2$lld px."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trop allongée : le grand côté peut faire au plus %1$lld× le petit, donc jusqu'à %2$lld px ici."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बहुत लंबा और पतला: लंबी भुजा छोटी से अधिकतम %1$lld गुना हो सकती है, यहाँ %2$lld px तक।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Troppo allungata: il lato lungo può essere al massimo %1$lld× quello corto, qui fino a %2$lld px."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "細長すぎます。長辺は短辺の %1$lld 倍まで、ここでは %2$lld px までです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "너무 길쭉합니다. 긴 변은 짧은 변의 %1$lld배까지, 여기서는 %2$lld px까지입니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te lang en smal: de lange zijde mag hoogstens %1$lld× de korte zijn, hier dus tot %2$lld px."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zbyt wydłużony: dłuższy bok może być najwyżej %1$lld× dłuższy od krótszego, tutaj do %2$lld px."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alongada demais: o lado maior pode ter no máximo %1$lld× o menor, aqui até %2$lld px."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Слишком вытянуто: длинная сторона может быть не больше чем в %1$lld раза длиннее короткой, здесь — до %2$lld px."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "För lång och smal: den långa sidan får vara högst %1$lld× den korta, här alltså upp till %2$lld px."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çok uzun ve dar: uzun kenar kısa kenarın en fazla %1$lld katı olabilir, burada en fazla %2$lld px."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Надто витягнуто: довга сторона може бути не більше ніж у %1$lld рази довша за коротку, тут — до %2$lld px."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "太细长了：长边最多为短边的 %1$lld 倍，此处最多 %2$lld px。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "太細長了：長邊最多為短邊的 %1$lld 倍，此處最多 %2$lld px。"
+          }
+        }
+      }
+    },
+    "map_image_custom_sides" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يجب أن يكون كل ضلع بين %1$lld و%2$lld px."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jede Seite muss %1$lld–%2$lld px lang sein."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each side must be %1$lld–%2$lld px."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada lado debe medir entre %1$lld y %2$lld px."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque côté doit faire entre %1$lld et %2$lld px."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "हर भुजा %1$lld–%2$lld px होनी चाहिए।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogni lato deve essere tra %1$lld e %2$lld px."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各辺は %1$lld～%2$lld px にしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 변은 %1$lld~%2$lld px여야 합니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elke zijde moet %1$lld–%2$lld px zijn."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Każdy bok musi mieć od %1$lld do %2$lld px."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada lado deve ter entre %1$lld e %2$lld px."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Каждая сторона должна быть от %1$lld до %2$lld px."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Varje sida måste vara %1$lld–%2$lld px."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her kenar %1$lld–%2$lld px olmalı."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кожна сторона має бути від %1$lld до %2$lld px."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每边须为 %1$lld–%2$lld px。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每邊須為 %1$lld–%2$lld px。"
+          }
+        }
+      }
+    },
     "map_image_custom_width" : {
       "extractionState" : "manual",
       "localizations" : {

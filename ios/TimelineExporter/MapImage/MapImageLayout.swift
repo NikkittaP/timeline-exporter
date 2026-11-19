@@ -226,6 +226,11 @@ enum CustomSizeProblem: Equatable {
     }
 }
 
+/// The longest the long side may be next to the short one of [width] x [height].
+func customMaxLongSide(width: Int, height: Int) -> Int {
+    min(min(width, height) * MapImageSpec.customMaxRatio, MapImageSpec.customMaxSide)
+}
+
 /// Whether there is memory for a render of [spec] right now: the snapshot,
 /// the composed image and the encoded file at its peak, with room to spare.
 /// [available] is os_proc_available_memory(), which is 0 where it is not

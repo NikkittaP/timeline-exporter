@@ -279,6 +279,8 @@
     <string name="map_image_custom_width">Ширина, px</string>
     <string name="map_image_custom_height">Высота, px</string>
     <string name="map_image_custom_range">Каждая сторона %1$d–%2$d px, длинная не больше чем в %3$d раза длиннее короткой.</string>
+    <string name="map_image_custom_sides">Каждая сторона должна быть от %1$d до %2$d px.</string>
+    <string name="map_image_custom_ratio">Слишком вытянуто: длинная сторона может быть не больше чем в %1$d раза длиннее короткой, здесь — до %2$d px.</string>
     <string name="map_image_custom_gpu">Этот размер больше, чем может отрисовать графика устройства: не более %1$d px по стороне.</string>
     <string name="map_image_custom_memory">Сейчас не хватает свободной памяти для этого размера. Попробуйте поменьше.</string>
     <string name="map_image_custom_error">Не удалось отрисовать изображение такого размера. Ничего не сохранено; попробуйте поменьше.</string>

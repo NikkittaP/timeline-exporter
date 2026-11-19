@@ -283,6 +283,8 @@
     <string name="map_image_custom_width">العرض، px</string>
     <string name="map_image_custom_height">الارتفاع، px</string>
     <string name="map_image_custom_range">كل ضلع بين %1$d و%2$d px، والطويل لا يتجاوز %3$d أضعاف القصير.</string>
+    <string name="map_image_custom_sides">يجب أن يكون كل ضلع بين %1$d و%2$d px.</string>
+    <string name="map_image_custom_ratio">مستطيلة أكثر من اللازم: لا يتجاوز الضلع الطويل %1$d أضعاف القصير، أي حتى %2$d px هنا.</string>
     <string name="map_image_custom_gpu">هذا الحجم أكبر مما يستطيع معالج رسومات الجهاز عرضه: %1$d px كحد أقصى لكل ضلع.</string>
     <string name="map_image_custom_memory">لا تتوفر ذاكرة كافية لهذا الحجم الآن. جرّب حجمًا أصغر.</string>
     <string name="map_image_custom_error">تعذّر إنشاء الصورة بهذا الحجم. لم يُحفظ شيء؛ جرّب حجمًا أصغر.</string>

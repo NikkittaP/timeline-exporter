@@ -275,6 +275,8 @@
     <string name="map_image_custom_width">Bredd, px</string>
     <string name="map_image_custom_height">Höjd, px</string>
     <string name="map_image_custom_range">Varje sida %1$d–%2$d px, den långa högst %3$d× den korta.</string>
+    <string name="map_image_custom_sides">Varje sida måste vara %1$d–%2$d px.</string>
+    <string name="map_image_custom_ratio">För lång och smal: den långa sidan får vara högst %1$d× den korta, här alltså upp till %2$d px.</string>
     <string name="map_image_custom_gpu">Storleken är större än vad enhetens grafik kan rendera: högst %1$d px per sida.</string>
     <string name="map_image_custom_memory">Inte tillräckligt med ledigt minne för den här storleken just nu. Prova en mindre.</string>
     <string name="map_image_custom_error">Kunde inte rendera bilden i den här storleken. Inget sparades; prova en mindre.</string>

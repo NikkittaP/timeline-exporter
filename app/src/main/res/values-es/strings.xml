@@ -277,6 +277,8 @@
     <string name="map_image_custom_width">Ancho, px</string>
     <string name="map_image_custom_height">Alto, px</string>
     <string name="map_image_custom_range">Cada lado entre %1$d y %2$d px; el largo, como máximo %3$d× el corto.</string>
+    <string name="map_image_custom_sides">Cada lado debe medir entre %1$d y %2$d px.</string>
+    <string name="map_image_custom_ratio">Demasiado alargada: el lado largo puede ser como máximo %1$d× el corto, aquí hasta %2$d px.</string>
     <string name="map_image_custom_gpu">Este tamaño supera lo que puede renderizar la gráfica de este dispositivo: como máximo %1$d px por lado.</string>
     <string name="map_image_custom_memory">Ahora no hay suficiente memoria libre para este tamaño. Prueba uno más pequeño.</string>
     <string name="map_image_custom_error">No se pudo renderizar la imagen con este tamaño. No se ha guardado nada; prueba uno más pequeño.</string>

@@ -343,6 +343,8 @@
     <string name="map_image_custom_width">Width, px</string>
     <string name="map_image_custom_height">Height, px</string>
     <string name="map_image_custom_range">Each side %1$d–%2$d px, the long side at most %3$d× the short one.</string>
+    <string name="map_image_custom_sides">Each side must be %1$d–%2$d px.</string>
+    <string name="map_image_custom_ratio">Too long and narrow: the long side can be at most %1$d× the short one, so up to %2$d px here.</string>
     <string name="map_image_custom_gpu">This size is larger than this device\'s graphics can render: at most %1$d px per side.</string>
     <string name="map_image_custom_memory">Not enough free memory for this size right now. Try a smaller one.</string>
     <string name="map_image_custom_error">Couldn\'t render the image at this size. Nothing was saved; try a smaller one.</string>

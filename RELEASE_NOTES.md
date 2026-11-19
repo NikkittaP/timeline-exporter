@@ -37,8 +37,9 @@ characters each; the same text is the app's own 1.11.1 notes
 - A **"Custom"** choice after the four shapes, on Android and iOS: Width
   and Height in pixels, prefilled with the size the image would have had.
   Each side 400–8192 px, the long side at most 3× the short one; outside
-  that the fields turn red with the rule underneath and Save / Share stay
-  off. The device's GPU limit and free memory are checked as for High, and
+  that the fields turn red, the note underneath names the one rule that is
+  broken (for a too narrow size: how long the long side may be), and
+  Save / Share stay off. The device's GPU limit and free memory are checked as for High, and
   a size the device cannot make is refused with the reason, never written
   smaller. The Standard/High switch is hidden: the typed pixels are the
   output.

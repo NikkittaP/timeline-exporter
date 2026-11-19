@@ -273,6 +273,8 @@
     <string name="map_image_custom_width">幅（px）</string>
     <string name="map_image_custom_height">高さ（px）</string>
     <string name="map_image_custom_range">各辺 %1$d～%2$d px、長辺は短辺の %3$d 倍まで。</string>
+    <string name="map_image_custom_sides">各辺は %1$d～%2$d px にしてください。</string>
+    <string name="map_image_custom_ratio">細長すぎます。長辺は短辺の %1$d 倍まで、ここでは %2$d px までです。</string>
     <string name="map_image_custom_gpu">このサイズはこの端末のグラフィックスで描画できる上限を超えています（1 辺最大 %1$d px）。</string>
     <string name="map_image_custom_memory">現在、このサイズに必要な空きメモリが足りません。小さいサイズをお試しください。</string>
     <string name="map_image_custom_error">このサイズで画像を描画できませんでした。保存はされていません。小さいサイズをお試しください。</string>

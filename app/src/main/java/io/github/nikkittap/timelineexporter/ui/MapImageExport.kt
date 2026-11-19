@@ -364,16 +364,37 @@ private fun MapImageExportContent(
                         onWidth = { customWidth = it },
                         onHeight = { customHeight = it },
                     )
-                    when {
-                        customProblem != null -> Note(
+                    // Each problem names the one rule it breaks: the full rule
+                    // is only the hint while a field is still empty.
+                    when (customProblem) {
+                        CustomSizeProblem.Missing -> Note(
                             stringResource(
                                 R.string.map_image_custom_range,
                                 MapImageSpec.CUSTOM_MIN_SIDE,
                                 MapImageSpec.CUSTOM_MAX_SIDE,
                                 MapImageSpec.CUSTOM_MAX_RATIO,
                             ),
-                            error = customProblem != CustomSizeProblem.Missing,
+                            error = false,
                         )
+                        CustomSizeProblem.OutOfRange -> Note(
+                            stringResource(
+                                R.string.map_image_custom_sides,
+                                MapImageSpec.CUSTOM_MIN_SIDE,
+                                MapImageSpec.CUSTOM_MAX_SIDE,
+                            ),
+                            error = true,
+                        )
+                        CustomSizeProblem.TooElongated -> Note(
+                            stringResource(
+                                R.string.map_image_custom_ratio,
+                                MapImageSpec.CUSTOM_MAX_RATIO,
+                                customMaxLongSide(customWidth.toInt(), customHeight.toInt()),
+                            ),
+                            error = true,
+                        )
+                        null -> Unit
+                    }
+                    when {
                         customSupport == HighResolutionSupport.ExceedsGpu -> Note(
                             stringResource(R.string.map_image_custom_gpu, limits?.maxRenderSizePx ?: 0),
                             error = true,

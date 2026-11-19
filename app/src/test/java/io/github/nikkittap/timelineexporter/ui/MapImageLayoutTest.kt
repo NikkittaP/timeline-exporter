@@ -394,4 +394,14 @@ class MapImageLayoutTest {
             root.deleteRecursively()
         }
     }
+
+    @Test
+    fun theTooElongatedHintSaysHowLongTheLongSideMayBe() {
+        assertEquals(CustomSizeProblem.TooElongated, customSizeProblem(2000, 8191))
+        assertEquals(6000, customMaxLongSide(2000, 8191))
+        assertEquals(6000, customMaxLongSide(8191, 2000))
+        assertEquals(null, customSizeProblem(2000, customMaxLongSide(2000, 8191)))
+        // Never past the largest side, however wide the short one is.
+        assertEquals(MapImageSpec.CUSTOM_MAX_SIDE, customMaxLongSide(4000, 3000))
+    }
 }

@@ -277,6 +277,8 @@
     <string name="map_image_custom_width">Largura, px</string>
     <string name="map_image_custom_height">Altura, px</string>
     <string name="map_image_custom_range">Cada lado entre %1$d e %2$d px; o maior, no máximo %3$d× o menor.</string>
+    <string name="map_image_custom_sides">Cada lado deve ter entre %1$d e %2$d px.</string>
+    <string name="map_image_custom_ratio">Alongada demais: o lado maior pode ter no máximo %1$d× o menor, aqui até %2$d px.</string>
     <string name="map_image_custom_gpu">Este tamanho é maior do que a GPU deste dispositivo consegue renderizar: no máximo %1$d px por lado.</string>
     <string name="map_image_custom_memory">Não há memória livre suficiente para este tamanho agora. Tente um menor.</string>
     <string name="map_image_custom_error">Não foi possível renderizar a imagem neste tamanho. Nada foi salvo; tente um menor.</string>

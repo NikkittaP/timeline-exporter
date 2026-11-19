@@ -314,9 +314,19 @@ struct MapImageSheet: View {
     /// why this device cannot render it now.
     private var customNote: (text: String, error: Bool)? {
         guard custom else { return nil }
-        if let problem = customProblem {
+        // Each problem names the one rule it breaks: the full rule is only
+        // the hint while a field is still empty.
+        switch customProblem {
+        case .missing:
             return (L.f("map_image_custom_range", MapImageSpec.customMinSide, MapImageSpec.customMaxSide,
-                        MapImageSpec.customMaxRatio), problem != .missing)
+                        MapImageSpec.customMaxRatio), false)
+        case .outOfRange:
+            return (L.f("map_image_custom_sides", MapImageSpec.customMinSide, MapImageSpec.customMaxSide), true)
+        case .tooElongated:
+            let w = Int(customWidth) ?? 0, h = Int(customHeight) ?? 0
+            return (L.f("map_image_custom_ratio", MapImageSpec.customMaxRatio, customMaxLongSide(width: w, height: h)), true)
+        case nil:
+            break
         }
         if let customSpec, !mapImageFitsMemory(customSpec, available: os_proc_available_memory()) {
             return (L.s("map_image_custom_memory"), true)

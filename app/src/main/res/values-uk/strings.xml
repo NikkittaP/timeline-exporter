@@ -279,6 +279,8 @@
     <string name="map_image_custom_width">Ширина, px</string>
     <string name="map_image_custom_height">Висота, px</string>
     <string name="map_image_custom_range">Кожна сторона %1$d–%2$d px, довга не більше ніж у %3$d рази довша за коротку.</string>
+    <string name="map_image_custom_sides">Кожна сторона має бути від %1$d до %2$d px.</string>
+    <string name="map_image_custom_ratio">Надто витягнуто: довга сторона може бути не більше ніж у %1$d рази довша за коротку, тут — до %2$d px.</string>
     <string name="map_image_custom_gpu">Цей розмір більший, ніж може відобразити графіка пристрою: не більше %1$d px по стороні.</string>
     <string name="map_image_custom_memory">Зараз бракує вільної пам\'яті для цього розміру. Спробуйте менший.</string>
     <string name="map_image_custom_error">Не вдалося відобразити зображення такого розміру. Нічого не збережено; спробуйте менший.</string>

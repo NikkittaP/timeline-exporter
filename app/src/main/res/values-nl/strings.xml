@@ -275,6 +275,8 @@
     <string name="map_image_custom_width">Breedte, px</string>
     <string name="map_image_custom_height">Hoogte, px</string>
     <string name="map_image_custom_range">Elke zijde %1$d–%2$d px, de lange hoogstens %3$d× de korte.</string>
+    <string name="map_image_custom_sides">Elke zijde moet %1$d–%2$d px zijn.</string>
+    <string name="map_image_custom_ratio">Te lang en smal: de lange zijde mag hoogstens %1$d× de korte zijn, hier dus tot %2$d px.</string>
     <string name="map_image_custom_gpu">Dit formaat is groter dan de grafische chip van dit apparaat kan renderen: hoogstens %1$d px per zijde.</string>
     <string name="map_image_custom_memory">Nu niet genoeg vrij geheugen voor dit formaat. Probeer een kleiner formaat.</string>
     <string name="map_image_custom_error">Kon de afbeelding niet op dit formaat renderen. Er is niets opgeslagen; probeer een kleiner formaat.</string>

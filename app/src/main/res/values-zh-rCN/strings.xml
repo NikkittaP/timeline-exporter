@@ -273,6 +273,8 @@
     <string name="map_image_custom_width">宽度（px）</string>
     <string name="map_image_custom_height">高度（px）</string>
     <string name="map_image_custom_range">每边 %1$d–%2$d px，长边不超过短边的 %3$d 倍。</string>
+    <string name="map_image_custom_sides">每边须为 %1$d–%2$d px。</string>
+    <string name="map_image_custom_ratio">太细长了：长边最多为短边的 %1$d 倍，此处最多 %2$d px。</string>
     <string name="map_image_custom_gpu">此尺寸超出了本设备图形处理器的渲染上限：每边最多 %1$d px。</string>
     <string name="map_image_custom_memory">当前可用内存不足以生成此尺寸。请尝试更小的尺寸。</string>
     <string name="map_image_custom_error">无法以此尺寸渲染图片。未保存任何内容；请尝试更小的尺寸。</string>

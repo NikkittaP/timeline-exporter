@@ -279,6 +279,8 @@
     <string name="map_image_custom_width">Szerokość, px</string>
     <string name="map_image_custom_height">Wysokość, px</string>
     <string name="map_image_custom_range">Każdy bok %1$d–%2$d px, dłuższy najwyżej %3$d× dłuższy od krótszego.</string>
+    <string name="map_image_custom_sides">Każdy bok musi mieć od %1$d do %2$d px.</string>
+    <string name="map_image_custom_ratio">Zbyt wydłużony: dłuższy bok może być najwyżej %1$d× dłuższy od krótszego, tutaj do %2$d px.</string>
     <string name="map_image_custom_gpu">Ten rozmiar przekracza możliwości grafiki tego urządzenia: najwyżej %1$d px na bok.</string>
     <string name="map_image_custom_memory">Brak teraz wolnej pamięci na ten rozmiar. Spróbuj mniejszego.</string>
     <string name="map_image_custom_error">Nie udało się wyrenderować obrazu w tym rozmiarze. Nic nie zapisano; spróbuj mniejszego.</string>

@@ -237,6 +237,10 @@ internal fun customSizeProblem(width: Int?, height: Int?): CustomSizeProblem? {
     return null
 }
 
+/** The longest the long side may be next to the short one of [width] x [height]. */
+internal fun customMaxLongSide(width: Int, height: Int): Int =
+    min(min(width, height) * MapImageSpec.CUSTOM_MAX_RATIO, MapImageSpec.CUSTOM_MAX_SIDE)
+
 /** Whether the High resolution of one shape can be rendered on this device. */
 internal enum class HighResolutionSupport { Supported, ExceedsGpu, InsufficientMemory }
 
