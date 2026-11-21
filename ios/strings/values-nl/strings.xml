@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">Zo werkt het</string>
     <string name="ios_welcome_body">Google Maps kan onthouden waar je bent geweest: dat is je **tijdlijn** (Timeline). Deze app opent je tijdlijnbestand, toont je ritten op een kaart en bewaart ze als GPX-, KML-, GeoJSON- of CSV-bestanden voor andere apps (Strava, Garmin, Google Earth, Excel…).</string>
-    <string name="ios_welcome_not_tracker">Deze app volgt je niet en logt niet in bij Google. Hij leest alleen het bestand dat je uit Google Maps bewaart, en alles blijft op dit apparaat.</string>
-    <string name="ios_requirements_title">⚠️ Belangrijk: controleer dit eerst</string>
-    <string name="ios_requirement_account">**Je locatiegeschiedenis komt uit je Google-account.** Je hebt de Google Maps-app nodig, ingelogd met je Google-account.</string>
-    <string name="ios_requirement_timeline">**De tijdlijn moet aanstaan in Google Maps.** Google bewaart alleen de dagen sinds hij aan is gezet; stond hij uit, dan valt er niets te exporteren.</string>
-    <string name="ios_requirement_location">**Google Maps heeft locatietoegang ‘Altijd’ nodig** (app Instellingen → Google Maps → Locatie), anders legt de tijdlijn bijna niets vast.</string>
-    <string name="ios_requirement_device">**De tijdlijn staat op de telefoon die hem heeft vastgelegd.** Is je geschiedenis op een andere telefoon vastgelegd, bewaar het bestand dan op die telefoon.</string>
+    <string name="ios_requirements_title">Voordat je begint</string>
+    <string name="ios_requirement_account">**De tijdlijn wordt vastgelegd door Google Maps**, in de app die is ingelogd met je Google-account. Deze app leest een bestand dat je daaruit bewaart; zelf legt hij niets vast.</string>
+    <string name="ios_requirement_timeline">**De tijdlijn moet aanstaan.** Google bewaart alleen de dagen sinds hij aan is gezet, en geen app kan de dagen daarvoor toevoegen.</string>
+    <string name="ios_requirement_location">**Google Maps heeft je locatie nodig.** De instelling van Google vraagt om locatietoegang ‘Altijd’ (app Instellingen → Google Maps → Locatie); met minder legt de tijdlijn mogelijk maar een deel van je dag vast.</string>
+    <string name="ios_requirement_device">**Elke telefoon heeft zijn eigen tijdlijn.** Geschiedenis van een andere telefoon staat niet op deze iPhone: exporteer hem op die telefoon, of importeer hier de back-up van Google (Je tijdlijn → wolkpictogram).</string>
     <string name="ios_quick_title">Je bestand in 3 stappen</string>
     <string name="ios_quick_step1">Tik in **Google Maps** op je profielfoto → **Instellingen** → **Locatie en privacy** → **Timeline-gegevens exporteren**.</string>
     <string name="ios_quick_step2">Tik op **Bewaar in Bestanden** en bewaar het bestand Op mijn iPhone of in iCloud Drive.</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">Uitgebreide stap-voor-stap-uitleg</string>
     <string name="ios_try_sample_button">Probeer met voorbeeldgegevens</string>
     <string name="ios_sample_hint">Verzonnen reizen: zie wat de app doet voordat je die van jezelf exporteert.</string>
-    <string name="help_intro">Google Maps bewaart je tijdlijn alleen op je telefoon, niet online, dus geen andere app kan hem direct lezen. Je bewaart hem één keer uit Google Maps als bestand en opent dat bestand hier. Er wordt niets geüpload.</string>
+    <string name="help_intro">Google Maps bewaart je tijdlijn op de telefoon die hem heeft vastgelegd, niet online in je Google-account (de versleutelde back-up is optioneel), dus andere apps kunnen hem niet direct lezen. Bewaar hem één keer uit Google Maps als bestand en open dat bestand hier.</string>
     <string name="ios_turn_on_title">1. Zet de tijdlijn aan (overslaan als hij aanstaat)</string>
     <string name="ios_maps_profile">Open Google Maps en tik op je profielfoto (rechtsboven)</string>
     <string name="ios_turn_on_step2">Tik op **Je tijdlijn**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">%1$s bewaren</string>
     <string name="ios_export_run_share">%1$s delen</string>
     <string name="ios_map_image_entry_hint">Een afbeelding van deze route om te bewaren of te delen</string>
-    <string name="ios_map_image_distance_note">De vastgelegde afstand telt de lijn op deze afbeelding op en kan dus afwijken van de afgelegde afstand van een reis.</string>
     <string name="ios_map_status_loading">Kaart laden…</string>
     <string name="ios_map_status_tiles">Kaarttegels niet beschikbaar. Je gegevens blijven zichtbaar.</string>
     <string name="ios_map_status_failed">De kaart kon niet worden geladen.</string>
     <string name="ios_trips_clear_marks">Markeringen wissen</string>
     <string name="ios_place_unnamed">Naamloze plek</string>
     <string name="ios_trip_on_map">Op de kaart getoond</string>
-    <string name="ios_trips_none_selected">Geen reizen geselecteerd — alle %1$s worden geëxporteerd.</string>
-    <string name="ios_select_all">Alles selecteren</string>
     <string name="ios_search_places">Plaatsen zoeken</string>
     <string name="ios_export_data_file">Gegevensbestand</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">Technische gegevens meesturen</string>
     <string name="ios_problem_details_note">Helpt me het probleem na te bootsen. Bevat geen locatiegegevens en niets uit je bestand.</string>
     <string name="ios_feedback_copy_address">E-mailadres kopiëren</string>
+    <string name="ios_privacy_policy">Privacybeleid</string>
 </resources>

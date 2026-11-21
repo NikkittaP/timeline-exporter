@@ -1,12 +1,12 @@
 Google Maps kan komma ihåg platser du besöker – det är din tidslinje (Timeline). Den här appen öppnar din tidslinjefil, visar dina resor på en karta och sparar dem som GPX-, KML-, GeoJSON- eller CSV-filer för andra appar (Strava, Garmin, Google Earth, Excel …).
 
-Appen spårar dig inte och loggar inte in på Google. Den läser bara filen du sparar från Google Maps, och allt stannar på den här enheten.
+Filen läses på den här enheten och laddas aldrig upp. Appen registrerar inte din plats och loggar inte in på Google; bara kartbakgrunden hämtas från internet.
 
-⚠️ VIKTIGT – KONTROLLERA FÖRST
-• DIN PLATSHISTORIK KOMMER FRÅN DITT GOOGLE-KONTO. Du behöver appen Google Maps, inloggad med ditt Google-konto.
-• TIDSLINJEN MÅSTE VARA PÅ I GOOGLE MAPS. Google sparar bara dagarna sedan den slogs på – var den av finns det inget att exportera.
-• Google Maps behöver platsåtkomst ”Alltid” (appen Inställningar → Google Maps → Plats), annars registrerar tidslinjen nästan ingenting.
-• Tidslinjen sparas på telefonen som registrerade den. Om din historik registrerades på en annan telefon sparar du filen på den telefonen.
+INNAN DU BÖRJAR
+• TIDSLINJEN REGISTRERAS AV GOOGLE MAPS, i appen som är inloggad med ditt Google-konto. Den här appen läser en fil du sparar därifrån; själv registrerar den ingenting.
+• TIDSLINJEN MÅSTE VARA PÅ. Google sparar bara dagarna sedan den slogs på, och ingen app kan lägga till dagarna innan dess.
+• Google Maps behöver din plats. Googles inställning ber om platsåtkomst ”Alltid” (appen Inställningar → Google Maps → Plats); med mindre kan tidslinjen registrera bara en del av din dag.
+• Varje telefon har sin egen tidslinje. Historik från en annan telefon finns inte på den här iPhonen: exportera den på den telefonen, eller importera Googles säkerhetskopia här (Din tidslinje → molnikonen).
 
 DIN FIL I 3 STEG
 1. I Google Maps trycker du på din profilbild → Inställningar → Plats och integritet → Exportera Timeline-data.
@@ -25,6 +25,6 @@ DET HÄR KAN DU GÖRA
 • Öppnar även äldre Google-filer: Timeline.json från Android, Semantic Location History, Records.json
 
 PRIVAT
-Allt sker på din iPhone eller iPad. Din platshistorik laddas aldrig upp: inget konto, inga servrar, ingen analys, ingen reklam. Internet används bara för kartan. Gratis och öppen källkod.
+Allt sker på din iPhone eller iPad. Din platshistorik laddas aldrig upp: inget konto, inga servrar, ingen analys, ingen reklam. Internet används bara för kartan. Öppen källkod.
 
 Timeline Exporter är en oberoende app och är inte knuten till Google.

@@ -1,12 +1,12 @@
 Mapy Google mogą zapamiętywać miejsca, w których bywasz — to Twoja oś czasu (Timeline). Ta aplikacja otwiera plik osi czasu, pokazuje Twoje podróże na mapie i zapisuje je jako pliki GPX, KML, GeoJSON lub CSV dla innych aplikacji (Strava, Garmin, Google Earth, Excel…).
 
-Ta aplikacja Cię nie śledzi i nie loguje się do Google. Czyta tylko plik zapisany z Map Google, a wszystko zostaje na tym urządzeniu.
+Plik jest odczytywany na tym urządzeniu i nigdzie nie jest wysyłany. Aplikacja nie zapisuje Twojej lokalizacji i nie loguje się do Google; z internetu pobierany jest tylko podkład mapy.
 
-⚠️ WAŻNE — SPRAWDŹ NAJPIERW
-• HISTORIA LOKALIZACJI POCHODZI Z TWOJEGO KONTA GOOGLE. Potrzebna jest aplikacja Mapy Google zalogowana na Twoje konto Google.
-• OŚ CZASU MUSI BYĆ WŁĄCZONA W MAPACH GOOGLE. Google zapisuje tylko dni od jej włączenia — jeśli była wyłączona, nie ma czego eksportować.
-• Mapy Google potrzebują dostępu do lokalizacji „Zawsze” (aplikacja Ustawienia → Google Maps → Lokalizacja), inaczej oś czasu prawie nic nie zapisze.
-• Oś czasu jest przechowywana na telefonie, który ją zapisał. Jeśli historia była zapisywana na innym telefonie, zapisz plik na tamtym telefonie.
+ZANIM ZACZNIESZ
+• OŚ CZASU ZAPISUJĄ MAPY GOOGLE, w aplikacji zalogowanej na Twoje konto Google. Ta aplikacja czyta plik, który z nich zapiszesz; sama niczego nie rejestruje.
+• OŚ CZASU MUSI BYĆ WŁĄCZONA. Google zapisuje tylko dni od jej włączenia i żadna aplikacja nie doda dni sprzed tego momentu.
+• Mapy Google potrzebują Twojej lokalizacji. Konfiguracja Google prosi o dostęp do lokalizacji „Zawsze” (aplikacja Ustawienia → Google Maps → Lokalizacja); przy mniejszym dostępie oś czasu może zapisać tylko część dnia.
+• Każdy telefon ma własną oś czasu. Historii zapisanej na innym telefonie nie ma na tym iPhonie: wyeksportuj ją na tamtym telefonie albo zaimportuj tu kopię zapasową Google (Twoja oś czasu → ikona chmury).
 
 PLIK W 3 KROKACH
 1. W Mapach Google dotknij zdjęcia profilowego → Ustawienia → Lokalizacja i prywatność → Eksportuj dane Timeline.
@@ -25,6 +25,6 @@ CO MOŻESZ ZROBIĆ
 • Otwiera też starsze pliki Google: Timeline.json z Androida, Semantic Location History, Records.json
 
 PRYWATNIE
-Wszystko dzieje się na Twoim iPhonie lub iPadzie. Historia lokalizacji nigdy nie jest wysyłana: bez konta, serwerów, analityki i reklam. Internet służy tylko do wczytania mapy. Bezpłatna i open source.
+Wszystko dzieje się na Twoim iPhonie lub iPadzie. Historia lokalizacji nigdy nie jest wysyłana: bez konta, serwerów, analityki i reklam. Internet służy tylko do wczytania mapy. Otwarty kod źródłowy.
 
 Timeline Exporter to niezależna aplikacja, niepowiązana z Google.

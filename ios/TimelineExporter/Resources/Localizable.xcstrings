@@ -10064,109 +10064,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تحتفظ خرائط Google بمخططك الزمني على هاتفك فقط وليس على الإنترنت، لذا لا يمكن لأي تطبيق آخر قراءته مباشرة. تحفظه مرة واحدة من خرائط Google كملف، ثم تفتح ذلك الملف هنا. لا يُرفع أي شيء إلى أي مكان."
+            "value" : "تحتفظ خرائط Google بمخططك الزمني على الهاتف الذي سجّله، لا في حسابك على Google عبر الإنترنت (النسخة الاحتياطية المشفّرة اختيارية)، لذا لا يمكن لتطبيقات أخرى قراءته مباشرة. احفظه مرة واحدة من خرائط Google كملف، ثم افتح ذلك الملف هنا."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps speichert deine Zeitachse nur auf deinem Telefon, nicht online — keine andere App kann sie direkt lesen. Du sicherst sie einmal aus Google Maps als Datei und öffnest diese Datei hier. Es wird nichts hochgeladen."
+            "value" : "Google Maps speichert deine Zeitachse auf dem Telefon, das sie aufgezeichnet hat, nicht online in deinem Google-Konto (die verschlüsselte Sicherung ist optional) — andere Apps können sie nicht direkt lesen. Sichere sie einmal aus Google Maps als Datei und öffne diese Datei hier."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps keeps your Timeline only on your phone, not online, so no other app can read it directly. You save it once from Google Maps as a file, then open that file here. Nothing is uploaded anywhere."
+            "value" : "Google Maps keeps your Timeline on the phone that recorded it, not in your Google account online (the encrypted backup is optional), so other apps cannot read it directly. Save it once from Google Maps as a file, then open that file here."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps guarda tu cronología solo en tu teléfono, no en internet, así que ninguna otra app puede leerla directamente. La guardas una vez desde Google Maps como archivo y abres ese archivo aquí. No se sube nada a ningún sitio."
+            "value" : "Google Maps guarda tu cronología en el teléfono que la registró, no en tu cuenta de Google en internet (la copia de seguridad cifrada es opcional), así que otras apps no pueden leerla directamente. Guárdala una vez desde Google Maps como archivo y abre ese archivo aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps conserve votre Timeline uniquement sur votre téléphone, pas en ligne : aucune autre app ne peut la lire directement. Enregistrez-la une fois depuis Google Maps dans un fichier, puis ouvrez ce fichier ici. Rien n'est envoyé nulle part."
+            "value" : "Google Maps conserve votre Timeline sur le téléphone qui l'a enregistrée, pas en ligne dans votre compte Google (la sauvegarde chiffrée est facultative) : les autres apps ne peuvent pas la lire directement. Enregistrez-la une fois depuis Google Maps dans un fichier, puis ouvrez ce fichier ici."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps आपकी Timeline सिर्फ़ आपके फ़ोन पर रखता है, ऑनलाइन नहीं, इसलिए कोई दूसरा ऐप उसे सीधे नहीं पढ़ सकता। आप उसे एक बार Google Maps से फ़ाइल के रूप में सहेजते हैं, फिर वह फ़ाइल यहाँ खोलते हैं। कुछ भी कहीं अपलोड नहीं होता।"
+            "value" : "Google Maps आपकी Timeline उसी फ़ोन पर रखता है जिसने उसे रिकॉर्ड किया, ऑनलाइन Google खाते में नहीं (एन्क्रिप्टेड बैकअप वैकल्पिक है), इसलिए दूसरे ऐप उसे सीधे नहीं पढ़ सकते। उसे एक बार Google Maps से फ़ाइल के रूप में सहेजें, फिर वह फ़ाइल यहाँ खोलें।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps conserva la Timeline solo sul telefono, non online, quindi nessun'altra app può leggerla direttamente. La salvi una volta da Google Maps come file e apri quel file qui. Non viene caricato nulla da nessuna parte."
+            "value" : "Google Maps conserva la Timeline sul telefono che l'ha registrata, non online nel tuo account Google (il backup crittografato è facoltativo), quindi le altre app non possono leggerla direttamente. Salvala una volta da Google Maps come file e apri quel file qui."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google マップはタイムラインをオンラインではなくスマートフォン内だけに保存するため、他のアプリは直接読めません。Google マップから一度ファイルとして保存し、そのファイルをここで開きます。どこにもアップロードされません。"
+            "value" : "Google マップはタイムラインをオンラインの Google アカウントではなく、記録したスマートフォンに保存します（暗号化バックアップは任意）。そのため他のアプリは直接読めません。Google マップから一度ファイルとして保存し、そのファイルをここで開いてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google 지도는 타임라인을 온라인이 아닌 휴대폰에만 보관하므로 다른 앱은 직접 읽을 수 없습니다. Google 지도에서 한 번 파일로 저장한 뒤 그 파일을 여기에서 엽니다. 어디에도 업로드되지 않습니다."
+            "value" : "Google 지도는 타임라인을 온라인 Google 계정이 아니라 기록한 휴대폰에 보관합니다(암호화된 백업은 선택 사항). 그래서 다른 앱은 직접 읽을 수 없습니다. Google 지도에서 한 번 파일로 저장한 뒤 그 파일을 여기에서 여세요."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps bewaart je tijdlijn alleen op je telefoon, niet online, dus geen andere app kan hem direct lezen. Je bewaart hem één keer uit Google Maps als bestand en opent dat bestand hier. Er wordt niets geüpload."
+            "value" : "Google Maps bewaart je tijdlijn op de telefoon die hem heeft vastgelegd, niet online in je Google-account (de versleutelde back-up is optioneel), dus andere apps kunnen hem niet direct lezen. Bewaar hem één keer uit Google Maps als bestand en open dat bestand hier."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapy Google przechowują oś czasu tylko na telefonie, a nie w internecie, więc żadna inna aplikacja nie odczyta jej bezpośrednio. Raz zapisujesz ją z Map Google jako plik i otwierasz ten plik tutaj. Nic nie jest nigdzie wysyłane."
+            "value" : "Mapy Google przechowują oś czasu na telefonie, który ją zapisał, a nie online na koncie Google (zaszyfrowana kopia zapasowa jest opcjonalna), więc inne aplikacje nie odczytają jej bezpośrednio. Zapisz ją raz z Map Google jako plik i otwórz ten plik tutaj."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Google Maps guarda a Linha do tempo só no seu celular, não na internet, então nenhum outro app consegue lê-la diretamente. Você a salva uma vez pelo Google Maps como arquivo e abre esse arquivo aqui. Nada é enviado para lugar nenhum."
+            "value" : "O Google Maps guarda a Linha do tempo no celular que a registrou, não na sua Conta do Google on-line (o backup criptografado é opcional), então outros apps não conseguem lê-la diretamente. Salve-a uma vez pelo Google Maps como arquivo e abra esse arquivo aqui."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Карты хранят Хронологию только на телефоне, а не в интернете, поэтому другие приложения не могут прочитать её напрямую. Один раз сохраните её из Google Карт в файл и откройте этот файл здесь. Ничего никуда не загружается."
+            "value" : "Google Карты хранят Хронологию на телефоне, который её записал, а не в аккаунте Google в интернете (зашифрованная резервная копия необязательна), поэтому другие приложения не могут прочитать её напрямую. Один раз сохраните её из Google Карт в файл и откройте этот файл здесь."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps sparar din tidslinje bara på telefonen, inte på nätet, så ingen annan app kan läsa den direkt. Du sparar den en gång från Google Maps som en fil och öppnar filen här. Inget laddas upp någonstans."
+            "value" : "Google Maps sparar din tidslinje på telefonen som registrerade den, inte online i ditt Google-konto (den krypterade säkerhetskopian är valfri), så andra appar kan inte läsa den direkt. Spara den en gång från Google Maps som en fil och öppna filen här."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Haritalar Zaman çizelgenizi internette değil, yalnızca telefonunuzda tutar; bu yüzden başka hiçbir uygulama onu doğrudan okuyamaz. Onu bir kez Google Haritalar'dan dosya olarak kaydedip bu dosyayı burada açarsınız. Hiçbir şey hiçbir yere yüklenmez."
+            "value" : "Google Haritalar Zaman çizelgenizi çevrim içi Google hesabınızda değil, onu kaydeden telefonda tutar (şifreli yedek isteğe bağlıdır); bu yüzden diğer uygulamalar onu doğrudan okuyamaz. Onu bir kez Google Haritalar'dan dosya olarak kaydedin ve bu dosyayı burada açın."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Карти зберігають Хронологію лише на телефоні, а не в інтернеті, тому інші застосунки не можуть прочитати її напряму. Один раз збережіть її з Google Карт у файл і відкрийте цей файл тут. Нічого нікуди не завантажується."
+            "value" : "Google Карти зберігають Хронологію на телефоні, який її записав, а не в акаунті Google в інтернеті (зашифрована резервна копія необов'язкова), тому інші застосунки не можуть прочитати її напряму. Один раз збережіть її з Google Карт у файл і відкрийте цей файл тут."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google 地图只把时间轴保存在手机上，而不是在线保存，所以其他应用无法直接读取。你只需从 Google 地图把它保存成文件一次，然后在这里打开该文件。不会上传到任何地方。"
+            "value" : "Google 地图把时间轴保存在记录它的手机上，而不是在线保存在 Google 账号中（加密备份是可选的），所以其他应用无法直接读取。只需从 Google 地图把它保存成文件一次，然后在这里打开该文件。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google 地圖只把時間軸儲存在手機上，而不是線上，所以其他應用程式無法直接讀取。你只需從 Google 地圖把它儲存成檔案一次，然後在這裡開啟該檔案。不會上傳到任何地方。"
+            "value" : "Google 地圖把時間軸儲存在記錄它的手機上，而不是線上儲存在 Google 帳戶中（加密備份是選用的），所以其他應用程式無法直接讀取。只需從 Google 地圖把它儲存成檔案一次，然後在這裡開啟該檔案。"
           }
         }
       }
@@ -15030,119 +15030,6 @@
         }
       }
     },
-    "ios_map_image_distance_note" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "المسافة المسجّلة هي مجموع الخط المرسوم في هذه الصورة، لذا قد تختلف عن المسافة المقطوعة في الرحلة."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die aufgezeichnete Strecke summiert die Linie auf diesem Bild und kann daher von der Reisestrecke einer Reise abweichen."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tracked distance adds up the line on this image, so it can differ from a trip’s travelled distance."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La distancia registrada suma la línea de esta imagen, por lo que puede diferir de la distancia recorrida de un viaje."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La distance enregistrée additionne la ligne de cette image : elle peut différer de la distance parcourue d’un voyage."
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "दर्ज की गई दूरी इस तस्वीर की रेखा का योग है, इसलिए यह यात्रा की तय दूरी से अलग हो सकती है।"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La distanza registrata somma la linea di questa immagine, quindi può differire dalla distanza percorsa di un viaggio."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "記録された距離はこの画像の線の合計なので、旅行の移動距離とは異なる場合があります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "기록된 거리는 이 이미지의 선을 합산한 값이므로 여행의 이동 거리와 다를 수 있습니다."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "De vastgelegde afstand telt de lijn op deze afbeelding op en kan dus afwijken van de afgelegde afstand van een reis."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zarejestrowany dystans sumuje linię na tym obrazie, więc może różnić się od dystansu przebytego w podróży."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A distância registrada soma a linha desta imagem, então pode ser diferente da distância percorrida de uma viagem."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Записанное расстояние — это сумма линии на картинке, поэтому оно может отличаться от пройденного расстояния поездки."
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Registrerad sträcka summerar linjen på bilden och kan därför skilja sig från en resas färdväg."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kaydedilen mesafe bu görseldeki çizgiyi toplar, bu nedenle bir seyahatin kat edilen yolundan farklı olabilir."
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Записана відстань — це сума лінії на зображенні, тому вона може відрізнятися від пройденої відстані подорожі."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "记录距离是此图片上线路的总和，因此可能与行程的实际里程不同。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "記錄距離是此圖片上線條的總和，因此可能與行程的實際里程不同。"
-          }
-        }
-      }
-    },
     "ios_map_image_entry_hint" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -15817,6 +15704,119 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未命名地點"
+          }
+        }
+      }
+    },
+    "ios_privacy_policy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سياسة الخصوصية"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutzerklärung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy policy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de privacidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Politique de confidentialité"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "गोपनीयता नीति"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informativa sulla privacy"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシーポリシー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보처리방침"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacybeleid"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Polityka prywatności"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de privacidade"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Политика конфиденциальности"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Integritetspolicy"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gizlilik politikası"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Політика конфіденційності"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隐私政策"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隱私權政策"
           }
         }
       }
@@ -17296,109 +17296,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**سجل مواقعك يأتي من حسابك على Google.** تحتاج إلى تطبيق خرائط Google مسجَّلًا فيه الدخول بحسابك على Google."
+            "value" : "**تسجّل خرائط Google المخطط الزمني**، في التطبيق المسجَّل فيه الدخول بحسابك على Google. يقرأ هذا التطبيق ملفًا تحفظه منها، ولا يسجّل شيئًا بنفسه."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Dein Standortverlauf kommt aus deinem Google-Konto.** Du brauchst die Google Maps-App, angemeldet mit deinem Google-Konto."
+            "value" : "**Die Zeitachse zeichnet Google Maps auf**, in der App, die mit deinem Google-Konto angemeldet ist. Diese App liest eine Datei, die du daraus sicherst; sie selbst zeichnet nichts auf."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Your location history comes from your Google account.** You need the Google Maps app, signed in with your Google account."
+            "value" : "**Timeline is recorded by Google Maps**, in the app signed in to your Google account. This app reads a file you save from it; it records nothing itself."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Tu historial de ubicaciones viene de tu cuenta de Google.** Necesitas la app Google Maps con tu cuenta de Google iniciada."
+            "value" : "**La cronología la registra Google Maps**, en la app con tu cuenta de Google iniciada. Esta app lee un archivo que guardas desde allí; ella misma no registra nada."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Votre historique de localisation vient de votre compte Google.** Il faut l'app Google Maps, connectée à votre compte Google."
+            "value" : "**Timeline est enregistrée par Google Maps**, dans l'app connectée à votre compte Google. Cette app lit un fichier que vous en enregistrez ; elle-même n'enregistre rien."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**आपकी लोकेशन हिस्ट्री आपके Google खाते से आती है।** Google Maps ऐप चाहिए, जिसमें आपके Google खाते से साइन इन हो।"
+            "value" : "**Timeline को Google Maps रिकॉर्ड करता है**, उस ऐप में जिसमें आपके Google खाते से साइन इन है। यह ऐप उससे सहेजी गई फ़ाइल पढ़ता है; खुद कुछ रिकॉर्ड नहीं करता।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**La cronologia delle posizioni viene dal tuo account Google.** Serve l'app Google Maps con l'accesso al tuo account Google."
+            "value" : "**La Timeline viene registrata da Google Maps**, nell'app con l'accesso al tuo account Google. Questa app legge un file che salvi da lì; da sola non registra nulla."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**位置情報の履歴はあなたの Google アカウントから来ます。** Google アカウントでログインした Google マップアプリが必要です。"
+            "value" : "**タイムラインを記録するのは Google マップです**（Google アカウントでログインしたアプリ）。このアプリはそこから保存したファイルを読むだけで、自分では何も記録しません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**위치 기록은 Google 계정에서 옵니다.** Google 계정으로 로그인한 Google 지도 앱이 필요합니다."
+            "value" : "**타임라인은 Google 지도가 기록합니다.** Google 계정으로 로그인한 앱에서요. 이 앱은 거기서 저장한 파일을 읽을 뿐, 스스로는 아무것도 기록하지 않습니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Je locatiegeschiedenis komt uit je Google-account.** Je hebt de Google Maps-app nodig, ingelogd met je Google-account."
+            "value" : "**De tijdlijn wordt vastgelegd door Google Maps**, in de app die is ingelogd met je Google-account. Deze app leest een bestand dat je daaruit bewaart; zelf legt hij niets vast."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Historia lokalizacji pochodzi z Twojego konta Google.** Potrzebna jest aplikacja Mapy Google zalogowana na Twoje konto Google."
+            "value" : "**Oś czasu zapisują Mapy Google**, w aplikacji zalogowanej na Twoje konto Google. Ta aplikacja czyta plik, który z nich zapiszesz; sama niczego nie rejestruje."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Seu histórico de localização vem da sua Conta do Google.** Você precisa do app Google Maps conectado à sua Conta do Google."
+            "value" : "**A Linha do tempo é registrada pelo Google Maps**, no app conectado à sua Conta do Google. Este app lê um arquivo que você salva de lá; ele mesmo não registra nada."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**История местоположений берётся из вашего аккаунта Google.** Нужно приложение Google Карты, в котором выполнен вход в ваш аккаунт Google."
+            "value" : "**Хронологию записывают Google Карты** — в приложении, где выполнен вход в ваш аккаунт Google. Это приложение читает файл, который вы из них сохраните, и само ничего не записывает."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Din platshistorik kommer från ditt Google-konto.** Du behöver appen Google Maps, inloggad med ditt Google-konto."
+            "value" : "**Tidslinjen registreras av Google Maps**, i appen som är inloggad med ditt Google-konto. Den här appen läser en fil du sparar därifrån; själv registrerar den ingenting."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Konum geçmişiniz Google hesabınızdan gelir.** Google hesabınızla oturum açılmış Google Haritalar uygulaması gerekir."
+            "value" : "**Zaman çizelgesini Google Haritalar kaydeder**, Google hesabınızla oturum açılmış uygulamada. Bu uygulama oradan kaydettiğiniz dosyayı okur; kendisi hiçbir şey kaydetmez."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Історія місцеперебувань береться з вашого акаунта Google.** Потрібен застосунок Google Карти, у якому ви ввійшли у свій акаунт Google."
+            "value" : "**Хронологію записують Google Карти** — у застосунку, де ви ввійшли у свій акаунт Google. Цей застосунок читає файл, який ви з них збережете, і сам нічого не записує."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**你的位置记录来自你的 Google 账号。** 需要安装 Google 地图应用并登录你的 Google 账号。"
+            "value" : "**时间轴由 Google 地图记录**，即登录了你 Google 账号的那个应用。本应用只读取你从那里保存的文件，自己不记录任何内容。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**你的位置記錄來自你的 Google 帳戶。** 需要安裝 Google 地圖應用程式並登入你的 Google 帳戶。"
+            "value" : "**時間軸由 Google 地圖記錄**，也就是登入你 Google 帳戶的那個應用程式。本應用程式只讀取你從那裡儲存的檔案，自己不記錄任何內容。"
           }
         }
       }
@@ -17409,109 +17409,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**يُحفظ المخطط الزمني على الهاتف الذي سجّله.** إذا سُجّل سجلك على هاتف آخر، فاحفظ الملف على ذلك الهاتف."
+            "value" : "**لكل هاتف مخططه الزمني الخاص.** السجل المسجَّل على هاتف آخر غير موجود على هذا الـ iPhone: صدّره على ذلك الهاتف، أو استورد النسخة الاحتياطية من Google هنا (مخططك الزمني ← رمز السحابة)."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Die Zeitachse liegt auf dem Telefon, das sie aufgezeichnet hat.** Wurde dein Verlauf auf einem anderen Telefon aufgezeichnet, sichere die Datei dort."
+            "value" : "**Jedes Telefon hat seine eigene Zeitachse.** Was ein anderes Telefon aufgezeichnet hat, ist nicht auf diesem iPhone: Exportiere es dort oder importiere hier die Sicherung von Google (Deine Zeitachse → Wolkensymbol)."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Timeline is kept on the phone that recorded it.** If your history was recorded on another phone, save the file on that phone."
+            "value" : "**Each phone keeps its own Timeline.** History recorded on another phone is not on this iPhone: export it on that phone, or import Google’s backup here (Your Timeline → cloud icon)."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**La cronología se guarda en el teléfono que la registró.** Si tu historial se registró en otro teléfono, guarda el archivo en ese teléfono."
+            "value" : "**Cada teléfono guarda su propia cronología.** El historial registrado en otro teléfono no está en este iPhone: expórtalo en ese teléfono o importa aquí la copia de seguridad de Google (Tu cronología → icono de nube)."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Timeline est conservée sur le téléphone qui l'a enregistrée.** Si votre historique a été enregistré sur un autre téléphone, enregistrez le fichier sur celui-ci."
+            "value" : "**Chaque téléphone a sa propre Timeline.** L'historique enregistré sur un autre téléphone n'est pas sur cet iPhone : exportez-le sur ce téléphone, ou importez ici la sauvegarde Google (Votre Timeline → icône de nuage)."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Timeline उसी फ़ोन पर रहती है जिसने उसे रिकॉर्ड किया।** अगर आपकी हिस्ट्री किसी दूसरे फ़ोन पर रिकॉर्ड हुई थी, तो फ़ाइल उसी फ़ोन पर सहेजें।"
+            "value" : "**हर फ़ोन की अपनी Timeline होती है।** किसी दूसरे फ़ोन पर रिकॉर्ड हुई हिस्ट्री इस iPhone पर नहीं है: उसे उसी फ़ोन पर एक्सपोर्ट करें, या Google का बैकअप यहाँ इम्पोर्ट करें (आपकी Timeline → क्लाउड आइकन)।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**La Timeline resta sul telefono che l'ha registrata.** Se la cronologia è stata registrata su un altro telefono, salva il file su quel telefono."
+            "value" : "**Ogni telefono ha la sua Timeline.** La cronologia registrata su un altro telefono non è su questo iPhone: esportala da quel telefono o importa qui il backup di Google (La tua Timeline → icona della nuvola)."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**タイムラインは記録したスマートフォンに保存されています。** 別のスマートフォンで記録した場合は、そのスマートフォンでファイルを保存してください。"
+            "value" : "**タイムラインはスマートフォンごとに保存されます。** 別のスマートフォンで記録した履歴はこの iPhone にはありません。そのスマートフォンで書き出すか、Google のバックアップをここにインポートしてください（タイムライン → クラウドアイコン）。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**타임라인은 기록한 휴대폰에 저장됩니다.** 다른 휴대폰에서 기록했다면 그 휴대폰에서 파일을 저장하세요."
+            "value" : "**휴대폰마다 타임라인이 따로 있습니다.** 다른 휴대폰에서 기록한 기록은 이 iPhone에 없습니다. 그 휴대폰에서 내보내거나 Google 백업을 여기로 가져오세요(내 타임라인 → 클라우드 아이콘)."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**De tijdlijn staat op de telefoon die hem heeft vastgelegd.** Is je geschiedenis op een andere telefoon vastgelegd, bewaar het bestand dan op die telefoon."
+            "value" : "**Elke telefoon heeft zijn eigen tijdlijn.** Geschiedenis van een andere telefoon staat niet op deze iPhone: exporteer hem op die telefoon, of importeer hier de back-up van Google (Je tijdlijn → wolkpictogram)."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Oś czasu jest przechowywana na telefonie, który ją zapisał.** Jeśli historia była zapisywana na innym telefonie, zapisz plik na tamtym telefonie."
+            "value" : "**Każdy telefon ma własną oś czasu.** Historii zapisanej na innym telefonie nie ma na tym iPhonie: wyeksportuj ją na tamtym telefonie albo zaimportuj tu kopię zapasową Google (Twoja oś czasu → ikona chmury)."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**A Linha do tempo fica no celular que a registrou.** Se o seu histórico foi registrado em outro celular, salve o arquivo nele."
+            "value" : "**Cada celular tem a própria Linha do tempo.** O histórico registrado em outro celular não está neste iPhone: exporte-o naquele celular ou importe aqui o backup do Google (Sua linha do tempo → ícone de nuvem)."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Хронология хранится на том телефоне, который её записал.** Если история записывалась на другом телефоне, сохраните файл на нём."
+            "value" : "**У каждого телефона своя Хронология.** История, записанная на другом телефоне, не попадёт на этот iPhone сама: экспортируйте её на том телефоне или импортируйте сюда резервную копию Google (Хронология → значок облака)."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Tidslinjen sparas på telefonen som registrerade den.** Om din historik registrerades på en annan telefon sparar du filen på den telefonen."
+            "value" : "**Varje telefon har sin egen tidslinje.** Historik från en annan telefon finns inte på den här iPhonen: exportera den på den telefonen, eller importera Googles säkerhetskopia här (Din tidslinje → molnikonen)."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Zaman çizelgesi onu kaydeden telefonda saklanır.** Geçmişiniz başka bir telefonda kaydedildiyse dosyayı o telefonda kaydedin."
+            "value" : "**Her telefonun kendi Zaman çizelgesi vardır.** Başka bir telefonda kaydedilen geçmiş bu iPhone'da yoktur: onu o telefonda dışa aktarın veya Google yedeğini buraya içe aktarın (Zaman çizelgeniz → bulut simgesi)."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Хронологія зберігається на тому телефоні, який її записав.** Якщо історія записувалася на іншому телефоні, збережіть файл на ньому."
+            "value" : "**У кожного телефона своя Хронологія.** Історії, записаної на іншому телефоні, немає на цьому iPhone: експортуйте її на тому телефоні або імпортуйте сюди резервну копію Google (Ваша хронологія → значок хмари)."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**时间轴保存在记录它的那部手机上。** 如果你的记录是在另一部手机上产生的，请在那部手机上保存文件。"
+            "value" : "**每部手机都有自己的时间轴。** 在另一部手机上记录的历史不在这部 iPhone 上：请在那部手机上导出，或在这里导入 Google 备份（你的时间轴 → 云朵图标）。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**時間軸儲存在記錄它的那支手機上。** 如果你的記錄是在另一支手機上產生的，請在那支手機上儲存檔案。"
+            "value" : "**每支手機都有自己的時間軸。** 在另一支手機上記錄的歷史不在這支 iPhone 上：請在那支手機上匯出，或在這裡匯入 Google 備份（你的時間軸 → 雲朵圖示）。"
           }
         }
       }
@@ -17522,109 +17522,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**تحتاج خرائط Google إلى الوصول إلى الموقع «دائمًا»** (تطبيق الإعدادات ← Google Maps ← الموقع)، وإلا فلن يسجّل المخطط الزمني إلا القليل جدًا."
+            "value" : "**تحتاج خرائط Google إلى موقعك.** يطلب إعداد Google الوصول إلى الموقع «دائمًا» (تطبيق الإعدادات ← Google Maps ← الموقع)؛ وبأقل من ذلك قد لا يسجّل المخطط الزمني إلا جزءًا من يومك."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Maps braucht Standortzugriff „Immer“** (App „Einstellungen“ → Google Maps → Standort), sonst zeichnet die Zeitachse kaum etwas auf."
+            "value" : "**Google Maps braucht deinen Standort.** Die Einrichtung von Google fragt nach Standortzugriff „Immer“ (App „Einstellungen“ → Google Maps → Standort); mit weniger zeichnet die Zeitachse eventuell nur einen Teil deines Tages auf."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Maps needs location access set to “Always”** (Settings app → Google Maps → Location), otherwise Timeline records very little."
+            "value" : "**Google Maps needs your location.** Google’s setup asks for location access “Always” (Settings app → Google Maps → Location); with less, Timeline may record only part of your day."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Maps necesita acceso a la ubicación «Siempre»** (app Ajustes → Google Maps → Ubicación); si no, la cronología apenas registra nada."
+            "value" : "**Google Maps necesita tu ubicación.** La configuración de Google pide acceso a la ubicación «Siempre» (app Ajustes → Google Maps → Ubicación); con menos, la cronología puede registrar solo parte del día."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Maps doit avoir l'accès à la position « Toujours »** (app Réglages → Google Maps → Position), sinon Timeline n'enregistre presque rien."
+            "value" : "**Google Maps a besoin de votre position.** La configuration de Google demande l'accès « Toujours » (app Réglages → Google Maps → Position) ; avec moins, Timeline risque de n'enregistrer qu'une partie de votre journée."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Maps को लोकेशन एक्सेस “हमेशा” चाहिए** (सेटिंग्स ऐप → Google Maps → लोकेशन), वरना Timeline बहुत कम रिकॉर्ड करती है।"
+            "value" : "**Google Maps को आपकी लोकेशन चाहिए।** Google का सेटअप लोकेशन एक्सेस “हमेशा” माँगता है (सेटिंग्स ऐप → Google Maps → लोकेशन); इससे कम पर Timeline आपके दिन का सिर्फ़ कुछ हिस्सा रिकॉर्ड कर सकती है।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Maps deve avere l'accesso alla posizione «Sempre»** (app Impostazioni → Google Maps → Posizione), altrimenti la Timeline registra pochissimo."
+            "value" : "**Google Maps ha bisogno della tua posizione.** La configurazione di Google chiede l'accesso alla posizione «Sempre» (app Impostazioni → Google Maps → Posizione); con meno, la Timeline può registrare solo una parte della giornata."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google マップの位置情報へのアクセスを「常に」にしてください**（設定アプリ → Google Maps → 位置情報）。そうしないとタイムラインはほとんど記録されません。"
+            "value" : "**Google マップには位置情報が必要です。** Google の設定では位置情報へのアクセスを「常に」にするよう求められます（設定アプリ → Google Maps → 位置情報）。それ以外だと、タイムラインには 1 日の一部しか記録されないことがあります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google 지도의 위치 접근을 ‘항상’으로 설정하세요** (설정 앱 → Google Maps → 위치). 그렇지 않으면 타임라인에 거의 기록되지 않습니다."
+            "value" : "**Google 지도에 위치 접근이 필요합니다.** Google 설정에서는 위치 접근을 ‘항상’으로 요청합니다(설정 앱 → Google Maps → 위치). 그보다 낮으면 타임라인에 하루 중 일부만 기록될 수 있습니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Maps heeft locatietoegang ‘Altijd’ nodig** (app Instellingen → Google Maps → Locatie), anders legt de tijdlijn bijna niets vast."
+            "value" : "**Google Maps heeft je locatie nodig.** De instelling van Google vraagt om locatietoegang ‘Altijd’ (app Instellingen → Google Maps → Locatie); met minder legt de tijdlijn mogelijk maar een deel van je dag vast."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Mapy Google potrzebują dostępu do lokalizacji „Zawsze”** (aplikacja Ustawienia → Google Maps → Lokalizacja), inaczej oś czasu prawie nic nie zapisze."
+            "value" : "**Mapy Google potrzebują Twojej lokalizacji.** Konfiguracja Google prosi o dostęp do lokalizacji „Zawsze” (aplikacja Ustawienia → Google Maps → Lokalizacja); przy mniejszym dostępie oś czasu może zapisać tylko część dnia."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**O Google Maps precisa de acesso à localização “Sempre”** (app Ajustes → Google Maps → Localização); senão a Linha do tempo registra muito pouco."
+            "value" : "**O Google Maps precisa da sua localização.** A configuração do Google pede acesso à localização “Sempre” (app Ajustes → Google Maps → Localização); com menos, a Linha do tempo pode registrar só parte do seu dia."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Картам нужен доступ к геопозиции «Всегда»** (приложение «Настройки» → Google Maps → Геопозиция), иначе Хронология почти ничего не запишет."
+            "value" : "**Google Картам нужна ваша геопозиция.** При настройке Google просит доступ «Всегда» (приложение «Настройки» → Google Maps → Геопозиция); с меньшим доступом Хронология может записывать только часть дня."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Maps behöver platsåtkomst ”Alltid”** (appen Inställningar → Google Maps → Plats), annars registrerar tidslinjen nästan ingenting."
+            "value" : "**Google Maps behöver din plats.** Googles inställning ber om platsåtkomst ”Alltid” (appen Inställningar → Google Maps → Plats); med mindre kan tidslinjen registrera bara en del av din dag."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Haritalar'ın konum erişimi “Her Zaman” olmalıdır** (Ayarlar uygulaması → Google Maps → Konum), yoksa Zaman çizelgesi neredeyse hiçbir şey kaydetmez."
+            "value" : "**Google Haritalar'ın konumunuza ihtiyacı var.** Google'ın kurulumu konum erişimini “Her Zaman” olarak ister (Ayarlar uygulaması → Google Maps → Konum); daha azıyla Zaman çizelgesi gününüzün yalnızca bir kısmını kaydedebilir."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Картам потрібен доступ до геопозиції «Завжди»** (застосунок «Параметри» → Google Maps → Геопозиція), інакше Хронологія майже нічого не запише."
+            "value" : "**Google Картам потрібна ваша геопозиція.** Під час налаштування Google просить доступ «Завжди» (застосунок «Параметри» → Google Maps → Геопозиція); з меншим доступом Хронологія може записувати лише частину дня."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google 地图的位置权限需设为“始终”**（“设置”应用 → Google Maps → 位置），否则时间轴几乎记录不到内容。"
+            "value" : "**Google 地图需要你的位置。** Google 的设置会要求将位置权限设为“始终”（“设置”应用 → Google Maps → 位置）；权限更低时，时间轴可能只记录一天中的一部分。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google 地圖的位置存取權須設為「永遠」**（「設定」App → Google Maps → 位置），否則時間軸幾乎記錄不到內容。"
+            "value" : "**Google 地圖需要你的位置。** Google 的設定會要求將位置存取權設為「永遠」（「設定」App → Google Maps → 位置）；權限較低時，時間軸可能只記錄一天中的一部分。"
           }
         }
       }
@@ -17635,109 +17635,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**يجب تشغيل المخطط الزمني في خرائط Google.** تحفظ Google الأيام منذ تشغيله فقط — إذا كان متوقفًا فلا يوجد ما يُصدَّر."
+            "value" : "**يجب أن يكون المخطط الزمني قيد التشغيل.** تحفظ Google الأيام منذ تشغيله فقط، ولا يمكن لأي تطبيق إضافة الأيام التي سبقت ذلك."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Die Zeitachse muss in Google Maps aktiviert sein.** Google speichert nur die Tage seit der Aktivierung — war sie aus, gibt es nichts zu exportieren."
+            "value" : "**Die Zeitachse muss eingeschaltet sein.** Google speichert nur die Tage seit der Aktivierung, und keine App kann die Tage davor ergänzen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Timeline must be turned on in Google Maps.** Google saves only the days since it was turned on — if it was off, there is nothing to export."
+            "value" : "**Timeline has to be on.** Google saves only the days since it was turned on, and no app can add the days before that."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**La cronología debe estar activada en Google Maps.** Google solo guarda los días desde que se activó; si estaba desactivada, no hay nada que exportar."
+            "value" : "**La cronología tiene que estar activada.** Google solo guarda los días desde que se activó, y ninguna app puede añadir los días anteriores."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Timeline doit être activée dans Google Maps.** Google n'enregistre que les jours depuis son activation : si elle était désactivée, il n'y a rien à exporter."
+            "value" : "**Timeline doit être activée.** Google n'enregistre que les jours depuis son activation, et aucune app ne peut ajouter les jours d'avant."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Maps में Timeline चालू होनी चाहिए।** Google सिर्फ़ चालू करने के बाद के दिन सहेजता है — अगर यह बंद थी, तो एक्सपोर्ट करने के लिए कुछ नहीं है।"
+            "value" : "**Timeline चालू होनी चाहिए।** Google सिर्फ़ चालू करने के बाद के दिन सहेजता है, और कोई भी ऐप उससे पहले के दिन नहीं जोड़ सकता।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**La Timeline deve essere attiva in Google Maps.** Google salva solo i giorni da quando è stata attivata: se era disattivata, non c'è nulla da esportare."
+            "value" : "**La Timeline deve essere attiva.** Google salva solo i giorni da quando è stata attivata, e nessuna app può aggiungere quelli precedenti."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google マップでタイムラインがオンになっている必要があります。** Google はオンにした日以降しか保存しません。オフだった場合、エクスポートするものはありません。"
+            "value" : "**タイムラインがオンになっている必要があります。** Google はオンにした日以降しか保存せず、それより前の日をアプリで追加することはできません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google 지도에서 타임라인이 켜져 있어야 합니다.** Google은 켠 날 이후만 저장합니다. 꺼져 있었다면 내보낼 것이 없습니다."
+            "value" : "**타임라인이 켜져 있어야 합니다.** Google은 켠 날 이후만 저장하며, 그 이전 날짜는 어떤 앱도 추가할 수 없습니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**De tijdlijn moet aanstaan in Google Maps.** Google bewaart alleen de dagen sinds hij aan is gezet; stond hij uit, dan valt er niets te exporteren."
+            "value" : "**De tijdlijn moet aanstaan.** Google bewaart alleen de dagen sinds hij aan is gezet, en geen app kan de dagen daarvoor toevoegen."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Oś czasu musi być włączona w Mapach Google.** Google zapisuje tylko dni od jej włączenia — jeśli była wyłączona, nie ma czego eksportować."
+            "value" : "**Oś czasu musi być włączona.** Google zapisuje tylko dni od jej włączenia i żadna aplikacja nie doda dni sprzed tego momentu."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**A Linha do tempo precisa estar ativada no Google Maps.** O Google só salva os dias desde a ativação; se estava desativada, não há nada para exportar."
+            "value" : "**A Linha do tempo precisa estar ativada.** O Google só salva os dias desde a ativação, e nenhum app consegue adicionar os dias anteriores."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**В Google Картах должна быть включена Хронология.** Google сохраняет только дни после её включения — если она была выключена, экспортировать нечего."
+            "value" : "**Хронология должна быть включена.** Google сохраняет только дни после её включения, и никакое приложение не добавит дни до этого."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Tidslinjen måste vara på i Google Maps.** Google sparar bara dagarna sedan den slogs på – var den av finns det inget att exportera."
+            "value" : "**Tidslinjen måste vara på.** Google sparar bara dagarna sedan den slogs på, och ingen app kan lägga till dagarna innan dess."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Google Haritalar'da Zaman çizelgesi açık olmalıdır.** Google yalnızca açıldığı günden sonraki günleri kaydeder; kapalıysa dışa aktarılacak bir şey yoktur."
+            "value" : "**Zaman çizelgesi açık olmalıdır.** Google yalnızca açıldığı günden sonraki günleri kaydeder ve hiçbir uygulama önceki günleri ekleyemez."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**У Google Картах має бути ввімкнена Хронологія.** Google зберігає лише дні після її ввімкнення — якщо вона була вимкнена, експортувати нічого."
+            "value" : "**Хронологія має бути ввімкнена.** Google зберігає лише дні після її ввімкнення, і жоден застосунок не додасть дні до цього."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**必须在 Google 地图中开启时间轴。** Google 只保存开启之后的日子——如果之前是关闭的，就没有可导出的内容。"
+            "value" : "**时间轴必须处于开启状态。** Google 只保存开启之后的日子，任何应用都无法补上之前的日子。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**必須在 Google 地圖中開啟時間軸。** Google 只儲存開啟之後的日子——如果之前是關閉的，就沒有可匯出的內容。"
+            "value" : "**時間軸必須處於開啟狀態。** Google 只儲存開啟之後的日子，任何應用程式都無法補上之前的日子。"
           }
         }
       }
@@ -17748,109 +17748,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ مهم — تحقّق من هذا أولًا"
+            "value" : "قبل أن تبدأ"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Wichtig — zuerst prüfen"
+            "value" : "Bevor du anfängst"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Important — check this first"
+            "value" : "Before you start"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Importante: compruébalo primero"
+            "value" : "Antes de empezar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Important — à vérifier d'abord"
+            "value" : "Avant de commencer"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ ज़रूरी — पहले यह जाँचें"
+            "value" : "शुरू करने से पहले"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Importante: controlla prima questo"
+            "value" : "Prima di iniziare"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ 重要：最初に確認してください"
+            "value" : "始める前に"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ 중요: 먼저 확인하세요"
+            "value" : "시작하기 전에"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Belangrijk: controleer dit eerst"
+            "value" : "Voordat je begint"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Ważne — sprawdź najpierw"
+            "value" : "Zanim zaczniesz"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Importante: confira primeiro"
+            "value" : "Antes de começar"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Важно — проверьте сначала"
+            "value" : "Перед началом"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Viktigt – kontrollera först"
+            "value" : "Innan du börjar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Önemli: önce bunu kontrol edin"
+            "value" : "Başlamadan önce"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ Важливо — перевірте спершу"
+            "value" : "Перед початком"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ 重要：请先检查"
+            "value" : "开始之前"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "⚠️ 重要：請先確認"
+            "value" : "開始之前"
           }
         }
       }
@@ -18077,119 +18077,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜尋地點"
-          }
-        }
-      }
-    },
-    "ios_select_all" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تحديد الكل"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle auswählen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select all"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleccionar todo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tout sélectionner"
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "सभी चुनें"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleziona tutto"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべて選択"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모두 선택"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alles selecteren"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zaznacz wszystko"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecionar tudo"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Выбрать все"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Markera alla"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tümünü seç"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Вибрати всі"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全选"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全選"
           }
         }
       }
@@ -18981,119 +18868,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "清除標記"
-          }
-        }
-      }
-    },
-    "ios_trips_none_selected" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "لم تُحدَّد أي رحلة — سيتم تصدير الكل: %1$@"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Reisen ausgewählt — alle %1$@ werden exportiert."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No trips selected — all %1$@ will be exported."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ningún viaje seleccionado: se exportarán los %1$@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun voyage sélectionné — les %1$@ seront exportés."
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "कोई यात्रा नहीं चुनी गई — सभी एक्सपोर्ट होंगी: %1$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessun viaggio selezionato: verranno esportati tutti i %1$@."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "旅行が選択されていません — すべて書き出します:%1$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "선택한 여행 없음 — 모두 내보냅니다: %1$@"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geen reizen geselecteerd — alle %1$@ worden geëxporteerd."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nie zaznaczono podróży — zostaną wyeksportowane wszystkie: %1$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma viagem selecionada: todas as %1$@ serão exportadas."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Поездки не отмечены — экспортируются все: %1$@"
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inga resor valda — alla %1$@ exporteras."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seyahat seçilmedi — tümü dışa aktarılacak: %1$@"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Поїздки не позначено — експортуються всі: %1$@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未选择旅行 — 将全部导出:%1$@"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未選擇旅行 — 將全部匯出:%1$@"
           }
         }
       }
@@ -20450,119 +20224,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Google 地圖可以記住你去過的地方——這就是你的**時間軸**。本應用程式會開啟你的時間軸檔案，在地圖上顯示你的行程，並儲存為 GPX、KML、GeoJSON 或 CSV 檔案，供其他應用程式使用（Strava、Garmin、Google 地球、Excel 等）。"
-          }
-        }
-      }
-    },
-    "ios_welcome_not_tracker" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "هذا التطبيق لا يتتبعك ولا يسجّل الدخول إلى Google. إنه يقرأ فقط الملف الذي تحفظه من خرائط Google، ويبقى كل شيء على هذا الجهاز."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese App verfolgt dich nicht und meldet sich nicht bei Google an. Sie liest nur die Datei, die du aus Google Maps sicherst, und alles bleibt auf diesem Gerät."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This app does not track you and does not sign in to Google. It only reads the file you save from Google Maps, and everything stays on this device."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta app no te rastrea ni inicia sesión en Google. Solo lee el archivo que guardas desde Google Maps, y todo se queda en este dispositivo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette app ne vous suit pas et ne se connecte pas à Google. Elle lit seulement le fichier que vous enregistrez depuis Google Maps, et tout reste sur cet appareil."
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "यह ऐप आपको ट्रैक नहीं करता और Google में साइन इन नहीं करता। यह सिर्फ़ वह फ़ाइल पढ़ता है जो आप Google Maps से सहेजते हैं, और सब कुछ इसी डिवाइस पर रहता है।"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questa app non ti traccia e non accede a Google. Legge solo il file che salvi da Google Maps, e tutto resta su questo dispositivo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このアプリはあなたを追跡せず、Google にもログインしません。Google マップから保存したファイルを読むだけで、すべてこのデバイス内に留まります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 앱은 사용자를 추적하지 않으며 Google에 로그인하지 않습니다. Google 지도에서 저장한 파일만 읽고, 모든 것이 이 기기에 남습니다."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deze app volgt je niet en logt niet in bij Google. Hij leest alleen het bestand dat je uit Google Maps bewaart, en alles blijft op dit apparaat."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta aplikacja Cię nie śledzi i nie loguje się do Google. Czyta tylko plik zapisany z Map Google, a wszystko zostaje na tym urządzeniu."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este app não rastreia você e não entra na sua conta do Google. Ele só lê o arquivo que você salva pelo Google Maps, e tudo fica neste aparelho."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Приложение не следит за вами и не входит в аккаунт Google. Оно только читает файл, который вы сохранили из Google Карт, и всё остаётся на этом устройстве."
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appen spårar dig inte och loggar inte in på Google. Den läser bara filen du sparar från Google Maps, och allt stannar på den här enheten."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu uygulama sizi izlemez ve Google'da oturum açmaz. Yalnızca Google Haritalar'dan kaydettiğiniz dosyayı okur ve her şey bu cihazda kalır."
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Застосунок не стежить за вами і не входить в акаунт Google. Він лише читає файл, який ви зберегли з Google Карт, і все залишається на цьому пристрої."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本应用不会追踪你，也不会登录 Google。它只读取你从 Google 地图保存的文件，一切都留在这台设备上。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "本應用程式不會追蹤你，也不會登入 Google。它只讀取你從 Google 地圖儲存的檔案，一切都留在這部裝置上。"
           }
         }
       }
@@ -25700,6 +25361,119 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "深色地圖"
+          }
+        }
+      }
+    },
+    "map_image_distance_note" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المسافة المسجّلة هي مجموع الخط المرسوم على هذه الصورة. لا تُحتسب الرحلات الجوية والفجوات التي لا توجد فيها نقاط GPS، لذا تكون غالبًا أقصر من المسافة المقطوعة التي يذكرها Google."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die aufgezeichnete Strecke ist die Länge der Linie auf diesem Bild. Flüge und Lücken ohne GPS-Punkte zählen nicht mit, daher ist sie oft kürzer als die von Google angegebene zurückgelegte Strecke."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tracked distance adds up the line drawn on this image. Flights and gaps without GPS points are not counted, so it is often shorter than the travelled distance Google reports."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La distancia registrada suma la línea dibujada en esta imagen. No cuenta los vuelos ni los huecos sin puntos GPS, así que suele ser menor que la distancia recorrida que indica Google."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La distance enregistrée additionne la ligne tracée sur cette image. Les vols et les trous sans points GPS ne sont pas comptés : elle est donc souvent plus courte que la distance parcourue indiquée par Google."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "दर्ज की गई दूरी इस इमेज पर बनी लाइन को जोड़कर निकलती है। उड़ानें और बिना GPS पॉइंट वाले अंतराल नहीं गिने जाते, इसलिए यह अक्सर Google की बताई तय दूरी से कम होती है।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La distanza registrata somma la linea disegnata su questa immagine. Voli e intervalli senza punti GPS non vengono contati, quindi spesso è inferiore alla distanza percorsa indicata da Google."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記録された距離は、この画像に描かれた線の長さの合計です。飛行機での移動や GPS ポイントのない区間は含まれないため、Google が示す移動距離より短くなることがよくあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기록된 거리는 이 이미지에 그려진 선의 길이를 합한 값입니다. 비행 구간과 GPS 지점이 없는 구간은 포함되지 않으므로 Google이 보여 주는 이동 거리보다 짧은 경우가 많습니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De vastgelegde afstand telt de lijn op deze afbeelding op. Vluchten en gaten zonder GPS-punten tellen niet mee, dus hij is vaak korter dan de afgelegde afstand die Google noemt."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zarejestrowany dystans to suma linii narysowanej na tym obrazie. Loty i przerwy bez punktów GPS nie są liczone, więc często jest krótszy niż przebyty dystans podawany przez Google."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A distância registrada soma a linha desenhada nesta imagem. Voos e lacunas sem pontos de GPS não entram na conta, então ela costuma ser menor que a distância percorrida informada pelo Google."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Записанное расстояние — это длина линии на этом изображении. Перелёты и промежутки без GPS-точек не учитываются, поэтому оно часто меньше пройденного расстояния, которое показывает Google."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registrerad sträcka är längden på linjen i den här bilden. Flygresor och luckor utan GPS-punkter räknas inte, så den är ofta kortare än den tillryggalagda sträckan som Google anger."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedilen mesafe, bu görselde çizilen çizginin toplamıdır. Uçuşlar ve GPS noktası olmayan boşluklar sayılmaz; bu yüzden genellikle Google'ın bildirdiği kat edilen mesafeden kısadır."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Записана відстань — це довжина лінії на цьому зображенні. Перельоти й проміжки без GPS-точок не враховуються, тому вона часто менша за пройдену відстань, яку показує Google."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "记录距离是这张图片上所画线条的总长度。航班和没有 GPS 点的空白段不计入，因此通常比 Google 显示的行程距离短。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記錄距離是這張圖片上所畫線條的總長度。航班和沒有 GPS 點的空白段不計入，因此通常比 Google 顯示的行程距離短。"
           }
         }
       }
@@ -33664,6 +33438,119 @@
         }
       }
     },
+    "privacy_note" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يُقرأ ملفك على هذا الجهاز ولا يُرفع إلى أي مكان. لا يسجّل التطبيق موقعك ولا يسجّل الدخول إلى Google؛ لا يُحمَّل من الإنترنت سوى خلفية الخريطة."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Datei wird auf diesem Gerät gelesen und nie hochgeladen. Die App zeichnet deinen Standort nicht auf und meldet sich nicht bei Google an; nur der Kartenhintergrund wird aus dem Internet geladen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Timeline file is read on this device and never uploaded. The app does not record your location or sign in to Google; only the map background is loaded from the internet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu archivo se lee en este dispositivo y nunca se sube. La app no registra tu ubicación ni inicia sesión en Google; solo el fondo del mapa se carga desde internet."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre fichier est lu sur cet appareil et n'est jamais envoyé. L'app n'enregistre pas votre position et ne se connecte pas à Google ; seul le fond de carte est chargé depuis Internet."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आपकी फ़ाइल इसी डिवाइस पर पढ़ी जाती है और कभी अपलोड नहीं होती। ऐप आपकी लोकेशन रिकॉर्ड नहीं करता और Google में साइन इन नहीं करता; इंटरनेट से सिर्फ़ मैप का बैकग्राउंड लोड होता है।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tuo file viene letto su questo dispositivo e non viene mai caricato. L'app non registra la tua posizione e non accede a Google; da internet si carica solo lo sfondo della mappa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルはこのデバイス上で読み込まれ、アップロードされることはありません。このアプリは位置情報を記録せず、Google にもログインしません。インターネットから読み込むのは地図の背景だけです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일은 이 기기에서 읽히며 업로드되지 않습니다. 앱은 위치를 기록하지 않고 Google에 로그인하지도 않습니다. 인터넷에서는 지도 배경만 불러옵니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je bestand wordt op dit apparaat gelezen en nooit geüpload. De app legt je locatie niet vast en logt niet in bij Google; alleen de kaartachtergrond wordt van internet geladen."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plik jest odczytywany na tym urządzeniu i nigdzie nie jest wysyłany. Aplikacja nie zapisuje Twojej lokalizacji i nie loguje się do Google; z internetu pobierany jest tylko podkład mapy."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu arquivo é lido neste aparelho e nunca é enviado. O app não registra sua localização nem entra na sua conta do Google; só o fundo do mapa é carregado da internet."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файл читается на этом устройстве и никуда не загружается. Приложение не записывает ваше местоположение и не входит в аккаунт Google; из интернета загружается только подложка карты."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filen läses på den här enheten och laddas aldrig upp. Appen registrerar inte din plats och loggar inte in på Google; bara kartbakgrunden hämtas från internet."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosyanız bu cihazda okunur ve hiçbir yere yüklenmez. Uygulama konumunuzu kaydetmez ve Google'da oturum açmaz; internetten yalnızca harita arka planı yüklenir."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Файл читається на цьому пристрої й нікуди не завантажується. Застосунок не записує ваше місцезнаходження і не входить в акаунт Google; з інтернету завантажується лише підкладка мапи."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件只在这台设备上读取，绝不会上传。本应用不会记录你的位置，也不会登录 Google；只有地图底图需要从网络加载。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檔案只在這部裝置上讀取，絕不會上傳。本應用程式不會記錄你的位置，也不會登入 Google；只有地圖底圖需要從網路載入。"
+          }
+        }
+      }
+    },
     "result_range" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -39201,115 +39088,115 @@
         }
       }
     },
-    "trips_checked_none" : {
+    "trips_checked_zero" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "سيتم تصدير كل الرحلات"
+            "value" : "لا توجد رحلات محددة للتصدير"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Reisen werden exportiert"
+            "value" : "Keine Reisen zum Export markiert"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "All trips will be exported"
+            "value" : "No trips marked for export"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se exportarán todos los viajes"
+            "value" : "No hay viajes marcados para exportar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tous les voyages seront exportés"
+            "value" : "Aucun voyage coché pour l'export"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "सभी यात्राएँ एक्सपोर्ट होंगी"
+            "value" : "एक्सपोर्ट के लिए कोई यात्रा चुनी नहीं गई"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verranno esportati tutti i viaggi"
+            "value" : "Nessun viaggio selezionato per l'esportazione"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "すべての旅行を書き出します"
+            "value" : "書き出す旅行が選択されていません"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "모든 여행을 내보냅니다"
+            "value" : "내보낼 여행이 선택되지 않았습니다"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle reizen worden geëxporteerd"
+            "value" : "Geen reizen aangevinkt voor export"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zostaną wyeksportowane wszystkie podróże"
+            "value" : "Nie zaznaczono podróży do eksportu"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas as viagens serão exportadas"
+            "value" : "Nenhuma viagem marcada para exportar"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Экспортируются все поездки"
+            "value" : "Не отмечено ни одной поездки для экспорта"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alla resor exporteras"
+            "value" : "Inga resor markerade för export"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tüm seyahatler dışa aktarılacak"
+            "value" : "Dışa aktarma için işaretli seyahat yok"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Експортуються всі поїздки"
+            "value" : "Не позначено жодної поїздки для експорту"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将导出所有旅行"
+            "value" : "未勾选要导出的旅行"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將匯出所有旅行"
+            "value" : "未勾選要匯出的旅行"
           }
         }
       }
@@ -39709,109 +39596,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تُكتشف الرحلة عندما تبتعد عن المنزل أكثر من 50 كم. انقر على رحلة لمعاينتها على الخريطة. حدّد الرحلات لتصديرها وحدها."
+            "value" : "تُكتشف الرحلة عندما تبتعد عن المنزل أكثر من 50 كم. انقر على رحلة لمعاينتها على الخريطة. ألغِ تحديد الرحلات لاستبعادها من التصدير."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Reise wird erkannt, wenn du dich mehr als 50 km von zu Hause entfernst. Tippe auf eine Reise, um sie auf der Karte anzusehen. Hake Reisen an, um nur diese zu exportieren."
+            "value" : "Eine Reise wird erkannt, wenn du dich mehr als 50 km von zu Hause entfernst. Tippe auf eine Reise, um sie auf der Karte anzusehen. Entferne den Haken bei Reisen, die nicht exportiert werden sollen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map. Tick trips to export only those."
+            "value" : "Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map. Untick trips to leave them out of the export."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se detecta un viaje cuando te alejas más de 50 km de casa. Toca un viaje para verlo en el mapa. Marca viajes para exportar solo esos."
+            "value" : "Se detecta un viaje cuando te alejas más de 50 km de casa. Toca un viaje para verlo en el mapa. Desmarca los viajes que no quieras exportar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un voyage est détecté quand vous vous éloignez de plus de 50 km de chez vous. Touchez un voyage pour l'afficher sur la carte. Cochez des voyages pour n'exporter que ceux-là."
+            "value" : "Un voyage est détecté quand vous vous éloignez de plus de 50 km de chez vous. Touchez un voyage pour l'afficher sur la carte. Décochez les voyages à exclure de l'export."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "जब आप घर से 50 किमी से ज़्यादा दूर जाते हैं, तब यात्रा पहचानी जाती है। मैप पर देखने के लिए किसी यात्रा पर टैप करें। सिर्फ़ कुछ यात्राएँ एक्सपोर्ट करने के लिए उन पर निशान लगाएँ।"
+            "value" : "जब आप घर से 50 किमी से ज़्यादा दूर जाते हैं, तब यात्रा पहचानी जाती है। मैप पर देखने के लिए किसी यात्रा पर टैप करें। जिन यात्राओं को एक्सपोर्ट नहीं करना है, उनका निशान हटा दें।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un viaggio viene rilevato quando ti allontani più di 50 km da casa. Tocca un viaggio per vederlo sulla mappa. Spunta i viaggi per esportare solo quelli."
+            "value" : "Un viaggio viene rilevato quando ti allontani più di 50 km da casa. Tocca un viaggio per vederlo sulla mappa. Togli la spunta ai viaggi da escludere dall'esportazione."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自宅から 50 km 以上離れると旅行として検出されます。旅行をタップすると地図でプレビューできます。チェックを入れた旅行だけを書き出すこともできます。"
+            "value" : "自宅から 50 km 以上離れると旅行として検出されます。旅行をタップすると地図でプレビューできます。書き出さない旅行はチェックを外してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "집에서 50km 넘게 이동하면 여행으로 감지됩니다. 여행을 탭하면 지도에서 미리 볼 수 있습니다. 체크한 여행만 내보낼 수도 있습니다."
+            "value" : "집에서 50km 넘게 이동하면 여행으로 감지됩니다. 여행을 탭하면 지도에서 미리 볼 수 있습니다. 내보내지 않을 여행은 체크를 해제하세요."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Een reis wordt herkend als je meer dan 50 km van huis gaat. Tik op een reis om hem op de kaart te bekijken. Vink reizen aan om alleen die te exporteren."
+            "value" : "Een reis wordt herkend als je meer dan 50 km van huis gaat. Tik op een reis om hem op de kaart te bekijken. Vink reizen uit om ze buiten de export te laten."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podróż jest wykrywana, gdy oddalasz się od domu o ponad 50 km. Dotknij podróży, aby zobaczyć ją na mapie. Zaznacz podróże, aby wyeksportować tylko je."
+            "value" : "Podróż jest wykrywana, gdy oddalasz się od domu o ponad 50 km. Dotknij podróży, aby zobaczyć ją na mapie. Odznacz podróże, których nie chcesz eksportować."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma viagem é detectada quando você se afasta mais de 50 km de casa. Toque em uma viagem para vê-la no mapa. Marque viagens para exportar só elas."
+            "value" : "Uma viagem é detectada quando você se afasta mais de 50 km de casa. Toque em uma viagem para vê-la no mapa. Desmarque as viagens que não quer exportar."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Поездка начинается, когда вы уезжаете от дома дальше чем на 50 км. Нажмите на поездку, чтобы посмотреть её на карте. Отметьте поездки галочкой, чтобы экспортировать только их."
+            "value" : "Поездка начинается, когда вы уезжаете от дома дальше чем на 50 км. Нажмите на поездку, чтобы посмотреть её на карте. Снимите галочку с поездок, которые не нужно экспортировать."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En resa upptäcks när du är mer än 50 km hemifrån. Tryck på en resa för att se den på kartan. Bocka för resor för att bara exportera dem."
+            "value" : "En resa upptäcks när du är mer än 50 km hemifrån. Tryck på en resa för att se den på kartan. Bocka ur resor för att utelämna dem från exporten."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evden 50 km'den fazla uzaklaştığınızda bir seyahat algılanır. Haritada görmek için bir seyahate dokunun. Yalnızca bunları dışa aktarmak için seyahatleri işaretleyin."
+            "value" : "Evden 50 km'den fazla uzaklaştığınızda bir seyahat algılanır. Haritada görmek için bir seyahate dokunun. Dışa aktarmak istemediğiniz seyahatlerin işaretini kaldırın."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Поїздка починається, коли ви від'їжджаєте від дому далі ніж на 50 км. Торкніться поїздки, щоб переглянути її на мапі. Позначте поїздки, щоб експортувати лише їх."
+            "value" : "Поїздка починається, коли ви від'їжджаєте від дому далі ніж на 50 км. Торкніться поїздки, щоб переглянути її на мапі. Зніміть позначку з поїздок, які не треба експортувати."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "当你离家超过 50 公里时即识别为一次旅行。点按旅行即可在地图上预览。勾选旅行即可只导出这些旅行。"
+            "value" : "当你离家超过 50 公里时即识别为一次旅行。点按旅行即可在地图上预览。取消勾选的旅行不会被导出。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "當你離家超過 50 公里時即識別為一次旅行。輕觸旅行即可在地圖上預覽。勾選旅行即可只匯出這些旅行。"
+            "value" : "當你離家超過 50 公里時即識別為一次旅行。輕觸旅行即可在地圖上預覽。取消勾選的旅行不會被匯出。"
           }
         }
       }
@@ -40151,6 +40038,119 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所選日期範圍內沒有旅行。"
+          }
+        }
+      }
+    },
+    "trips_select_all" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تحديد الكل"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle auswählen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select all"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleccionar todo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout sélectionner"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सभी चुनें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleziona tutto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべて選択"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모두 선택"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles selecteren"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaznacz wszystko"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selecionar tudo"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выбрать все"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Markera alla"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tümünü seç"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вибрати всі"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全选"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全選"
           }
         }
       }

@@ -1,12 +1,12 @@
 Google Maps can remember the places you go — that is your Timeline. This app opens your Timeline file, shows your trips on a map and saves them as GPX, KML, GeoJSON or CSV files for other apps (Strava, Garmin, Google Earth, Excel…).
 
-This app does not track you and does not sign in to Google. It only reads the file you save from Google Maps, and everything stays on this device.
+Your Timeline file is read on this device and never uploaded. The app does not record your location or sign in to Google; only the map background is loaded from the internet.
 
-⚠️ IMPORTANT — CHECK THIS FIRST
-• YOUR LOCATION HISTORY COMES FROM YOUR GOOGLE ACCOUNT. You need the Google Maps app, signed in with your Google account.
-• TIMELINE MUST BE TURNED ON IN GOOGLE MAPS. Google saves only the days since it was turned on — if it was off, there is nothing to export.
-• Google Maps needs location access set to “Always” (Settings app → Google Maps → Location), otherwise Timeline records very little.
-• Timeline is kept on the phone that recorded it. If your history was recorded on another phone, save the file on that phone.
+BEFORE YOU START
+• TIMELINE IS RECORDED BY GOOGLE MAPS, in the app signed in to your Google account. This app reads a file you save from it; it records nothing itself.
+• TIMELINE HAS TO BE ON. Google saves only the days since it was turned on, and no app can add the days before that.
+• Google Maps needs your location. Google’s setup asks for location access “Always” (Settings app → Google Maps → Location); with less, Timeline may record only part of your day.
+• Each phone keeps its own Timeline. History recorded on another phone is not on this iPhone: export it on that phone, or import Google’s backup here (Your Timeline → cloud icon).
 
 GET YOUR FILE IN 3 STEPS
 1. In Google Maps tap your profile picture → Settings → Location & Privacy → Export Timeline data.
@@ -25,6 +25,6 @@ WHAT YOU CAN DO
 • Also opens older Google files: Android Timeline.json, Semantic Location History, Records.json
 
 PRIVATE
-Everything happens on your iPhone or iPad. Your location history is never uploaded: no account, no servers, no analytics, no ads. The internet is used only to load the map. Free and open source.
+Everything happens on your iPhone or iPad. Your location history is never uploaded: no account, no servers, no analytics, no ads. The internet is used only to load the map. Open source.
 
 Timeline Exporter is an independent app, not affiliated with Google.

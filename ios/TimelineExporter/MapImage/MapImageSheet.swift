@@ -194,7 +194,7 @@ struct MapImageSheet: View {
                                 Text(note.text).foregroundStyle(note.error ? .red : .secondary)
                             }
                             if showStats {
-                                Text(L.s("ios_map_image_distance_note"))
+                                Text(L.s("map_image_distance_note"))
                             }
                         }
                     }

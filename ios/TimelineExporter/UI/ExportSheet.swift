@@ -8,9 +8,7 @@ extension TimelineStore {
         case .track:
             return L.f("export_writes_value", L.s("content_track"), L.f("points_count", Fmt.grouped(filteredCount)))
         case .trips:
-            // Nothing ticked writes every visible trip.
-            let marked = exportTripKeys.count
-            let count = marked == 0 ? visibleTrips.count : marked
+            let count = markedTripCount
             return L.f("export_writes_value", L.s(count == 1 ? "content_trip" : "content_trips"),
                        L.plural("trips_count", count))
         case .places:
@@ -22,7 +20,7 @@ extension TimelineStore {
     var exportTitle: String {
         switch contentKind {
         case .track: L.s("step_export_track")
-        case .trips: exportTripKeys.count == 1 ? L.s("step_export_trip") : L.s("step_export_trips")
+        case .trips: markedTripCount == 1 ? L.s("step_export_trip") : L.s("step_export_trips")
         case .places: L.s("step_export_places")
         }
     }
@@ -74,7 +72,7 @@ struct ExportSheet: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
-                    .disabled(store.exportState == .working)
+                    .disabled(store.exportState == .working || noTripsMarked)
                     .accessibilityIdentifier("exportRun")
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 4)
@@ -139,6 +137,8 @@ struct ExportSheet: View {
 
     @ViewBuilder private var status: some View {
         switch store.exportState {
+        case .idle where noTripsMarked:
+            Text(L.s("trips_checked_zero")).foregroundStyle(.orange)
         case .idle:
             EmptyView()
         case .working:
@@ -157,6 +157,11 @@ struct ExportSheet: View {
         case .failed(let formatName, let detail):
             Text(L.f("export_error_generic", formatName, detail)).foregroundStyle(.red)
         }
+    }
+
+    /// Trips listed, none ticked: there is nothing to write until one is.
+    private var noTripsMarked: Bool {
+        store.contentKind == .trips && !store.visibleTrips.isEmpty && store.markedTripCount == 0
     }
 
     /// export_success, export_success_trips, export_success_places and the like.

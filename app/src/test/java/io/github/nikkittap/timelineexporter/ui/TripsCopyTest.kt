@@ -21,6 +21,17 @@ class TripsCopyTest {
     }
 
     @Test
+    fun `every trip starts ticked and an untick leaves just that one out`() {
+        val visible = listOf(3L, 1L, 2L)
+        assertEquals(setOf(1L, 2L, 3L), markedTripKeys(visible, emptySet()))
+        assertEquals(setOf(1L, 3L), markedTripKeys(visible, setOf(2L)))
+        // Unticked trips outside the date range do not count against those in it.
+        assertEquals(setOf(1L, 2L, 3L), markedTripKeys(visible, setOf(9L)))
+        // None ticked is none, not "all": step 4 then has nothing to write.
+        assertTrue(markedTripKeys(visible, setOf(1L, 2L, 3L)).isEmpty())
+    }
+
+    @Test
     fun `track and places headings do not depend on the count`() {
         assertEquals(R.string.step_export_track, exportStepTitle(ContentKind.TRACK, 1))
         assertEquals(R.string.step_export_places, exportStepTitle(ContentKind.PLACES, 1))
@@ -55,10 +66,11 @@ class TripsCopyTest {
         val en = strings(File(res, "values"))
         assertEquals(
             "Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map. " +
-                "Tick trips to export only those.",
+                "Untick trips to leave them out of the export.",
             en["trips_hint"],
         )
         assertEquals("Marked for export: %1\$s of %2\$s", en["trips_checked"])
+        assertEquals("No trips marked for export", en["trips_checked_zero"])
         assertEquals("Show marked trips on map", en["trip_show_checked_on_map"])
         assertEquals("Export trip", en["step_export_trip"])
         assertEquals("Trip", en["content_trip"])
@@ -67,7 +79,7 @@ class TripsCopyTest {
     @Test
     fun `every locale has the trips strings and a trip-count plural with other`() {
         val keys = listOf("content_trip", "content_trips", "step_export_trip", "step_export_trips", "trips_hint",
-            "trip_export_checkbox", "trips_checked", "trips_checked_none", "trip_show_all_on_map", "trip_show_checked_on_map")
+            "trip_export_checkbox", "trips_checked", "trips_checked_zero", "trips_select_all", "trip_show_all_on_map", "trip_show_checked_on_map")
         val locales = res.listFiles { f -> f.isDirectory && f.name.startsWith("values") && File(f, "strings.xml").exists() }!!
         assertEquals(18, locales.size)
         for (dir in locales) {

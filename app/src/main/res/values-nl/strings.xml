@@ -21,6 +21,7 @@
 
     <string name="pick_file_button">Timeline.json kiezen</string>
     <string name="idle_hint">Kies een Google Maps Timeline-JSON-bestand om te verwerken.</string>
+    <string name="privacy_note">Je bestand wordt op dit apparaat gelezen en nooit geüpload. De app legt je locatie niet vast en logt niet in bij Google; alleen de kaartachtergrond wordt van internet geladen.</string>
     <string name="idle_help_button">Hoe krijg ik Timeline-gegevens?</string>
 
     <string name="loading_opening">Bestand openen…</string>
@@ -87,7 +88,7 @@
     <string name="track_name_full_range">(volledige export)</string>
 
     <string name="help_title">Je Timeline-gegevens ophalen</string>
-    <string name="help_intro">Sinds eind 2024 bewaart Google de Timeline alleen op je apparaat — er is geen Google Takeout-optie en geen app van derden die het rechtstreeks kan lezen. Je exporteert het één keer via de systeeminstellingen en opent het bestand daarna hier.</string>
+    <string name="help_intro">Sinds eind 2024 bewaart Google de Timeline op je apparaat (met een optionele versleutelde back-up) in plaats van online in je Google-account. Er is geen Google Takeout-optie en geen andere app kan hem rechtstreeks lezen. Je exporteert hem één keer via de systeeminstellingen en opent het bestand daarna hier.</string>
 
     <string name="help_method_settings_title">Exporteren via Android-instellingen (aanbevolen)</string>
     <string name="help_method_settings_step1">Open de Android-app Instellingen</string>
@@ -195,10 +196,11 @@
     <string name="trips_none">Geen reizen: in dit bestand kom je nooit verder dan 50 km van huis.</string>
     <string name="trips_none_filtered">Geen reizen in het gekozen datumbereik.</string>
     <string name="trips_no_home">Dit bestand vermeldt geen thuis, dus er kunnen geen reizen worden gevonden.</string>
-    <string name="trips_hint">Een reis wordt herkend als je meer dan 50 km van huis gaat. Tik op een reis om hem op de kaart te bekijken. Vink reizen aan om alleen die te exporteren.</string>
+    <string name="trips_hint">Een reis wordt herkend als je meer dan 50 km van huis gaat. Tik op een reis om hem op de kaart te bekijken. Vink reizen uit om ze buiten de export te laten.</string>
     <string name="trip_export_checkbox">Deze reis exporteren</string>
-    <string name="trips_checked_none">Alle reizen worden geëxporteerd</string>
     <string name="trips_checked">Aangevinkt voor export: %1$s van %2$s</string>
+    <string name="trips_select_all">Alles selecteren</string>
+    <string name="trips_checked_zero">Geen reizen aangevinkt voor export</string>
     <string name="trip_show_all_on_map">Alle reizen op de kaart tonen</string>
     <string name="trip_show_checked_on_map">Aangevinkte reizen op de kaart tonen</string>
     <string name="trip_far_from_home">%1$s van huis</string>
@@ -290,6 +292,7 @@
     <string name="map_image_rendering_high">Hoge resolutie renderen…</string>
     <string name="map_image_high_error">Kan de afbeelding in hoge resolutie niet renderen. Er is niets opgeslagen; probeer Standaard.</string>
     <string name="map_image_stat_distance">Vastgelegde afstand</string>
+    <string name="map_image_distance_note">De vastgelegde afstand telt de lijn op deze afbeelding op. Vluchten en gaten zonder GPS-punten tellen niet mee, dus hij is vaak korter dan de afgelegde afstand die Google noemt.</string>
     <string name="map_image_stat_days">Dagen</string>
     <string name="map_image_stat_places">Plaatsen</string>
 

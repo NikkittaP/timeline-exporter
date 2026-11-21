@@ -225,12 +225,13 @@ checks the App Store length limits and runs `fastlane ios upload_metadata`.
 Same secrets and the same editable version as the screenshots; screenshots,
 binary and review submission are untouched.
 
-The description is plain text (App Store shows no bold), so the
-requirements — data from the Google account, Timeline turned on in Google
-Maps, location "Always" — are in CAPITALS under a warning sign. Its
-requirement and step sentences are the in-app strings from
-`ios/strings/values*/strings.xml` (`ios_requirement_*`, `ios_quick_step*`,
-`help_import_step1`): change one, change the other.
+The description is plain text (App Store shows no bold), so the first two
+requirements — Timeline recorded by Google Maps, Timeline turned on — start
+in CAPITALS under "Before you start". Its privacy paragraph, requirement and
+step sentences are the in-app strings (`privacy_note`, `ios_requirements_title`,
+`ios_requirement_*` in `ios/strings/values*/strings.xml`, `ios_quick_step*`,
+`help_import_step1`): change one, change the other. The app is paid on the
+App Store, so the listing says "Open source", never "Free".
 
 ## Security
 

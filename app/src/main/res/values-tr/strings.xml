@@ -21,6 +21,7 @@
 
     <string name="pick_file_button">Timeline.json seç</string>
     <string name="idle_hint">Ayrıştırmak için bir Google Maps Timeline JSON dosyası seçin.</string>
+    <string name="privacy_note">Dosyanız bu cihazda okunur ve hiçbir yere yüklenmez. Uygulama konumunuzu kaydetmez ve Google\'da oturum açmaz; internetten yalnızca harita arka planı yüklenir.</string>
     <string name="idle_help_button">Timeline verilerimi nasıl alırım?</string>
 
     <string name="loading_opening">Dosya açılıyor…</string>
@@ -87,7 +88,7 @@
     <string name="track_name_full_range">(tam dışa aktarım)</string>
 
     <string name="help_title">Timeline verilerinizi alma</string>
-    <string name="help_intro">2024 sonundan beri Google, Timeline\'ı yalnızca cihazınızda saklıyor — Google Takeout seçeneği yok ve onu doğrudan okuyabilen üçüncü taraf uygulama da yok. Verileri sistem Ayarları\'ndan bir kez dışa aktarır, ardından dosyayı burada açarsınız.</string>
+    <string name="help_intro">2024 sonundan beri Google, Timeline\'ı çevrim içi Google hesabınızda değil, cihazınızda saklıyor (isteğe bağlı şifreli yedekle). Google Takeout seçeneği yok ve başka hiçbir uygulama onu doğrudan okuyamaz. Verileri sistem Ayarları\'ndan bir kez dışa aktarır, ardından dosyayı burada açarsınız.</string>
 
     <string name="help_method_settings_title">Android Ayarları\'ndan dışa aktarma (önerilir)</string>
     <string name="help_method_settings_step1">Android Ayarlar uygulamasını açın</string>
@@ -195,10 +196,11 @@
     <string name="trips_none">Seyahat yok: bu dosyada evden hiç 50 km\'den fazla uzaklaşmıyorsunuz.</string>
     <string name="trips_none_filtered">Seçilen tarih aralığında seyahat yok.</string>
     <string name="trips_no_home">Bu dosya evinizin nerede olduğunu belirtmiyor, bu yüzden seyahatler bulunamıyor.</string>
-    <string name="trips_hint">Evden 50 km\'den fazla uzaklaştığınızda bir seyahat algılanır. Haritada görmek için bir seyahate dokunun. Yalnızca bunları dışa aktarmak için seyahatleri işaretleyin.</string>
+    <string name="trips_hint">Evden 50 km\'den fazla uzaklaştığınızda bir seyahat algılanır. Haritada görmek için bir seyahate dokunun. Dışa aktarmak istemediğiniz seyahatlerin işaretini kaldırın.</string>
     <string name="trip_export_checkbox">Bu seyahati dışa aktar</string>
-    <string name="trips_checked_none">Tüm seyahatler dışa aktarılacak</string>
     <string name="trips_checked">Dışa aktarım için işaretli: %1$s / %2$s</string>
+    <string name="trips_select_all">Tümünü seç</string>
+    <string name="trips_checked_zero">Dışa aktarma için işaretli seyahat yok</string>
     <string name="trip_show_all_on_map">Tüm seyahatleri haritada göster</string>
     <string name="trip_show_checked_on_map">İşaretli seyahatleri haritada göster</string>
     <string name="trip_far_from_home">evden %1$s</string>
@@ -290,6 +292,7 @@
     <string name="map_image_rendering_high">Yüksek çözünürlükte işleniyor…</string>
     <string name="map_image_high_error">Yüksek çözünürlüklü görüntü işlenemedi. Hiçbir şey kaydedilmedi; Standart\'ı deneyin.</string>
     <string name="map_image_stat_distance">Kaydedilen mesafe</string>
+    <string name="map_image_distance_note">Kaydedilen mesafe, bu görselde çizilen çizginin toplamıdır. Uçuşlar ve GPS noktası olmayan boşluklar sayılmaz; bu yüzden genellikle Google\'ın bildirdiği kat edilen mesafeden kısadır.</string>
     <string name="map_image_stat_days">Gün</string>
     <string name="map_image_stat_places">Yer</string>
 

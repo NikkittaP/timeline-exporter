@@ -1,12 +1,12 @@
 Google Maps peut mémoriser les lieux où vous allez : c'est votre Timeline. Cette app ouvre votre fichier Timeline, affiche vos trajets sur une carte et les enregistre en fichiers GPX, KML, GeoJSON ou CSV pour d'autres apps (Strava, Garmin, Google Earth, Excel…).
 
-Cette app ne vous suit pas et ne se connecte pas à Google. Elle lit seulement le fichier que vous enregistrez depuis Google Maps, et tout reste sur cet appareil.
+Votre fichier est lu sur cet appareil et n'est jamais envoyé. L'app n'enregistre pas votre position et ne se connecte pas à Google ; seul le fond de carte est chargé depuis Internet.
 
-⚠️ IMPORTANT — À VÉRIFIER D'ABORD
-• VOTRE HISTORIQUE DE LOCALISATION VIENT DE VOTRE COMPTE GOOGLE. Il faut l'app Google Maps, connectée à votre compte Google.
-• TIMELINE DOIT ÊTRE ACTIVÉE DANS GOOGLE MAPS. Google n'enregistre que les jours depuis son activation : si elle était désactivée, il n'y a rien à exporter.
-• Google Maps doit avoir l'accès à la position « Toujours » (app Réglages → Google Maps → Position), sinon Timeline n'enregistre presque rien.
-• Timeline est conservée sur le téléphone qui l'a enregistrée. Si votre historique a été enregistré sur un autre téléphone, enregistrez le fichier sur celui-ci.
+AVANT DE COMMENCER
+• TIMELINE EST ENREGISTRÉE PAR GOOGLE MAPS, dans l'app connectée à votre compte Google. Cette app lit un fichier que vous en enregistrez ; elle-même n'enregistre rien.
+• TIMELINE DOIT ÊTRE ACTIVÉE. Google n'enregistre que les jours depuis son activation, et aucune app ne peut ajouter les jours d'avant.
+• Google Maps a besoin de votre position. La configuration de Google demande l'accès « Toujours » (app Réglages → Google Maps → Position) ; avec moins, Timeline risque de n'enregistrer qu'une partie de votre journée.
+• Chaque téléphone a sa propre Timeline. L'historique enregistré sur un autre téléphone n'est pas sur cet iPhone : exportez-le sur ce téléphone, ou importez ici la sauvegarde Google (Votre Timeline → icône de nuage).
 
 VOTRE FICHIER EN 3 ÉTAPES
 1. Dans Google Maps, touchez votre photo de profil → Paramètres → Localisation et confidentialité → Exporter les données Timeline.
@@ -25,6 +25,6 @@ CE QUE VOUS POUVEZ FAIRE
 • Ouvre aussi les anciens fichiers Google : Timeline.json d’Android, Semantic Location History, Records.json
 
 CONFIDENTIEL
-Tout se passe sur votre iPhone ou iPad. Votre historique n’est jamais envoyé : pas de compte, pas de serveur, pas de statistiques, pas de pub. Internet sert uniquement à charger la carte. Gratuit et open source.
+Tout se passe sur votre iPhone ou iPad. Votre historique n’est jamais envoyé : pas de compte, pas de serveur, pas de statistiques, pas de pub. Internet sert uniquement à charger la carte. Open source.
 
 Timeline Exporter est une app indépendante, sans lien avec Google.

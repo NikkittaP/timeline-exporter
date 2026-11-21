@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">Så fungerar det</string>
     <string name="ios_welcome_body">Google Maps kan komma ihåg platser du besöker – det är din **tidslinje** (Timeline). Den här appen öppnar din tidslinjefil, visar dina resor på en karta och sparar dem som GPX-, KML-, GeoJSON- eller CSV-filer för andra appar (Strava, Garmin, Google Earth, Excel …).</string>
-    <string name="ios_welcome_not_tracker">Appen spårar dig inte och loggar inte in på Google. Den läser bara filen du sparar från Google Maps, och allt stannar på den här enheten.</string>
-    <string name="ios_requirements_title">⚠️ Viktigt – kontrollera först</string>
-    <string name="ios_requirement_account">**Din platshistorik kommer från ditt Google-konto.** Du behöver appen Google Maps, inloggad med ditt Google-konto.</string>
-    <string name="ios_requirement_timeline">**Tidslinjen måste vara på i Google Maps.** Google sparar bara dagarna sedan den slogs på – var den av finns det inget att exportera.</string>
-    <string name="ios_requirement_location">**Google Maps behöver platsåtkomst ”Alltid”** (appen Inställningar → Google Maps → Plats), annars registrerar tidslinjen nästan ingenting.</string>
-    <string name="ios_requirement_device">**Tidslinjen sparas på telefonen som registrerade den.** Om din historik registrerades på en annan telefon sparar du filen på den telefonen.</string>
+    <string name="ios_requirements_title">Innan du börjar</string>
+    <string name="ios_requirement_account">**Tidslinjen registreras av Google Maps**, i appen som är inloggad med ditt Google-konto. Den här appen läser en fil du sparar därifrån; själv registrerar den ingenting.</string>
+    <string name="ios_requirement_timeline">**Tidslinjen måste vara på.** Google sparar bara dagarna sedan den slogs på, och ingen app kan lägga till dagarna innan dess.</string>
+    <string name="ios_requirement_location">**Google Maps behöver din plats.** Googles inställning ber om platsåtkomst ”Alltid” (appen Inställningar → Google Maps → Plats); med mindre kan tidslinjen registrera bara en del av din dag.</string>
+    <string name="ios_requirement_device">**Varje telefon har sin egen tidslinje.** Historik från en annan telefon finns inte på den här iPhonen: exportera den på den telefonen, eller importera Googles säkerhetskopia här (Din tidslinje → molnikonen).</string>
     <string name="ios_quick_title">Din fil i 3 steg</string>
     <string name="ios_quick_step1">I **Google Maps** trycker du på din profilbild → **Inställningar** → **Plats och integritet** → **Exportera Timeline-data**.</string>
     <string name="ios_quick_step2">Tryck på **Spara i Filer** och spara filen På min iPhone eller i iCloud Drive.</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">Utförlig steg-för-steg-guide</string>
     <string name="ios_try_sample_button">Prova med exempeldata</string>
     <string name="ios_sample_hint">Påhittade resor: se vad appen gör innan du exporterar dina egna.</string>
-    <string name="help_intro">Google Maps sparar din tidslinje bara på telefonen, inte på nätet, så ingen annan app kan läsa den direkt. Du sparar den en gång från Google Maps som en fil och öppnar filen här. Inget laddas upp någonstans.</string>
+    <string name="help_intro">Google Maps sparar din tidslinje på telefonen som registrerade den, inte online i ditt Google-konto (den krypterade säkerhetskopian är valfri), så andra appar kan inte läsa den direkt. Spara den en gång från Google Maps som en fil och öppna filen här.</string>
     <string name="ios_turn_on_title">1. Slå på tidslinjen (hoppa över om den är på)</string>
     <string name="ios_maps_profile">Öppna Google Maps och tryck på din profilbild (uppe till höger)</string>
     <string name="ios_turn_on_step2">Tryck på **Din tidslinje**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">Spara %1$s</string>
     <string name="ios_export_run_share">Dela %1$s</string>
     <string name="ios_map_image_entry_hint">En bild av den här rutten att spara eller dela</string>
-    <string name="ios_map_image_distance_note">Registrerad sträcka summerar linjen på bilden och kan därför skilja sig från en resas färdväg.</string>
     <string name="ios_map_status_loading">Läser in kartan…</string>
     <string name="ios_map_status_tiles">Kartrutorna är inte tillgängliga. Dina data visas fortfarande.</string>
     <string name="ios_map_status_failed">Det gick inte att läsa in kartan.</string>
     <string name="ios_trips_clear_marks">Rensa markeringar</string>
     <string name="ios_place_unnamed">Namnlös plats</string>
     <string name="ios_trip_on_map">Visas på kartan</string>
-    <string name="ios_trips_none_selected">Inga resor valda — alla %1$s exporteras.</string>
-    <string name="ios_select_all">Markera alla</string>
     <string name="ios_search_places">Sök platser</string>
     <string name="ios_export_data_file">Datafil</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">Bifoga tekniska uppgifter</string>
     <string name="ios_problem_details_note">Hjälper mig att återskapa problemet. Innehåller inga platsdata och inget från din fil.</string>
     <string name="ios_feedback_copy_address">Kopiera e-postadress</string>
+    <string name="ios_privacy_policy">Integritetspolicy</string>
 </resources>

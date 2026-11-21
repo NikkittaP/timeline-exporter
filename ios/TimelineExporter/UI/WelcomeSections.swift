@@ -1,9 +1,10 @@
 import SwiftUI
 
 /// The first screen, before any file is open: what the app does and the one
-/// thing to do next, then what it needs from Google and how to get the file.
-/// Written for someone who has never heard of a JSON file — the App Store
-/// audience. The full steps are in HelpSheet.
+/// thing to do next, the sample, then what it needs from Google. Written for
+/// someone who has never heard of a JSON file — the App Store audience. The
+/// steps to get the file are one tap away in HelpSheet, not repeated here, so
+/// the screen reads as a start and not as a list of warnings.
 struct WelcomeSections: View {
     @Environment(TimelineStore.self) private var store
     @Binding var importing: Bool
@@ -19,19 +20,13 @@ struct WelcomeSections: View {
         Section {
             sampleButton
         } footer: {
-            Text(L.md("ios_welcome_not_tracker"))
+            Text(L.s("privacy_note"))
         }
 
         Section {
             Requirements()
         } header: {
             StepHeader(title: L.s("ios_requirements_title"))
-        }
-
-        Section {
-            NumberedSteps(keys: ["ios_quick_step1", "ios_quick_step2", "ios_quick_step3_top"])
-        } header: {
-            StepHeader(title: L.s("ios_quick_title"))
         }
     }
 
@@ -103,25 +98,31 @@ struct WelcomeSections: View {
     }
 }
 
-/// The conditions, each with a warning sign: shown on the first screen and at
-/// the top of Help.
+/// What Google has to have done for there to be a file worth opening: shown on
+/// the first screen and at the top of Help. Each with a plain symbol of its
+/// subject rather than a warning sign — they are conditions to know, not
+/// errors, and a column of orange alarms read as if something were wrong.
 struct Requirements: View {
     var withDevice = false
 
     var body: some View {
-        ForEach(keys, id: \.self) { key in
+        ForEach(items, id: \.key) { item in
             Label {
-                Text(L.md(key))
+                Text(L.md(item.key))
             } icon: {
-                Image(systemName: "exclamationmark.circle.fill").foregroundStyle(.orange)
+                Image(systemName: item.symbol).foregroundStyle(.tint)
             }
             .padding(.vertical, 2)
         }
     }
 
-    private var keys: [String] {
-        let base = ["ios_requirement_account", "ios_requirement_timeline", "ios_requirement_location"]
-        return withDevice ? base + ["ios_requirement_device"] : base
+    private var items: [(key: String, symbol: String)] {
+        let base = [
+            (key: "ios_requirement_account", symbol: "map"),
+            (key: "ios_requirement_timeline", symbol: "clock.arrow.circlepath"),
+            (key: "ios_requirement_location", symbol: "location"),
+        ]
+        return withDevice ? base + [(key: "ios_requirement_device", symbol: "iphone")] : base
     }
 }
 

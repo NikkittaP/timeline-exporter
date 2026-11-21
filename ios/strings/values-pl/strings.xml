@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">Jak to działa</string>
     <string name="ios_welcome_body">Mapy Google mogą zapamiętywać miejsca, w których bywasz — to Twoja **oś czasu** (Timeline). Ta aplikacja otwiera plik osi czasu, pokazuje Twoje podróże na mapie i zapisuje je jako pliki GPX, KML, GeoJSON lub CSV dla innych aplikacji (Strava, Garmin, Google Earth, Excel…).</string>
-    <string name="ios_welcome_not_tracker">Ta aplikacja Cię nie śledzi i nie loguje się do Google. Czyta tylko plik zapisany z Map Google, a wszystko zostaje na tym urządzeniu.</string>
-    <string name="ios_requirements_title">⚠️ Ważne — sprawdź najpierw</string>
-    <string name="ios_requirement_account">**Historia lokalizacji pochodzi z Twojego konta Google.** Potrzebna jest aplikacja Mapy Google zalogowana na Twoje konto Google.</string>
-    <string name="ios_requirement_timeline">**Oś czasu musi być włączona w Mapach Google.** Google zapisuje tylko dni od jej włączenia — jeśli była wyłączona, nie ma czego eksportować.</string>
-    <string name="ios_requirement_location">**Mapy Google potrzebują dostępu do lokalizacji „Zawsze”** (aplikacja Ustawienia → Google Maps → Lokalizacja), inaczej oś czasu prawie nic nie zapisze.</string>
-    <string name="ios_requirement_device">**Oś czasu jest przechowywana na telefonie, który ją zapisał.** Jeśli historia była zapisywana na innym telefonie, zapisz plik na tamtym telefonie.</string>
+    <string name="ios_requirements_title">Zanim zaczniesz</string>
+    <string name="ios_requirement_account">**Oś czasu zapisują Mapy Google**, w aplikacji zalogowanej na Twoje konto Google. Ta aplikacja czyta plik, który z nich zapiszesz; sama niczego nie rejestruje.</string>
+    <string name="ios_requirement_timeline">**Oś czasu musi być włączona.** Google zapisuje tylko dni od jej włączenia i żadna aplikacja nie doda dni sprzed tego momentu.</string>
+    <string name="ios_requirement_location">**Mapy Google potrzebują Twojej lokalizacji.** Konfiguracja Google prosi o dostęp do lokalizacji „Zawsze” (aplikacja Ustawienia → Google Maps → Lokalizacja); przy mniejszym dostępie oś czasu może zapisać tylko część dnia.</string>
+    <string name="ios_requirement_device">**Każdy telefon ma własną oś czasu.** Historii zapisanej na innym telefonie nie ma na tym iPhonie: wyeksportuj ją na tamtym telefonie albo zaimportuj tu kopię zapasową Google (Twoja oś czasu → ikona chmury).</string>
     <string name="ios_quick_title">Plik w 3 krokach</string>
     <string name="ios_quick_step1">W **Mapach Google** dotknij zdjęcia profilowego → **Ustawienia** → **Lokalizacja i prywatność** → **Eksportuj dane Timeline**.</string>
     <string name="ios_quick_step2">Dotknij **Zachowaj w Plikach** i zapisz plik Na moim iPhonie lub w iCloud Drive.</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">Szczegółowa instrukcja krok po kroku</string>
     <string name="ios_try_sample_button">Wypróbuj na przykładowych danych</string>
     <string name="ios_sample_hint">Zmyślone podróże: zobacz, co potrafi aplikacja, zanim wyeksportujesz swoje.</string>
-    <string name="help_intro">Mapy Google przechowują oś czasu tylko na telefonie, a nie w internecie, więc żadna inna aplikacja nie odczyta jej bezpośrednio. Raz zapisujesz ją z Map Google jako plik i otwierasz ten plik tutaj. Nic nie jest nigdzie wysyłane.</string>
+    <string name="help_intro">Mapy Google przechowują oś czasu na telefonie, który ją zapisał, a nie online na koncie Google (zaszyfrowana kopia zapasowa jest opcjonalna), więc inne aplikacje nie odczytają jej bezpośrednio. Zapisz ją raz z Map Google jako plik i otwórz ten plik tutaj.</string>
     <string name="ios_turn_on_title">1. Włącz oś czasu (pomiń, jeśli jest włączona)</string>
     <string name="ios_maps_profile">Otwórz Mapy Google i dotknij zdjęcia profilowego (prawy górny róg)</string>
     <string name="ios_turn_on_step2">Dotknij **Twoja oś czasu**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">Zapisz %1$s</string>
     <string name="ios_export_run_share">Udostępnij %1$s</string>
     <string name="ios_map_image_entry_hint">Obraz tej trasy do zapisania lub udostępnienia</string>
-    <string name="ios_map_image_distance_note">Zarejestrowany dystans sumuje linię na tym obrazie, więc może różnić się od dystansu przebytego w podróży.</string>
     <string name="ios_map_status_loading">Wczytywanie mapy…</string>
     <string name="ios_map_status_tiles">Kafelki mapy są niedostępne. Twoje dane są nadal widoczne.</string>
     <string name="ios_map_status_failed">Nie udało się wczytać mapy.</string>
     <string name="ios_trips_clear_marks">Wyczyść oznaczenia</string>
     <string name="ios_place_unnamed">Miejsce bez nazwy</string>
     <string name="ios_trip_on_map">Widoczna na mapie</string>
-    <string name="ios_trips_none_selected">Nie zaznaczono podróży — zostaną wyeksportowane wszystkie: %1$s</string>
-    <string name="ios_select_all">Zaznacz wszystko</string>
     <string name="ios_search_places">Szukaj miejsc</string>
     <string name="ios_export_data_file">Plik danych</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">Dołącz dane techniczne</string>
     <string name="ios_problem_details_note">Pomagają odtworzyć problem. Nie zawierają danych o lokalizacji ani niczego z Twojego pliku.</string>
     <string name="ios_feedback_copy_address">Kopiuj adres e-mail</string>
+    <string name="ios_privacy_policy">Polityka prywatności</string>
 </resources>

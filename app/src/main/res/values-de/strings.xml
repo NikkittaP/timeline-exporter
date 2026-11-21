@@ -21,6 +21,7 @@
 
     <string name="pick_file_button">Timeline.json auswählen</string>
     <string name="idle_hint">Wähle eine Google Maps Timeline-JSON-Datei zum Einlesen.</string>
+    <string name="privacy_note">Deine Datei wird auf diesem Gerät gelesen und nie hochgeladen. Die App zeichnet deinen Standort nicht auf und meldet sich nicht bei Google an; nur der Kartenhintergrund wird aus dem Internet geladen.</string>
     <string name="idle_help_button">Wie bekomme ich Timeline-Daten?</string>
 
     <string name="loading_opening">Datei wird geöffnet…</string>
@@ -87,7 +88,7 @@
     <string name="track_name_full_range">(vollständiger Export)</string>
 
     <string name="help_title">Timeline-Daten beschaffen</string>
-    <string name="help_intro">Seit Ende 2024 speichert Google die Timeline nur noch auf deinem Gerät — es gibt keine Google-Takeout-Option und keine Drittanbieter-App, die sie direkt lesen kann. Du exportierst sie einmal aus den Systemeinstellungen und öffnest die Datei dann hier.</string>
+    <string name="help_intro">Seit Ende 2024 speichert Google die Timeline auf deinem Gerät (mit optionaler verschlüsselter Sicherung) statt online in deinem Google-Konto. Es gibt keine Google-Takeout-Option, und keine andere App kann sie direkt lesen. Du exportierst sie einmal aus den Systemeinstellungen und öffnest die Datei dann hier.</string>
 
     <string name="help_method_settings_title">Export aus den Android-Einstellungen (empfohlen)</string>
     <string name="help_method_settings_step1">Öffne die Android-Einstellungen</string>
@@ -195,10 +196,11 @@
     <string name="trips_none">Keine Reisen: In dieser Datei bist du nie weiter als 50 km von zu Hause entfernt.</string>
     <string name="trips_none_filtered">Keine Reisen im gewählten Zeitraum.</string>
     <string name="trips_no_home">Die Datei enthält kein Zuhause, daher lassen sich keine Reisen finden.</string>
-    <string name="trips_hint">Eine Reise wird erkannt, wenn du dich mehr als 50 km von zu Hause entfernst. Tippe auf eine Reise, um sie auf der Karte anzusehen. Hake Reisen an, um nur diese zu exportieren.</string>
+    <string name="trips_hint">Eine Reise wird erkannt, wenn du dich mehr als 50 km von zu Hause entfernst. Tippe auf eine Reise, um sie auf der Karte anzusehen. Entferne den Haken bei Reisen, die nicht exportiert werden sollen.</string>
     <string name="trip_export_checkbox">Diese Reise exportieren</string>
-    <string name="trips_checked_none">Alle Reisen werden exportiert</string>
     <string name="trips_checked">Zum Export markiert: %1$s von %2$s</string>
+    <string name="trips_select_all">Alle auswählen</string>
+    <string name="trips_checked_zero">Keine Reisen zum Export markiert</string>
     <string name="trip_show_all_on_map">Alle Reisen auf der Karte zeigen</string>
     <string name="trip_show_checked_on_map">Markierte Reisen auf der Karte zeigen</string>
     <string name="trip_far_from_home">%1$s von zu Hause</string>
@@ -290,6 +292,7 @@
     <string name="map_image_rendering_high">Hohe Auflösung wird gerendert…</string>
     <string name="map_image_high_error">Das Bild in hoher Auflösung konnte nicht gerendert werden. Nichts wurde gespeichert; versuche Standard.</string>
     <string name="map_image_stat_distance">Aufgezeichnete Strecke</string>
+    <string name="map_image_distance_note">Die aufgezeichnete Strecke ist die Länge der Linie auf diesem Bild. Flüge und Lücken ohne GPS-Punkte zählen nicht mit, daher ist sie oft kürzer als die von Google angegebene zurückgelegte Strecke.</string>
     <string name="map_image_stat_days">Tage</string>
     <string name="map_image_stat_places">Orte</string>
 

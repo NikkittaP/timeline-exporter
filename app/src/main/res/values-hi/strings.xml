@@ -21,6 +21,7 @@
 
     <string name="pick_file_button">Timeline.json चुनें</string>
     <string name="idle_hint">विश्लेषण के लिए कोई Google Maps Timeline JSON फ़ाइल चुनें।</string>
+    <string name="privacy_note">आपकी फ़ाइल इसी डिवाइस पर पढ़ी जाती है और कभी अपलोड नहीं होती। ऐप आपकी लोकेशन रिकॉर्ड नहीं करता और Google में साइन इन नहीं करता; इंटरनेट से सिर्फ़ मैप का बैकग्राउंड लोड होता है।</string>
     <string name="idle_help_button">Timeline डेटा कैसे प्राप्त करें?</string>
 
     <string name="loading_opening">फ़ाइल खोली जा रही है…</string>
@@ -87,7 +88,7 @@
     <string name="track_name_full_range">(पूर्ण एक्सपोर्ट)</string>
 
     <string name="help_title">अपना Timeline डेटा प्राप्त करना</string>
-    <string name="help_intro">2024 के अंत से Google, Timeline को केवल आपके डिवाइस पर संग्रहीत करता है — न तो Google Takeout विकल्प है और न ही कोई तृतीय-पक्ष ऐप जो इसे सीधे पढ़ सके। आप इसे एक बार सिस्टम सेटिंग से एक्सपोर्ट करते हैं, फिर फ़ाइल यहाँ खोलते हैं।</string>
+    <string name="help_intro">2024 के अंत से Google, Timeline को ऑनलाइन Google खाते में नहीं, बल्कि आपके डिवाइस पर रखता है (वैकल्पिक एन्क्रिप्टेड बैकअप के साथ)। न तो Google Takeout विकल्प है और न ही कोई दूसरा ऐप इसे सीधे पढ़ सकता है। आप इसे एक बार सिस्टम सेटिंग से एक्सपोर्ट करते हैं, फिर फ़ाइल यहाँ खोलते हैं।</string>
 
     <string name="help_method_settings_title">Android सेटिंग से एक्सपोर्ट करें (अनुशंसित)</string>
     <string name="help_method_settings_step1">Android की सेटिंग ऐप खोलें</string>
@@ -195,10 +196,11 @@
     <string name="trips_none">कोई यात्रा नहीं: इस फ़ाइल में आप घर से कभी 50 किमी से ज़्यादा दूर नहीं गए।</string>
     <string name="trips_none_filtered">चुनी गई तारीख सीमा में कोई यात्रा नहीं है।</string>
     <string name="trips_no_home">इस फ़ाइल में घर दर्ज नहीं है, इसलिए यात्राएँ नहीं मिल सकतीं।</string>
-    <string name="trips_hint">जब आप घर से 50 किमी से ज़्यादा दूर जाते हैं, तब यात्रा पहचानी जाती है। मैप पर देखने के लिए किसी यात्रा पर टैप करें। सिर्फ़ कुछ यात्राएँ एक्सपोर्ट करने के लिए उन पर निशान लगाएँ।</string>
+    <string name="trips_hint">जब आप घर से 50 किमी से ज़्यादा दूर जाते हैं, तब यात्रा पहचानी जाती है। मैप पर देखने के लिए किसी यात्रा पर टैप करें। जिन यात्राओं को एक्सपोर्ट नहीं करना है, उनका निशान हटा दें।</string>
     <string name="trip_export_checkbox">यह यात्रा एक्सपोर्ट करें</string>
-    <string name="trips_checked_none">सभी यात्राएँ एक्सपोर्ट होंगी</string>
     <string name="trips_checked">एक्सपोर्ट के लिए चुनी गईं: %2$s में से %1$s</string>
+    <string name="trips_select_all">सभी चुनें</string>
+    <string name="trips_checked_zero">एक्सपोर्ट के लिए कोई यात्रा चुनी नहीं गई</string>
     <string name="trip_show_all_on_map">मैप पर सभी यात्राएँ दिखाएँ</string>
     <string name="trip_show_checked_on_map">चुनी हुई यात्राएँ मैप पर दिखाएँ</string>
     <string name="trip_far_from_home">घर से %1$s</string>
@@ -290,6 +292,7 @@
     <string name="map_image_rendering_high">उच्च रिज़ॉल्यूशन रेंडर हो रहा है…</string>
     <string name="map_image_high_error">उच्च रिज़ॉल्यूशन इमेज रेंडर नहीं हो सकी। कुछ भी सेव नहीं हुआ; मानक आज़माएँ।</string>
     <string name="map_image_stat_distance">दर्ज की गई दूरी</string>
+    <string name="map_image_distance_note">दर्ज की गई दूरी इस इमेज पर बनी लाइन को जोड़कर निकलती है। उड़ानें और बिना GPS पॉइंट वाले अंतराल नहीं गिने जाते, इसलिए यह अक्सर Google की बताई तय दूरी से कम होती है।</string>
     <string name="map_image_stat_days">दिन</string>
     <string name="map_image_stat_places">जगहें</string>
 

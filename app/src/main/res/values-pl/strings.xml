@@ -21,6 +21,7 @@
 
     <string name="pick_file_button">Wybierz Timeline.json</string>
     <string name="idle_hint">Wybierz plik JSON Google Maps Timeline do przetworzenia.</string>
+    <string name="privacy_note">Plik jest odczytywany na tym urządzeniu i nigdzie nie jest wysyłany. Aplikacja nie zapisuje Twojej lokalizacji i nie loguje się do Google; z internetu pobierany jest tylko podkład mapy.</string>
     <string name="idle_help_button">Jak uzyskać dane Timeline?</string>
 
     <string name="loading_opening">Otwieranie pliku…</string>
@@ -89,7 +90,7 @@
     <string name="track_name_full_range">(pełny eksport)</string>
 
     <string name="help_title">Jak uzyskać dane Timeline</string>
-    <string name="help_intro">Od końca 2024 r. Google przechowuje Timeline tylko na Twoim urządzeniu — nie ma opcji Google Takeout ani aplikacji innych firm, które mogłyby je odczytać bezpośrednio. Eksportujesz dane raz z ustawień systemowych, a potem otwierasz plik tutaj.</string>
+    <string name="help_intro">Od końca 2024 r. Google przechowuje Timeline na Twoim urządzeniu (z opcjonalną zaszyfrowaną kopią zapasową), a nie online na koncie Google. Nie ma opcji Google Takeout i żadna inna aplikacja nie odczyta jej bezpośrednio. Eksportujesz dane raz z ustawień systemowych, a potem otwierasz plik tutaj.</string>
 
     <string name="help_method_settings_title">Eksport z ustawień Androida (zalecane)</string>
     <string name="help_method_settings_step1">Otwórz aplikację Ustawienia w Androidzie</string>
@@ -199,10 +200,11 @@
     <string name="trips_none">Brak podróży: w tym pliku nigdy nie oddalasz się od domu o więcej niż 50 km.</string>
     <string name="trips_none_filtered">Brak podróży w wybranym zakresie dat.</string>
     <string name="trips_no_home">Plik nie wskazuje domu, więc nie można znaleźć podróży.</string>
-    <string name="trips_hint">Podróż jest wykrywana, gdy oddalasz się od domu o ponad 50 km. Dotknij podróży, aby zobaczyć ją na mapie. Zaznacz podróże, aby wyeksportować tylko je.</string>
+    <string name="trips_hint">Podróż jest wykrywana, gdy oddalasz się od domu o ponad 50 km. Dotknij podróży, aby zobaczyć ją na mapie. Odznacz podróże, których nie chcesz eksportować.</string>
     <string name="trip_export_checkbox">Eksportuj tę podróż</string>
-    <string name="trips_checked_none">Zostaną wyeksportowane wszystkie podróże</string>
     <string name="trips_checked">Zaznaczone do eksportu: %1$s z %2$s</string>
+    <string name="trips_select_all">Zaznacz wszystko</string>
+    <string name="trips_checked_zero">Nie zaznaczono podróży do eksportu</string>
     <string name="trip_show_all_on_map">Pokaż wszystkie podróże na mapie</string>
     <string name="trip_show_checked_on_map">Pokaż zaznaczone na mapie</string>
     <string name="trip_far_from_home">%1$s od domu</string>
@@ -294,6 +296,7 @@
     <string name="map_image_rendering_high">Renderowanie w wysokiej rozdzielczości…</string>
     <string name="map_image_high_error">Nie udało się wyrenderować obrazu w wysokiej rozdzielczości. Nic nie zapisano; spróbuj Standardowej.</string>
     <string name="map_image_stat_distance">Zarejestrowany dystans</string>
+    <string name="map_image_distance_note">Zarejestrowany dystans to suma linii narysowanej na tym obrazie. Loty i przerwy bez punktów GPS nie są liczone, więc często jest krótszy niż przebyty dystans podawany przez Google.</string>
     <string name="map_image_stat_days">Dni</string>
     <string name="map_image_stat_places">Miejsca</string>
 

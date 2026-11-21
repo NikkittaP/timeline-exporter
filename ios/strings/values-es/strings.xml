@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">Cómo funciona</string>
     <string name="ios_welcome_body">Google Maps puede recordar los lugares a los que vas: es tu **cronología** (Timeline). Esta app abre tu archivo de cronología, muestra tus viajes en un mapa y los guarda como archivos GPX, KML, GeoJSON o CSV para otras apps (Strava, Garmin, Google Earth, Excel…).</string>
-    <string name="ios_welcome_not_tracker">Esta app no te rastrea ni inicia sesión en Google. Solo lee el archivo que guardas desde Google Maps, y todo se queda en este dispositivo.</string>
-    <string name="ios_requirements_title">⚠️ Importante: compruébalo primero</string>
-    <string name="ios_requirement_account">**Tu historial de ubicaciones viene de tu cuenta de Google.** Necesitas la app Google Maps con tu cuenta de Google iniciada.</string>
-    <string name="ios_requirement_timeline">**La cronología debe estar activada en Google Maps.** Google solo guarda los días desde que se activó; si estaba desactivada, no hay nada que exportar.</string>
-    <string name="ios_requirement_location">**Google Maps necesita acceso a la ubicación «Siempre»** (app Ajustes → Google Maps → Ubicación); si no, la cronología apenas registra nada.</string>
-    <string name="ios_requirement_device">**La cronología se guarda en el teléfono que la registró.** Si tu historial se registró en otro teléfono, guarda el archivo en ese teléfono.</string>
+    <string name="ios_requirements_title">Antes de empezar</string>
+    <string name="ios_requirement_account">**La cronología la registra Google Maps**, en la app con tu cuenta de Google iniciada. Esta app lee un archivo que guardas desde allí; ella misma no registra nada.</string>
+    <string name="ios_requirement_timeline">**La cronología tiene que estar activada.** Google solo guarda los días desde que se activó, y ninguna app puede añadir los días anteriores.</string>
+    <string name="ios_requirement_location">**Google Maps necesita tu ubicación.** La configuración de Google pide acceso a la ubicación «Siempre» (app Ajustes → Google Maps → Ubicación); con menos, la cronología puede registrar solo parte del día.</string>
+    <string name="ios_requirement_device">**Cada teléfono guarda su propia cronología.** El historial registrado en otro teléfono no está en este iPhone: expórtalo en ese teléfono o importa aquí la copia de seguridad de Google (Tu cronología → icono de nube).</string>
     <string name="ios_quick_title">Tu archivo en 3 pasos</string>
     <string name="ios_quick_step1">En **Google Maps**, toca tu foto de perfil → **Configuración** → **Ubicación y privacidad** → **Exportar datos de Timeline**.</string>
     <string name="ios_quick_step2">Toca **Guardar en Archivos** y guarda el archivo En mi iPhone o en iCloud Drive.</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">Guía detallada paso a paso</string>
     <string name="ios_try_sample_button">Probar con datos de ejemplo</string>
     <string name="ios_sample_hint">Viajes inventados: mira lo que hace la app antes de exportar los tuyos.</string>
-    <string name="help_intro">Google Maps guarda tu cronología solo en tu teléfono, no en internet, así que ninguna otra app puede leerla directamente. La guardas una vez desde Google Maps como archivo y abres ese archivo aquí. No se sube nada a ningún sitio.</string>
+    <string name="help_intro">Google Maps guarda tu cronología en el teléfono que la registró, no en tu cuenta de Google en internet (la copia de seguridad cifrada es opcional), así que otras apps no pueden leerla directamente. Guárdala una vez desde Google Maps como archivo y abre ese archivo aquí.</string>
     <string name="ios_turn_on_title">1. Activa la cronología (sáltalo si ya está activada)</string>
     <string name="ios_maps_profile">Abre Google Maps y toca tu foto de perfil (arriba a la derecha)</string>
     <string name="ios_turn_on_step2">Toca **Tu cronología**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">Guardar %1$s</string>
     <string name="ios_export_run_share">Compartir %1$s</string>
     <string name="ios_map_image_entry_hint">Una imagen de esta ruta para guardar o compartir</string>
-    <string name="ios_map_image_distance_note">La distancia registrada suma la línea de esta imagen, por lo que puede diferir de la distancia recorrida de un viaje.</string>
     <string name="ios_map_status_loading">Cargando mapa…</string>
     <string name="ios_map_status_tiles">Mosaicos del mapa no disponibles. Tus datos se siguen mostrando.</string>
     <string name="ios_map_status_failed">No se pudo cargar el mapa.</string>
     <string name="ios_trips_clear_marks">Quitar marcas</string>
     <string name="ios_place_unnamed">Lugar sin nombre</string>
     <string name="ios_trip_on_map">Visible en el mapa</string>
-    <string name="ios_trips_none_selected">Ningún viaje seleccionado: se exportarán los %1$s.</string>
-    <string name="ios_select_all">Seleccionar todo</string>
     <string name="ios_search_places">Buscar lugares</string>
     <string name="ios_export_data_file">Archivo de datos</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">Incluir detalles técnicos</string>
     <string name="ios_problem_details_note">Me ayudan a reproducir el problema. No contienen datos de ubicación ni nada de tu archivo.</string>
     <string name="ios_feedback_copy_address">Copiar dirección de correo</string>
+    <string name="ios_privacy_policy">Política de privacidad</string>
 </resources>

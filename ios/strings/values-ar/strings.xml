@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">طريقة العمل</string>
     <string name="ios_welcome_body">يمكن لخرائط Google أن تتذكر الأماكن التي تزورها — وهذا هو **مخططك الزمني** (Timeline). يفتح هذا التطبيق ملف المخطط الزمني، ويعرض رحلاتك على خريطة، ويحفظها كملفات GPX أو KML أو GeoJSON أو CSV لاستخدامها في تطبيقات أخرى (Strava وGarmin وGoogle Earth وExcel…).</string>
-    <string name="ios_welcome_not_tracker">هذا التطبيق لا يتتبعك ولا يسجّل الدخول إلى Google. إنه يقرأ فقط الملف الذي تحفظه من خرائط Google، ويبقى كل شيء على هذا الجهاز.</string>
-    <string name="ios_requirements_title">⚠️ مهم — تحقّق من هذا أولًا</string>
-    <string name="ios_requirement_account">**سجل مواقعك يأتي من حسابك على Google.** تحتاج إلى تطبيق خرائط Google مسجَّلًا فيه الدخول بحسابك على Google.</string>
-    <string name="ios_requirement_timeline">**يجب تشغيل المخطط الزمني في خرائط Google.** تحفظ Google الأيام منذ تشغيله فقط — إذا كان متوقفًا فلا يوجد ما يُصدَّر.</string>
-    <string name="ios_requirement_location">**تحتاج خرائط Google إلى الوصول إلى الموقع «دائمًا»** (تطبيق الإعدادات ← Google Maps ← الموقع)، وإلا فلن يسجّل المخطط الزمني إلا القليل جدًا.</string>
-    <string name="ios_requirement_device">**يُحفظ المخطط الزمني على الهاتف الذي سجّله.** إذا سُجّل سجلك على هاتف آخر، فاحفظ الملف على ذلك الهاتف.</string>
+    <string name="ios_requirements_title">قبل أن تبدأ</string>
+    <string name="ios_requirement_account">**تسجّل خرائط Google المخطط الزمني**، في التطبيق المسجَّل فيه الدخول بحسابك على Google. يقرأ هذا التطبيق ملفًا تحفظه منها، ولا يسجّل شيئًا بنفسه.</string>
+    <string name="ios_requirement_timeline">**يجب أن يكون المخطط الزمني قيد التشغيل.** تحفظ Google الأيام منذ تشغيله فقط، ولا يمكن لأي تطبيق إضافة الأيام التي سبقت ذلك.</string>
+    <string name="ios_requirement_location">**تحتاج خرائط Google إلى موقعك.** يطلب إعداد Google الوصول إلى الموقع «دائمًا» (تطبيق الإعدادات ← Google Maps ← الموقع)؛ وبأقل من ذلك قد لا يسجّل المخطط الزمني إلا جزءًا من يومك.</string>
+    <string name="ios_requirement_device">**لكل هاتف مخططه الزمني الخاص.** السجل المسجَّل على هاتف آخر غير موجود على هذا الـ iPhone: صدّره على ذلك الهاتف، أو استورد النسخة الاحتياطية من Google هنا (مخططك الزمني ← رمز السحابة).</string>
     <string name="ios_quick_title">احصل على ملفك في 3 خطوات</string>
     <string name="ios_quick_step1">في **خرائط Google** انقر على صورة ملفك الشخصي ← **الإعدادات** ← **الموقع والخصوصية** ← **تصدير بيانات المخطط الزمني**.</string>
     <string name="ios_quick_step2">انقر على **حفظ في الملفات** واحفظ الملف في «على الـ iPhone» أو iCloud Drive.</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">دليل مفصّل خطوة بخطوة</string>
     <string name="ios_try_sample_button">جرّبه ببيانات تجريبية</string>
     <string name="ios_sample_hint">رحلات متخيَّلة: شاهد ما يفعله التطبيق قبل تصدير رحلاتك.</string>
-    <string name="help_intro">تحتفظ خرائط Google بمخططك الزمني على هاتفك فقط وليس على الإنترنت، لذا لا يمكن لأي تطبيق آخر قراءته مباشرة. تحفظه مرة واحدة من خرائط Google كملف، ثم تفتح ذلك الملف هنا. لا يُرفع أي شيء إلى أي مكان.</string>
+    <string name="help_intro">تحتفظ خرائط Google بمخططك الزمني على الهاتف الذي سجّله، لا في حسابك على Google عبر الإنترنت (النسخة الاحتياطية المشفّرة اختيارية)، لذا لا يمكن لتطبيقات أخرى قراءته مباشرة. احفظه مرة واحدة من خرائط Google كملف، ثم افتح ذلك الملف هنا.</string>
     <string name="ios_turn_on_title">1. شغّل المخطط الزمني (تخطَّ إن كان يعمل)</string>
     <string name="ios_maps_profile">افتح خرائط Google وانقر على صورة ملفك الشخصي (أعلى اليمين)</string>
     <string name="ios_turn_on_step2">انقر على **مخططك الزمني**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">حفظ %1$s</string>
     <string name="ios_export_run_share">مشاركة %1$s</string>
     <string name="ios_map_image_entry_hint">صورة لهذا المسار لحفظها أو مشاركتها</string>
-    <string name="ios_map_image_distance_note">المسافة المسجّلة هي مجموع الخط المرسوم في هذه الصورة، لذا قد تختلف عن المسافة المقطوعة في الرحلة.</string>
     <string name="ios_map_status_loading">جارٍ تحميل الخريطة…</string>
     <string name="ios_map_status_tiles">مربعات الخريطة غير متاحة. ما زالت بياناتك معروضة.</string>
     <string name="ios_map_status_failed">تعذّر تحميل الخريطة.</string>
     <string name="ios_trips_clear_marks">إلغاء التحديد</string>
     <string name="ios_place_unnamed">مكان بلا اسم</string>
     <string name="ios_trip_on_map">معروضة على الخريطة</string>
-    <string name="ios_trips_none_selected">لم تُحدَّد أي رحلة — سيتم تصدير الكل: %1$s</string>
-    <string name="ios_select_all">تحديد الكل</string>
     <string name="ios_search_places">ابحث في الأماكن</string>
     <string name="ios_export_data_file">ملف بيانات</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">تضمين التفاصيل التقنية</string>
     <string name="ios_problem_details_note">تساعدني على إعادة إنتاج المشكلة. لا تحتوي على بيانات موقع ولا على أي شيء من ملفك.</string>
     <string name="ios_feedback_copy_address">نسخ عنوان البريد الإلكتروني</string>
+    <string name="ios_privacy_policy">سياسة الخصوصية</string>
 </resources>

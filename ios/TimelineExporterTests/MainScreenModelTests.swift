@@ -97,15 +97,30 @@ final class MainScreenModelTests: XCTestCase {
         XCTAssertFalse(filter.isEmpty)
     }
 
-    func testSelectAllMarksEveryVisibleTripAndClearTakesThemOff() async throws {
+    /// A tick means "exported": every trip starts ticked, Clear unticks them
+    /// all and then nothing is written, Select all ticks them again.
+    func testEveryTripStartsMarkedAndNoneMarkedExportsNothing() async throws {
         let store = try await sampleStore()
         store.setContentKind(.trips)
-        let keys = Set(store.visibleTrips.map(\.key))
-        store.checkAllTrips()
-        XCTAssertEqual(store.checkedTrips, keys)
-        XCTAssertEqual(Set(store.exportTripKeys), keys)
+        let trips = store.visibleTrips
+        XCTAssertFalse(trips.isEmpty)
+        XCTAssertEqual(store.markedTripCount, trips.count, "a new file has every trip ticked")
+        XCTAssertFalse(store.tripsNarrowed)
+        XCTAssertTrue(store.exportTripKeys.isEmpty, "all ticked: the core's 'every trip'")
+
         store.clearCheckedTrips()
-        XCTAssertTrue(store.exportTripKeys.isEmpty, "no marks: every visible trip is exported")
+        XCTAssertEqual(store.markedTripCount, 0)
+        await store.export(.gpx)
+        XCTAssertEqual(store.exportState, .nothing(.trips), "none ticked writes nothing")
+        XCTAssertNil(store.pendingExport)
+
+        store.setTrip(trips[0].key, checked: true)
+        XCTAssertEqual(store.exportTripKeys, [trips[0].key])
+        XCTAssertEqual(store.exportWritesText, L.f("export_writes_value", L.s("content_trip"), L.plural("trips_count", 1)))
+
+        store.checkAllTrips()
+        XCTAssertEqual(store.markedTripCount, trips.count)
+        XCTAssertTrue(store.exportTripKeys.isEmpty)
     }
 
     func testNoTripsNoYears() {

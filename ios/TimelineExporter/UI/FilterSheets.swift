@@ -86,20 +86,29 @@ struct TimeOfDaySheet: View {
         _to = State(initialValue: Self.date(minute: w.end))
     }
 
+    private func presetButton(_ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity, minHeight: 32)
+        }
+        .buttonStyle(.bordered)
+    }
+
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            Button(L.s("time_preset_any")) { finish(nil) }
-                                .buttonStyle(.bordered)
-                            ForEach(TimeWindow.presets, id: \.key) { preset in
-                                Button(L.s(preset.key)) { finish(preset.window) }
-                                    .buttonStyle(.bordered)
-                            }
+                    // A grid that wraps rather than a sideways scroll: on a phone
+                    // the last preset was cut off at the edge, and nothing said
+                    // there was more. Long names wrap inside their own button.
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 120), spacing: 8)], spacing: 8) {
+                        presetButton(L.s("time_preset_any")) { finish(nil) }
+                        ForEach(TimeWindow.presets, id: \.key) { preset in
+                            presetButton(L.s(preset.key)) { finish(preset.window) }
                         }
                     }
+                    .padding(.vertical, 4)
                 }
                 Section {
                     DatePicker(L.s("time_dialog_from"), selection: $from, displayedComponents: .hourAndMinute)

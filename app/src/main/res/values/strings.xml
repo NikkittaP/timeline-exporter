@@ -29,6 +29,7 @@
     <!-- Pick file / Idle state -->
     <string name="pick_file_button">Pick Timeline.json</string>
     <string name="idle_hint">Pick a Google Maps Timeline JSON file to parse.</string>
+    <string name="privacy_note">Your Timeline file is read on this device and never uploaded. The app does not record your location or sign in to Google; only the map background is loaded from the internet.</string>
     <string name="idle_help_button">How do I get Timeline data?</string>
 
     <!-- Loading stages (translated in UI from VM's semantic LoadingPhase) -->
@@ -126,7 +127,7 @@
 
     <!-- Help dialog -->
     <string name="help_title">Getting your Timeline data</string>
-    <string name="help_intro">Since late 2024 Google stores Timeline only on your device — there\'s no Google Takeout option and no third-party app can read it directly. You export it once from system Settings, then bring the file here.</string>
+    <string name="help_intro">Since late 2024 Google keeps Timeline on your device (with an optional encrypted backup) rather than in your Google account online. There\'s no Google Takeout option and no other app can read it directly. You export it once from system Settings, then bring the file here.</string>
 
     <string name="help_method_settings_title">Export from Android Settings (recommended)</string>
     <string name="help_method_settings_step1">Open the Android Settings app</string>
@@ -252,10 +253,11 @@
     <string name="trips_none">No trips: this file never goes more than 50 km from home.</string>
     <string name="trips_none_filtered">No trips in the selected date range.</string>
     <string name="trips_no_home">This file does not say where home is, so trips cannot be found.</string>
-    <string name="trips_hint">Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map. Tick trips to export only those.</string>
+    <string name="trips_hint">Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map. Untick trips to leave them out of the export.</string>
     <string name="trip_export_checkbox">Export this trip</string>
-    <string name="trips_checked_none">All trips will be exported</string>
     <string name="trips_checked">Marked for export: %1$s of %2$s</string>
+    <string name="trips_select_all">Select all</string>
+    <string name="trips_checked_zero">No trips marked for export</string>
     <string name="trip_show_all_on_map">Show all trips on map</string>
     <string name="trip_show_checked_on_map">Show marked trips on map</string>
     <string name="trip_far_from_home">%1$s from home</string>
@@ -358,6 +360,7 @@
     <string name="map_image_rendering_high">Rendering high resolution…</string>
     <string name="map_image_high_error">Couldn\'t render the high-resolution image. Nothing was saved; try Standard.</string>
     <string name="map_image_stat_distance">Tracked distance</string>
+    <string name="map_image_distance_note">Tracked distance adds up the line drawn on this image. Flights and gaps without GPS points are not counted, so it is often shorter than the travelled distance Google reports.</string>
     <string name="map_image_stat_days">Days</string>
     <string name="map_image_stat_places">Places</string>
 

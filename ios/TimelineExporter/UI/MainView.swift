@@ -156,6 +156,12 @@ struct MainView: View {
                     Label(L.s("ios_problem_title"), systemImage: FeedbackKind.problem.symbol)
                 }
                 .accessibilityIdentifier("reportProblem")
+                // The same page the App Store listing links to: what the app
+                // reads, and that only map tiles go over the network.
+                Link(destination: URL(string: "https://nikitapetrovapps.com/timeline-exporter/PRIVACY.html")!) {
+                    Label(L.s("ios_privacy_policy"), systemImage: "hand.raised")
+                }
+                .accessibilityIdentifier("privacyPolicy")
             }
             if !history.isEmpty {
                 Button { info = .history } label: { Label(L.s("whats_new_title"), systemImage: "sparkles") }

@@ -21,6 +21,7 @@
 
     <string name="pick_file_button">اختيار Timeline.json</string>
     <string name="idle_hint">اختر ملف JSON الخاص بالمخطط الزمني في خرائط Google لتحليله.</string>
+    <string name="privacy_note">يُقرأ ملفك على هذا الجهاز ولا يُرفع إلى أي مكان. لا يسجّل التطبيق موقعك ولا يسجّل الدخول إلى Google؛ لا يُحمَّل من الإنترنت سوى خلفية الخريطة.</string>
     <string name="idle_help_button">كيف أحصل على بيانات المخطط الزمني؟</string>
 
     <string name="loading_opening">جارٍ فتح الملف…</string>
@@ -91,7 +92,7 @@
     <string name="track_name_full_range">(تصدير كامل)</string>
 
     <string name="help_title">الحصول على بيانات المخطط الزمني</string>
-    <string name="help_intro">منذ أواخر عام 2024، يخزّن Google المخطط الزمني على جهازك فقط — لا يوجد خيار Google Takeout ولا تطبيق خارجي يمكنه قراءته مباشرةً. تصدّره مرة واحدة من إعدادات النظام، ثم تفتح الملف هنا.</string>
+    <string name="help_intro">منذ أواخر عام 2024، يحتفظ Google بالمخطط الزمني على جهازك (مع نسخة احتياطية مشفّرة اختيارية) بدلًا من حسابك على Google عبر الإنترنت. لا يوجد خيار Google Takeout ولا يمكن لأي تطبيق آخر قراءته مباشرةً. تصدّره مرة واحدة من إعدادات النظام، ثم تفتح الملف هنا.</string>
 
     <string name="help_method_settings_title">التصدير من إعدادات Android (مُستحسَن)</string>
     <string name="help_method_settings_step1">افتح تطبيق الإعدادات في Android</string>
@@ -203,10 +204,11 @@
     <string name="trips_none">لا توجد رحلات: في هذا الملف لم تبتعد عن المنزل أكثر من 50 كم.</string>
     <string name="trips_none_filtered">لا توجد رحلات في النطاق الزمني المحدد.</string>
     <string name="trips_no_home">لا يحدد هذا الملف مكان المنزل، لذا لا يمكن العثور على الرحلات.</string>
-    <string name="trips_hint">تُكتشف الرحلة عندما تبتعد عن المنزل أكثر من 50 كم. انقر على رحلة لمعاينتها على الخريطة. حدّد الرحلات لتصديرها وحدها.</string>
+    <string name="trips_hint">تُكتشف الرحلة عندما تبتعد عن المنزل أكثر من 50 كم. انقر على رحلة لمعاينتها على الخريطة. ألغِ تحديد الرحلات لاستبعادها من التصدير.</string>
     <string name="trip_export_checkbox">تصدير هذه الرحلة</string>
-    <string name="trips_checked_none">سيتم تصدير كل الرحلات</string>
     <string name="trips_checked">محدّدة للتصدير: %1$s من %2$s</string>
+    <string name="trips_select_all">تحديد الكل</string>
+    <string name="trips_checked_zero">لا توجد رحلات محددة للتصدير</string>
     <string name="trip_show_all_on_map">عرض كل الرحلات على الخريطة</string>
     <string name="trip_show_checked_on_map">عرض الرحلات المحدّدة على الخريطة</string>
     <string name="trip_far_from_home">على بُعد %1$s من المنزل</string>
@@ -298,6 +300,7 @@
     <string name="map_image_rendering_high">جارٍ عرض الدقة العالية…</string>
     <string name="map_image_high_error">تعذّر عرض الصورة عالية الدقة. لم يُحفظ شيء؛ جرّب الدقة القياسية.</string>
     <string name="map_image_stat_distance">المسافة المسجّلة</string>
+    <string name="map_image_distance_note">المسافة المسجّلة هي مجموع الخط المرسوم على هذه الصورة. لا تُحتسب الرحلات الجوية والفجوات التي لا توجد فيها نقاط GPS، لذا تكون غالبًا أقصر من المسافة المقطوعة التي يذكرها Google.</string>
     <string name="map_image_stat_days">الأيام</string>
     <string name="map_image_stat_places">الأماكن</string>
 

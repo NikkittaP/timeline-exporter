@@ -448,10 +448,12 @@ fun MainScreen(
     // The trip the map shows alone, by its start. A key rather than the trip,
     // for the same reason as the place selection below.
     var selectedTripKey by rememberSaveable { mutableStateOf<Long?>(null) }
-    // The trips ticked for export, by the same key. Empty means every trip.
-    // Kept when the dates change: a ticked trip outside the range is simply
-    // not counted, and is ticked again when the range takes it back in.
-    var checkedTripKeys by rememberSaveable(stateSaver = LongSetSaver) { mutableStateOf(emptySet<Long>()) }
+    // The trips unticked, so left out of the export, by the same key. Every
+    // trip starts ticked: a tick means "exported", as in any checkbox list,
+    // and none ticked exports nothing. Kept when the dates change: a trip the
+    // range brings back in comes back as it was left, and one never seen
+    // arrives ticked.
+    var excludedTripKeys by rememberSaveable(stateSaver = LongSetSaver) { mutableStateOf(emptySet<Long>()) }
     // Non-null while the naming dialog is open, and the place it is about.
     var placeBeingNamed by remember { mutableStateOf<PlaceEntry?>(null) }
     // The one place the map and the list both point at. Held as a key rather
@@ -596,19 +598,23 @@ fun MainScreen(
     val allTripExports = remember(visibleTrips, filteredPoints) {
         exportTrips(visibleTrips.sortedBy { it.start }, filteredPoints)
     }
-    // What step 4 writes: the ticked trips, or all of them when none are.
-    // With no trip selected the map draws this same set, so the preview is
-    // the export.
-    val anyTripChecked = visibleTrips.any { it.key in checkedTripKeys }
-    val tripExports = remember(allTripExports, checkedTripKeys, anyTripChecked) {
-        if (anyTripChecked) allTripExports.filter { it.trip.key in checkedTripKeys } else allTripExports
+    // What step 4 writes: the ticked trips. With no trip selected the map
+    // draws this same set, so the preview is the export — except with none
+    // ticked, when it keeps every trip in view rather than going blank.
+    val checkedTripKeys = remember(visibleTrips, excludedTripKeys) {
+        markedTripKeys(visibleTrips.map { it.key }, excludedTripKeys)
     }
+    val tripsNarrowed = checkedTripKeys.size < visibleTrips.size
+    val tripExports = remember(allTripExports, checkedTripKeys, tripsNarrowed) {
+        if (tripsNarrowed) allTripExports.filter { it.trip.key in checkedTripKeys } else allTripExports
+    }
+    val mapTripExports = tripExports.ifEmpty { allTripExports }
     val selectedTrip = visibleTrips.firstOrNull { it.key == selectedTripKey }
     // From every trip, not only the ticked ones: an unticked trip can still
     // be looked at.
     val selectedTripExport = allTripExports.firstOrNull { it.trip.key == selectedTripKey }
-    val tripPoints = remember(tripExports, selectedTripExport) {
-        selectedTripExport?.points ?: tripExports.flatMap { it.points }
+    val tripPoints = remember(mapTripExports, selectedTripExport) {
+        selectedTripExport?.points ?: mapTripExports.flatMap { it.points }
     }
     // Always selects, even the trip already selected: a second tap used to let
     // go of it, which made a trip found after a long scroll easy to lose.
@@ -618,7 +624,7 @@ fun MainScreen(
         tripReveals++
     }
     val onTripChecked: (io.github.nikkittap.timelineexporter.trips.Trip, Boolean) -> Unit = { trip, on ->
-        checkedTripKeys = if (on) checkedTripKeys + trip.key else checkedTripKeys - trip.key
+        excludedTripKeys = if (on) excludedTripKeys - trip.key else excludedTripKeys + trip.key
     }
 
     /**
@@ -661,12 +667,12 @@ fun MainScreen(
     // track. Remembered so the instance is stable across recompositions: the
     // map re-frames its camera when the subject changes, and a new wrapper
     // every frame would re-frame every frame.
-    val mapSubject = remember(contentKind, filteredPoints, places, tripPoints, selectedTripExport, tripExports) {
+    val mapSubject = remember(contentKind, filteredPoints, places, tripPoints, selectedTripExport, mapTripExports) {
         when (contentKind) {
             ContentKind.TRACK -> MapSubject.Track(filteredPoints)
             // The trips' own points, or the selected trip's alone: a new
             // subject re-frames the camera, which is what takes the map to it.
-            ContentKind.TRIPS -> MapSubject.Track(tripPoints, selectedTripExport?.let { listOf(it.points) } ?: tripExports.map { it.points })
+            ContentKind.TRIPS -> MapSubject.Track(tripPoints, selectedTripExport?.let { listOf(it.points) } ?: mapTripExports.map { it.points })
             ContentKind.PLACES -> MapSubject.Places(places)
         }
     }
@@ -707,7 +713,7 @@ fun MainScreen(
     //
     // Both are named apart from "every trip" only when the ticks pick some
     // out: step 2's dates no longer describe what is in the file then.
-    val checkedTrips = if (anyTripChecked) tripExports.map { it.trip } else emptyList()
+    val checkedTrips = if (tripsNarrowed) tripExports.map { it.trip } else emptyList()
     val contentName = buildContentName(filter, contentKind, checkedTrips)
 
     val pickFileLauncher = rememberLauncherForActivityResult(
@@ -846,6 +852,13 @@ fun MainScreen(
                             ) {
                                 Text(stringResource(R.string.idle_help_button))
                             }
+                            // What happens to the file, before it is picked:
+                            // the question a location-history app gets first.
+                            Text(
+                                stringResource(R.string.privacy_note),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
                     }
 
@@ -939,7 +952,7 @@ fun MainScreen(
                                         SelectedTripCard(
                                             trip = selectedTrip,
                                             checked = selectedTrip.key in checkedTripKeys,
-                                            anyChecked = anyTripChecked,
+                                            anyChecked = tripsNarrowed && tripExports.isNotEmpty(),
                                             onCheckedChange = { onTripChecked(selectedTrip, it) },
                                             onShowAllOnMap = { selectedTripKey = null },
                                         )
@@ -954,7 +967,8 @@ fun MainScreen(
                                 checkedKeys = checkedTripKeys,
                                 onTripClick = onTripPicked,
                                 onCheckedChange = onTripChecked,
-                                onClearChecked = { checkedTripKeys = emptySet() },
+                                onClearChecked = { excludedTripKeys = excludedTripKeys + visibleTrips.map { it.key } },
+                                onSelectAll = { excludedTripKeys = excludedTripKeys - visibleTrips.map { it.key }.toSet() },
                                 onShowAll = { tripsFullscreen = true },
                             )
                         }
@@ -1009,6 +1023,7 @@ fun MainScreen(
                         onFeedbackClick = onFeedbackClick,
                         postExportAsk = postExportAsk,
                         onMapImage = if (contentKind == ContentKind.PLACES) null else ({ mapImageOpen = true }),
+                        noTripsMarked = contentKind == ContentKind.TRIPS && visibleTrips.isNotEmpty() && tripExports.isEmpty(),
                     )
                 }
             }
@@ -2096,10 +2111,19 @@ private fun ExportStep(
     postExportAsk: PostExportAsk = PostExportAsk.Feedback,
     /** Opens the map image export, or null where there is no route to draw (Places). */
     onMapImage: (() -> Unit)? = null,
+    /** Trips listed but every one unticked: say why the buttons are off. */
+    noTripsMarked: Boolean = false,
 ) {
     val enabled = canSave && exportState !is ExportState.Working
 
     ExportSubjectPlaque(contentKind = contentKind, itemCount = itemCount)
+    if (noTripsMarked) {
+        Text(
+            text = stringResource(R.string.trips_checked_zero),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.error,
+        )
+    }
 
     // Destination first, format second — one row of format buttons either way.
     // The alternative, a second row of "share as GPX / KML / …" buttons, would

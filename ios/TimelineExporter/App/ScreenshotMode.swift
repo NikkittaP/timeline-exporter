@@ -89,6 +89,7 @@ enum ScreenshotMode {
             store.setContentKind(.trips)
             if let day = cal.date(from: focusTrip),
                let trip = store.tripList.trips.first(where: { cal.isDate($0.startDay, inSameDayAs: day) }) {
+                store.clearCheckedTrips()
                 store.setTrip(trip.key, checked: true)
                 store.selectTrip(trip.key)
             }
@@ -97,6 +98,7 @@ enum ScreenshotMode {
             let trips = store.visibleTrips
             if let day = cal.date(from: focusTrip),
                let index = trips.firstIndex(where: { cal.isDate($0.startDay, inSameDayAs: day) }) {
+                store.clearCheckedTrips()
                 store.setTrip(trips[index].key, checked: true)
                 if index + 1 < trips.count {
                     store.selectTrip(trips[index + 1].key)

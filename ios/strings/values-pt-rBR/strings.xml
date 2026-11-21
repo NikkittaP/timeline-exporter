@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">Como funciona</string>
     <string name="ios_welcome_body">O Google Maps pode lembrar os lugares por onde você passa: é a sua **Linha do tempo** (Timeline). Este app abre o arquivo da Linha do tempo, mostra suas viagens no mapa e as salva como arquivos GPX, KML, GeoJSON ou CSV para outros apps (Strava, Garmin, Google Earth, Excel…).</string>
-    <string name="ios_welcome_not_tracker">Este app não rastreia você e não entra na sua conta do Google. Ele só lê o arquivo que você salva pelo Google Maps, e tudo fica neste aparelho.</string>
-    <string name="ios_requirements_title">⚠️ Importante: confira primeiro</string>
-    <string name="ios_requirement_account">**Seu histórico de localização vem da sua Conta do Google.** Você precisa do app Google Maps conectado à sua Conta do Google.</string>
-    <string name="ios_requirement_timeline">**A Linha do tempo precisa estar ativada no Google Maps.** O Google só salva os dias desde a ativação; se estava desativada, não há nada para exportar.</string>
-    <string name="ios_requirement_location">**O Google Maps precisa de acesso à localização “Sempre”** (app Ajustes → Google Maps → Localização); senão a Linha do tempo registra muito pouco.</string>
-    <string name="ios_requirement_device">**A Linha do tempo fica no celular que a registrou.** Se o seu histórico foi registrado em outro celular, salve o arquivo nele.</string>
+    <string name="ios_requirements_title">Antes de começar</string>
+    <string name="ios_requirement_account">**A Linha do tempo é registrada pelo Google Maps**, no app conectado à sua Conta do Google. Este app lê um arquivo que você salva de lá; ele mesmo não registra nada.</string>
+    <string name="ios_requirement_timeline">**A Linha do tempo precisa estar ativada.** O Google só salva os dias desde a ativação, e nenhum app consegue adicionar os dias anteriores.</string>
+    <string name="ios_requirement_location">**O Google Maps precisa da sua localização.** A configuração do Google pede acesso à localização “Sempre” (app Ajustes → Google Maps → Localização); com menos, a Linha do tempo pode registrar só parte do seu dia.</string>
+    <string name="ios_requirement_device">**Cada celular tem a própria Linha do tempo.** O histórico registrado em outro celular não está neste iPhone: exporte-o naquele celular ou importe aqui o backup do Google (Sua linha do tempo → ícone de nuvem).</string>
     <string name="ios_quick_title">Seu arquivo em 3 passos</string>
     <string name="ios_quick_step1">No **Google Maps**, toque na sua foto de perfil → **Configurações** → **Localização e privacidade** → **Exportar dados da Linha do tempo**.</string>
     <string name="ios_quick_step2">Toque em **Salvar em Arquivos** e salve o arquivo No Meu iPhone ou no iCloud Drive.</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">Guia detalhado passo a passo</string>
     <string name="ios_try_sample_button">Testar com dados de exemplo</string>
     <string name="ios_sample_hint">Viagens inventadas: veja o que o app faz antes de exportar as suas.</string>
-    <string name="help_intro">O Google Maps guarda a Linha do tempo só no seu celular, não na internet, então nenhum outro app consegue lê-la diretamente. Você a salva uma vez pelo Google Maps como arquivo e abre esse arquivo aqui. Nada é enviado para lugar nenhum.</string>
+    <string name="help_intro">O Google Maps guarda a Linha do tempo no celular que a registrou, não na sua Conta do Google on-line (o backup criptografado é opcional), então outros apps não conseguem lê-la diretamente. Salve-a uma vez pelo Google Maps como arquivo e abra esse arquivo aqui.</string>
     <string name="ios_turn_on_title">1. Ative a Linha do tempo (pule se já estiver ativa)</string>
     <string name="ios_maps_profile">Abra o Google Maps e toque na sua foto de perfil (canto superior direito)</string>
     <string name="ios_turn_on_step2">Toque em **Sua linha do tempo**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">Salvar %1$s</string>
     <string name="ios_export_run_share">Compartilhar %1$s</string>
     <string name="ios_map_image_entry_hint">Uma imagem deste trajeto para salvar ou compartilhar</string>
-    <string name="ios_map_image_distance_note">A distância registrada soma a linha desta imagem, então pode ser diferente da distância percorrida de uma viagem.</string>
     <string name="ios_map_status_loading">Carregando mapa…</string>
     <string name="ios_map_status_tiles">Blocos do mapa indisponíveis. Seus dados continuam visíveis.</string>
     <string name="ios_map_status_failed">Não foi possível carregar o mapa.</string>
     <string name="ios_trips_clear_marks">Limpar marcações</string>
     <string name="ios_place_unnamed">Lugar sem nome</string>
     <string name="ios_trip_on_map">Exibida no mapa</string>
-    <string name="ios_trips_none_selected">Nenhuma viagem selecionada: todas as %1$s serão exportadas.</string>
-    <string name="ios_select_all">Selecionar tudo</string>
     <string name="ios_search_places">Buscar lugares</string>
     <string name="ios_export_data_file">Arquivo de dados</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">Incluir detalhes técnicos</string>
     <string name="ios_problem_details_note">Ajudam a reproduzir o problema. Não contêm dados de localização nem nada do seu arquivo.</string>
     <string name="ios_feedback_copy_address">Copiar endereço de e-mail</string>
+    <string name="ios_privacy_policy">Política de privacidade</string>
 </resources>

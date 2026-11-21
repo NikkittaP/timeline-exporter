@@ -448,6 +448,9 @@ private fun MapImageExportContent(
                 }
 
                 OptionRow(stringResource(R.string.map_image_show_stats), showStats, enabled) { showStats = it }
+                // Why Tracked distance is shorter than the travelled figure
+                // elsewhere in the app: flights and gaps are not on the line.
+                if (showStats) Note(stringResource(R.string.map_image_distance_note))
                 OptionRow(stringResource(R.string.map_image_show_endpoints), showEndpoints, enabled) { showEndpoints = it }
                 OptionRow(stringResource(R.string.map_color_by_day), colorByDay, enabled) { colorByDay = it }
                 OptionRow(stringResource(R.string.map_image_dark_map), darkMap, enabled) { darkMap = it }

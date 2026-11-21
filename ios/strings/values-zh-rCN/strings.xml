@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">工作原理</string>
     <string name="ios_welcome_body">Google 地图可以记住你去过的地方——这就是你的**时间轴**。本应用打开你的时间轴文件，在地图上显示你的行程，并保存为 GPX、KML、GeoJSON 或 CSV 文件，供其他应用使用（Strava、Garmin、Google 地球、Excel 等）。</string>
-    <string name="ios_welcome_not_tracker">本应用不会追踪你，也不会登录 Google。它只读取你从 Google 地图保存的文件，一切都留在这台设备上。</string>
-    <string name="ios_requirements_title">⚠️ 重要：请先检查</string>
-    <string name="ios_requirement_account">**你的位置记录来自你的 Google 账号。** 需要安装 Google 地图应用并登录你的 Google 账号。</string>
-    <string name="ios_requirement_timeline">**必须在 Google 地图中开启时间轴。** Google 只保存开启之后的日子——如果之前是关闭的，就没有可导出的内容。</string>
-    <string name="ios_requirement_location">**Google 地图的位置权限需设为“始终”**（“设置”应用 → Google Maps → 位置），否则时间轴几乎记录不到内容。</string>
-    <string name="ios_requirement_device">**时间轴保存在记录它的那部手机上。** 如果你的记录是在另一部手机上产生的，请在那部手机上保存文件。</string>
+    <string name="ios_requirements_title">开始之前</string>
+    <string name="ios_requirement_account">**时间轴由 Google 地图记录**，即登录了你 Google 账号的那个应用。本应用只读取你从那里保存的文件，自己不记录任何内容。</string>
+    <string name="ios_requirement_timeline">**时间轴必须处于开启状态。** Google 只保存开启之后的日子，任何应用都无法补上之前的日子。</string>
+    <string name="ios_requirement_location">**Google 地图需要你的位置。** Google 的设置会要求将位置权限设为“始终”（“设置”应用 → Google Maps → 位置）；权限更低时，时间轴可能只记录一天中的一部分。</string>
+    <string name="ios_requirement_device">**每部手机都有自己的时间轴。** 在另一部手机上记录的历史不在这部 iPhone 上：请在那部手机上导出，或在这里导入 Google 备份（你的时间轴 → 云朵图标）。</string>
     <string name="ios_quick_title">3 步获取文件</string>
     <string name="ios_quick_step1">在 **Google 地图** 中点按你的头像 → **设置** → **位置信息和隐私** → **导出时间轴数据**。</string>
     <string name="ios_quick_step2">点按 **存储到“文件”**，将文件保存到“我的 iPhone”或 iCloud 云盘。</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">详细分步指南</string>
     <string name="ios_try_sample_button">用示例数据试试</string>
     <string name="ios_sample_hint">虚构的行程：在导出你自己的数据之前，先看看本应用能做什么。</string>
-    <string name="help_intro">Google 地图只把时间轴保存在手机上，而不是在线保存，所以其他应用无法直接读取。你只需从 Google 地图把它保存成文件一次，然后在这里打开该文件。不会上传到任何地方。</string>
+    <string name="help_intro">Google 地图把时间轴保存在记录它的手机上，而不是在线保存在 Google 账号中（加密备份是可选的），所以其他应用无法直接读取。只需从 Google 地图把它保存成文件一次，然后在这里打开该文件。</string>
     <string name="ios_turn_on_title">1. 开启时间轴（已开启可跳过）</string>
     <string name="ios_maps_profile">打开 Google 地图，点按你的头像（右上角）</string>
     <string name="ios_turn_on_step2">点按 **你的时间轴**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">保存 %1$s</string>
     <string name="ios_export_run_share">分享 %1$s</string>
     <string name="ios_map_image_entry_hint">保存或分享此路线的图片</string>
-    <string name="ios_map_image_distance_note">记录距离是此图片上线路的总和，因此可能与行程的实际里程不同。</string>
     <string name="ios_map_status_loading">正在加载地图…</string>
     <string name="ios_map_status_tiles">地图图块不可用。您的数据仍会显示。</string>
     <string name="ios_map_status_failed">无法加载地图。</string>
     <string name="ios_trips_clear_marks">清除标记</string>
     <string name="ios_place_unnamed">未命名地点</string>
     <string name="ios_trip_on_map">已显示在地图上</string>
-    <string name="ios_trips_none_selected">未选择旅行 — 将全部导出:%1$s</string>
-    <string name="ios_select_all">全选</string>
     <string name="ios_search_places">搜索地点</string>
     <string name="ios_export_data_file">数据文件</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">附上技术信息</string>
     <string name="ios_problem_details_note">帮助我重现问题。不包含位置数据，也不包含你文件中的任何内容。</string>
     <string name="ios_feedback_copy_address">复制邮箱地址</string>
+    <string name="ios_privacy_policy">隐私政策</string>
 </resources>

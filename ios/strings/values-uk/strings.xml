@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">Як це працює</string>
     <string name="ios_welcome_body">Google Карти вміють запам'ятовувати, де ви бували, — це ваша **Хронологія**. Застосунок відкриває файл Хронології, показує поїздки на карті та зберігає їх у файли GPX, KML, GeoJSON або CSV для інших застосунків (Strava, Garmin, Google Earth, Excel…).</string>
-    <string name="ios_welcome_not_tracker">Застосунок не стежить за вами і не входить в акаунт Google. Він лише читає файл, який ви зберегли з Google Карт, і все залишається на цьому пристрої.</string>
-    <string name="ios_requirements_title">⚠️ Важливо — перевірте спершу</string>
-    <string name="ios_requirement_account">**Історія місцеперебувань береться з вашого акаунта Google.** Потрібен застосунок Google Карти, у якому ви ввійшли у свій акаунт Google.</string>
-    <string name="ios_requirement_timeline">**У Google Картах має бути ввімкнена Хронологія.** Google зберігає лише дні після її ввімкнення — якщо вона була вимкнена, експортувати нічого.</string>
-    <string name="ios_requirement_location">**Google Картам потрібен доступ до геопозиції «Завжди»** (застосунок «Параметри» → Google Maps → Геопозиція), інакше Хронологія майже нічого не запише.</string>
-    <string name="ios_requirement_device">**Хронологія зберігається на тому телефоні, який її записав.** Якщо історія записувалася на іншому телефоні, збережіть файл на ньому.</string>
+    <string name="ios_requirements_title">Перед початком</string>
+    <string name="ios_requirement_account">**Хронологію записують Google Карти** — у застосунку, де ви ввійшли у свій акаунт Google. Цей застосунок читає файл, який ви з них збережете, і сам нічого не записує.</string>
+    <string name="ios_requirement_timeline">**Хронологія має бути ввімкнена.** Google зберігає лише дні після її ввімкнення, і жоден застосунок не додасть дні до цього.</string>
+    <string name="ios_requirement_location">**Google Картам потрібна ваша геопозиція.** Під час налаштування Google просить доступ «Завжди» (застосунок «Параметри» → Google Maps → Геопозиція); з меншим доступом Хронологія може записувати лише частину дня.</string>
+    <string name="ios_requirement_device">**У кожного телефона своя Хронологія.** Історії, записаної на іншому телефоні, немає на цьому iPhone: експортуйте її на тому телефоні або імпортуйте сюди резервну копію Google (Ваша хронологія → значок хмари).</string>
     <string name="ios_quick_title">Отримайте файл за 3 кроки</string>
     <string name="ios_quick_step1">У **Google Картах** торкніться фото профілю → **Налаштування** → **Місцезнаходження та конфіденційність** → **Експортувати дані Timeline**.</string>
     <string name="ios_quick_step2">Торкніться **Зберегти у «Файли»** і збережіть файл у «На iPhone» або iCloud Drive.</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">Детальна покрокова інструкція</string>
     <string name="ios_try_sample_button">Спробувати на прикладі</string>
     <string name="ios_sample_hint">Вигадані поїздки: подивіться, що вміє застосунок, до експорту своїх.</string>
-    <string name="help_intro">Google Карти зберігають Хронологію лише на телефоні, а не в інтернеті, тому інші застосунки не можуть прочитати її напряму. Один раз збережіть її з Google Карт у файл і відкрийте цей файл тут. Нічого нікуди не завантажується.</string>
+    <string name="help_intro">Google Карти зберігають Хронологію на телефоні, який її записав, а не в акаунті Google в інтернеті (зашифрована резервна копія необов'язкова), тому інші застосунки не можуть прочитати її напряму. Один раз збережіть її з Google Карт у файл і відкрийте цей файл тут.</string>
     <string name="ios_turn_on_title">1. Увімкніть Хронологію (якщо вже ввімкнена — пропустіть)</string>
     <string name="ios_maps_profile">Відкрийте Google Карти й торкніться фото профілю (угорі праворуч)</string>
     <string name="ios_turn_on_step2">Торкніться **Ваша хронологія**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">Зберегти %1$s</string>
     <string name="ios_export_run_share">Поділитися: %1$s</string>
     <string name="ios_map_image_entry_hint">Зображення цього маршруту, щоб зберегти або надіслати</string>
-    <string name="ios_map_image_distance_note">Записана відстань — це сума лінії на зображенні, тому вона може відрізнятися від пройденої відстані подорожі.</string>
     <string name="ios_map_status_loading">Завантаження карти…</string>
     <string name="ios_map_status_tiles">Фрагменти карти недоступні. Ваші дані й далі показано.</string>
     <string name="ios_map_status_failed">Не вдалося завантажити карту.</string>
     <string name="ios_trips_clear_marks">Зняти позначки</string>
     <string name="ios_place_unnamed">Місце без назви</string>
     <string name="ios_trip_on_map">Показано на карті</string>
-    <string name="ios_trips_none_selected">Поїздки не позначено — експортуються всі: %1$s</string>
-    <string name="ios_select_all">Вибрати всі</string>
     <string name="ios_search_places">Пошук місць</string>
     <string name="ios_export_data_file">Файл даних</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">Додати технічні дані</string>
     <string name="ios_problem_details_note">Допомагають відтворити проблему. Не містять геоданих і нічого з вашого файлу.</string>
     <string name="ios_feedback_copy_address">Скопіювати адресу пошти</string>
+    <string name="ios_privacy_policy">Політика конфіденційності</string>
 </resources>

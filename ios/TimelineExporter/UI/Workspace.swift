@@ -18,6 +18,7 @@ struct Workspace: View {
     let onJourney: (JourneyScene) -> Void
     @State private var filtersShown = false
     @State private var exportShown = false
+    @State private var mapImageShown = false
 
     /// A phone on its side: every point of height is the map's.
     private var condensed: Bool {
@@ -43,7 +44,7 @@ struct Workspace: View {
                 // One map for the three modes, so the switch does not tear
                 // it down: only its height changes.
                 if showsMapInColumn {
-                    MapPane(state: $mapState, colorToggle: true)
+                    MapPane(state: $mapState, colorToggle: true, onMapImage: { mapImageShown = true })
                         .frame(height: store.contentKind == .track
                                ? nil : PageLayout.stackedMapHeight(pageHeight: pageSize.height))
                         .frame(maxHeight: store.contentKind == .track ? .infinity : nil)
@@ -60,7 +61,7 @@ struct Workspace: View {
 
             if mode == .split {
                 Divider().ignoresSafeArea(.container, edges: .bottom)
-                MapPane(state: $mapState, underBottomEdge: true)
+                MapPane(state: $mapState, underBottomEdge: true, onMapImage: { mapImageShown = true })
                     .frame(maxWidth: .infinity)
             }
         }
@@ -69,6 +70,11 @@ struct Workspace: View {
         }
         .sheet(isPresented: $exportShown) {
             ExportSheet(wideMapImage: MapImagePreviewFrame.wideSheet(window: pageSize, sizeClass: sizeClass))
+        }
+        // Straight from the map, as on Android: the picture of what is on it
+        // should not hide two levels down in the Export sheet.
+        .sheet(isPresented: $mapImageShown) {
+            MapImageSheet(wide: MapImagePreviewFrame.wideSheet(window: pageSize, sizeClass: sizeClass))
         }
         .task {
             await stageScreenshot()
@@ -218,7 +224,9 @@ private struct WorkspaceHeader: View {
         [
             L.f("points_count", Fmt.grouped(core.pointCount)),
             L.plural("map_day_count", store.dayCount),
-            Fmt.km(store.totalDistance),
+            // "travelled", as on a trip: Google's own figure, flights included,
+            // so it is read apart from the shorter Tracked distance on a Map image.
+            Fmt.km(store.totalDistance) + " " + L.s("trip_travelled_label"),
         ].joined(separator: " · ")
     }
 

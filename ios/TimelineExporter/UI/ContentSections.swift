@@ -72,6 +72,8 @@ struct MapPane: View {
     var underBottomEdge = false
     /// Colour by day as a button on the map, where no pane has the switch.
     var colorToggle = false
+    /// Opens the Map image; nil leaves the button off.
+    var onMapImage: (() -> Void)? = nil
     /// The strip or the card with the gap under it, as laid out.
     @State private var overlayHeight: CGFloat = 0
 
@@ -81,7 +83,8 @@ struct MapPane: View {
             PreviewMap(
                 state: $state,
                 bottomOverlay: store.showsDayLegend || trip != nil ? overlayHeight : 0,
-                colorToggle: colorToggle
+                colorToggle: colorToggle,
+                onMapImage: onMapImage
             )
             .ignoresSafeArea(.container, edges: underBottomEdge ? .bottom : [])
             if store.showsDayLegend {
@@ -99,6 +102,7 @@ struct PreviewMap: View {
     @Binding var state: PreviewMapState
     var bottomOverlay: CGFloat? = nil
     var colorToggle = false
+    var onMapImage: (() -> Void)? = nil
     @State private var flightToken = 0
 
     var body: some View {
@@ -125,6 +129,10 @@ struct PreviewMap: View {
                     if colorToggle && store.contentKind == .track {
                         ColorByDayButton()
                             .accessibilityIdentifier("colorByDay")
+                    }
+                    if let onMapImage, store.canMakeMapImage {
+                        MapButton(symbol: "photo", label: L.s("map_image_export_entry"), action: onMapImage)
+                            .accessibilityIdentifier("mapImageFromMap")
                     }
                 }
                 .padding(8)
@@ -192,7 +200,7 @@ private struct TripPreviewCard: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(store.checkedTrips.isEmpty ? L.s("trip_show_all_on_map") : L.s("trip_show_checked_on_map"))
+            .accessibilityLabel(store.tripsNarrowed && store.markedTripCount > 0 ? L.s("trip_show_checked_on_map") : L.s("trip_show_all_on_map"))
             .accessibilityIdentifier("tripPreviewClose")
         }
         .padding(.leading, 14)

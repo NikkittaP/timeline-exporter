@@ -1,12 +1,12 @@
 Google Maps kan onthouden waar je bent geweest: dat is je tijdlijn (Timeline). Deze app opent je tijdlijnbestand, toont je ritten op een kaart en bewaart ze als GPX-, KML-, GeoJSON- of CSV-bestanden voor andere apps (Strava, Garmin, Google Earth, Excel…).
 
-Deze app volgt je niet en logt niet in bij Google. Hij leest alleen het bestand dat je uit Google Maps bewaart, en alles blijft op dit apparaat.
+Je bestand wordt op dit apparaat gelezen en nooit geüpload. De app legt je locatie niet vast en logt niet in bij Google; alleen de kaartachtergrond wordt van internet geladen.
 
-⚠️ BELANGRIJK: CONTROLEER DIT EERST
-• JE LOCATIEGESCHIEDENIS KOMT UIT JE GOOGLE-ACCOUNT. Je hebt de Google Maps-app nodig, ingelogd met je Google-account.
-• DE TIJDLIJN MOET AANSTAAN IN GOOGLE MAPS. Google bewaart alleen de dagen sinds hij aan is gezet; stond hij uit, dan valt er niets te exporteren.
-• Google Maps heeft locatietoegang ‘Altijd’ nodig (app Instellingen → Google Maps → Locatie), anders legt de tijdlijn bijna niets vast.
-• De tijdlijn staat op de telefoon die hem heeft vastgelegd. Is je geschiedenis op een andere telefoon vastgelegd, bewaar het bestand dan op die telefoon.
+VOORDAT JE BEGINT
+• DE TIJDLIJN WORDT VASTGELEGD DOOR GOOGLE MAPS, in de app die is ingelogd met je Google-account. Deze app leest een bestand dat je daaruit bewaart; zelf legt hij niets vast.
+• DE TIJDLIJN MOET AANSTAAN. Google bewaart alleen de dagen sinds hij aan is gezet, en geen app kan de dagen daarvoor toevoegen.
+• Google Maps heeft je locatie nodig. De instelling van Google vraagt om locatietoegang ‘Altijd’ (app Instellingen → Google Maps → Locatie); met minder legt de tijdlijn mogelijk maar een deel van je dag vast.
+• Elke telefoon heeft zijn eigen tijdlijn. Geschiedenis van een andere telefoon staat niet op deze iPhone: exporteer hem op die telefoon, of importeer hier de back-up van Google (Je tijdlijn → wolkpictogram).
 
 JE BESTAND IN 3 STAPPEN
 1. Tik in Google Maps op je profielfoto → Instellingen → Locatie en privacy → Timeline-gegevens exporteren.
@@ -25,6 +25,6 @@ WAT JE KUNT DOEN
 • Opent ook oudere Google-bestanden: Android-Timeline.json, Semantic Location History, Records.json
 
 PRIVÉ
-Alles gebeurt op je iPhone of iPad. Je locatiegeschiedenis wordt nooit geüpload: geen account, geen servers, geen analyses, geen advertenties. Internet wordt alleen gebruikt voor de kaart. Gratis en open source.
+Alles gebeurt op je iPhone of iPad. Je locatiegeschiedenis wordt nooit geüpload: geen account, geen servers, geen analyses, geen advertenties. Internet wordt alleen gebruikt voor de kaart. Open source.
 
 Timeline Exporter is een onafhankelijke app en is niet verbonden aan Google.

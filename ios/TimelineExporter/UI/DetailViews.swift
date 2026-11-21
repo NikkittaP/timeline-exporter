@@ -49,7 +49,7 @@ private struct TripDetailView: View {
             if let trip {
                 Section {
                     Toggle(isOn: Binding(
-                        get: { store.checkedTrips.contains(key) },
+                        get: { store.isTripMarked(key) },
                         set: { store.setTrip(key, checked: $0) }
                     )) {
                         Text(L.s("trip_export_checkbox"))

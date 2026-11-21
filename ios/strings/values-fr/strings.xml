@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">Comment ça marche</string>
     <string name="ios_welcome_body">Google Maps peut mémoriser les lieux où vous allez : c'est votre **Timeline**. Cette app ouvre votre fichier Timeline, affiche vos trajets sur une carte et les enregistre en fichiers GPX, KML, GeoJSON ou CSV pour d'autres apps (Strava, Garmin, Google Earth, Excel…).</string>
-    <string name="ios_welcome_not_tracker">Cette app ne vous suit pas et ne se connecte pas à Google. Elle lit seulement le fichier que vous enregistrez depuis Google Maps, et tout reste sur cet appareil.</string>
-    <string name="ios_requirements_title">⚠️ Important — à vérifier d'abord</string>
-    <string name="ios_requirement_account">**Votre historique de localisation vient de votre compte Google.** Il faut l'app Google Maps, connectée à votre compte Google.</string>
-    <string name="ios_requirement_timeline">**Timeline doit être activée dans Google Maps.** Google n'enregistre que les jours depuis son activation : si elle était désactivée, il n'y a rien à exporter.</string>
-    <string name="ios_requirement_location">**Google Maps doit avoir l'accès à la position « Toujours »** (app Réglages → Google Maps → Position), sinon Timeline n'enregistre presque rien.</string>
-    <string name="ios_requirement_device">**Timeline est conservée sur le téléphone qui l'a enregistrée.** Si votre historique a été enregistré sur un autre téléphone, enregistrez le fichier sur celui-ci.</string>
+    <string name="ios_requirements_title">Avant de commencer</string>
+    <string name="ios_requirement_account">**Timeline est enregistrée par Google Maps**, dans l'app connectée à votre compte Google. Cette app lit un fichier que vous en enregistrez ; elle-même n'enregistre rien.</string>
+    <string name="ios_requirement_timeline">**Timeline doit être activée.** Google n'enregistre que les jours depuis son activation, et aucune app ne peut ajouter les jours d'avant.</string>
+    <string name="ios_requirement_location">**Google Maps a besoin de votre position.** La configuration de Google demande l'accès « Toujours » (app Réglages → Google Maps → Position) ; avec moins, Timeline risque de n'enregistrer qu'une partie de votre journée.</string>
+    <string name="ios_requirement_device">**Chaque téléphone a sa propre Timeline.** L'historique enregistré sur un autre téléphone n'est pas sur cet iPhone : exportez-le sur ce téléphone, ou importez ici la sauvegarde Google (Votre Timeline → icône de nuage).</string>
     <string name="ios_quick_title">Votre fichier en 3 étapes</string>
     <string name="ios_quick_step1">Dans **Google Maps**, touchez votre photo de profil → **Paramètres** → **Localisation et confidentialité** → **Exporter les données Timeline**.</string>
     <string name="ios_quick_step2">Touchez **Enregistrer dans Fichiers** et enregistrez le fichier Sur mon iPhone ou dans iCloud Drive.</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">Guide détaillé étape par étape</string>
     <string name="ios_try_sample_button">Essayer avec des données d'exemple</string>
     <string name="ios_sample_hint">Des trajets inventés : découvrez l'app avant d'exporter les vôtres.</string>
-    <string name="help_intro">Google Maps conserve votre Timeline uniquement sur votre téléphone, pas en ligne : aucune autre app ne peut la lire directement. Enregistrez-la une fois depuis Google Maps dans un fichier, puis ouvrez ce fichier ici. Rien n'est envoyé nulle part.</string>
+    <string name="help_intro">Google Maps conserve votre Timeline sur le téléphone qui l'a enregistrée, pas en ligne dans votre compte Google (la sauvegarde chiffrée est facultative) : les autres apps ne peuvent pas la lire directement. Enregistrez-la une fois depuis Google Maps dans un fichier, puis ouvrez ce fichier ici.</string>
     <string name="ios_turn_on_title">1. Activer Timeline (à sauter si elle est activée)</string>
     <string name="ios_maps_profile">Ouvrez Google Maps et touchez votre photo de profil (en haut à droite)</string>
     <string name="ios_turn_on_step2">Touchez **Votre Timeline**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">Enregistrer %1$s</string>
     <string name="ios_export_run_share">Partager %1$s</string>
     <string name="ios_map_image_entry_hint">Une image de cet itinéraire à enregistrer ou partager</string>
-    <string name="ios_map_image_distance_note">La distance enregistrée additionne la ligne de cette image : elle peut différer de la distance parcourue d’un voyage.</string>
     <string name="ios_map_status_loading">Chargement de la carte…</string>
     <string name="ios_map_status_tiles">Tuiles de carte indisponibles. Vos données restent affichées.</string>
     <string name="ios_map_status_failed">Impossible de charger la carte.</string>
     <string name="ios_trips_clear_marks">Effacer les coches</string>
     <string name="ios_place_unnamed">Lieu sans nom</string>
     <string name="ios_trip_on_map">Affiché sur la carte</string>
-    <string name="ios_trips_none_selected">Aucun voyage sélectionné — les %1$s seront exportés.</string>
-    <string name="ios_select_all">Tout sélectionner</string>
     <string name="ios_search_places">Rechercher des lieux</string>
     <string name="ios_export_data_file">Fichier de données</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">Inclure les détails techniques</string>
     <string name="ios_problem_details_note">Ils m\'aident à reproduire le problème. Ils ne contiennent aucune donnée de localisation ni rien de votre fichier.</string>
     <string name="ios_feedback_copy_address">Copier l\'adresse e-mail</string>
+    <string name="ios_privacy_policy">Politique de confidentialité</string>
 </resources>

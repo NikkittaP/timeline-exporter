@@ -1,12 +1,12 @@
 Google Maps kann sich merken, wo du warst — das ist deine Zeitachse (Timeline). Diese App öffnet deine Zeitachsen-Datei, zeigt deine Wege auf einer Karte und speichert sie als GPX-, KML-, GeoJSON- oder CSV-Dateien für andere Apps (Strava, Garmin, Google Earth, Excel …).
 
-Diese App verfolgt dich nicht und meldet sich nicht bei Google an. Sie liest nur die Datei, die du aus Google Maps sicherst, und alles bleibt auf diesem Gerät.
+Deine Datei wird auf diesem Gerät gelesen und nie hochgeladen. Die App zeichnet deinen Standort nicht auf und meldet sich nicht bei Google an; nur der Kartenhintergrund wird aus dem Internet geladen.
 
-⚠️ WICHTIG — ZUERST PRÜFEN
-• DEIN STANDORTVERLAUF KOMMT AUS DEINEM GOOGLE-KONTO. Du brauchst die Google Maps-App, angemeldet mit deinem Google-Konto.
-• DIE ZEITACHSE MUSS IN GOOGLE MAPS AKTIVIERT SEIN. Google speichert nur die Tage seit der Aktivierung — war sie aus, gibt es nichts zu exportieren.
-• Google Maps braucht Standortzugriff „Immer“ (App „Einstellungen“ → Google Maps → Standort), sonst zeichnet die Zeitachse kaum etwas auf.
-• Die Zeitachse liegt auf dem Telefon, das sie aufgezeichnet hat. Wurde dein Verlauf auf einem anderen Telefon aufgezeichnet, sichere die Datei dort.
+BEVOR DU ANFÄNGST
+• DIE ZEITACHSE ZEICHNET GOOGLE MAPS AUF, in der App, die mit deinem Google-Konto angemeldet ist. Diese App liest eine Datei, die du daraus sicherst; sie selbst zeichnet nichts auf.
+• DIE ZEITACHSE MUSS EINGESCHALTET SEIN. Google speichert nur die Tage seit der Aktivierung, und keine App kann die Tage davor ergänzen.
+• Google Maps braucht deinen Standort. Die Einrichtung von Google fragt nach Standortzugriff „Immer“ (App „Einstellungen“ → Google Maps → Standort); mit weniger zeichnet die Zeitachse eventuell nur einen Teil deines Tages auf.
+• Jedes Telefon hat seine eigene Zeitachse. Was ein anderes Telefon aufgezeichnet hat, ist nicht auf diesem iPhone: Exportiere es dort oder importiere hier die Sicherung von Google (Deine Zeitachse → Wolkensymbol).
 
 DEINE DATEI IN 3 SCHRITTEN
 1. Tippe in Google Maps auf dein Profilbild → Einstellungen → Standort und Datenschutz → Timeline-Daten exportieren.
@@ -25,6 +25,6 @@ WAS DU TUN KANNST
 • Öffnet auch ältere Google-Dateien: Android-Timeline.json, Semantic Location History, Records.json
 
 PRIVAT
-Alles passiert auf deinem iPhone oder iPad. Dein Standortverlauf wird nie hochgeladen: kein Konto, keine Server, keine Analyse, keine Werbung. Das Internet wird nur für die Karte genutzt. Kostenlos und Open Source.
+Alles passiert auf deinem iPhone oder iPad. Dein Standortverlauf wird nie hochgeladen: kein Konto, keine Server, keine Analyse, keine Werbung. Das Internet wird nur für die Karte genutzt. Open Source.
 
 Timeline Exporter ist eine unabhängige App und steht in keiner Verbindung zu Google.

@@ -58,8 +58,10 @@ final class TimelineStore {
     private(set) var places: [PlaceItem] = []
     /// The trip on the map; nil is every trip step 3 writes.
     private(set) var selectedTrip: Int64?
-    /// Ticked for export; none ticked exports every visible trip.
-    private(set) var checkedTrips: Set<Int64> = []
+    /// Unticked, so left out of the export. Every trip starts ticked: a tick
+    /// means "exported", as in any list of checkboxes, and a trip a new date
+    /// range brings in arrives ticked too.
+    private(set) var excludedTrips: Set<Int64> = []
     private(set) var selectedPlace: String?
     /// The day picked in the map's legend (epoch day); nil shows every day.
     private(set) var selectedDay: Int64?
@@ -180,7 +182,7 @@ final class TimelineStore {
         tripList = TripListData()
         places = []
         selectedTrip = nil
-        checkedTrips = []
+        excludedTrips = []
         selectedPlace = nil
         selectedDay = nil
         mapLine = MapLine()
@@ -341,9 +343,28 @@ final class TimelineStore {
         return trips.filter { $0.end >= r.lowerBound && $0.start <= r.upperBound }.reversed()
     }
 
-    /// The ticked trips still visible; empty means every visible trip.
+    func isTripMarked(_ key: Int64) -> Bool {
+        !excludedTrips.contains(key)
+    }
+
+    /// The visible trips ticked for export, newest first.
+    var markedTrips: [TripItem] {
+        visibleTrips.filter { !excludedTrips.contains($0.key) }
+    }
+
+    var markedTripCount: Int { markedTrips.count }
+
+    /// Some visible trips are unticked: the export is narrower than the list.
+    var tripsNarrowed: Bool {
+        visibleTrips.contains { excludedTrips.contains($0.key) }
+    }
+
+    /// The keys handed to the shared core, where an empty list means every
+    /// visible trip: empty while nothing is unticked, else the ticked ones.
+    /// With none ticked it is empty too, so the map keeps showing every
+    /// trip; export() refuses that case before it reaches the core.
     var exportTripKeys: [Int64] {
-        visibleTrips.map(\.key).filter { checkedTrips.contains($0) }.sorted()
+        tripsNarrowed ? markedTrips.map(\.key).sorted() : []
     }
 
     /// The trip shown on the map: the selected one while the date range still
@@ -365,21 +386,23 @@ final class TimelineStore {
     }
 
     func setTrip(_ key: Int64, checked: Bool) {
-        if checked { checkedTrips.insert(key) } else { checkedTrips.remove(key) }
+        if checked { excludedTrips.remove(key) } else { excludedTrips.insert(key) }
         exportState = .idle
         if previewedTrip == nil { scheduleRecount() }
     }
 
-    /// Ticks every trip in the list. It writes what no tick writes; the marks
-    /// are there to take a few off again.
+    /// Ticks every trip in the list: the export writes all of them.
     func checkAllTrips() {
-        checkedTrips.formUnion(visibleTrips.map(\.key))
+        excludedTrips.subtract(visibleTrips.map(\.key))
         exportState = .idle
         if previewedTrip == nil { scheduleRecount() }
     }
 
+    /// Unticks every trip in the list, to tick a few back. Nothing is
+    /// exported until one is.
     func clearCheckedTrips() {
-        checkedTrips = []
+        excludedTrips.formUnion(visibleTrips.map(\.key))
+        exportState = .idle
         if previewedTrip == nil { scheduleRecount() }
     }
 
@@ -406,7 +429,7 @@ final class TimelineStore {
     /// The label written inside the file: "Google Timeline 1 Jun 2025 — 7 Jun 2025, 07:00–19:00".
     var trackName: String {
         let rangePart: String
-        let checked = contentKind == .trips ? visibleTrips.filter { checkedTrips.contains($0.key) } : []
+        let checked = contentKind == .trips && tripsNarrowed ? markedTrips : []
         if let first = checked.min(by: { $0.start < $1.start }), let last = checked.max(by: { $0.end < $1.end }) {
             rangePart = L.f("track_name_date_range", Fmt.date(first.startDay), Fmt.date(last.endDay))
         } else if let r = filter.range {
@@ -435,7 +458,7 @@ final class TimelineStore {
         let empty: Bool
         switch kind {
         case .track: empty = filteredCount == 0
-        case .trips: empty = visibleTrips.isEmpty
+        case .trips: empty = markedTrips.isEmpty
         case .places: empty = places.isEmpty
         }
         if empty {

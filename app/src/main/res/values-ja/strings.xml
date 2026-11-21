@@ -21,6 +21,7 @@
 
     <string name="pick_file_button">Timeline.json を選択</string>
     <string name="idle_hint">解析する Google マップのタイムライン JSON ファイルを選択してください。</string>
+    <string name="privacy_note">ファイルはこのデバイス上で読み込まれ、アップロードされることはありません。このアプリは位置情報を記録せず、Google にもログインしません。インターネットから読み込むのは地図の背景だけです。</string>
     <string name="idle_help_button">タイムラインのデータを取得するには？</string>
 
     <string name="loading_opening">ファイルを開いています…</string>
@@ -86,7 +87,7 @@
     <string name="track_name_full_range">(全体のエクスポート)</string>
 
     <string name="help_title">タイムラインのデータを取得する</string>
-    <string name="help_intro">2024 年後半以降、Google はタイムラインをお使いの端末にのみ保存します。Google Takeout のオプションはなく、直接読み取れるサードパーティ製アプリもありません。システムの設定から一度エクスポートし、そのファイルをここで開きます。</string>
+    <string name="help_intro">2024 年後半以降、Google はタイムラインをオンラインの Google アカウントではなく、お使いの端末に保存します（暗号化バックアップは任意）。Google Takeout のオプションはなく、他のアプリが直接読み取ることもできません。システムの設定から一度エクスポートし、そのファイルをここで開きます。</string>
 
     <string name="help_method_settings_title">Android の設定からエクスポート（推奨）</string>
     <string name="help_method_settings_step1">Android の「設定」アプリを開く</string>
@@ -193,10 +194,11 @@
     <string name="trips_none">旅行はありません：このファイルでは自宅から 50 km 以上離れていません。</string>
     <string name="trips_none_filtered">選択した期間に旅行はありません。</string>
     <string name="trips_no_home">このファイルには自宅が記録されていないため、旅行を見つけられません。</string>
-    <string name="trips_hint">自宅から 50 km 以上離れると旅行として検出されます。旅行をタップすると地図でプレビューできます。チェックを入れた旅行だけを書き出すこともできます。</string>
+    <string name="trips_hint">自宅から 50 km 以上離れると旅行として検出されます。旅行をタップすると地図でプレビューできます。書き出さない旅行はチェックを外してください。</string>
     <string name="trip_export_checkbox">この旅行を書き出す</string>
-    <string name="trips_checked_none">すべての旅行を書き出します</string>
     <string name="trips_checked">書き出しに選択済み: %1$s / %2$s</string>
+    <string name="trips_select_all">すべて選択</string>
+    <string name="trips_checked_zero">書き出す旅行が選択されていません</string>
     <string name="trip_show_all_on_map">すべての旅行を地図に表示</string>
     <string name="trip_show_checked_on_map">選択した旅行を地図に表示</string>
     <string name="trip_far_from_home">自宅から %1$s</string>
@@ -288,6 +290,7 @@
     <string name="map_image_rendering_high">高解像度で描画中…</string>
     <string name="map_image_high_error">高解像度の画像を描画できませんでした。何も保存されていません。標準をお試しください。</string>
     <string name="map_image_stat_distance">記録された距離</string>
+    <string name="map_image_distance_note">記録された距離は、この画像に描かれた線の長さの合計です。飛行機での移動や GPS ポイントのない区間は含まれないため、Google が示す移動距離より短くなることがよくあります。</string>
     <string name="map_image_stat_days">日数</string>
     <string name="map_image_stat_places">場所</string>
 

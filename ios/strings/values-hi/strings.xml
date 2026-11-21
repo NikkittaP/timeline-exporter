@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">यह कैसे काम करता है</string>
     <string name="ios_welcome_body">Google Maps आपकी जाने वाली जगहें याद रख सकता है — यही आपकी **Timeline** है। यह ऐप आपकी Timeline फ़ाइल खोलता है, आपकी यात्राएँ मैप पर दिखाता है और उन्हें दूसरे ऐप्स (Strava, Garmin, Google Earth, Excel…) के लिए GPX, KML, GeoJSON या CSV फ़ाइलों के रूप में सहेजता है।</string>
-    <string name="ios_welcome_not_tracker">यह ऐप आपको ट्रैक नहीं करता और Google में साइन इन नहीं करता। यह सिर्फ़ वह फ़ाइल पढ़ता है जो आप Google Maps से सहेजते हैं, और सब कुछ इसी डिवाइस पर रहता है।</string>
-    <string name="ios_requirements_title">⚠️ ज़रूरी — पहले यह जाँचें</string>
-    <string name="ios_requirement_account">**आपकी लोकेशन हिस्ट्री आपके Google खाते से आती है।** Google Maps ऐप चाहिए, जिसमें आपके Google खाते से साइन इन हो।</string>
-    <string name="ios_requirement_timeline">**Google Maps में Timeline चालू होनी चाहिए।** Google सिर्फ़ चालू करने के बाद के दिन सहेजता है — अगर यह बंद थी, तो एक्सपोर्ट करने के लिए कुछ नहीं है।</string>
-    <string name="ios_requirement_location">**Google Maps को लोकेशन एक्सेस “हमेशा” चाहिए** (सेटिंग्स ऐप → Google Maps → लोकेशन), वरना Timeline बहुत कम रिकॉर्ड करती है।</string>
-    <string name="ios_requirement_device">**Timeline उसी फ़ोन पर रहती है जिसने उसे रिकॉर्ड किया।** अगर आपकी हिस्ट्री किसी दूसरे फ़ोन पर रिकॉर्ड हुई थी, तो फ़ाइल उसी फ़ोन पर सहेजें।</string>
+    <string name="ios_requirements_title">शुरू करने से पहले</string>
+    <string name="ios_requirement_account">**Timeline को Google Maps रिकॉर्ड करता है**, उस ऐप में जिसमें आपके Google खाते से साइन इन है। यह ऐप उससे सहेजी गई फ़ाइल पढ़ता है; खुद कुछ रिकॉर्ड नहीं करता।</string>
+    <string name="ios_requirement_timeline">**Timeline चालू होनी चाहिए।** Google सिर्फ़ चालू करने के बाद के दिन सहेजता है, और कोई भी ऐप उससे पहले के दिन नहीं जोड़ सकता।</string>
+    <string name="ios_requirement_location">**Google Maps को आपकी लोकेशन चाहिए।** Google का सेटअप लोकेशन एक्सेस “हमेशा” माँगता है (सेटिंग्स ऐप → Google Maps → लोकेशन); इससे कम पर Timeline आपके दिन का सिर्फ़ कुछ हिस्सा रिकॉर्ड कर सकती है।</string>
+    <string name="ios_requirement_device">**हर फ़ोन की अपनी Timeline होती है।** किसी दूसरे फ़ोन पर रिकॉर्ड हुई हिस्ट्री इस iPhone पर नहीं है: उसे उसी फ़ोन पर एक्सपोर्ट करें, या Google का बैकअप यहाँ इम्पोर्ट करें (आपकी Timeline → क्लाउड आइकन)।</string>
     <string name="ios_quick_title">3 चरणों में अपनी फ़ाइल पाएँ</string>
     <string name="ios_quick_step1">**Google Maps** में अपनी प्रोफ़ाइल फ़ोटो → **सेटिंग** → **स्थान और गोपनीयता** → **Timeline डेटा एक्सपोर्ट करें** पर टैप करें।</string>
     <string name="ios_quick_step2">**फ़ाइलें में सहेजें** पर टैप करें और फ़ाइल को “मेरे iPhone पर” या iCloud Drive में सहेजें।</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">विस्तृत चरण-दर-चरण गाइड</string>
     <string name="ios_try_sample_button">सैंपल डेटा से आज़माएँ</string>
     <string name="ios_sample_hint">काल्पनिक यात्राएँ: अपनी एक्सपोर्ट करने से पहले देखें कि ऐप क्या करता है।</string>
-    <string name="help_intro">Google Maps आपकी Timeline सिर्फ़ आपके फ़ोन पर रखता है, ऑनलाइन नहीं, इसलिए कोई दूसरा ऐप उसे सीधे नहीं पढ़ सकता। आप उसे एक बार Google Maps से फ़ाइल के रूप में सहेजते हैं, फिर वह फ़ाइल यहाँ खोलते हैं। कुछ भी कहीं अपलोड नहीं होता।</string>
+    <string name="help_intro">Google Maps आपकी Timeline उसी फ़ोन पर रखता है जिसने उसे रिकॉर्ड किया, ऑनलाइन Google खाते में नहीं (एन्क्रिप्टेड बैकअप वैकल्पिक है), इसलिए दूसरे ऐप उसे सीधे नहीं पढ़ सकते। उसे एक बार Google Maps से फ़ाइल के रूप में सहेजें, फिर वह फ़ाइल यहाँ खोलें।</string>
     <string name="ios_turn_on_title">1. Timeline चालू करें (चालू हो तो छोड़ दें)</string>
     <string name="ios_maps_profile">Google Maps खोलें और अपनी प्रोफ़ाइल फ़ोटो (ऊपर दाईं ओर) पर टैप करें</string>
     <string name="ios_turn_on_step2">**आपकी Timeline** पर टैप करें</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">%1$s सहेजें</string>
     <string name="ios_export_run_share">%1$s शेयर करें</string>
     <string name="ios_map_image_entry_hint">सहेजने या शेयर करने के लिए इस मार्ग की तस्वीर</string>
-    <string name="ios_map_image_distance_note">दर्ज की गई दूरी इस तस्वीर की रेखा का योग है, इसलिए यह यात्रा की तय दूरी से अलग हो सकती है।</string>
     <string name="ios_map_status_loading">मैप लोड हो रहा है…</string>
     <string name="ios_map_status_tiles">मैप टाइल उपलब्ध नहीं हैं। आपका डेटा अब भी दिख रहा है।</string>
     <string name="ios_map_status_failed">मैप लोड नहीं हो सका।</string>
     <string name="ios_trips_clear_marks">निशान हटाएँ</string>
     <string name="ios_place_unnamed">बिना नाम की जगह</string>
     <string name="ios_trip_on_map">मैप पर दिख रही है</string>
-    <string name="ios_trips_none_selected">कोई यात्रा नहीं चुनी गई — सभी एक्सपोर्ट होंगी: %1$s</string>
-    <string name="ios_select_all">सभी चुनें</string>
     <string name="ios_search_places">जगहें खोजें</string>
     <string name="ios_export_data_file">डेटा फ़ाइल</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">तकनीकी विवरण शामिल करें</string>
     <string name="ios_problem_details_note">इनसे मुझे समस्या दोहराने में मदद मिलती है। इनमें कोई लोकेशन डेटा या आपकी फ़ाइल की कोई चीज़ नहीं होती।</string>
     <string name="ios_feedback_copy_address">ईमेल पता कॉपी करें</string>
+    <string name="ios_privacy_policy">गोपनीयता नीति</string>
 </resources>

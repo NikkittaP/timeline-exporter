@@ -87,7 +87,7 @@ struct TripsPanel: View {
 
     /// The count, what an export takes, and the marks all at once.
     private func bar(_ trips: [TripItem]) -> some View {
-        let marked = store.exportTripKeys.count
+        let marked = store.markedTripCount
         return HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 1) {
                 Text(L.plural("trips_count", trips.count))
@@ -97,7 +97,7 @@ struct TripsPanel: View {
                     .accessibilityIdentifier("modeTitle")
                 Text(checkedText(trips, marked: marked))
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(marked == 0 ? Color.orange : Color.secondary)
                     .monospacedDigit()
                     .accessibilityIdentifier("tripMarks")
             }
@@ -107,7 +107,7 @@ struct TripsPanel: View {
                     .accessibilityIdentifier("clearTripMarks")
             }
             if marked < trips.count {
-                Button(L.s("ios_select_all")) { store.checkAllTrips() }
+                Button(L.s("trips_select_all")) { store.checkAllTrips() }
                     .accessibilityIdentifier("selectAllTrips")
             }
             if let showMap {
@@ -128,13 +128,10 @@ struct TripsPanel: View {
         .frame(maxWidth: .infinity)
     }
 
+    /// A tick is "exported": all of them start ticked, and none ticked
+    /// exports nothing, said in so many words.
     private func checkedText(_ trips: [TripItem], marked: Int) -> String {
-        if marked == 0 {
-            // As export does it: nothing ticked writes every visible trip.
-            return trips.count == 1
-                ? L.s("trips_checked_none")
-                : L.f("ios_trips_none_selected", L.plural("trips_count", trips.count))
-        }
+        if marked == 0 { return L.s("trips_checked_zero") }
         return L.f("trips_checked", Fmt.grouped(marked), Fmt.grouped(trips.count))
     }
 }
@@ -168,7 +165,7 @@ struct TripRow: View {
     let open: (TripItem) -> Void
 
     var body: some View {
-        let checked = store.checkedTrips.contains(trip.key)
+        let checked = store.isTripMarked(trip.key)
         let selected = inPlace && store.previewedTrip == trip.key
         let covered = TripText.covered(trip)
         let flags = TripText.flags(trip)

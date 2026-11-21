@@ -1,12 +1,12 @@
 Google Maps puede recordar los lugares a los que vas: es tu cronología (Timeline). Esta app abre tu archivo de cronología, muestra tus viajes en un mapa y los guarda como archivos GPX, KML, GeoJSON o CSV para otras apps (Strava, Garmin, Google Earth, Excel…).
 
-Esta app no te rastrea ni inicia sesión en Google. Solo lee el archivo que guardas desde Google Maps, y todo se queda en este dispositivo.
+Tu archivo se lee en este dispositivo y nunca se sube. La app no registra tu ubicación ni inicia sesión en Google; solo el fondo del mapa se carga desde internet.
 
-⚠️ IMPORTANTE: COMPRUÉBALO PRIMERO
-• TU HISTORIAL DE UBICACIONES VIENE DE TU CUENTA DE GOOGLE. Necesitas la app Google Maps con tu cuenta de Google iniciada.
-• LA CRONOLOGÍA DEBE ESTAR ACTIVADA EN GOOGLE MAPS. Google solo guarda los días desde que se activó; si estaba desactivada, no hay nada que exportar.
-• Google Maps necesita acceso a la ubicación «Siempre» (app Ajustes → Google Maps → Ubicación); si no, la cronología apenas registra nada.
-• La cronología se guarda en el teléfono que la registró. Si tu historial se registró en otro teléfono, guarda el archivo en ese teléfono.
+ANTES DE EMPEZAR
+• LA CRONOLOGÍA LA REGISTRA GOOGLE MAPS, en la app con tu cuenta de Google iniciada. Esta app lee un archivo que guardas desde allí; ella misma no registra nada.
+• LA CRONOLOGÍA TIENE QUE ESTAR ACTIVADA. Google solo guarda los días desde que se activó, y ninguna app puede añadir los días anteriores.
+• Google Maps necesita tu ubicación. La configuración de Google pide acceso a la ubicación «Siempre» (app Ajustes → Google Maps → Ubicación); con menos, la cronología puede registrar solo parte del día.
+• Cada teléfono guarda su propia cronología. El historial registrado en otro teléfono no está en este iPhone: expórtalo en ese teléfono o importa aquí la copia de seguridad de Google (Tu cronología → icono de nube).
 
 TU ARCHIVO EN 3 PASOS
 1. En Google Maps, toca tu foto de perfil → Configuración → Ubicación y privacidad → Exportar datos de Timeline.
@@ -25,6 +25,6 @@ QUÉ PUEDES HACER
 • También abre archivos antiguos de Google: Timeline.json de Android, Semantic Location History, Records.json
 
 PRIVADO
-Todo ocurre en tu iPhone o iPad. Tu historial nunca se sube: sin cuenta, sin servidores, sin analíticas, sin anuncios. Internet solo se usa para cargar el mapa. Gratis y de código abierto.
+Todo ocurre en tu iPhone o iPad. Tu historial nunca se sube: sin cuenta, sin servidores, sin analíticas, sin anuncios. Internet solo se usa para cargar el mapa. De código abierto.
 
 Timeline Exporter es una app independiente, sin relación con Google.

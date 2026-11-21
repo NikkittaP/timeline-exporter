@@ -21,6 +21,7 @@
 
     <string name="pick_file_button">Выбрать Timeline.json</string>
     <string name="idle_hint">Выберите JSON-файл Google Maps Timeline для разбора.</string>
+    <string name="privacy_note">Файл читается на этом устройстве и никуда не загружается. Приложение не записывает ваше местоположение и не входит в аккаунт Google; из интернета загружается только подложка карты.</string>
     <string name="idle_help_button">Как получить данные Timeline?</string>
 
     <string name="loading_opening">Открытие файла…</string>
@@ -89,7 +90,7 @@
     <string name="track_name_full_range">(полный экспорт)</string>
 
     <string name="help_title">Как получить данные Timeline</string>
-    <string name="help_intro">С конца 2024 года Google хранит Timeline только на вашем устройстве — нет ни выгрузки через Google Takeout, ни сторонних приложений, читающих её напрямую. Вы один раз экспортируете данные из системных настроек, а затем открываете файл здесь.</string>
+    <string name="help_intro">С конца 2024 года Google хранит Timeline на вашем устройстве (с необязательной зашифрованной резервной копией), а не в аккаунте Google в интернете. Выгрузки через Google Takeout нет, и другие приложения не могут прочитать её напрямую. Вы один раз экспортируете данные из системных настроек, а затем открываете файл здесь.</string>
 
     <string name="help_method_settings_title">Экспорт из настроек Android (рекомендуется)</string>
     <string name="help_method_settings_step1">Откройте приложение «Настройки» Android</string>
@@ -199,10 +200,11 @@
     <string name="trips_none">Поездок нет: в этом файле вы не уезжали от дома дальше 50 км.</string>
     <string name="trips_none_filtered">В выбранном диапазоне дат нет поездок.</string>
     <string name="trips_no_home">В файле не отмечен дом, поэтому поездки найти нельзя.</string>
-    <string name="trips_hint">Поездка начинается, когда вы уезжаете от дома дальше чем на 50 км. Нажмите на поездку, чтобы посмотреть её на карте. Отметьте поездки галочкой, чтобы экспортировать только их.</string>
+    <string name="trips_hint">Поездка начинается, когда вы уезжаете от дома дальше чем на 50 км. Нажмите на поездку, чтобы посмотреть её на карте. Снимите галочку с поездок, которые не нужно экспортировать.</string>
     <string name="trip_export_checkbox">Экспортировать эту поездку</string>
-    <string name="trips_checked_none">Экспортируются все поездки</string>
     <string name="trips_checked">Отмечено для экспорта: %1$s из %2$s</string>
+    <string name="trips_select_all">Выбрать все</string>
+    <string name="trips_checked_zero">Не отмечено ни одной поездки для экспорта</string>
     <string name="trip_show_all_on_map">Показать все поездки на карте</string>
     <string name="trip_show_checked_on_map">Показать отмеченные на карте</string>
     <string name="trip_far_from_home">%1$s от дома</string>
@@ -294,6 +296,7 @@
     <string name="map_image_rendering_high">Отрисовка в высоком разрешении…</string>
     <string name="map_image_high_error">Не удалось отрисовать изображение в высоком разрешении. Ничего не сохранено; попробуйте стандартное.</string>
     <string name="map_image_stat_distance">Записанное расстояние</string>
+    <string name="map_image_distance_note">Записанное расстояние — это длина линии на этом изображении. Перелёты и промежутки без GPS-точек не учитываются, поэтому оно часто меньше пройденного расстояния, которое показывает Google.</string>
     <string name="map_image_stat_days">Дни</string>
     <string name="map_image_stat_places">Места</string>
 

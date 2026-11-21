@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">使い方</string>
     <string name="ios_welcome_body">Google マップは行った場所を記録できます。これがあなたの**タイムライン**です。このアプリはタイムラインのファイルを開き、移動を地図に表示し、他のアプリ（Strava、Garmin、Google Earth、Excel など）で使える GPX・KML・GeoJSON・CSV ファイルとして保存します。</string>
-    <string name="ios_welcome_not_tracker">このアプリはあなたを追跡せず、Google にもログインしません。Google マップから保存したファイルを読むだけで、すべてこのデバイス内に留まります。</string>
-    <string name="ios_requirements_title">⚠️ 重要：最初に確認してください</string>
-    <string name="ios_requirement_account">**位置情報の履歴はあなたの Google アカウントから来ます。** Google アカウントでログインした Google マップアプリが必要です。</string>
-    <string name="ios_requirement_timeline">**Google マップでタイムラインがオンになっている必要があります。** Google はオンにした日以降しか保存しません。オフだった場合、エクスポートするものはありません。</string>
-    <string name="ios_requirement_location">**Google マップの位置情報へのアクセスを「常に」にしてください**（設定アプリ → Google Maps → 位置情報）。そうしないとタイムラインはほとんど記録されません。</string>
-    <string name="ios_requirement_device">**タイムラインは記録したスマートフォンに保存されています。** 別のスマートフォンで記録した場合は、そのスマートフォンでファイルを保存してください。</string>
+    <string name="ios_requirements_title">始める前に</string>
+    <string name="ios_requirement_account">**タイムラインを記録するのは Google マップです**（Google アカウントでログインしたアプリ）。このアプリはそこから保存したファイルを読むだけで、自分では何も記録しません。</string>
+    <string name="ios_requirement_timeline">**タイムラインがオンになっている必要があります。** Google はオンにした日以降しか保存せず、それより前の日をアプリで追加することはできません。</string>
+    <string name="ios_requirement_location">**Google マップには位置情報が必要です。** Google の設定では位置情報へのアクセスを「常に」にするよう求められます（設定アプリ → Google Maps → 位置情報）。それ以外だと、タイムラインには 1 日の一部しか記録されないことがあります。</string>
+    <string name="ios_requirement_device">**タイムラインはスマートフォンごとに保存されます。** 別のスマートフォンで記録した履歴はこの iPhone にはありません。そのスマートフォンで書き出すか、Google のバックアップをここにインポートしてください（タイムライン → クラウドアイコン）。</string>
     <string name="ios_quick_title">3 ステップでファイルを取得</string>
     <string name="ios_quick_step1">**Google マップ**でプロフィール写真 → **設定** → **位置情報とプライバシー** → **タイムラインデータをエクスポート** をタップ。</string>
     <string name="ios_quick_step2">**“ファイル”に保存** をタップし、「このiPhone内」または iCloud Drive に保存します。</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">詳しい手順ガイド</string>
     <string name="ios_try_sample_button">サンプルデータで試す</string>
     <string name="ios_sample_hint">架空の移動データで、自分のデータをエクスポートする前にアプリの機能を確認できます。</string>
-    <string name="help_intro">Google マップはタイムラインをオンラインではなくスマートフォン内だけに保存するため、他のアプリは直接読めません。Google マップから一度ファイルとして保存し、そのファイルをここで開きます。どこにもアップロードされません。</string>
+    <string name="help_intro">Google マップはタイムラインをオンラインの Google アカウントではなく、記録したスマートフォンに保存します（暗号化バックアップは任意）。そのため他のアプリは直接読めません。Google マップから一度ファイルとして保存し、そのファイルをここで開いてください。</string>
     <string name="ios_turn_on_title">1. タイムラインをオンにする（オンなら不要）</string>
     <string name="ios_maps_profile">Google マップを開き、プロフィール写真（右上）をタップ</string>
     <string name="ios_turn_on_step2">**タイムライン** をタップ</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">%1$s を保存</string>
     <string name="ios_export_run_share">%1$s を共有</string>
     <string name="ios_map_image_entry_hint">このルートの画像を保存または共有</string>
-    <string name="ios_map_image_distance_note">記録された距離はこの画像の線の合計なので、旅行の移動距離とは異なる場合があります。</string>
     <string name="ios_map_status_loading">地図を読み込み中…</string>
     <string name="ios_map_status_tiles">地図タイルを利用できません。データは引き続き表示されます。</string>
     <string name="ios_map_status_failed">地図を読み込めませんでした。</string>
     <string name="ios_trips_clear_marks">チェックを解除</string>
     <string name="ios_place_unnamed">名前のない場所</string>
     <string name="ios_trip_on_map">地図に表示中</string>
-    <string name="ios_trips_none_selected">旅行が選択されていません — すべて書き出します:%1$s</string>
-    <string name="ios_select_all">すべて選択</string>
     <string name="ios_search_places">場所を検索</string>
     <string name="ios_export_data_file">データファイル</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">技術情報を含める</string>
     <string name="ios_problem_details_note">問題の再現に役立ちます。位置情報やファイルの内容は含まれません。</string>
     <string name="ios_feedback_copy_address">メールアドレスをコピー</string>
+    <string name="ios_privacy_policy">プライバシーポリシー</string>
 </resources>

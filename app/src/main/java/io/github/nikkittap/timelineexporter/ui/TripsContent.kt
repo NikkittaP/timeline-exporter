@@ -63,6 +63,15 @@ fun tripsIn(trips: List<Trip>, range: ClosedRange<Instant>?): List<Trip> =
     trips.filter { range == null || (it.end >= range.start && it.start <= range.endInclusive) }
         .sortedByDescending { it.start }
 
+/**
+ * The trips ticked for export, by key: every one in [visible] the user has
+ * not unticked. Empty when all of them are unticked — none, not "all", so
+ * step 4 has nothing to write and says so. [excluded] may hold trips outside
+ * the date range; they come back unticked when the range takes them in.
+ */
+internal fun markedTripKeys(visible: List<Long>, excluded: Set<Long>): Set<Long> =
+    visible.filterTo(HashSet()) { it !in excluded }
+
 // ---------- step 3 content ----------
 
 /**
@@ -76,9 +85,10 @@ fun tripsIn(trips: List<Trip>, range: ClosedRange<Instant>?): List<Trip> =
  * which is where it always is.
  *
  * The checkbox on each row is the other choice: which trips step 4 writes.
- * None ticked means all of them, so nothing changes for someone who never
- * touches a box. Once any are ticked, a line above the list says how many of
- * how many and offers to clear them, so a narrowed export is never silent.
+ * Every trip starts ticked, so nothing changes for someone who never touches
+ * a box, and a tick means "exported" as in any checkbox list. A line above
+ * the list says how many of how many, with Clear and Select all, so a
+ * narrowed export is never silent; none ticked exports nothing and says so.
  * It used to be "Use only this trip", which narrowed step 2's dates: one
  * trip at most, and nothing on this card said how to get the rest back.
  *
@@ -95,6 +105,7 @@ fun TripsPreview(
     onTripClick: (Trip) -> Unit,
     onCheckedChange: (Trip, Boolean) -> Unit,
     onClearChecked: () -> Unit,
+    onSelectAll: () -> Unit,
     onShowAll: () -> Unit,
 ) {
     if (trips.isEmpty()) {
@@ -130,16 +141,24 @@ fun TripsPreview(
             text = if (checkedCount > 0) {
                 stringResource(R.string.trips_checked, "%,d".format(checkedCount), "%,d".format(trips.size))
             } else {
-                stringResource(R.string.trips_checked_none)
+                stringResource(R.string.trips_checked_zero)
             },
             style = MaterialTheme.typography.labelLarge,
-            color = if (checkedCount > 0) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.onSurfaceVariant,
+            color = when {
+                checkedCount == 0 -> MaterialTheme.colorScheme.error
+                checkedCount < trips.size -> MaterialTheme.colorScheme.primary
+                else -> MaterialTheme.colorScheme.onSurfaceVariant
+            },
             modifier = Modifier.weight(1f),
         )
         if (checkedCount > 0) {
             TextButton(onClick = onClearChecked) {
                 Text(stringResource(R.string.filter_clear_button))
+            }
+        }
+        if (checkedCount < trips.size) {
+            TextButton(onClick = onSelectAll) {
+                Text(stringResource(R.string.trips_select_all))
             }
         }
     }

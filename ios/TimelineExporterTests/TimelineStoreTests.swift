@@ -151,6 +151,7 @@ final class TimelineStoreTests: XCTestCase {
         let newest = trips[0]
         let older = trips[1]
 
+        store.clearCheckedTrips()
         store.setTrip(newest.key, checked: true)
         store.selectTrip(older.key)
         XCTAssertEqual(store.previewedTrip, older.key)
@@ -163,8 +164,8 @@ final class TimelineStoreTests: XCTestCase {
             XCTAssertNil(store.previewedTrip)
         }
 
-        store.clearCheckedTrips()
-        XCTAssertTrue(store.exportTripKeys.isEmpty, "no marks: every visible trip is exported")
+        store.checkAllTrips()
+        XCTAssertTrue(store.exportTripKeys.isEmpty, "every visible trip ticked: the core's 'all'")
     }
 }
 

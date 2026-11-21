@@ -4,12 +4,11 @@
 <resources>
     <string name="ios_welcome_title">So funktioniert es</string>
     <string name="ios_welcome_body">Google Maps kann sich merken, wo du warst — das ist deine **Zeitachse** (Timeline). Diese App öffnet deine Zeitachsen-Datei, zeigt deine Wege auf einer Karte und speichert sie als GPX-, KML-, GeoJSON- oder CSV-Dateien für andere Apps (Strava, Garmin, Google Earth, Excel …).</string>
-    <string name="ios_welcome_not_tracker">Diese App verfolgt dich nicht und meldet sich nicht bei Google an. Sie liest nur die Datei, die du aus Google Maps sicherst, und alles bleibt auf diesem Gerät.</string>
-    <string name="ios_requirements_title">⚠️ Wichtig — zuerst prüfen</string>
-    <string name="ios_requirement_account">**Dein Standortverlauf kommt aus deinem Google-Konto.** Du brauchst die Google Maps-App, angemeldet mit deinem Google-Konto.</string>
-    <string name="ios_requirement_timeline">**Die Zeitachse muss in Google Maps aktiviert sein.** Google speichert nur die Tage seit der Aktivierung — war sie aus, gibt es nichts zu exportieren.</string>
-    <string name="ios_requirement_location">**Google Maps braucht Standortzugriff „Immer“** (App „Einstellungen“ → Google Maps → Standort), sonst zeichnet die Zeitachse kaum etwas auf.</string>
-    <string name="ios_requirement_device">**Die Zeitachse liegt auf dem Telefon, das sie aufgezeichnet hat.** Wurde dein Verlauf auf einem anderen Telefon aufgezeichnet, sichere die Datei dort.</string>
+    <string name="ios_requirements_title">Bevor du anfängst</string>
+    <string name="ios_requirement_account">**Die Zeitachse zeichnet Google Maps auf**, in der App, die mit deinem Google-Konto angemeldet ist. Diese App liest eine Datei, die du daraus sicherst; sie selbst zeichnet nichts auf.</string>
+    <string name="ios_requirement_timeline">**Die Zeitachse muss eingeschaltet sein.** Google speichert nur die Tage seit der Aktivierung, und keine App kann die Tage davor ergänzen.</string>
+    <string name="ios_requirement_location">**Google Maps braucht deinen Standort.** Die Einrichtung von Google fragt nach Standortzugriff „Immer“ (App „Einstellungen“ → Google Maps → Standort); mit weniger zeichnet die Zeitachse eventuell nur einen Teil deines Tages auf.</string>
+    <string name="ios_requirement_device">**Jedes Telefon hat seine eigene Zeitachse.** Was ein anderes Telefon aufgezeichnet hat, ist nicht auf diesem iPhone: Exportiere es dort oder importiere hier die Sicherung von Google (Deine Zeitachse → Wolkensymbol).</string>
     <string name="ios_quick_title">Deine Datei in 3 Schritten</string>
     <string name="ios_quick_step1">Tippe in **Google Maps** auf dein Profilbild → **Einstellungen** → **Standort und Datenschutz** → **Timeline-Daten exportieren**.</string>
     <string name="ios_quick_step2">Tippe auf **In „Dateien“ sichern** und sichere die Datei unter „Auf meinem iPhone“ oder in iCloud Drive.</string>
@@ -17,7 +16,7 @@
     <string name="ios_full_guide_button">Ausführliche Schritt-für-Schritt-Anleitung</string>
     <string name="ios_try_sample_button">Mit Beispieldaten ausprobieren</string>
     <string name="ios_sample_hint">Ausgedachte Reisen: sieh dir die App an, bevor du deine eigenen exportierst.</string>
-    <string name="help_intro">Google Maps speichert deine Zeitachse nur auf deinem Telefon, nicht online — keine andere App kann sie direkt lesen. Du sicherst sie einmal aus Google Maps als Datei und öffnest diese Datei hier. Es wird nichts hochgeladen.</string>
+    <string name="help_intro">Google Maps speichert deine Zeitachse auf dem Telefon, das sie aufgezeichnet hat, nicht online in deinem Google-Konto (die verschlüsselte Sicherung ist optional) — andere Apps können sie nicht direkt lesen. Sichere sie einmal aus Google Maps als Datei und öffne diese Datei hier.</string>
     <string name="ios_turn_on_title">1. Zeitachse aktivieren (überspringen, wenn sie an ist)</string>
     <string name="ios_maps_profile">Öffne Google Maps und tippe auf dein Profilbild (oben rechts)</string>
     <string name="ios_turn_on_step2">Tippe auf **Deine Zeitachse**</string>
@@ -47,15 +46,12 @@
     <string name="ios_export_run_save">%1$s speichern</string>
     <string name="ios_export_run_share">%1$s teilen</string>
     <string name="ios_map_image_entry_hint">Ein Bild dieser Route zum Speichern oder Teilen</string>
-    <string name="ios_map_image_distance_note">Die aufgezeichnete Strecke summiert die Linie auf diesem Bild und kann daher von der Reisestrecke einer Reise abweichen.</string>
     <string name="ios_map_status_loading">Karte wird geladen…</string>
     <string name="ios_map_status_tiles">Kartenkacheln nicht verfügbar. Deine Daten werden weiterhin angezeigt.</string>
     <string name="ios_map_status_failed">Die Karte konnte nicht geladen werden.</string>
     <string name="ios_trips_clear_marks">Markierungen löschen</string>
     <string name="ios_place_unnamed">Unbenannter Ort</string>
     <string name="ios_trip_on_map">Auf der Karte angezeigt</string>
-    <string name="ios_trips_none_selected">Keine Reisen ausgewählt — alle %1$s werden exportiert.</string>
-    <string name="ios_select_all">Alle auswählen</string>
     <string name="ios_search_places">Orte suchen</string>
     <string name="ios_export_data_file">Datendatei</string>
 
@@ -75,4 +71,5 @@
     <string name="ios_problem_include_details">Technische Details anhängen</string>
     <string name="ios_problem_details_note">Hilft mir, das Problem nachzustellen. Enthält keine Standortdaten und nichts aus deiner Datei.</string>
     <string name="ios_feedback_copy_address">E-Mail-Adresse kopieren</string>
+    <string name="ios_privacy_policy">Datenschutzerklärung</string>
 </resources>

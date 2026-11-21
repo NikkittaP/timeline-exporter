@@ -21,6 +21,7 @@
 
     <string name="pick_file_button">选择 Timeline.json</string>
     <string name="idle_hint">选择要解析的 Google 地图时间轴 JSON 文件。</string>
+    <string name="privacy_note">文件只在这台设备上读取，绝不会上传。本应用不会记录你的位置，也不会登录 Google；只有地图底图需要从网络加载。</string>
     <string name="idle_help_button">如何获取时间轴数据？</string>
 
     <string name="loading_opening">正在打开文件…</string>
@@ -86,7 +87,7 @@
     <string name="track_name_full_range">（完整导出）</string>
 
     <string name="help_title">获取你的时间轴数据</string>
-    <string name="help_intro">自 2024 年底起，Google 仅将时间轴存储在你的设备上——没有 Google Takeout 选项，也没有可直接读取它的第三方应用。你从系统设置中导出一次，然后在这里打开该文件。</string>
+    <string name="help_intro">自 2024 年底起，Google 将时间轴保存在你的设备上（可选加密备份），而不是在线保存在 Google 账号中。没有 Google Takeout 选项，其他应用也无法直接读取。你从系统设置中导出一次，然后在这里打开该文件。</string>
 
     <string name="help_method_settings_title">从 Android 设置导出（推荐）</string>
     <string name="help_method_settings_step1">打开 Android “设置”应用</string>
@@ -193,10 +194,11 @@
     <string name="trips_none">没有旅行：此文件中你从未离家超过 50 公里。</string>
     <string name="trips_none_filtered">所选日期范围内没有旅行。</string>
     <string name="trips_no_home">此文件未标明住所，因此无法找出旅行。</string>
-    <string name="trips_hint">当你离家超过 50 公里时即识别为一次旅行。点按旅行即可在地图上预览。勾选旅行即可只导出这些旅行。</string>
+    <string name="trips_hint">当你离家超过 50 公里时即识别为一次旅行。点按旅行即可在地图上预览。取消勾选的旅行不会被导出。</string>
     <string name="trip_export_checkbox">导出此旅行</string>
-    <string name="trips_checked_none">将导出所有旅行</string>
     <string name="trips_checked">已选择导出：%1$s / %2$s</string>
+    <string name="trips_select_all">全选</string>
+    <string name="trips_checked_zero">未勾选要导出的旅行</string>
     <string name="trip_show_all_on_map">在地图上显示所有旅行</string>
     <string name="trip_show_checked_on_map">在地图上显示已勾选的旅行</string>
     <string name="trip_far_from_home">离家 %1$s</string>
@@ -288,6 +290,7 @@
     <string name="map_image_rendering_high">正在渲染高分辨率…</string>
     <string name="map_image_high_error">无法渲染高分辨率图片。未保存任何内容；请尝试标准分辨率。</string>
     <string name="map_image_stat_distance">记录距离</string>
+    <string name="map_image_distance_note">记录距离是这张图片上所画线条的总长度。航班和没有 GPS 点的空白段不计入，因此通常比 Google 显示的行程距离短。</string>
     <string name="map_image_stat_days">天数</string>
     <string name="map_image_stat_places">地点</string>
 
