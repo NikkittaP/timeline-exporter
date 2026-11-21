@@ -15,6 +15,7 @@ struct MapImageSheet: View {
 
     init(wide: CGSize?) {
         self.wide = wide
+        _askedSize = State(initialValue: wide)
         // Laid out for the size it is about to get, not as a column first.
         if #available(iOS 18, *), let wide {
             _sheetSize = State(initialValue: wide)
@@ -97,6 +98,11 @@ struct MapImageSheet: View {
     /// The whole sheet, as laid out: from outside the action bar, so a status
     /// line appearing in the bar does not resize the picture.
     @State private var sheetSize = CGSize(width: 390, height: 700)
+    /// [wide] as last asked of the presentation. It follows [wide] once the
+    /// turn of the iPad has settled: asked during the turn, the size is lost
+    /// to the form sheet UIKit lays out for the new orientation, and the sheet
+    /// came back to a landscape window at its upright size.
+    @State private var askedSize: CGSize?
 
     private var previewSize: CGSize {
         MapImagePreviewFrame.size(ratio: ratio, sheet: sheetSize, heightShare: sizeClass == .regular ? 0.7 : 0.48)
@@ -217,7 +223,13 @@ struct MapImageSheet: View {
             }
         }
         .onGeometryChange(for: CGSize.self, of: { $0.size }) { sheetSize = $0 }
-        .modifier(MapImageSheetSizing(wide: wide))
+        .modifier(MapImageSheetSizing(wide: askedSize))
+        .task(id: wide) {
+            guard askedSize != wide else { return }
+            try? await Task.sleep(for: .milliseconds(600))
+            guard !Task.isCancelled else { return }
+            askedSize = wide
+        }
     }
 
     private var failedToDraw: Bool { content?.line.isEmpty ?? false }
@@ -475,7 +487,8 @@ enum MapImagePreviewFrame {
 }
 
 /// Asks for [wide] as the sheet's size. Always the same modifier, so a turn of
-/// the iPad resizes the sheet instead of rebuilding what is inside it. iOS 17
+/// the iPad resizes the sheet instead of rebuilding what is inside it (once
+/// the turn is over: see MapImageSheet.askedSize). iOS 17
 /// has no way to ask: there the sheet stays the system's, in one column.
 private struct MapImageSheetSizing: ViewModifier {
     let wide: CGSize?

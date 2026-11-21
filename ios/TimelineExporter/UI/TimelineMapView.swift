@@ -69,6 +69,13 @@ struct TimelineMapView: UIViewRepresentable {
     /// safe area. Framing keeps clear of that and of the safe area, and the
     /// attribution sits above it. nil is a map inside the page.
     var bottomOverlay: CGFloat? = nil
+    /// Bumped by a long press on the recenter button: the paper plane flies
+    /// the track (RouteFlight).
+    var flightToken = 0
+    /// Whether the line is one to fly: the track, as on Android, not the trips.
+    var canFly = false
+    /// The plane has no track to fly.
+    var onNoRoute: () -> Void = {}
     let onStatus: (MapStatus) -> Void
     let onSelectPlace: (String?) -> Void
 
@@ -97,6 +104,7 @@ struct TimelineMapView: UIViewRepresentable {
         c.scheme = colorScheme
         c.fitToken = fitToken
         c.restoreToken = restoreToken
+        c.flightToken = flightToken
         c.bottomOverlay = bottomOverlay
         placeAttribution(on: map)
         // The map started loading in its initialiser, before it had a delegate.
@@ -125,6 +133,12 @@ struct TimelineMapView: UIViewRepresentable {
             c.restoreToken = restoreToken
             _ = c.restoreCamera(for: content, on: map)
         }
+        if c.flightToken != flightToken {
+            c.flightToken = flightToken
+            let noRoute = onNoRoute
+            // Not straight into a SwiftUI update: this runs during one.
+            if !(canFly && c.fly(on: map, tint: UIColor(named: "AccentColor") ?? .systemBlue)) { DispatchQueue.main.async { noRoute() } }
+        }
     }
 
     /// MapLibre's default margin, plus whatever floats over the map's bottom.
@@ -135,6 +149,7 @@ struct TimelineMapView: UIViewRepresentable {
 
     static func dismantleUIView(_ map: MLNMapView, coordinator: Coordinator) {
         coordinator.stopLoadingWatch()
+        coordinator.cancelFlight()
     }
 
     static func styleURL(_ scheme: ColorScheme) -> URL? {
@@ -149,7 +164,9 @@ struct TimelineMapView: UIViewRepresentable {
         var scheme: ColorScheme?
         var fitToken = 0
         var restoreToken = 0
+        var flightToken = 0
         var bottomOverlay: CGFloat?
+        private var flight: RouteFlight?
         private let memory: MapCameraMemory
         private var shown: MapContent?
         private var wanted = MapContent()
@@ -201,6 +218,7 @@ struct TimelineMapView: UIViewRepresentable {
             let first = shown == nil && wanted == MapContent()
             let changedData = content.line != wanted.line || content.places != wanted.places
             let changedDay = content.selectedDay != wanted.selectedDay
+            if fit || changedData || changedDay { cancelFlight() }
             wanted = content
             if (fit || first || changedData || changedDay) && !(keepCamera && first) { fitPending = true }
             if changedData || changedDay || fit { markBusy(map) }
@@ -212,6 +230,30 @@ struct TimelineMapView: UIViewRepresentable {
             shown = nil
             lineLayers = []
             apply(to: style, map: mapView)
+        }
+
+        // MARK: Flight
+
+        /// Frames the track and flies the plane along it; false when there is
+        /// no line to fly (places, or nothing recorded).
+        func fly(on map: MLNMapView, tint: UIColor) -> Bool {
+            cancelFlight()
+            guard wanted.places.isEmpty, let route = RouteMotion.prepare(wanted.line) else { return false }
+            let flight = RouteFlight(map: map, route: route, color: tint)
+            flight.onEnd = { [weak self, weak flight] in
+                if let self, self.flight === flight { self.flight = nil }
+            }
+            self.flight = flight
+            flight.start { [weak self, weak map] animated in
+                guard let self, let map else { return }
+                self.fit(map, animated: animated)
+            }
+            return true
+        }
+
+        func cancelFlight() {
+            flight?.cancel()
+            flight = nil
         }
 
         // MARK: Status
@@ -451,7 +493,7 @@ struct TimelineMapView: UIViewRepresentable {
         }
 
         /// Frame the picked day, the line or the places, with room around them.
-        private func fit(_ map: MLNMapView) {
+        private func fit(_ map: MLNMapView, animated: Bool = false) {
             memory.clear()
             let line = wanted.line
             var lats = line.framedLatitudes
@@ -480,14 +522,14 @@ struct TimelineMapView: UIViewRepresentable {
             }
             if maxLat - minLat < 0.002 && maxLon - minLon < 0.002 {
                 let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2, longitude: (minLon + maxLon) / 2)
-                map.setCenter(center, zoomLevel: 14, animated: false)
+                map.setCenter(center, zoomLevel: 14, animated: animated)
                 return
             }
             let bounds = MLNCoordinateBounds(
                 sw: CLLocationCoordinate2D(latitude: minLat, longitude: minLon),
                 ne: CLLocationCoordinate2D(latitude: maxLat, longitude: maxLon)
             )
-            map.setVisibleCoordinateBounds(bounds, edgePadding: pad, animated: false, completionHandler: nil)
+            map.setVisibleCoordinateBounds(bounds, edgePadding: pad, animated: animated, completionHandler: nil)
         }
 
         @objc func tapped(_ gesture: UITapGestureRecognizer) {

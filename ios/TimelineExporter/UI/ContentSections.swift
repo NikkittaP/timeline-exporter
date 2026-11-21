@@ -99,10 +99,11 @@ struct PreviewMap: View {
     @Binding var state: PreviewMapState
     var bottomOverlay: CGFloat? = nil
     var colorToggle = false
+    @State private var flightToken = 0
 
     var body: some View {
-        StoreMap(fitToken: state.fitToken, restoreToken: state.restoreToken, bottomOverlay: bottomOverlay,
-                 status: $state.status)
+        StoreMap(fitToken: state.fitToken, restoreToken: state.restoreToken, flightToken: flightToken,
+                 bottomOverlay: bottomOverlay, status: $state.status)
             .overlay(alignment: .topLeading) {
                 // Clear of the buttons in the other corner.
                 MapStatusChip(status: state.status)
@@ -118,6 +119,8 @@ struct PreviewMap: View {
                     .accessibilityIdentifier("mapExpand")
                     MapButton(symbol: "scope", label: L.s("map_recenter")) {
                         state.fitToken += 1
+                    } onLongPress: {
+                        flightToken += 1
                     }
                     if colorToggle && store.contentKind == .track {
                         ColorByDayButton()
@@ -209,8 +212,11 @@ private struct StoreMap: View {
     @Environment(TimelineStore.self) private var store
     let fitToken: Int
     var restoreToken = 0
+    var flightToken = 0
     var bottomOverlay: CGFloat? = nil
     @Binding var status: MapStatus
+    /// "No route to fly along yet", for a moment.
+    @State private var noRoute = false
 
     var body: some View {
         TimelineMapView(
@@ -219,9 +225,29 @@ private struct StoreMap: View {
             restoreToken: restoreToken,
             memory: store.mapCamera,
             bottomOverlay: bottomOverlay,
+            flightToken: flightToken,
+            canFly: store.contentKind == .track,
+            onNoRoute: { noRoute = true },
             onStatus: { status = $0 },
             onSelectPlace: { store.selectPlace($0) }
         )
+        .overlay(alignment: .bottom) {
+            if noRoute {
+                Text(L.s("journey_no_route"))
+                    .font(.callout)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: Design.controlRadius))
+                    .padding(.bottom, (bottomOverlay ?? 0) + 24)
+                    .transition(.opacity)
+                    .allowsHitTesting(false)
+                    .task {
+                        try? await Task.sleep(for: .seconds(2))
+                        withAnimation { noRoute = false }
+                    }
+            }
+        }
+        .animation(.default, value: noRoute)
         .overlay {
             if let note = store.mapEmptyNote {
                 Text(note)
@@ -284,20 +310,25 @@ private struct ExpandedMap: View {
     @Environment(TimelineStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var fitToken = 0
+    @State private var flightToken = 0
     @State private var status = MapStatus.loading
     /// The day strip with the gap under it, as laid out.
     @State private var stripHeight: CGFloat = 0
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            StoreMap(fitToken: fitToken, bottomOverlay: store.showsDayLegend ? stripHeight : 0, status: $status)
+            StoreMap(fitToken: fitToken, flightToken: flightToken, bottomOverlay: store.showsDayLegend ? stripHeight : 0, status: $status)
                 .ignoresSafeArea()
             HStack(alignment: .top) {
                 MapStatusChip(status: status)
                 Spacer(minLength: 8)
                 MapButtonColumn {
                     MapButton(symbol: "xmark", label: L.s("map_exit_fullscreen")) { dismiss() }
-                    MapButton(symbol: "scope", label: L.s("map_recenter")) { fitToken += 1 }
+                    MapButton(symbol: "scope", label: L.s("map_recenter")) {
+                        fitToken += 1
+                    } onLongPress: {
+                        flightToken += 1
+                    }
                     if store.contentKind == .track {
                         ColorByDayButton()
                     }
@@ -414,9 +445,18 @@ private struct MapButton: View {
     /// A switch that is on: tinted, and said so to VoiceOver.
     var active = false
     let action: () -> Void
+    /// A hidden second use of the button (the recenter button's plane).
+    var onLongPress: (() -> Void)? = nil
+    /// When a press fired the long press: its release is no tap. A time, not
+    /// a flag, so a press slid off the button never swallows a later tap.
+    @State private var longPressed: Date?
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            let wasLong = longPressed.map { Date().timeIntervalSince($0) < 10 } ?? false
+            longPressed = nil
+            if !wasLong { action() }
+        } label: {
             Image(systemName: symbol)
                 .font(.body.weight(.semibold))
                 .foregroundStyle(active ? Color.accentColor : Color.primary)
@@ -425,6 +465,14 @@ private struct MapButton: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        // Simultaneous, so the tap stays the Button's own.
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 0.5).onEnded { _ in
+                longPressed = Date()
+                onLongPress?()
+            },
+            including: onLongPress == nil ? .subviews : .all
+        )
         .accessibilityLabel(label)
         .accessibilityAddTraits(active ? .isSelected : [])
     }

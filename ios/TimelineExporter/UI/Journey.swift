@@ -138,17 +138,12 @@ private struct JourneyDrawing {
     private static let snailShell = Color(red: 0.898, green: 0.714, blue: 0.478) // #E5B67A
 
     func draw(in gc: inout GraphicsContext, size: CGSize) {
-        let sx = size.width / 300
-        let sy = size.height / 150
+        // Every scene keeps its proportions, centred: a sheet as wide as an
+        // iPad's on its side would otherwise pull the snail out flat.
+        let s = min(size.width / 300, size.height / 150)
         var g = gc
-        if case .distance = scene {
-            // The globe keeps its proportions; the other scenes stretch as on Android.
-            let s = min(sx, sy)
-            g.translateBy(x: (size.width - 300 * s) / 2, y: (size.height - 150 * s) / 2)
-            g.scaleBy(x: s, y: s)
-        } else {
-            g.scaleBy(x: sx, y: sy)
-        }
+        g.translateBy(x: (size.width - 300 * s) / 2, y: (size.height - 150 * s) / 2)
+        g.scaleBy(x: s, y: s)
         switch scene {
         case .distance: drawDistance(&g)
         case .traveler:
