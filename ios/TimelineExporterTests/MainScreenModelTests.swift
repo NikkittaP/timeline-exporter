@@ -100,10 +100,13 @@ final class MainScreenModelTests: XCTestCase {
     /// A tick means "exported": every trip starts ticked, Clear unticks them
     /// all and then nothing is written, Select all ticks them again.
     func testEveryTripStartsMarkedAndNoneMarkedExportsNothing() async throws {
-        let store = try await sampleStore()
+        let bundled = try XCTUnwrap(Bundle.main.url(forResource: "timeline_demo", withExtension: "json"))
+        let store = TimelineStore(settings: InMemorySettingsStore())
+        await store.open(url: bundled)
         store.setContentKind(.trips)
+        await store.recount()
         let trips = store.visibleTrips
-        XCTAssertFalse(trips.isEmpty)
+        XCTAssertFalse(trips.isEmpty, "the demo has trips")
         XCTAssertEqual(store.markedTripCount, trips.count, "a new file has every trip ticked")
         XCTAssertFalse(store.tripsNarrowed)
         XCTAssertTrue(store.exportTripKeys.isEmpty, "all ticked: the core's 'every trip'")
