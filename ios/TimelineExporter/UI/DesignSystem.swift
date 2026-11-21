@@ -87,9 +87,34 @@ extension View {
 
 extension View {
     /// A main action's label at a comfortable width; the button is centred
-    /// in what is left of the row.
+    /// in what is left of the row. The label style is set here because a
+    /// Label in a Form row otherwise takes the list's style, which puts the
+    /// icon in a column of its own and the title at the leading edge: "Share
+    /// GPX" sat left of centre on its button.
     func actionLabelWidth() -> some View {
-        frame(maxWidth: Design.actionLabelMaxWidth)
+        labelStyle(ActionLabelStyle())
+    }
+
+    /// The one main action of a sheet: Liquid Glass where the system has it.
+    @ViewBuilder
+    func prominentActionStyle() -> some View {
+        if #available(iOS 26, *) {
+            buttonStyle(.glassProminent)
+        } else {
+            buttonStyle(.borderedProminent)
+        }
+    }
+}
+
+/// Icon and title side by side, centred together, at most a comfortable width.
+struct ActionLabelStyle: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: 8) {
+            configuration.icon
+            configuration.title
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: Design.actionLabelMaxWidth)
     }
 }
 

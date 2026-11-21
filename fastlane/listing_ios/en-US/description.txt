@@ -11,7 +11,7 @@ This app does not track you and does not sign in to Google. It only reads the fi
 GET YOUR FILE IN 3 STEPS
 1. In Google Maps tap your profile picture → Settings → Location & Privacy → Export Timeline data.
 2. Tap Save to Files and save the file to On My iPhone or iCloud Drive.
-3. Tap Choose Timeline file on the main screen and find the file. It is usually called location-history.json.
+3. Tap Choose Timeline file on the main screen and find the file. It is usually called Timeline.json.
 
 Not sure yet? Tap “Try it with sample data”. Made-up trips: see what the app does before exporting your own.
 

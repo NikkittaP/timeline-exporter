@@ -29,16 +29,16 @@
     <string name="ios_export_step3">**Timeline verilerini dışa aktar**'a dokunun</string>
     <string name="ios_export_step4">**Dosyalar'a Kaydet**'e dokunun, iPhone'umda veya iCloud Drive'ı seçin ve **Kaydet**'e dokunun</string>
     <string name="ios_import_title">3. Dosyayı burada açın</string>
-    <string name="help_import_step1">Ana ekranda **Zaman çizelgesi dosyası seç**'e dokunun ve dosyayı bulun. Genellikle adı location-history.json olur.</string>
+    <string name="help_import_step1">Ana ekranda **Zaman çizelgesi dosyası seç**'e dokunun ve dosyayı bulun. Genellikle adı Timeline.json olur.</string>
     <string name="help_import_step2">Ya da Dosyalar uygulamasında: dosyaya basılı tutun → Paylaş → **Timeline Exporter**.</string>
     <string name="ios_trouble_title">Bir şey çalışmazsa</string>
     <string name="ios_trouble_no_export">**“Timeline verilerini dışa aktar” yok mu?** Google Haritalar'da oturum açtığınızı ve Zaman çizelgesinin açık olduğunu kontrol edin (1. adım). Seçenek, Zaman çizelgesi bir şey kaydettiğinde görünür.</string>
     <string name="ios_trouble_alt_path">**Menüyü bulamıyor musunuz?** Şunu deneyin: profil fotoğrafı → **Zaman çizelgeniz** → ⋯ → **Konum ve gizlilik ayarları** → **Timeline verilerini dışa aktar**.</string>
     <string name="ios_trouble_few_days">**Dosyada yalnızca birkaç gün mü var?** Google yalnızca bu telefonun, Zaman çizelgesi açıkken kaydettiklerini tutar. Otomatik silmenin kapalı olduğunu da kontrol edin (Zaman çizelgeniz'deki bulut simgesi).</string>
     <string name="ios_trouble_android">**Geçmiş bir Android telefonda mı?** Orada kaydedin: Ayarlar → Konum → Konum hizmetleri → Zaman çizelgesi → Timeline verilerini dışa aktar. Dosyayı bu iPhone'a gönderin (Google Drive, e-posta veya bir mesajlaşma uygulaması) ve Dosyalar'a kaydedin.</string>
-    <string name="help_note_file_location">• iPhone'da dosyanın adı location-history.json, Android'de Timeline.json'dır. İkisi de burada açılır.</string>
+    <string name="help_note_file_location">• Dosyanın adı genellikle Timeline.json'dır. iPhone'dan yapılan eski dışa aktarmaların adı location-history.json'dır. İkisi de burada açılır.</string>
     <string name="pick_file_button">Zaman çizelgesi dosyası seç</string>
-    <string name="error_not_timeline">Bu bir Google Haritalar Zaman çizelgesi dosyasına benzemiyor. Google Haritalar'dan kaydettiğiniz dosyayı seçin (genellikle location-history.json); adımlar Yardım'da.</string>
+    <string name="error_not_timeline">Bu bir Google Haritalar Zaman çizelgesi dosyasına benzemiyor. Google Haritalar'dan kaydettiğiniz dosyayı seçin (genellikle Timeline.json); adımlar Yardım'da.</string>
     <string name="language_settings_hint">iOS her uygulamanın dilini Ayarlar\'da tutar.</string>
     <string name="ios_empty_title">Zaman çizelgenizi görün ve kaydedin</string>
     <string name="ios_empty_body">Google Haritalar zaman çizelgesi dosyanızı açın, haritada görün ve GPX, KML, GeoJSON ya da CSV olarak kaydedin.</string>
@@ -58,4 +58,21 @@
     <string name="ios_select_all">Tümünü seç</string>
     <string name="ios_search_places">Yer ara</string>
     <string name="ios_export_data_file">Veri dosyası</string>
+
+    <!-- Help and Feedback: Suggest a Feature, Report a Problem -->
+    <string name="ios_help_feedback_section">Yardım ve Geri Bildirim</string>
+    <string name="ios_suggest_title">Özellik Önerin</string>
+    <string name="ios_suggest_intro">Timeline Exporter\'ı tek başıma geliştiriyorum ve her mesajı okuyorum. Uygulamayı sizin için daha kullanışlı ne yapardı?</string>
+    <string name="ios_suggest_ideas">Listemdeki fikirler</string>
+    <string name="ios_suggest_other">Kendi fikriniz</string>
+    <string name="ios_suggest_other_placeholder">Uygulamanın ne yapmasını istediğinizi anlatın</string>
+    <string name="ios_feedback_compose">E-posta Yaz</string>
+    <string name="ios_feedback_privacy">Hiçbir şey otomatik olarak gönderilmez. E-posta uygulamanızda, göndermeden önce inceleyip düzenleyebileceğiniz bir taslak açılır.</string>
+    <string name="ios_problem_title">Sorun Bildirin</string>
+    <string name="ios_problem_intro">Bir şeylerin ters gitmesine üzüldüm. Ne olduğunu anlatın, inceleyeyim.</string>
+    <string name="ios_problem_label">Ne oldu?</string>
+    <string name="ios_problem_placeholder">Ne yaptığınız, ne beklediğiniz ve bunun yerine ne olduğu</string>
+    <string name="ios_problem_include_details">Teknik ayrıntıları ekle</string>
+    <string name="ios_problem_details_note">Sorunu yeniden oluşturmama yardımcı olur. Konum verisi ya da dosyanızdan herhangi bir şey içermez.</string>
+    <string name="ios_feedback_copy_address">E-posta Adresini Kopyala</string>
 </resources>

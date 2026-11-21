@@ -29,16 +29,16 @@
     <string name="ios_export_step3">Нажмите **Экспортировать данные Хронологии**</string>
     <string name="ios_export_step4">Нажмите **Сохранить в «Файлы»**, выберите «На iPhone» или iCloud Drive и нажмите **Сохранить**</string>
     <string name="ios_import_title">3. Откройте файл здесь</string>
-    <string name="help_import_step1">Нажмите **Выбрать файл Хронологии** на главном экране и найдите файл. Обычно он называется location-history.json.</string>
+    <string name="help_import_step1">Нажмите **Выбрать файл Хронологии** на главном экране и найдите файл. Обычно он называется Timeline.json.</string>
     <string name="help_import_step2">Или в приложении «Файлы»: нажмите и удерживайте файл → «Поделиться» → **Timeline Exporter**.</string>
     <string name="ios_trouble_title">Если что-то не получается</string>
     <string name="ios_trouble_no_export">**Нет пункта «Экспортировать данные Хронологии»?** Проверьте, что вы вошли в аккаунт в Google Картах и Хронология включена (шаг 1). Пункт появится, когда Хронология что-нибудь сохранит.</string>
     <string name="ios_trouble_alt_path">**Не нашли меню?** Попробуйте так: фото профиля → **Хронология** → ⋯ → **Настройки местоположения и конфиденциальности** → **Экспортировать данные Хронологии**.</string>
     <string name="ios_trouble_few_days">**В файле всего несколько дней?** Google хранит только то, что этот телефон записал, пока Хронология была включена. Проверьте также, что автоудаление выключено (значок облака в Хронологии).</string>
     <string name="ios_trouble_android">**История на Android-телефоне?** Сохраните её там: Настройки → Местоположение → Геолокация → Хронология → «Экспортировать данные Хронологии». Перешлите файл на этот iPhone (Google Диск, почта или мессенджер) и сохраните в «Файлы».</string>
-    <string name="help_note_file_location">• На iPhone файл называется location-history.json, на Android — Timeline.json. Здесь открываются оба.</string>
+    <string name="help_note_file_location">• Обычно файл называется Timeline.json. Более старые выгрузки с iPhone называются location-history.json. Здесь открываются оба.</string>
     <string name="pick_file_button">Выбрать файл Хронологии</string>
-    <string name="error_not_timeline">Это не похоже на файл Хронологии Google Карт. Выберите файл, сохранённый из Google Карт (обычно location-history.json), — шаги есть в Справке.</string>
+    <string name="error_not_timeline">Это не похоже на файл Хронологии Google Карт. Выберите файл, сохранённый из Google Карт (обычно Timeline.json), — шаги есть в Справке.</string>
     <string name="language_settings_hint">iOS хранит язык каждого приложения в Настройках.</string>
     <string name="ios_empty_title">Смотрите и сохраняйте Хронологию</string>
     <string name="ios_empty_body">Откройте файл Хронологии Google Карт, чтобы увидеть её на карте и сохранить в GPX, KML, GeoJSON или CSV.</string>
@@ -58,4 +58,21 @@
     <string name="ios_select_all">Выбрать все</string>
     <string name="ios_search_places">Поиск мест</string>
     <string name="ios_export_data_file">Файл данных</string>
+
+    <!-- Help and Feedback: Suggest a Feature, Report a Problem -->
+    <string name="ios_help_feedback_section">Помощь и отзывы</string>
+    <string name="ios_suggest_title">Предложить функцию</string>
+    <string name="ios_suggest_intro">Я делаю Timeline Exporter в одиночку и читаю каждое письмо. Что сделало бы приложение полезнее для вас?</string>
+    <string name="ios_suggest_ideas">Идеи из моего списка</string>
+    <string name="ios_suggest_other">Ваша идея</string>
+    <string name="ios_suggest_other_placeholder">Опишите, что бы вы хотели видеть в приложении</string>
+    <string name="ios_feedback_compose">Написать письмо</string>
+    <string name="ios_feedback_privacy">Ничего не отправляется автоматически. В почтовом приложении откроется черновик — его можно проверить и изменить перед отправкой.</string>
+    <string name="ios_problem_title">Сообщить о проблеме</string>
+    <string name="ios_problem_intro">Жаль, что что-то пошло не так. Расскажите, что случилось, — я разберусь.</string>
+    <string name="ios_problem_label">Что случилось?</string>
+    <string name="ios_problem_placeholder">Что вы делали, чего ожидали и что произошло вместо этого</string>
+    <string name="ios_problem_include_details">Приложить технические данные</string>
+    <string name="ios_problem_details_note">Помогают воспроизвести проблему. Не содержат геоданных и ничего из вашего файла.</string>
+    <string name="ios_feedback_copy_address">Скопировать адрес почты</string>
 </resources>

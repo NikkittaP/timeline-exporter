@@ -15,8 +15,8 @@ happens on your device.
 
 ## What the app processes
 
-- **The Timeline file you choose** (`Timeline.json` on Android,
-  `location-history.json` on iPhone). The app reads it locally to extract
+- **The Timeline file you choose** (`Timeline.json`; older iPhone exports are
+  called `location-history.json`). The app reads it locally to extract
   GPS points. The file is never uploaded anywhere.
 - **The exported file you save.** Saved through the system file picker
   (Android's Storage Access Framework, the Files app on iOS) to the location

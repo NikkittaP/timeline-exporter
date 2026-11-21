@@ -29,16 +29,16 @@
     <string name="ios_export_step3">輕觸 **匯出時間軸資料**</string>
     <string name="ios_export_step4">輕觸 **儲存到「檔案」**，選擇「我的 iPhone」或 iCloud 雲碟，然後輕觸 **儲存**</string>
     <string name="ios_import_title">3. 在這裡開啟檔案</string>
-    <string name="help_import_step1">在主畫面輕觸 **選擇時間軸檔案** 並找到該檔案。它通常名為 location-history.json。</string>
+    <string name="help_import_step1">在主畫面輕觸 **選擇時間軸檔案** 並找到該檔案。它通常名為 Timeline.json。</string>
     <string name="help_import_step2">或在「檔案」App 中：按住檔案 → 分享 → **Timeline Exporter**。</string>
     <string name="ios_trouble_title">遇到問題時</string>
     <string name="ios_trouble_no_export">**沒有「匯出時間軸資料」？** 請確認已在 Google 地圖中登入且時間軸已開啟（第 1 步）。時間軸儲存了內容後該選項才會出現。</string>
     <string name="ios_trouble_alt_path">**找不到選單？** 試試：個人資料相片 → **你的時間軸** → ⋯ → **位置與隱私設定** → **匯出時間軸資料**。</string>
     <string name="ios_trouble_few_days">**檔案裡只有幾天？** Google 只保留這支手機在時間軸開啟期間記錄的內容。另請確認自動刪除已關閉（「你的時間軸」中的雲朵圖示）。</string>
     <string name="ios_trouble_android">**記錄在 Android 手機上？** 在那支手機上儲存：設定 → 位置 → 定位服務 → 時間軸 → 匯出時間軸資料。把檔案傳到這支 iPhone（Google 雲端硬碟、電子郵件或通訊應用程式），並儲存到「檔案」。</string>
-    <string name="help_note_file_location">• 在 iPhone 上檔名為 location-history.json，在 Android 上為 Timeline.json。兩者都能在這裡開啟。</string>
+    <string name="help_note_file_location">• 檔名通常為 Timeline.json。iPhone 上較早的匯出檔名為 location-history.json。兩者都能在這裡開啟。</string>
     <string name="pick_file_button">選擇時間軸檔案</string>
-    <string name="error_not_timeline">這看起來不像 Google 地圖的時間軸檔案。請選擇你從 Google 地圖儲存的檔案（通常為 location-history.json）——步驟請見「說明」。</string>
+    <string name="error_not_timeline">這看起來不像 Google 地圖的時間軸檔案。請選擇你從 Google 地圖儲存的檔案（通常為 Timeline.json）——步驟請見「說明」。</string>
     <string name="language_settings_hint">iOS 在「設定」中為每個 App 設定語言。</string>
     <string name="ios_empty_title">查看並儲存你的時間軸</string>
     <string name="ios_empty_body">開啟 Google 地圖時間軸檔案，在地圖上查看，並儲存為 GPX、KML、GeoJSON 或 CSV。</string>
@@ -58,4 +58,21 @@
     <string name="ios_select_all">全選</string>
     <string name="ios_search_places">搜尋地點</string>
     <string name="ios_export_data_file">資料檔案</string>
+
+    <!-- Help and Feedback: Suggest a Feature, Report a Problem -->
+    <string name="ios_help_feedback_section">說明與意見回饋</string>
+    <string name="ios_suggest_title">建議新功能</string>
+    <string name="ios_suggest_intro">Timeline Exporter 由我獨立開發，每則訊息我都會閱讀。什麼功能能讓它對你更有用？</string>
+    <string name="ios_suggest_ideas">我清單中的想法</string>
+    <string name="ios_suggest_other">你自己的想法</string>
+    <string name="ios_suggest_other_placeholder">描述你希望 App 做什麼</string>
+    <string name="ios_feedback_compose">撰寫郵件</string>
+    <string name="ios_feedback_privacy">不會自動傳送任何內容。郵件 App 會開啟一份草稿，你可以在傳送前查看和修改。</string>
+    <string name="ios_problem_title">回報問題</string>
+    <string name="ios_problem_intro">很抱歉出了問題。告訴我發生了什麼，我會去查看。</string>
+    <string name="ios_problem_label">發生了什麼？</string>
+    <string name="ios_problem_placeholder">你做了什麼、預期是什麼、實際發生了什麼</string>
+    <string name="ios_problem_include_details">附上技術資訊</string>
+    <string name="ios_problem_details_note">協助我重現問題。不包含位置資料，也不包含你檔案中的任何內容。</string>
+    <string name="ios_feedback_copy_address">拷貝電子郵件地址</string>
 </resources>

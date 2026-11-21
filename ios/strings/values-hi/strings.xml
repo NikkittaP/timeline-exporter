@@ -29,16 +29,16 @@
     <string name="ios_export_step3">**Timeline डेटा एक्सपोर्ट करें** पर टैप करें</string>
     <string name="ios_export_step4">**फ़ाइलें में सहेजें** पर टैप करें, “मेरे iPhone पर” या iCloud Drive चुनें, फिर **सहेजें** पर टैप करें</string>
     <string name="ios_import_title">3. फ़ाइल यहाँ खोलें</string>
-    <string name="help_import_step1">मुख्य स्क्रीन पर **Timeline फ़ाइल चुनें** पर टैप करें और फ़ाइल ढूँढें। आमतौर पर इसका नाम location-history.json होता है।</string>
+    <string name="help_import_step1">मुख्य स्क्रीन पर **Timeline फ़ाइल चुनें** पर टैप करें और फ़ाइल ढूँढें। आमतौर पर इसका नाम Timeline.json होता है।</string>
     <string name="help_import_step2">या फ़ाइलें ऐप में: फ़ाइल को दबाकर रखें → शेयर करें → **Timeline Exporter**।</string>
     <string name="ios_trouble_title">अगर कुछ काम न करे</string>
     <string name="ios_trouble_no_export">**“Timeline डेटा एक्सपोर्ट करें” नहीं दिख रहा?** जाँचें कि आप Google Maps में साइन इन हैं और Timeline चालू है (चरण 1)। Timeline में कुछ सहेजे जाने के बाद यह विकल्प दिखता है।</string>
     <string name="ios_trouble_alt_path">**मेन्यू नहीं मिल रहा?** यह आज़माएँ: प्रोफ़ाइल फ़ोटो → **आपकी Timeline** → ⋯ → **स्थान और गोपनीयता सेटिंग** → **Timeline डेटा एक्सपोर्ट करें**।</string>
     <string name="ios_trouble_few_days">**फ़ाइल में सिर्फ़ कुछ दिन?** Google सिर्फ़ वही रखता है जो इस फ़ोन ने Timeline चालू रहते रिकॉर्ड किया। यह भी जाँचें कि ऑटो-डिलीट बंद है (आपकी Timeline में बादल वाला आइकन)।</string>
     <string name="ios_trouble_android">**हिस्ट्री Android फ़ोन पर है?** वहीं सहेजें: सेटिंग्स → लोकेशन → लोकेशन सेवाएँ → Timeline → Timeline डेटा एक्सपोर्ट करें। फ़ाइल को इस iPhone पर भेजें (Google Drive, ईमेल या मैसेंजर) और फ़ाइलें में सहेजें।</string>
-    <string name="help_note_file_location">• iPhone पर फ़ाइल का नाम location-history.json होता है, Android पर Timeline.json। दोनों यहाँ खुलती हैं।</string>
+    <string name="help_note_file_location">• फ़ाइल का नाम आमतौर पर Timeline.json होता है। iPhone से पुराने एक्सपोर्ट का नाम location-history.json होता है। दोनों यहाँ खुलती हैं।</string>
     <string name="pick_file_button">Timeline फ़ाइल चुनें</string>
-    <string name="error_not_timeline">यह Google Maps की Timeline फ़ाइल नहीं लगती। Google Maps से सहेजी गई फ़ाइल चुनें (आमतौर पर location-history.json) — चरण सहायता में हैं।</string>
+    <string name="error_not_timeline">यह Google Maps की Timeline फ़ाइल नहीं लगती। Google Maps से सहेजी गई फ़ाइल चुनें (आमतौर पर Timeline.json) — चरण सहायता में हैं।</string>
     <string name="language_settings_hint">iOS हर ऐप की भाषा Settings में रखता है।</string>
     <string name="ios_empty_title">अपनी Timeline देखें और सहेजें</string>
     <string name="ios_empty_body">अपनी Google Maps Timeline फ़ाइल खोलें, उसे मैप पर देखें और GPX, KML, GeoJSON या CSV के रूप में सहेजें।</string>
@@ -58,4 +58,21 @@
     <string name="ios_select_all">सभी चुनें</string>
     <string name="ios_search_places">जगहें खोजें</string>
     <string name="ios_export_data_file">डेटा फ़ाइल</string>
+
+    <!-- Help and Feedback: Suggest a Feature, Report a Problem -->
+    <string name="ios_help_feedback_section">सहायता और फ़ीडबैक</string>
+    <string name="ios_suggest_title">फ़ीचर सुझाएँ</string>
+    <string name="ios_suggest_intro">मैं Timeline Exporter अकेले बनाता हूँ और हर संदेश पढ़ता हूँ। किस चीज़ से ऐप आपके लिए और उपयोगी बनेगा?</string>
+    <string name="ios_suggest_ideas">मेरी सूची के आइडिया</string>
+    <string name="ios_suggest_other">आपका अपना आइडिया</string>
+    <string name="ios_suggest_other_placeholder">बताएँ कि आप ऐप से क्या करवाना चाहेंगे</string>
+    <string name="ios_feedback_compose">ईमेल लिखें</string>
+    <string name="ios_feedback_privacy">कुछ भी अपने-आप नहीं भेजा जाता। आपका मेल ऐप एक ड्राफ़्ट खोलता है, जिसे आप भेजने से पहले देख और बदल सकते हैं।</string>
+    <string name="ios_problem_title">समस्या की रिपोर्ट करें</string>
+    <string name="ios_problem_intro">माफ़ कीजिए, कुछ गड़बड़ हो गई। बताइए क्या हुआ, मैं इसे देखूँगा।</string>
+    <string name="ios_problem_label">क्या हुआ?</string>
+    <string name="ios_problem_placeholder">आपने क्या किया, क्या उम्मीद थी और उसकी जगह क्या हुआ</string>
+    <string name="ios_problem_include_details">तकनीकी विवरण शामिल करें</string>
+    <string name="ios_problem_details_note">इनसे मुझे समस्या दोहराने में मदद मिलती है। इनमें कोई लोकेशन डेटा या आपकी फ़ाइल की कोई चीज़ नहीं होती।</string>
+    <string name="ios_feedback_copy_address">ईमेल पता कॉपी करें</string>
 </resources>

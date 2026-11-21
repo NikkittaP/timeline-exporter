@@ -29,16 +29,16 @@
     <string name="ios_export_step3">Toca **Exportar datos de Timeline**</string>
     <string name="ios_export_step4">Toca **Guardar en Archivos**, elige En mi iPhone o iCloud Drive y toca **Guardar**</string>
     <string name="ios_import_title">3. Abre el archivo aquí</string>
-    <string name="help_import_step1">Toca **Elegir archivo de cronología** en la pantalla principal y busca el archivo. Normalmente se llama location-history.json.</string>
+    <string name="help_import_step1">Toca **Elegir archivo de cronología** en la pantalla principal y busca el archivo. Normalmente se llama Timeline.json.</string>
     <string name="help_import_step2">O en la app Archivos: mantén pulsado el archivo → Compartir → **Timeline Exporter**.</string>
     <string name="ios_trouble_title">Si algo no funciona</string>
     <string name="ios_trouble_no_export">**¿No aparece «Exportar datos de Timeline»?** Comprueba que has iniciado sesión en Google Maps y que la cronología está activada (paso 1). La opción aparece cuando la cronología ha guardado algo.</string>
     <string name="ios_trouble_alt_path">**¿No encuentras el menú?** Prueba: foto de perfil → **Tu cronología** → ⋯ → **Configuración de ubicación y privacidad** → **Exportar datos de Timeline**.</string>
     <string name="ios_trouble_few_days">**¿Solo unos pocos días en el archivo?** Google solo conserva lo que este teléfono registró con la cronología activada. Comprueba también que la eliminación automática está desactivada (icono de nube en Tu cronología).</string>
     <string name="ios_trouble_android">**¿Historial en un teléfono Android?** Guárdalo allí: Ajustes → Ubicación → Servicios de ubicación → Cronología → Exportar datos de Timeline. Envía el archivo a este iPhone (Google Drive, correo o un mensajero) y guárdalo en Archivos.</string>
-    <string name="help_note_file_location">• En iPhone el archivo se llama location-history.json; en Android, Timeline.json. Los dos se abren aquí.</string>
+    <string name="help_note_file_location">• El archivo suele llamarse Timeline.json. Las exportaciones antiguas del iPhone se llaman location-history.json. Los dos se abren aquí.</string>
     <string name="pick_file_button">Elegir archivo de cronología</string>
-    <string name="error_not_timeline">Esto no parece un archivo de cronología de Google Maps. Elige el archivo que guardaste desde Google Maps (normalmente location-history.json); la Ayuda muestra los pasos.</string>
+    <string name="error_not_timeline">Esto no parece un archivo de cronología de Google Maps. Elige el archivo que guardaste desde Google Maps (normalmente Timeline.json); la Ayuda muestra los pasos.</string>
     <string name="language_settings_hint">iOS guarda el idioma de cada app en Ajustes.</string>
     <string name="ios_empty_title">Ve y guarda tu cronología</string>
     <string name="ios_empty_body">Abre tu archivo de cronología de Google Maps para verla en un mapa y guardarla como GPX, KML, GeoJSON o CSV.</string>
@@ -58,4 +58,21 @@
     <string name="ios_select_all">Seleccionar todo</string>
     <string name="ios_search_places">Buscar lugares</string>
     <string name="ios_export_data_file">Archivo de datos</string>
+
+    <!-- Help and Feedback: Suggest a Feature, Report a Problem -->
+    <string name="ios_help_feedback_section">Ayuda y comentarios</string>
+    <string name="ios_suggest_title">Sugerir una función</string>
+    <string name="ios_suggest_intro">Desarrollo Timeline Exporter por mi cuenta y leo cada mensaje. ¿Qué haría que la app te resultara más útil?</string>
+    <string name="ios_suggest_ideas">Ideas en mi lista</string>
+    <string name="ios_suggest_other">Tu propia idea</string>
+    <string name="ios_suggest_other_placeholder">Describe lo que te gustaría que hiciera la app</string>
+    <string name="ios_feedback_compose">Redactar correo</string>
+    <string name="ios_feedback_privacy">No se envía nada automáticamente. Tu app de correo abre un borrador que puedes revisar y editar antes de enviarlo.</string>
+    <string name="ios_problem_title">Informar de un problema</string>
+    <string name="ios_problem_intro">Siento que algo haya fallado. Cuéntame qué pasó y lo revisaré.</string>
+    <string name="ios_problem_label">¿Qué ha pasado?</string>
+    <string name="ios_problem_placeholder">Qué hiciste, qué esperabas y qué pasó en su lugar</string>
+    <string name="ios_problem_include_details">Incluir detalles técnicos</string>
+    <string name="ios_problem_details_note">Me ayudan a reproducir el problema. No contienen datos de ubicación ni nada de tu archivo.</string>
+    <string name="ios_feedback_copy_address">Copiar dirección de correo</string>
 </resources>

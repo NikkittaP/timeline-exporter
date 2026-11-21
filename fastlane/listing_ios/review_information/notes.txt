@@ -1,4 +1,4 @@
-Timeline Exporter converts the location history that Google Maps keeps on the phone ("Timeline") into GPX, KML, GeoJSON or CSV files. It has no account, no sign-in and no server: it only reads a file the user exports from the Google Maps app (Google Maps → profile picture → Settings → Location & Privacy → Export Timeline data → Save to Files; the file is location-history.json).
+Timeline Exporter converts the location history that Google Maps keeps on the phone ("Timeline") into GPX, KML, GeoJSON or CSV files. It has no account, no sign-in and no server: it only reads a file the user exports from the Google Maps app (Google Maps → profile picture → Settings → Location & Privacy → Export Timeline data → Save to Files; the file is Timeline.json).
 
 To review without a Google account: on the first screen tap "Try it with sample data". The app opens a bundled, made-up history (no real person's data) and every feature can be tried: map preview, date filter, export to each format, Save to Files and the share sheet.
 

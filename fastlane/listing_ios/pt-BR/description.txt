@@ -11,7 +11,7 @@ Este app não rastreia você e não entra na sua conta do Google. Ele só lê o 
 SEU ARQUIVO EM 3 PASSOS
 1. No Google Maps, toque na sua foto de perfil → Configurações → Localização e privacidade → Exportar dados da Linha do tempo.
 2. Toque em Salvar em Arquivos e salve o arquivo No Meu iPhone ou no iCloud Drive.
-3. Toque em Escolher arquivo da Linha do tempo na tela principal e encontre o arquivo. Normalmente ele se chama location-history.json.
+3. Toque em Escolher arquivo da Linha do tempo na tela principal e encontre o arquivo. Normalmente ele se chama Timeline.json.
 
 Ainda em dúvida? Toque em “Testar com dados de exemplo”. Viagens inventadas: veja o que o app faz antes de exportar as suas.
 

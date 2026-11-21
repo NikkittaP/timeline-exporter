@@ -64,92 +64,237 @@ struct HelpSheet: View {
     }
 }
 
-// MARK: Feedback
+// MARK: Help & Feedback
 
-/// The feature ballot and a free-text note, sent as a GitHub issue or an
-/// email the user still edits. Nothing leaves the app by itself.
+/// The two ways to write to the developer, both under Help & Feedback.
+enum FeedbackKind: String, Identifiable {
+    /// The idea ballot and a note of one's own. No technical details.
+    case feature
+    /// What went wrong, with the technical details the user can leave out.
+    case problem
+
+    var id: String { rawValue }
+
+    var titleKey: String { self == .feature ? "ios_suggest_title" : "ios_problem_title" }
+    var symbol: String { self == .feature ? "lightbulb" : "exclamationmark.bubble" }
+}
+
+/// Suggest a Feature or Report a Problem. Nothing leaves the app by itself:
+/// the button opens a draft in the mail app, which the user reads, edits and
+/// sends there. No analytics, no backend.
 struct FeedbackSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
+    let kind: FeedbackKind
     @State private var selected: Set<Int> = []
-    @State private var other = ""
-    @State private var diagnostics: String
-    @State private var failure: String?
+    @State private var note = ""
+    @State private var includeDetails = true
+    @State private var noMailApp = false
+    private let diagnostics: String
 
-    init(formatName: String?, pointCount: Int?) {
-        _diagnostics = State(initialValue: Feedback.diagnostics(formatName: formatName, pointCount: pointCount))
+    init(kind: FeedbackKind, formatName: String?, pointCount: Int?) {
+        self.kind = kind
+        diagnostics = Feedback.diagnostics(formatName: formatName, pointCount: pointCount)
     }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    ForEach(Feedback.options.indices, id: \.self) { i in
-                        Toggle(L.s(Feedback.options[i].key), isOn: Binding(
-                            get: { selected.contains(i) },
-                            set: { on in if on { selected.insert(i) } else { selected.remove(i) } }
-                        ))
-                    }
-                } header: {
-                    Text(L.s("feedback_intro")).textCase(nil)
+                    FeedbackHeader(kind: kind)
                 }
-                Section(L.s("feedback_other_label")) {
-                    TextField(L.s("feedback_other_label"), text: $other, axis: .vertical)
-                        .lineLimit(3...8)
-                }
-                Section {
-                    TextField(L.s("feedback_diagnostics_label"), text: $diagnostics, axis: .vertical)
-                        .font(.footnote.monospaced())
-                        .lineLimit(3...10)
-                } header: {
-                    Text(L.s("feedback_diagnostics_label"))
-                } footer: {
-                    Text(L.s("feedback_diagnostics_note"))
-                }
-                Section {
-                    Button {
-                        send(Feedback.githubURL(body: message(of: selected)), failure: "feedback_toast_no_browser")
-                    } label: {
-                        Label(L.s("feedback_send_github"), systemImage: "chevron.left.forwardslash.chevron.right")
-                    }
-                    Button {
-                        send(Feedback.mailURL(body: message(of: selected)), failure: "feedback_toast_no_email")
-                    } label: {
-                        Label(L.s("feedback_send_email"), systemImage: "envelope")
-                    }
-                } footer: {
-                    Text(L.s("feedback_channel_hint"))
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+
+                switch kind {
+                case .feature: featureSections
+                case .problem: problemSections
                 }
             }
-            .navigationTitle(L.s("feedback_title"))
+            .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .bottom, spacing: 0) { actionBar }
+            .navigationTitle(L.s(kind.titleKey))
             .navigationBarTitleDisplayMode(.inline)
+            // The header says it in large type; the bar keeps it for VoiceOver
+            // and for when the header has scrolled away.
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L.s("feedback_dismiss")) { dismiss() }
                 }
             }
-            .alert(failure ?? "", isPresented: Binding(get: { failure != nil }, set: { if !$0 { failure = nil } })) {
-                Button("OK") { failure = nil }
+            .alert(L.s("feedback_toast_no_email"), isPresented: $noMailApp) {
+                Button(L.s("ios_feedback_copy_address")) {
+                    UIPasteboard.general.string = Feedback.email
+                }
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(Feedback.email)
             }
         }
     }
 
-    private func message(of selected: Set<Int>) -> String {
-        Feedback.body(selected: selected.sorted(), other: other, diagnostics: diagnostics)
+    @ViewBuilder private var featureSections: some View {
+        Section {
+            ForEach(Feedback.options.indices, id: \.self) { i in
+                CheckRow(title: L.s(Feedback.options[i].key), checked: selected.contains(i)) {
+                    if selected.contains(i) { selected.remove(i) } else { selected.insert(i) }
+                }
+            }
+        } header: {
+            Text(L.s("ios_suggest_ideas"))
+        }
+        Section {
+            TextField(L.s("ios_suggest_other_placeholder"), text: $note, axis: .vertical)
+                .lineLimit(3...8)
+        } header: {
+            Text(L.s("ios_suggest_other"))
+        }
     }
 
-    private func send(_ url: URL?, failure key: String) {
+    @ViewBuilder private var problemSections: some View {
+        Section {
+            TextField(L.s("ios_problem_placeholder"), text: $note, axis: .vertical)
+                .lineLimit(4...10)
+        } header: {
+            Text(L.s("ios_problem_label"))
+        }
+        Section {
+            Toggle(L.s("ios_problem_include_details"), isOn: $includeDetails.animation())
+            if includeDetails {
+                Text(diagnostics)
+                    .font(.footnote.monospaced())
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        } footer: {
+            Text(L.s("ios_problem_details_note"))
+        }
+    }
+
+    /// The one action, pinned under the form with the promise beneath it.
+    private var actionBar: some View {
+        VStack(spacing: 8) {
+            Button(action: compose) {
+                Label(L.s("ios_feedback_compose"), systemImage: "envelope")
+                    .font(.body.weight(.semibold))
+                    .actionLabelWidth()
+            }
+            .prominentActionStyle()
+            .controlSize(.large)
+            .disabled(!canCompose)
+            .accessibilityIdentifier("feedbackCompose")
+            Text(L.s("ios_feedback_privacy"))
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 12)
+        .padding(.bottom, 8)
+        .frame(maxWidth: .infinity)
+        .background(.bar)
+    }
+
+    /// An idea needs something ticked or written; a problem may be described
+    /// in the mail app just as well.
+    private var canCompose: Bool {
+        switch kind {
+        case .feature: !selected.isEmpty || !note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        case .problem: true
+        }
+    }
+
+    private func compose() {
+        let url: URL?
+        switch kind {
+        case .feature:
+            url = Feedback.mailURL(
+                subject: L.s("feedback_message_subject"),
+                body: Feedback.body(selected: selected.sorted(), other: note, diagnostics: Feedback.appLine)
+            )
+        case .problem:
+            url = Feedback.mailURL(
+                subject: L.s("ios_problem_subject"),
+                body: Feedback.problemBody(text: note, diagnostics: includeDetails ? diagnostics : "")
+            )
+        }
         guard let url else { return }
         UIApplication.shared.open(url) { ok in
-            if !ok { failure = L.s(key) }
+            if !ok { noMailApp = true }
         }
+    }
+}
+
+/// The sheet's own icon, title and a word from the developer.
+private struct FeedbackHeader: View {
+    let kind: FeedbackKind
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: kind.symbol)
+                .font(.system(size: 28, weight: .semibold))
+                .foregroundStyle(.tint)
+                .frame(width: 64, height: 64)
+                .modifier(HeaderBadge())
+                .accessibilityHidden(true)
+            Text(L.s(kind.titleKey))
+                .font(.title2.weight(.bold))
+                .multilineTextAlignment(.center)
+                .accessibilityAddTraits(.isHeader)
+            Text(L.s(kind == .feature ? "ios_suggest_intro" : "ios_problem_intro"))
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+    }
+}
+
+/// A tinted disc behind the header icon: glass where the system has it.
+private struct HeaderBadge: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.glassEffect(.regular.tint(Color.accentColor.opacity(0.18)), in: Circle())
+        } else {
+            content.background(Color.accentColor.opacity(0.14), in: Circle())
+        }
+    }
+}
+
+/// One idea of the ballot: a row that is ticked, as in the system's own
+/// multiple-choice lists, rather than a switch.
+private struct CheckRow: View {
+    let title: String
+    let checked: Bool
+    let toggle: () -> Void
+
+    var body: some View {
+        Button(action: toggle) {
+            HStack(spacing: 12) {
+                Image(systemName: checked ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(checked ? AnyShapeStyle(.tint) : AnyShapeStyle(.tertiary))
+                    .contentTransition(.symbolEffect(.replace))
+                    .accessibilityHidden(true)
+                Text(title)
+                    .foregroundStyle(.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.vertical, 2)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .sensoryFeedback(.selection, trigger: checked)
+        .accessibilityAddTraits(checked ? .isSelected : [])
     }
 }
 
 /// The text side of feedback, kept apart from the view for the tests.
 enum Feedback {
     static let email = "nikitapetrovapps@gmail.com"
-    static let newIssue = "https://github.com/NikkittaP/timeline-exporter/issues/new"
 
     /// [outgoing] is English on purpose, character for character the English
     /// label, so a request matches its row of FEEDBACK.md whatever the language.
@@ -177,10 +322,14 @@ enum Feedback {
         return "\(version) (\(build))"
     }
 
-    /// English and machine-ish: it goes to an issue tracker, not to the user.
+    /// All a feature request carries besides the user's words: which build
+    /// it was asked of.
+    static var appLine: String { "App: \(appVersion) iOS" }
+
+    /// English and machine-ish: it goes to the developer, not to the user.
     static func diagnostics(formatName: String?, pointCount: Int?) -> String {
         var lines = [
-            "App: \(appVersion) iOS",
+            appLine,
             "Device: \(deviceModel) · iOS \(UIDevice.current.systemVersion)",
             "Locale: \(Locale.current.identifier(.bcp47))",
         ]
@@ -202,30 +351,30 @@ enum Feedback {
             if !out.isEmpty { out += "\n" }
             out += L.s("feedback_body_notes") + "\n" + note + "\n"
         }
-        let diag = diagnostics.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !diag.isEmpty {
-            if !out.isEmpty { out += "\n" }
-            out += "---\n" + diag + "\n"
-        }
-        return out
+        return out + footer(diagnostics, after: out)
     }
 
-    static func githubURL(body: String) -> URL? {
-        var c = URLComponents(string: newIssue)
-        c?.queryItems = [
-            URLQueryItem(name: "title", value: L.s("feedback_message_subject")),
-            URLQueryItem(name: "body", value: body),
-        ]
-        return c?.url
+    /// The description, then the details if the user kept them. An empty
+    /// description leaves the label, a place to write in the mail app.
+    static func problemBody(text: String, diagnostics: String) -> String {
+        let note = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let out = L.s("ios_problem_body_label") + "\n" + (note.isEmpty ? "\n" : note + "\n")
+        return out + footer(diagnostics, after: out)
+    }
+
+    private static func footer(_ diagnostics: String, after out: String) -> String {
+        let diag = diagnostics.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !diag.isEmpty else { return "" }
+        return (out.isEmpty ? "" : "\n") + "---\n" + diag + "\n"
     }
 
     /// mailto with subject and body percent-encoded by hand: URLComponents
     /// leaves "+" and "&" alone, which mail apps read as a space and a split.
-    static func mailURL(body: String) -> URL? {
+    static func mailURL(subject: String, body: String) -> URL? {
         var allowed = CharacterSet.urlQueryAllowed
         allowed.remove(charactersIn: "&+=?#")
         func enc(_ s: String) -> String { s.addingPercentEncoding(withAllowedCharacters: allowed) ?? "" }
-        return URL(string: "mailto:\(email)?subject=\(enc(L.s("feedback_message_subject")))&body=\(enc(body))")
+        return URL(string: "mailto:\(email)?subject=\(enc(subject))&body=\(enc(body))")
     }
 
     /// "iPhone17,2" rather than "iPhone": the marketing name is not on the device.

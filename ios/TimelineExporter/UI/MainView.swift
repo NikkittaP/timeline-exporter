@@ -60,8 +60,9 @@ struct MainView: View {
             .sheet(item: $info) { sheet in
                 switch sheet {
                 case .help: HelpSheet()
-                case .feedback:
+                case .feedback(let kind):
                     FeedbackSheet(
+                        kind: kind,
                         formatName: store.timeline?.formatName,
                         pointCount: store.timeline.map { $0.pointCount }
                     )
@@ -145,8 +146,17 @@ struct MainView: View {
 
     private var menu: some View {
         Menu {
-            Button { info = .help } label: { Label(L.s("action_help"), systemImage: "questionmark.circle") }
-            Button { info = .feedback } label: { Label(L.s("feedback_title"), systemImage: "lightbulb") }
+            Section(L.s("ios_help_feedback_section")) {
+                Button { info = .help } label: { Label(L.s("action_help"), systemImage: "questionmark.circle") }
+                Button { info = .feedback(.feature) } label: {
+                    Label(L.s("ios_suggest_title"), systemImage: FeedbackKind.feature.symbol)
+                }
+                .accessibilityIdentifier("suggestFeature")
+                Button { info = .feedback(.problem) } label: {
+                    Label(L.s("ios_problem_title"), systemImage: FeedbackKind.problem.symbol)
+                }
+                .accessibilityIdentifier("reportProblem")
+            }
             if !history.isEmpty {
                 Button { info = .history } label: { Label(L.s("whats_new_title"), systemImage: "sparkles") }
             }
@@ -179,13 +189,14 @@ struct MainView: View {
 }
 
 private enum InfoSheet: Identifiable {
-    case help, feedback, history
+    case help, history
+    case feedback(FeedbackKind)
     case whatsNew([WhatsNewEntry])
 
     var id: String {
         switch self {
         case .help: "help"
-        case .feedback: "feedback"
+        case .feedback(let kind): "feedback-\(kind.rawValue)"
         case .history: "history"
         case .whatsNew: "whatsNew"
         }

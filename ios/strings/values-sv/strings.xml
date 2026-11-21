@@ -29,16 +29,16 @@
     <string name="ios_export_step3">Tryck på **Exportera Timeline-data**</string>
     <string name="ios_export_step4">Tryck på **Spara i Filer**, välj På min iPhone eller iCloud Drive och tryck på **Spara**</string>
     <string name="ios_import_title">3. Öppna filen här</string>
-    <string name="help_import_step1">Tryck på **Välj tidslinjefil** på huvudskärmen och leta upp filen. Den heter oftast location-history.json.</string>
+    <string name="help_import_step1">Tryck på **Välj tidslinjefil** på huvudskärmen och leta upp filen. Den heter oftast Timeline.json.</string>
     <string name="help_import_step2">Eller i appen Filer: håll fingret på filen → Dela → **Timeline Exporter**.</string>
     <string name="ios_trouble_title">Om något inte fungerar</string>
     <string name="ios_trouble_no_export">**Inget ”Exportera Timeline-data”?** Kontrollera att du är inloggad i Google Maps och att tidslinjen är på (steg 1). Alternativet visas när tidslinjen har sparat något.</string>
     <string name="ios_trouble_alt_path">**Hittar du inte menyn?** Prova: profilbild → **Din tidslinje** → ⋯ → **Inställningar för plats och integritet** → **Exportera Timeline-data**.</string>
     <string name="ios_trouble_few_days">**Bara några dagar i filen?** Google sparar bara det den här telefonen registrerade medan tidslinjen var på. Kontrollera också att automatisk radering är av (molnikonen i Din tidslinje).</string>
     <string name="ios_trouble_android">**Historik på en Android-telefon?** Spara den där: Inställningar → Plats → Platstjänster → Tidslinje → Exportera Timeline-data. Skicka filen till den här iPhonen (Google Drive, e-post eller en meddelandeapp) och spara den i Filer.</string>
-    <string name="help_note_file_location">• På iPhone heter filen location-history.json, på Android Timeline.json. Båda kan öppnas här.</string>
+    <string name="help_note_file_location">• Filen heter oftast Timeline.json. Äldre exporter från iPhone heter location-history.json. Båda kan öppnas här.</string>
     <string name="pick_file_button">Välj tidslinjefil</string>
-    <string name="error_not_timeline">Det här ser inte ut som en tidslinjefil från Google Maps. Välj filen du sparade från Google Maps (oftast location-history.json) – stegen finns i Hjälp.</string>
+    <string name="error_not_timeline">Det här ser inte ut som en tidslinjefil från Google Maps. Välj filen du sparade från Google Maps (oftast Timeline.json) – stegen finns i Hjälp.</string>
     <string name="language_settings_hint">iOS ställer in varje apps språk i Inställningar.</string>
     <string name="ios_empty_title">Se och spara din tidslinje</string>
     <string name="ios_empty_body">Öppna din tidslinjefil från Google Maps för att se den på en karta och spara den som GPX, KML, GeoJSON eller CSV.</string>
@@ -58,4 +58,21 @@
     <string name="ios_select_all">Markera alla</string>
     <string name="ios_search_places">Sök platser</string>
     <string name="ios_export_data_file">Datafil</string>
+
+    <!-- Help and Feedback: Suggest a Feature, Report a Problem -->
+    <string name="ios_help_feedback_section">Hjälp och feedback</string>
+    <string name="ios_suggest_title">Föreslå en funktion</string>
+    <string name="ios_suggest_intro">Jag utvecklar Timeline Exporter på egen hand och läser varje meddelande. Vad skulle göra appen mer användbar för dig?</string>
+    <string name="ios_suggest_ideas">Idéer på min lista</string>
+    <string name="ios_suggest_other">Din egen idé</string>
+    <string name="ios_suggest_other_placeholder">Beskriv vad du vill att appen ska göra</string>
+    <string name="ios_feedback_compose">Skriv mejl</string>
+    <string name="ios_feedback_privacy">Inget skickas automatiskt. Din e-postapp öppnar ett utkast som du kan granska och ändra innan du skickar.</string>
+    <string name="ios_problem_title">Rapportera ett problem</string>
+    <string name="ios_problem_intro">Tråkigt att något gick fel. Berätta vad som hände så tittar jag på det.</string>
+    <string name="ios_problem_label">Vad hände?</string>
+    <string name="ios_problem_placeholder">Vad du gjorde, vad du förväntade dig och vad som hände i stället</string>
+    <string name="ios_problem_include_details">Bifoga tekniska uppgifter</string>
+    <string name="ios_problem_details_note">Hjälper mig att återskapa problemet. Innehåller inga platsdata och inget från din fil.</string>
+    <string name="ios_feedback_copy_address">Kopiera e-postadress</string>
 </resources>

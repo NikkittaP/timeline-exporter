@@ -29,16 +29,16 @@
     <string name="ios_export_step3">Tik op **Timeline-gegevens exporteren**</string>
     <string name="ios_export_step4">Tik op **Bewaar in Bestanden**, kies Op mijn iPhone of iCloud Drive en tik op **Bewaar**</string>
     <string name="ios_import_title">3. Open het bestand hier</string>
-    <string name="help_import_step1">Tik op het hoofdscherm op **Kies tijdlijnbestand** en zoek het bestand. Meestal heet het location-history.json.</string>
+    <string name="help_import_step1">Tik op het hoofdscherm op **Kies tijdlijnbestand** en zoek het bestand. Meestal heet het Timeline.json.</string>
     <string name="help_import_step2">Of in de app Bestanden: houd het bestand ingedrukt → Deel → **Timeline Exporter**.</string>
     <string name="ios_trouble_title">Als iets niet lukt</string>
     <string name="ios_trouble_no_export">**Geen ‘Timeline-gegevens exporteren’?** Controleer of je bent ingelogd in Google Maps en of de tijdlijn aanstaat (stap 1). De optie verschijnt zodra de tijdlijn iets heeft bewaard.</string>
     <string name="ios_trouble_alt_path">**Menu niet gevonden?** Probeer: profielfoto → **Je tijdlijn** → ⋯ → **Instellingen voor locatie en privacy** → **Timeline-gegevens exporteren**.</string>
     <string name="ios_trouble_few_days">**Maar een paar dagen in het bestand?** Google bewaart alleen wat deze telefoon vastlegde terwijl de tijdlijn aanstond. Controleer ook of automatisch verwijderen uitstaat (wolkicoon in Je tijdlijn).</string>
     <string name="ios_trouble_android">**Geschiedenis op een Android-telefoon?** Bewaar hem daar: Instellingen → Locatie → Locatieservices → Tijdlijn → Timeline-gegevens exporteren. Stuur het bestand naar deze iPhone (Google Drive, e-mail of een messenger) en bewaar het in Bestanden.</string>
-    <string name="help_note_file_location">• Op de iPhone heet het bestand location-history.json, op Android Timeline.json. Beide openen hier.</string>
+    <string name="help_note_file_location">• Het bestand heet meestal Timeline.json. Oudere exports van de iPhone heten location-history.json. Beide openen hier.</string>
     <string name="pick_file_button">Kies tijdlijnbestand</string>
-    <string name="error_not_timeline">Dit lijkt geen tijdlijnbestand van Google Maps. Kies het bestand dat je uit Google Maps hebt bewaard (meestal location-history.json); de Help toont de stappen.</string>
+    <string name="error_not_timeline">Dit lijkt geen tijdlijnbestand van Google Maps. Kies het bestand dat je uit Google Maps hebt bewaard (meestal Timeline.json); de Help toont de stappen.</string>
     <string name="language_settings_hint">iOS stelt de taal van elke app in bij Instellingen.</string>
     <string name="ios_empty_title">Bekijk en bewaar je tijdlijn</string>
     <string name="ios_empty_body">Open je Google Maps-tijdlijnbestand om het op een kaart te zien en op te slaan als GPX, KML, GeoJSON of CSV.</string>
@@ -58,4 +58,21 @@
     <string name="ios_select_all">Alles selecteren</string>
     <string name="ios_search_places">Plaatsen zoeken</string>
     <string name="ios_export_data_file">Gegevensbestand</string>
+
+    <!-- Help and Feedback: Suggest a Feature, Report a Problem -->
+    <string name="ios_help_feedback_section">Hulp en feedback</string>
+    <string name="ios_suggest_title">Functie voorstellen</string>
+    <string name="ios_suggest_intro">Ik maak Timeline Exporter in mijn eentje en lees elk bericht. Wat zou de app nuttiger voor je maken?</string>
+    <string name="ios_suggest_ideas">Ideeën op mijn lijst</string>
+    <string name="ios_suggest_other">Je eigen idee</string>
+    <string name="ios_suggest_other_placeholder">Beschrijf wat je zou willen dat de app doet</string>
+    <string name="ios_feedback_compose">E-mail opstellen</string>
+    <string name="ios_feedback_privacy">Er wordt niets automatisch verstuurd. Je mail-app opent een concept dat je kunt nakijken en aanpassen voordat je het verstuurt.</string>
+    <string name="ios_problem_title">Probleem melden</string>
+    <string name="ios_problem_intro">Vervelend dat er iets misging. Vertel wat er gebeurde, dan zoek ik het uit.</string>
+    <string name="ios_problem_label">Wat is er gebeurd?</string>
+    <string name="ios_problem_placeholder">Wat je deed, wat je verwachtte en wat er in plaats daarvan gebeurde</string>
+    <string name="ios_problem_include_details">Technische gegevens meesturen</string>
+    <string name="ios_problem_details_note">Helpt me het probleem na te bootsen. Bevat geen locatiegegevens en niets uit je bestand.</string>
+    <string name="ios_feedback_copy_address">E-mailadres kopiëren</string>
 </resources>

@@ -11,7 +11,7 @@ Questa app non ti traccia e non accede a Google. Legge solo il file che salvi da
 IL TUO FILE IN 3 PASSAGGI
 1. In Google Maps tocca la tua foto profilo → Impostazioni → Posizione e privacy → Esporta dati Timeline.
 2. Tocca Salva su File e salva il file Su iPhone o in iCloud Drive.
-3. Tocca Scegli file Timeline nella schermata principale e trova il file. Di solito si chiama location-history.json.
+3. Tocca Scegli file Timeline nella schermata principale e trova il file. Di solito si chiama Timeline.json.
 
 Non sei sicuro? Tocca «Prova con dati di esempio». Viaggi inventati: guarda cosa fa l'app prima di esportare i tuoi.
 

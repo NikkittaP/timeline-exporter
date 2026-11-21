@@ -52,14 +52,30 @@ final class FeedbackTests: XCTestCase {
         }
     }
 
-    func testLinksKeepTheBodyIntact() throws {
-        let body = "a & b + c\nd"
-        let github = try XCTUnwrap(Feedback.githubURL(body: body))
-        let items = URLComponents(url: github, resolvingAgainstBaseURL: false)?.queryItems ?? []
-        XCTAssertEqual(items.first { $0.name == "body" }?.value, body)
+    func testAFeatureRequestCarriesOnlyTheAppVersion() {
+        let body = Feedback.body(selected: [], other: "dark map", diagnostics: Feedback.appLine)
+        XCTAssertTrue(body.hasPrefix("Notes:\ndark map\n\n---\nApp: "))
+        XCTAssertFalse(body.contains("Device:"))
+        XCTAssertFalse(body.contains("Locale:"))
+    }
 
-        let mail = try XCTUnwrap(Feedback.mailURL(body: body))
-        XCTAssertTrue(mail.absoluteString.hasPrefix("mailto:nikitapetrovapps@gmail.com?subject="))
+    func testAProblemReportKeepsOrLeavesOutTheDetails() {
+        XCTAssertEqual(Feedback.problemBody(text: " crashes on open \n", diagnostics: "App: 1.0.0\nPoints: 3"), """
+        Problem:
+        crashes on open
+
+        ---
+        App: 1.0.0
+        Points: 3
+
+        """)
+        XCTAssertEqual(Feedback.problemBody(text: "", diagnostics: ""), "Problem:\n\n")
+    }
+
+    func testTheMailLinkKeepsTheBodyIntact() throws {
+        let body = "a & b + c\nd"
+        let mail = try XCTUnwrap(Feedback.mailURL(subject: "S & T", body: body))
+        XCTAssertTrue(mail.absoluteString.hasPrefix("mailto:nikitapetrovapps@gmail.com?subject=S%20%26%20T&"))
         XCTAssertTrue(mail.absoluteString.contains("body=a%20%26%20b%20%2B%20c%0Ad"))
     }
 

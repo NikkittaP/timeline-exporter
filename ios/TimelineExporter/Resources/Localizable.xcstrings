@@ -1928,109 +1928,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "لا يبدو هذا ملف مخطط زمني من خرائط Google. اختر الملف الذي حفظته من خرائط Google (عادةً location-history.json) — الخطوات في المساعدة."
+            "value" : "لا يبدو هذا ملف مخطط زمني من خرائط Google. اختر الملف الذي حفظته من خرائط Google (عادةً Timeline.json) — الخطوات في المساعدة."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das sieht nicht nach einer Google Maps-Zeitachsen-Datei aus. Wähle die Datei, die du aus Google Maps gesichert hast (meist location-history.json) — die Schritte stehen in der Hilfe."
+            "value" : "Das sieht nicht nach einer Google Maps-Zeitachsen-Datei aus. Wähle die Datei, die du aus Google Maps gesichert hast (meist Timeline.json) — die Schritte stehen in der Hilfe."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This does not look like a Google Maps Timeline file. Choose the file you saved from Google Maps (usually location-history.json) — Help shows the steps."
+            "value" : "This does not look like a Google Maps Timeline file. Choose the file you saved from Google Maps (usually Timeline.json) — Help shows the steps."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto no parece un archivo de cronología de Google Maps. Elige el archivo que guardaste desde Google Maps (normalmente location-history.json); la Ayuda muestra los pasos."
+            "value" : "Esto no parece un archivo de cronología de Google Maps. Elige el archivo que guardaste desde Google Maps (normalmente Timeline.json); la Ayuda muestra los pasos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce fichier ne ressemble pas à une Timeline Google Maps. Choisissez le fichier enregistré depuis Google Maps (généralement location-history.json) — l'Aide montre les étapes."
+            "value" : "Ce fichier ne ressemble pas à une Timeline Google Maps. Choisissez le fichier enregistré depuis Google Maps (généralement Timeline.json) — l'Aide montre les étapes."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "यह Google Maps की Timeline फ़ाइल नहीं लगती। Google Maps से सहेजी गई फ़ाइल चुनें (आमतौर पर location-history.json) — चरण सहायता में हैं।"
+            "value" : "यह Google Maps की Timeline फ़ाइल नहीं लगती। Google Maps से सहेजी गई फ़ाइल चुनें (आमतौर पर Timeline.json) — चरण सहायता में हैं।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questo non sembra un file Timeline di Google Maps. Scegli il file salvato da Google Maps (di solito location-history.json): la Guida mostra i passaggi."
+            "value" : "Questo non sembra un file Timeline di Google Maps. Scegli il file salvato da Google Maps (di solito Timeline.json): la Guida mostra i passaggi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google マップのタイムラインファイルではないようです。Google マップから保存したファイル（通常は location-history.json）を選んでください。手順はヘルプにあります。"
+            "value" : "Google マップのタイムラインファイルではないようです。Google マップから保存したファイル（通常は Timeline.json）を選んでください。手順はヘルプにあります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google 지도 타임라인 파일이 아닌 것 같습니다. Google 지도에서 저장한 파일(보통 location-history.json)을 선택하세요. 단계는 도움말에 있습니다."
+            "value" : "Google 지도 타임라인 파일이 아닌 것 같습니다. Google 지도에서 저장한 파일(보통 Timeline.json)을 선택하세요. 단계는 도움말에 있습니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit lijkt geen tijdlijnbestand van Google Maps. Kies het bestand dat je uit Google Maps hebt bewaard (meestal location-history.json); de Help toont de stappen."
+            "value" : "Dit lijkt geen tijdlijnbestand van Google Maps. Kies het bestand dat je uit Google Maps hebt bewaard (meestal Timeline.json); de Help toont de stappen."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "To nie wygląda na plik osi czasu Map Google. Wybierz plik zapisany z Map Google (zwykle location-history.json) — kroki są w Pomocy."
+            "value" : "To nie wygląda na plik osi czasu Map Google. Wybierz plik zapisany z Map Google (zwykle Timeline.json) — kroki są w Pomocy."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isto não parece um arquivo da Linha do tempo do Google Maps. Escolha o arquivo que você salvou pelo Google Maps (normalmente location-history.json); a Ajuda mostra os passos."
+            "value" : "Isto não parece um arquivo da Linha do tempo do Google Maps. Escolha o arquivo que você salvou pelo Google Maps (normalmente Timeline.json); a Ajuda mostra os passos."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Это не похоже на файл Хронологии Google Карт. Выберите файл, сохранённый из Google Карт (обычно location-history.json), — шаги есть в Справке."
+            "value" : "Это не похоже на файл Хронологии Google Карт. Выберите файл, сохранённый из Google Карт (обычно Timeline.json), — шаги есть в Справке."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Det här ser inte ut som en tidslinjefil från Google Maps. Välj filen du sparade från Google Maps (oftast location-history.json) – stegen finns i Hjälp."
+            "value" : "Det här ser inte ut som en tidslinjefil från Google Maps. Välj filen du sparade från Google Maps (oftast Timeline.json) – stegen finns i Hjälp."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bu bir Google Haritalar Zaman çizelgesi dosyasına benzemiyor. Google Haritalar'dan kaydettiğiniz dosyayı seçin (genellikle location-history.json); adımlar Yardım'da."
+            "value" : "Bu bir Google Haritalar Zaman çizelgesi dosyasına benzemiyor. Google Haritalar'dan kaydettiğiniz dosyayı seçin (genellikle Timeline.json); adımlar Yardım'da."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Це не схоже на файл Хронології Google Карт. Виберіть файл, збережений із Google Карт (зазвичай location-history.json), — кроки є в Довідці."
+            "value" : "Це не схоже на файл Хронології Google Карт. Виберіть файл, збережений із Google Карт (зазвичай Timeline.json), — кроки є в Довідці."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "这看起来不像 Google 地图的时间轴文件。请选择你从 Google 地图保存的文件（通常为 location-history.json）——步骤见“帮助”。"
+            "value" : "这看起来不像 Google 地图的时间轴文件。请选择你从 Google 地图保存的文件（通常为 Timeline.json）——步骤见“帮助”。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "這看起來不像 Google 地圖的時間軸檔案。請選擇你從 Google 地圖儲存的檔案（通常為 location-history.json）——步驟請見「說明」。"
+            "value" : "這看起來不像 Google 地圖的時間軸檔案。請選擇你從 Google 地圖儲存的檔案（通常為 Timeline.json）——步驟請見「說明」。"
           }
         }
       }
@@ -9725,109 +9725,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "انقر على **اختيار ملف المخطط الزمني** في الشاشة الرئيسية وابحث عن الملف. عادةً يكون اسمه location-history.json."
+            "value" : "انقر على **اختيار ملف المخطط الزمني** في الشاشة الرئيسية وابحث عن الملف. عادةً يكون اسمه Timeline.json."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe auf dem Hauptbildschirm auf **Zeitachsen-Datei wählen** und suche die Datei. Meist heißt sie location-history.json."
+            "value" : "Tippe auf dem Hauptbildschirm auf **Zeitachsen-Datei wählen** und suche die Datei. Meist heißt sie Timeline.json."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap **Choose Timeline file** on the main screen and find the file. It is usually called location-history.json."
+            "value" : "Tap **Choose Timeline file** on the main screen and find the file. It is usually called Timeline.json."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca **Elegir archivo de cronología** en la pantalla principal y busca el archivo. Normalmente se llama location-history.json."
+            "value" : "Toca **Elegir archivo de cronología** en la pantalla principal y busca el archivo. Normalmente se llama Timeline.json."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez **Choisir le fichier Timeline** sur l'écran principal et trouvez le fichier. Il s'appelle généralement location-history.json."
+            "value" : "Touchez **Choisir le fichier Timeline** sur l'écran principal et trouvez le fichier. Il s'appelle généralement Timeline.json."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "मुख्य स्क्रीन पर **Timeline फ़ाइल चुनें** पर टैप करें और फ़ाइल ढूँढें। आमतौर पर इसका नाम location-history.json होता है।"
+            "value" : "मुख्य स्क्रीन पर **Timeline फ़ाइल चुनें** पर टैप करें और फ़ाइल ढूँढें। आमतौर पर इसका नाम Timeline.json होता है।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocca **Scegli file Timeline** nella schermata principale e trova il file. Di solito si chiama location-history.json."
+            "value" : "Tocca **Scegli file Timeline** nella schermata principale e trova il file. Di solito si chiama Timeline.json."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "メイン画面の **タイムラインファイルを選択** をタップしてファイルを探します。通常は location-history.json という名前です。"
+            "value" : "メイン画面の **タイムラインファイルを選択** をタップしてファイルを探します。通常は Timeline.json という名前です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "메인 화면에서 **타임라인 파일 선택**을 탭하고 파일을 찾습니다. 보통 이름은 location-history.json입니다."
+            "value" : "메인 화면에서 **타임라인 파일 선택**을 탭하고 파일을 찾습니다. 보통 이름은 Timeline.json입니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tik op het hoofdscherm op **Kies tijdlijnbestand** en zoek het bestand. Meestal heet het location-history.json."
+            "value" : "Tik op het hoofdscherm op **Kies tijdlijnbestand** en zoek het bestand. Meestal heet het Timeline.json."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dotknij **Wybierz plik osi czasu** na ekranie głównym i znajdź plik. Zwykle nazywa się location-history.json."
+            "value" : "Dotknij **Wybierz plik osi czasu** na ekranie głównym i znajdź plik. Zwykle nazywa się Timeline.json."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque em **Escolher arquivo da Linha do tempo** na tela principal e encontre o arquivo. Normalmente ele se chama location-history.json."
+            "value" : "Toque em **Escolher arquivo da Linha do tempo** na tela principal e encontre o arquivo. Normalmente ele se chama Timeline.json."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нажмите **Выбрать файл Хронологии** на главном экране и найдите файл. Обычно он называется location-history.json."
+            "value" : "Нажмите **Выбрать файл Хронологии** на главном экране и найдите файл. Обычно он называется Timeline.json."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tryck på **Välj tidslinjefil** på huvudskärmen och leta upp filen. Den heter oftast location-history.json."
+            "value" : "Tryck på **Välj tidslinjefil** på huvudskärmen och leta upp filen. Den heter oftast Timeline.json."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ana ekranda **Zaman çizelgesi dosyası seç**'e dokunun ve dosyayı bulun. Genellikle adı location-history.json olur."
+            "value" : "Ana ekranda **Zaman çizelgesi dosyası seç**'e dokunun ve dosyayı bulun. Genellikle adı Timeline.json olur."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Торкніться **Вибрати файл Хронології** на головному екрані та знайдіть файл. Зазвичай він називається location-history.json."
+            "value" : "Торкніться **Вибрати файл Хронології** на головному екрані та знайдіть файл. Зазвичай він називається Timeline.json."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在主屏幕点按 **选择时间轴文件** 并找到该文件。它通常名为 location-history.json。"
+            "value" : "在主屏幕点按 **选择时间轴文件** 并找到该文件。它通常名为 Timeline.json。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在主畫面輕觸 **選擇時間軸檔案** 並找到該檔案。它通常名為 location-history.json。"
+            "value" : "在主畫面輕觸 **選擇時間軸檔案** 並找到該檔案。它通常名為 Timeline.json。"
           }
         }
       }
@@ -12211,109 +12211,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• على الـ iPhone يُسمّى الملف location-history.json، وعلى Android يُسمّى Timeline.json. كلاهما يُفتح هنا."
+            "value" : "• يُسمّى الملف عادةً Timeline.json. التصديرات الأقدم من الـ iPhone تُسمّى location-history.json. كلاهما يُفتح هنا."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Auf dem iPhone heißt die Datei location-history.json, auf Android Timeline.json. Beide lassen sich hier öffnen."
+            "value" : "• Die Datei heißt meist Timeline.json. Ältere Exporte vom iPhone heißen location-history.json. Beide lassen sich hier öffnen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• On iPhone the file is called location-history.json, on Android Timeline.json. Both open here."
+            "value" : "• The file is usually called Timeline.json. Older exports from iPhone are called location-history.json. Both open here."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• En iPhone el archivo se llama location-history.json; en Android, Timeline.json. Los dos se abren aquí."
+            "value" : "• El archivo suele llamarse Timeline.json. Las exportaciones antiguas del iPhone se llaman location-history.json. Los dos se abren aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Sur iPhone, le fichier s'appelle location-history.json ; sur Android, Timeline.json. Les deux s'ouvrent ici."
+            "value" : "• Le fichier s'appelle généralement Timeline.json. Les anciens exports depuis l'iPhone s'appellent location-history.json. Les deux s'ouvrent ici."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• iPhone पर फ़ाइल का नाम location-history.json होता है, Android पर Timeline.json। दोनों यहाँ खुलती हैं।"
+            "value" : "• फ़ाइल का नाम आमतौर पर Timeline.json होता है। iPhone से पुराने एक्सपोर्ट का नाम location-history.json होता है। दोनों यहाँ खुलती हैं।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Su iPhone il file si chiama location-history.json, su Android Timeline.json. Si aprono entrambi qui."
+            "value" : "• Di solito il file si chiama Timeline.json. Le esportazioni meno recenti da iPhone si chiamano location-history.json. Si aprono entrambi qui."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• iPhone ではファイル名は location-history.json、Android では Timeline.json です。どちらもここで開けます。"
+            "value" : "• ファイル名は通常 Timeline.json です。iPhone からの以前のエクスポートは location-history.json です。どちらもここで開けます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• iPhone에서는 파일 이름이 location-history.json, Android에서는 Timeline.json입니다. 둘 다 여기서 열립니다."
+            "value" : "• 파일 이름은 보통 Timeline.json입니다. iPhone에서 예전에 내보낸 파일은 location-history.json입니다. 둘 다 여기서 열립니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Op de iPhone heet het bestand location-history.json, op Android Timeline.json. Beide openen hier."
+            "value" : "• Het bestand heet meestal Timeline.json. Oudere exports van de iPhone heten location-history.json. Beide openen hier."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Na iPhonie plik nazywa się location-history.json, na Androidzie Timeline.json. Oba otwierają się tutaj."
+            "value" : "• Plik zwykle nazywa się Timeline.json. Starsze eksporty z iPhone'a nazywają się location-history.json. Oba otwierają się tutaj."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• No iPhone o arquivo se chama location-history.json; no Android, Timeline.json. Os dois abrem aqui."
+            "value" : "• O arquivo normalmente se chama Timeline.json. Exportações mais antigas do iPhone se chamam location-history.json. Os dois abrem aqui."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• На iPhone файл называется location-history.json, на Android — Timeline.json. Здесь открываются оба."
+            "value" : "• Обычно файл называется Timeline.json. Более старые выгрузки с iPhone называются location-history.json. Здесь открываются оба."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• På iPhone heter filen location-history.json, på Android Timeline.json. Båda kan öppnas här."
+            "value" : "• Filen heter oftast Timeline.json. Äldre exporter från iPhone heter location-history.json. Båda kan öppnas här."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• iPhone'da dosyanın adı location-history.json, Android'de Timeline.json'dır. İkisi de burada açılır."
+            "value" : "• Dosyanın adı genellikle Timeline.json'dır. iPhone'dan yapılan eski dışa aktarmaların adı location-history.json'dır. İkisi de burada açılır."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• На iPhone файл називається location-history.json, на Android — Timeline.json. Тут відкриваються обидва."
+            "value" : "• Зазвичай файл називається Timeline.json. Старіші експорти з iPhone називаються location-history.json. Тут відкриваються обидва."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 在 iPhone 上文件名为 location-history.json，在 Android 上为 Timeline.json。两者都能在这里打开。"
+            "value" : "• 文件名通常为 Timeline.json。iPhone 上较早的导出文件名为 location-history.json。两者都能在这里打开。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 在 iPhone 上檔名為 location-history.json，在 Android 上為 Timeline.json。兩者都能在這裡開啟。"
+            "value" : "• 檔名通常為 Timeline.json。iPhone 上較早的匯出檔名為 location-history.json。兩者都能在這裡開啟。"
           }
         }
       }
@@ -14239,6 +14239,345 @@
         }
       }
     },
+    "ios_feedback_compose" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "كتابة بريد إلكتروني"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-Mail verfassen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compose Email"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redactar correo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rédiger un e-mail"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ईमेल लिखें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scrivi un'email"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールを作成"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이메일 작성"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-mail opstellen"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napisz e-mail"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escrever e-mail"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Написать письмо"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skriv mejl"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-posta Yaz"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Написати лист"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撰写邮件"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撰寫郵件"
+          }
+        }
+      }
+    },
+    "ios_feedback_copy_address" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "نسخ عنوان البريد الإلكتروني"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-Mail-Adresse kopieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy Email Address"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar dirección de correo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copier l'adresse e-mail"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ईमेल पता कॉपी करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia indirizzo email"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メールアドレスをコピー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이메일 주소 복사"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-mailadres kopiëren"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiuj adres e-mail"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar endereço de e-mail"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопировать адрес почты"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kopiera e-postadress"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E-posta Adresini Kopyala"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скопіювати адресу пошти"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "复制邮箱地址"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷貝電子郵件地址"
+          }
+        }
+      }
+    },
+    "ios_feedback_privacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لا يُرسَل أي شيء تلقائيًا. يفتح تطبيق البريد مسودة يمكنك مراجعتها وتعديلها قبل الإرسال."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts wird automatisch gesendet. Deine Mail-App öffnet einen Entwurf, den du vor dem Senden prüfen und bearbeiten kannst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing is sent automatically. Your mail app opens a draft you can review and edit before sending."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se envía nada automáticamente. Tu app de correo abre un borrador que puedes revisar y editar antes de enviarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien n'est envoyé automatiquement. Votre app de messagerie ouvre un brouillon que vous pouvez relire et modifier avant l'envoi."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "कुछ भी अपने-आप नहीं भेजा जाता। आपका मेल ऐप एक ड्राफ़्ट खोलता है, जिसे आप भेजने से पहले देख और बदल सकते हैं।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nulla viene inviato automaticamente. L'app di posta apre una bozza che puoi rivedere e modificare prima dell'invio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動で送信されることはありません。メールアプリで下書きが開くので、送信前に確認・編集できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자동으로 전송되는 것은 없습니다. 메일 앱에서 초안이 열리며, 보내기 전에 확인하고 수정할 수 있습니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Er wordt niets automatisch verstuurd. Je mail-app opent een concept dat je kunt nakijken en aanpassen voordat je het verstuurt."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nic nie jest wysyłane automatycznie. Aplikacja pocztowa otworzy wersję roboczą, którą możesz przejrzeć i zmienić przed wysłaniem."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada é enviado automaticamente. Seu app de e-mail abre um rascunho que você pode revisar e editar antes de enviar."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ничего не отправляется автоматически. В почтовом приложении откроется черновик — его можно проверить и изменить перед отправкой."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inget skickas automatiskt. Din e-postapp öppnar ett utkast som du kan granska och ändra innan du skickar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiçbir şey otomatik olarak gönderilmez. E-posta uygulamanızda, göndermeden önce inceleyip düzenleyebileceğiniz bir taslak açılır."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нічого не надсилається автоматично. У поштовому застосунку відкриється чернетка — її можна переглянути й змінити перед надсиланням."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不会自动发送任何内容。邮件应用会打开一份草稿，你可以在发送前查看和修改。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不會自動傳送任何內容。郵件 App 會開啟一份草稿，你可以在傳送前查看和修改。"
+          }
+        }
+      }
+    },
     "ios_full_guide_button" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -14348,6 +14687,119 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "詳細逐步說明"
+          }
+        }
+      }
+    },
+    "ios_help_feedback_section" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المساعدة والملاحظات"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hilfe & Feedback"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help & Feedback"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda y comentarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aide et commentaires"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "सहायता और फ़ीडबैक"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aiuto e feedback"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヘルプとフィードバック"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도움말 및 피드백"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hulp en feedback"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomoc i opinie"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuda e feedback"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Помощь и отзывы"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hjälp och feedback"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yardım ve Geri Bildirim"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Допомога та відгуки"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帮助与反馈"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "說明與意見回饋"
           }
         }
       }
@@ -15365,6 +15817,910 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未命名地點"
+          }
+        }
+      }
+    },
+    "ios_problem_body_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem:"
+          }
+        }
+      }
+    },
+    "ios_problem_details_note" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تساعدني على إعادة إنتاج المشكلة. لا تحتوي على بيانات موقع ولا على أي شيء من ملفك."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hilft mir, das Problem nachzustellen. Enthält keine Standortdaten und nichts aus deiner Datei."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Helps me reproduce the problem. Contains no location data and nothing from your file."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me ayudan a reproducir el problema. No contienen datos de ubicación ni nada de tu archivo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ils m'aident à reproduire le problème. Ils ne contiennent aucune donnée de localisation ni rien de votre fichier."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "इनसे मुझे समस्या दोहराने में मदद मिलती है। इनमें कोई लोकेशन डेटा या आपकी फ़ाइल की कोई चीज़ नहीं होती।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi aiutano a riprodurre il problema. Non contengono dati sulla posizione né nulla del tuo file."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題の再現に役立ちます。位置情報やファイルの内容は含まれません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제를 재현하는 데 도움이 됩니다. 위치 데이터나 파일 내용은 포함되지 않습니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Helpt me het probleem na te bootsen. Bevat geen locatiegegevens en niets uit je bestand."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomagają odtworzyć problem. Nie zawierają danych o lokalizacji ani niczego z Twojego pliku."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajudam a reproduzir o problema. Não contêm dados de localização nem nada do seu arquivo."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Помогают воспроизвести проблему. Не содержат геоданных и ничего из вашего файла."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hjälper mig att återskapa problemet. Innehåller inga platsdata och inget från din fil."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorunu yeniden oluşturmama yardımcı olur. Konum verisi ya da dosyanızdan herhangi bir şey içermez."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Допомагають відтворити проблему. Не містять геоданих і нічого з вашого файлу."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "帮助我重现问题。不包含位置数据，也不包含你文件中的任何内容。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "協助我重現問題。不包含位置資料，也不包含你檔案中的任何內容。"
+          }
+        }
+      }
+    },
+    "ios_problem_include_details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تضمين التفاصيل التقنية"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technische Details anhängen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include technical details"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluir detalles técnicos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inclure les détails techniques"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "तकनीकी विवरण शामिल करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Includi dettagli tecnici"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "技術情報を含める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기술 정보 포함"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Technische gegevens meesturen"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dołącz dane techniczne"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluir detalhes técnicos"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приложить технические данные"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bifoga tekniska uppgifter"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teknik ayrıntıları ekle"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Додати технічні дані"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附上技术信息"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附上技術資訊"
+          }
+        }
+      }
+    },
+    "ios_problem_intro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "آسف لحدوث خطأ. أخبرني بما حدث وسأتحقق منه."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schade, dass etwas nicht klappt. Erzähl mir, was passiert ist – ich sehe es mir an."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorry something went wrong. Tell me what happened, and I'll look into it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siento que algo haya fallado. Cuéntame qué pasó y lo revisaré."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désolé, quelque chose n'a pas fonctionné. Dites-moi ce qui s'est passé et je m'en occupe."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "माफ़ कीजिए, कुछ गड़बड़ हो गई। बताइए क्या हुआ, मैं इसे देखूँगा।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi dispiace che qualcosa non abbia funzionato. Raccontami cosa è successo e ci darò un'occhiata."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ご不便をおかけしてすみません。何が起きたか教えてください。確認します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "불편을 드려 죄송합니다. 무슨 일이 있었는지 알려 주시면 확인하겠습니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vervelend dat er iets misging. Vertel wat er gebeurde, dan zoek ik het uit."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przykro mi, że coś nie działa. Opisz, co się stało, a sprawdzę to."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sinto muito que algo deu errado. Conte o que aconteceu e eu vou verificar."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Жаль, что что-то пошло не так. Расскажите, что случилось, — я разберусь."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tråkigt att något gick fel. Berätta vad som hände så tittar jag på det."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir şeylerin ters gitmesine üzüldüm. Ne olduğunu anlatın, inceleyeyim."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шкода, що щось пішло не так. Розкажіть, що сталося, — я розберуся."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "很抱歉出了问题。告诉我发生了什么，我会去查看。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "很抱歉出了問題。告訴我發生了什麼，我會去查看。"
+          }
+        }
+      }
+    },
+    "ios_problem_label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ماذا حدث؟"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was ist passiert?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What happened?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué ha pasado?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que s'est-il passé ?"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "क्या हुआ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cosa è successo?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何が起きましたか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무슨 일이 있었나요?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wat is er gebeurd?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Co się stało?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que aconteceu?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Что случилось?"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vad hände?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne oldu?"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Що сталося?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发生了什么？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "發生了什麼？"
+          }
+        }
+      }
+    },
+    "ios_problem_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ما الذي فعلته، وما الذي توقعته، وما الذي حدث بدلًا من ذلك"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du getan hast, was du erwartet hast und was stattdessen passiert ist"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What you did, what you expected, and what happened instead"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué hiciste, qué esperabas y qué pasó en su lugar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que vous avez fait, ce que vous attendiez et ce qui s'est passé à la place"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आपने क्या किया, क्या उम्मीद थी और उसकी जगह क्या हुआ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cosa hai fatto, cosa ti aspettavi e cosa è successo invece"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行った操作、期待した結果、実際に起きたこと"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무엇을 했는지, 무엇을 기대했는지, 실제로 어떻게 되었는지"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wat je deed, wat je verwachtte en wat er in plaats daarvan gebeurde"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje kroki, oczekiwany wynik i to, co stało się zamiast tego"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você fez, o que esperava e o que aconteceu no lugar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Что вы делали, чего ожидали и что произошло вместо этого"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vad du gjorde, vad du förväntade dig och vad som hände i stället"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne yaptığınız, ne beklediğiniz ve bunun yerine ne olduğu"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Що ви робили, чого очікували і що сталося натомість"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你做了什么、预期是什么、实际发生了什么"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你做了什麼、預期是什麼、實際發生了什麼"
+          }
+        }
+      }
+    },
+    "ios_problem_subject" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter — problem report"
+          }
+        }
+      }
+    },
+    "ios_problem_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الإبلاغ عن مشكلة"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem melden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report a Problem"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informar de un problema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signaler un problème"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "समस्या की रिपोर्ट करें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segnala un problema"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題を報告"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제 신고"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probleem melden"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zgłoś problem"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relatar um problema"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сообщить о проблеме"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapportera ett problem"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sorun Bildirin"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Повідомити про проблему"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "报告问题"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回報問題"
           }
         }
       }
@@ -16834,6 +18190,571 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "全選"
+          }
+        }
+      }
+    },
+    "ios_suggest_ideas" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أفكار في قائمتي"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ideen auf meiner Liste"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ideas on my list"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ideas en mi lista"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idées sur ma liste"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मेरी सूची के आइडिया"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idee nella mia lista"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検討中のアイデア"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "검토 중인 아이디어"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ideeën op mijn lijst"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomysły z mojej listy"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ideias da minha lista"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Идеи из моего списка"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idéer på min lista"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listemdeki fikirler"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ідеї з мого списку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我列表中的想法"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我清單中的想法"
+          }
+        }
+      }
+    },
+    "ios_suggest_intro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أطوّر Timeline Exporter بمفردي وأقرأ كل رسالة. ما الذي سيجعل التطبيق أكثر فائدة لك؟"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich entwickle Timeline Exporter allein und lese jede Nachricht. Was würde die App für dich nützlicher machen?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I build Timeline Exporter on my own, and I read every message. What would make it more useful for you?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desarrollo Timeline Exporter por mi cuenta y leo cada mensaje. ¿Qué haría que la app te resultara más útil?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je développe Timeline Exporter seul et je lis chaque message. Qu'est-ce qui rendrait l'app plus utile pour vous ?"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "मैं Timeline Exporter अकेले बनाता हूँ और हर संदेश पढ़ता हूँ। किस चीज़ से ऐप आपके लिए और उपयोगी बनेगा?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sviluppo Timeline Exporter da solo e leggo ogni messaggio. Cosa renderebbe l'app più utile per te?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter は個人で開発していて、すべてのメッセージに目を通しています。どんな機能があればもっと便利になりますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter는 혼자 만들고 있으며 모든 메시지를 읽습니다. 어떤 기능이 있으면 더 유용할까요?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ik maak Timeline Exporter in mijn eentje en lees elk bericht. Wat zou de app nuttiger voor je maken?"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tworzę Timeline Exporter sam i czytam każdą wiadomość. Co sprawiłoby, że aplikacja byłaby dla Ciebie bardziej przydatna?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desenvolvo o Timeline Exporter sozinho e leio todas as mensagens. O que tornaria o app mais útil para você?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Я делаю Timeline Exporter в одиночку и читаю каждое письмо. Что сделало бы приложение полезнее для вас?"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jag utvecklar Timeline Exporter på egen hand och läser varje meddelande. Vad skulle göra appen mer användbar för dig?"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter'ı tek başıma geliştiriyorum ve her mesajı okuyorum. Uygulamayı sizin için daha kullanışlı ne yapardı?"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Я розробляю Timeline Exporter самотужки й читаю кожен лист. Що зробило б застосунок кориснішим для вас?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter 由我独立开发，每条消息我都会阅读。什么功能能让它对你更有用？"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeline Exporter 由我獨立開發，每則訊息我都會閱讀。什麼功能能讓它對你更有用？"
+          }
+        }
+      }
+    },
+    "ios_suggest_other" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "فكرتك الخاصة"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine eigene Idee"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your own idea"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu propia idea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre propre idée"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "आपका अपना आइडिया"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua idea"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あなたのアイデア"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나만의 아이디어"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je eigen idee"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twój własny pomysł"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua própria ideia"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваша идея"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Din egen idé"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kendi fikriniz"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваша ідея"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你自己的想法"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你自己的想法"
+          }
+        }
+      }
+    },
+    "ios_suggest_other_placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "صِف ما تودّ أن يفعله التطبيق"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beschreibe, was die App können soll"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe what you'd like the app to do"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe lo que te gustaría que hiciera la app"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Décrivez ce que vous aimeriez que l'app fasse"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "बताएँ कि आप ऐप से क्या करवाना चाहेंगे"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descrivi cosa vorresti che facesse l'app"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アプリにしてほしいことを書いてください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱에 바라는 기능을 적어 주세요"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beschrijf wat je zou willen dat de app doet"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opisz, co aplikacja miałaby robić"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descreva o que você gostaria que o app fizesse"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Опишите, что бы вы хотели видеть в приложении"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beskriv vad du vill att appen ska göra"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uygulamanın ne yapmasını istediğinizi anlatın"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Опишіть, що б ви хотіли бачити в застосунку"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "描述你希望应用做什么"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "描述你希望 App 做什麼"
+          }
+        }
+      }
+    },
+    "ios_suggest_title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اقتراح ميزة"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Funktion vorschlagen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggest a Feature"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugerir una función"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggérer une fonctionnalité"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ीचर सुझाएँ"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggerisci una funzione"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "機能をリクエスト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기능 제안"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Functie voorstellen"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaproponuj funkcję"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugerir um recurso"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Предложить функцию"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Föreslå en funktion"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özellik Önerin"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Запропонувати функцію"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建议新功能"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建議新功能"
           }
         }
       }

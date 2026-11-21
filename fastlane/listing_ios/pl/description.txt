@@ -11,7 +11,7 @@ Ta aplikacja Cię nie śledzi i nie loguje się do Google. Czyta tylko plik zapi
 PLIK W 3 KROKACH
 1. W Mapach Google dotknij zdjęcia profilowego → Ustawienia → Lokalizacja i prywatność → Eksportuj dane Timeline.
 2. Dotknij Zachowaj w Plikach i zapisz plik Na moim iPhonie lub w iCloud Drive.
-3. Dotknij Wybierz plik osi czasu na ekranie głównym i znajdź plik. Zwykle nazywa się location-history.json.
+3. Dotknij Wybierz plik osi czasu na ekranie głównym i znajdź plik. Zwykle nazywa się Timeline.json.
 
 Jeszcze nie wiesz? Stuknij „Wypróbuj na przykładowych danych”. Zmyślone podróże: zobacz, co potrafi aplikacja, zanim wyeksportujesz swoje.
 
