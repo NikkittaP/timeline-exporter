@@ -5,6 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import androidx.compose.ui.unit.dp
 import org.junit.Test
 import java.io.File
 import java.time.Instant
@@ -15,6 +16,17 @@ import kotlin.time.toJavaInstant
 import kotlin.time.toKotlinInstant
 
 class MapImageLayoutTest {
+
+    @Test fun `share and save sit side by side only while both labels fit in full`() {
+        // Each button gets half the bar: the wider label plus the button's own
+        // padding must fit in that half, or Save goes on top of Share.
+        assertTrue(actionsSideBySide(available = 400.dp, widest = 140.dp, padding = 40.dp, gap = 8.dp))
+        // "Сохранить изображение" on a phone: 190 + 40 per half is too wide for 400.
+        assertFalse(actionsSideBySide(available = 400.dp, widest = 190.dp, padding = 40.dp, gap = 8.dp))
+        // Exactly fitting still fits.
+        assertTrue(actionsSideBySide(available = 368.dp, widest = 140.dp, padding = 40.dp, gap = 8.dp))
+    }
+
     private val spec = MapImageSpec.CleanPortrait
 
     private fun p(lat: Double, lon: Double, time: String = "2026-05-12T10:00:00Z") =

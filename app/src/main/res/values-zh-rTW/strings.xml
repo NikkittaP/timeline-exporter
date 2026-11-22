@@ -43,7 +43,9 @@
     <string name="filter_movement_all_except">除%1$s外全部</string>
     <string name="list_separator">"、"</string>
     <string name="filter_moving_only_short">僅移動中</string>
-    <string name="points_count">%1$s 個點</string>
+    <plurals name="points_count">
+        <item quantity="other">%1$s 個點</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="other">%1$s 個地點</item>
     </plurals>
@@ -195,7 +197,7 @@
     <string name="trips_no_home">此檔案未標明住所，因此無法找出旅行。</string>
     <string name="trips_hint">當你離家超過 50 公里時即識別為一次旅行。輕觸旅行即可在地圖上預覽。取消勾選的旅行不會被匯出。</string>
     <string name="trip_export_checkbox">匯出此旅行</string>
-    <string name="trips_checked">已選擇匯出：%1$s / %2$s</string>
+    <string name="trips_checked">已選擇：%1$s / %2$s</string>
     <string name="trips_select_all">全選</string>
     <string name="trips_checked_zero">未勾選要匯出的旅行</string>
     <string name="trip_show_all_on_map">在地圖上顯示所有旅行</string>
@@ -231,7 +233,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">匯出軌跡</string>
     <string name="step_export_places">匯出地點</string>
-    <string name="export_writes_label">將寫入</string>
+    <string name="export_writes_label">將匯出</string>
 
     <string name="map_recenter">顯示完整軌跡</string>
     <string name="map_scale_m">%1$s 公尺</string>
@@ -290,7 +292,7 @@
     <string name="map_image_rendering_high">正在算繪高解析度…</string>
     <string name="map_image_high_error">無法算繪高解析度圖片。未儲存任何內容；請改用標準。</string>
     <string name="map_image_stat_distance">記錄距離</string>
-    <string name="map_image_distance_note">記錄距離是這張圖片上所畫線條的總長度。航班和沒有 GPS 點的空白段不計入，因此通常比 Google 顯示的行程距離短。</string>
+    <string name="map_image_distance_note">記錄距離是這張圖片上所畫線條的長度，不計入航班和沒有 GPS 點的空白段。應用程式中其他地方顯示的行程距離採用 Google 自己的數據，因此哪一個更長都有可能。</string>
     <string name="map_image_stat_days">天數</string>
     <string name="map_image_stat_places">地點</string>
 

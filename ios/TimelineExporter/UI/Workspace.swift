@@ -222,7 +222,7 @@ private struct WorkspaceHeader: View {
 
     private var stats: String {
         [
-            L.f("points_count", Fmt.grouped(core.pointCount)),
+            L.plural("points_count", core.pointCount),
             L.plural("map_day_count", store.dayCount),
             // "travelled", as on a trip: Google's own figure, flights included,
             // so it is read apart from the shorter Tracked distance on a Map image.

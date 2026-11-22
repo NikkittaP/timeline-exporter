@@ -119,7 +119,7 @@ final class MainScreenModelTests: XCTestCase {
 
         store.setTrip(trips[0].key, checked: true)
         XCTAssertEqual(store.exportTripKeys, [trips[0].key])
-        XCTAssertEqual(store.exportWritesText, L.f("export_writes_value", L.s("content_trip"), L.plural("trips_count", 1)))
+        XCTAssertEqual(store.exportWritesText, L.plural("trips_count", 1), "the count alone, not \"Trip — 1 trip\"")
 
         store.checkAllTrips()
         XCTAssertEqual(store.markedTripCount, trips.count)

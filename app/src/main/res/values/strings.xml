@@ -63,7 +63,10 @@
     <string name="filter_movement_all_except">All except %1$s</string>
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">moving only</string>
-    <string name="points_count">%1$s points</string>
+    <plurals name="points_count">
+        <item quantity="one">%1$s point</item>
+        <item quantity="other">%1$s points</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="one">%1$s place</item>
         <item quantity="other">%1$s places</item>
@@ -254,7 +257,7 @@
     <string name="trips_no_home">This file does not say where home is, so trips cannot be found.</string>
     <string name="trips_hint">Trips are detected when you travel more than 50 km from home. Tap a trip to preview it on the map. Untick trips to leave them out of the export.</string>
     <string name="trip_export_checkbox">Export this trip</string>
-    <string name="trips_checked">Marked for export: %1$s of %2$s</string>
+    <string name="trips_checked">Marked: %1$s of %2$s</string>
     <string name="trips_select_all">Select all</string>
     <string name="trips_checked_zero">No trips marked for export</string>
     <string name="trip_show_all_on_map">Show all trips on map</string>
@@ -292,7 +295,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">Export track</string>
     <string name="step_export_places">Export places</string>
-    <string name="export_writes_label">This will write</string>
+    <string name="export_writes_label">Will be exported</string>
     <string name="export_writes_value" translatable="false">%1$s — %2$s</string>
 
     <!-- Map chrome: the scale bar, and the button that reframes the track -->
@@ -360,7 +363,7 @@
     <string name="map_image_rendering_high">Rendering high resolution…</string>
     <string name="map_image_high_error">Couldn\'t render the high-resolution image. Nothing was saved; try Standard.</string>
     <string name="map_image_stat_distance">Tracked distance</string>
-    <string name="map_image_distance_note">Tracked distance adds up the line drawn on this image. Flights and gaps without GPS points are not counted, so it is often shorter than the travelled distance Google reports.</string>
+    <string name="map_image_distance_note">Tracked distance is the length of the line on this image; flights and gaps without GPS points are not counted. The travelled distance elsewhere in the app uses Google\'s own figures, so the two can differ either way.</string>
     <string name="map_image_stat_days">Days</string>
     <string name="map_image_stat_places">Places</string>
 

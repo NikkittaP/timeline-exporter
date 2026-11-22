@@ -43,7 +43,14 @@
     <string name="filter_movement_all_except">الكل باستثناء: %1$s</string>
     <string name="list_separator">"، "</string>
     <string name="filter_moving_only_short">أثناء الحركة فقط</string>
-    <string name="points_count">%1$s نقطة</string>
+    <plurals name="points_count">
+        <item quantity="zero">%1$s نقطة</item>
+        <item quantity="one">نقطة واحدة</item>
+        <item quantity="two">نقطتان</item>
+        <item quantity="few">%1$s نقاط</item>
+        <item quantity="many">%1$s نقطة</item>
+        <item quantity="other">%1$s نقطة</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="zero">%1$s مكان</item>
         <item quantity="one">مكان واحد</item>
@@ -205,7 +212,7 @@
     <string name="trips_no_home">لا يحدد هذا الملف مكان المنزل، لذا لا يمكن العثور على الرحلات.</string>
     <string name="trips_hint">تُكتشف الرحلة عندما تبتعد عن المنزل أكثر من 50 كم. انقر على رحلة لمعاينتها على الخريطة. ألغِ تحديد الرحلات لاستبعادها من التصدير.</string>
     <string name="trip_export_checkbox">تصدير هذه الرحلة</string>
-    <string name="trips_checked">محدّدة للتصدير: %1$s من %2$s</string>
+    <string name="trips_checked">المحدّدة: %1$s من %2$s</string>
     <string name="trips_select_all">تحديد الكل</string>
     <string name="trips_checked_zero">لا توجد رحلات محددة للتصدير</string>
     <string name="trip_show_all_on_map">عرض كل الرحلات على الخريطة</string>
@@ -241,7 +248,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">تصدير المسار</string>
     <string name="step_export_places">تصدير الأماكن</string>
-    <string name="export_writes_label">ما سيُكتب</string>
+    <string name="export_writes_label">ما سيُصدَّر</string>
 
     <string name="map_recenter">عرض المسار بالكامل</string>
     <string name="map_scale_m">%1$s م</string>
@@ -300,7 +307,7 @@
     <string name="map_image_rendering_high">جارٍ عرض الدقة العالية…</string>
     <string name="map_image_high_error">تعذّر عرض الصورة عالية الدقة. لم يُحفظ شيء؛ جرّب الدقة القياسية.</string>
     <string name="map_image_stat_distance">المسافة المسجّلة</string>
-    <string name="map_image_distance_note">المسافة المسجّلة هي مجموع الخط المرسوم على هذه الصورة. لا تُحتسب الرحلات الجوية والفجوات التي لا توجد فيها نقاط GPS، لذا تكون غالبًا أقصر من المسافة المقطوعة التي يذكرها Google.</string>
+    <string name="map_image_distance_note">المسافة المسجّلة هي طول الخط المرسوم على هذه الصورة، ولا تُحتسب الرحلات الجوية والفجوات التي لا توجد فيها نقاط GPS. أما المسافة المقطوعة في أماكن أخرى من التطبيق فتأتي من أرقام Google نفسها، لذا قد تختلف القيمتان زيادةً أو نقصانًا.</string>
     <string name="map_image_stat_days">الأيام</string>
     <string name="map_image_stat_places">الأماكن</string>
 

@@ -43,7 +43,10 @@
     <string name="filter_movement_all_except">%1$s hariç tümü</string>
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">yalnızca hareket hâlinde</string>
-    <string name="points_count">%1$s nokta</string>
+    <plurals name="points_count">
+        <item quantity="one">%1$s nokta</item>
+        <item quantity="other">%1$s nokta</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="one">%1$s yer</item>
         <item quantity="other">%1$s yer</item>
@@ -197,7 +200,7 @@
     <string name="trips_no_home">Bu dosya evinizin nerede olduğunu belirtmiyor, bu yüzden seyahatler bulunamıyor.</string>
     <string name="trips_hint">Evden 50 km\'den fazla uzaklaştığınızda bir seyahat algılanır. Haritada görmek için bir seyahate dokunun. Dışa aktarmak istemediğiniz seyahatlerin işaretini kaldırın.</string>
     <string name="trip_export_checkbox">Bu seyahati dışa aktar</string>
-    <string name="trips_checked">Dışa aktarım için işaretli: %1$s / %2$s</string>
+    <string name="trips_checked">İşaretli: %1$s / %2$s</string>
     <string name="trips_select_all">Tümünü seç</string>
     <string name="trips_checked_zero">Dışa aktarma için işaretli seyahat yok</string>
     <string name="trip_show_all_on_map">Tüm seyahatleri haritada göster</string>
@@ -233,7 +236,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">Rotayı dışa aktar</string>
     <string name="step_export_places">Yerleri dışa aktar</string>
-    <string name="export_writes_label">Yazılacak olan</string>
+    <string name="export_writes_label">Dışa aktarılacak</string>
 
     <string name="map_recenter">Tüm rotayı göster</string>
     <string name="map_scale_m">%1$s m</string>
@@ -292,7 +295,7 @@
     <string name="map_image_rendering_high">Yüksek çözünürlükte işleniyor…</string>
     <string name="map_image_high_error">Yüksek çözünürlüklü görüntü işlenemedi. Hiçbir şey kaydedilmedi; Standart\'ı deneyin.</string>
     <string name="map_image_stat_distance">Kaydedilen mesafe</string>
-    <string name="map_image_distance_note">Kaydedilen mesafe, bu görselde çizilen çizginin toplamıdır. Uçuşlar ve GPS noktası olmayan boşluklar sayılmaz; bu yüzden genellikle Google\'ın bildirdiği kat edilen mesafeden kısadır.</string>
+    <string name="map_image_distance_note">Kaydedilen mesafe, bu görseldeki çizginin uzunluğudur; uçuşlar ve GPS noktası olmayan boşluklar sayılmaz. Uygulamanın başka yerlerinde görünen yol mesafesi Google\'ın kendi rakamlarına dayanır, bu yüzden ikisinden herhangi biri daha uzun olabilir.</string>
     <string name="map_image_stat_days">Gün</string>
     <string name="map_image_stat_places">Yer</string>
 

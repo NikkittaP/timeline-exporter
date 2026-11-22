@@ -3962,109 +3962,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ما سيُكتب"
+            "value" : "ما سيُصدَّر"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geschrieben wird"
+            "value" : "Wird exportiert"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This will write"
+            "value" : "Will be exported"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se escribirá"
+            "value" : "Se exportará"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sera écrit"
+            "value" : "À exporter"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "यह लिखा जाएगा"
+            "value" : "एक्सपोर्ट होगा"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verrà scritto"
+            "value" : "Da esportare"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書き出される内容"
+            "value" : "書き出す内容"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "저장될 내용"
+            "value" : "내보낼 내용"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dit wordt weggeschreven"
+            "value" : "Te exporteren"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zostanie zapisane"
+            "value" : "Do eksportu"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Será gravado"
+            "value" : "Para exportar"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Будет записано"
+            "value" : "Будет экспортировано"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Detta skrivs"
+            "value" : "Exporteras"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yazılacak olan"
+            "value" : "Dışa aktarılacak"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Буде записано"
+            "value" : "Буде експортовано"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "将写入"
+            "value" : "将导出"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "將寫入"
+            "value" : "將匯出"
           }
         }
       }
@@ -25597,109 +25597,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "المسافة المسجّلة هي مجموع الخط المرسوم على هذه الصورة. لا تُحتسب الرحلات الجوية والفجوات التي لا توجد فيها نقاط GPS، لذا تكون غالبًا أقصر من المسافة المقطوعة التي يذكرها Google."
+            "value" : "المسافة المسجّلة هي طول الخط المرسوم على هذه الصورة، ولا تُحتسب الرحلات الجوية والفجوات التي لا توجد فيها نقاط GPS. أما المسافة المقطوعة في أماكن أخرى من التطبيق فتأتي من أرقام Google نفسها، لذا قد تختلف القيمتان زيادةً أو نقصانًا."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die aufgezeichnete Strecke ist die Länge der Linie auf diesem Bild. Flüge und Lücken ohne GPS-Punkte zählen nicht mit, daher ist sie oft kürzer als die von Google angegebene zurückgelegte Strecke."
+            "value" : "Die aufgezeichnete Strecke ist die Länge der Linie auf diesem Bild; Flüge und Lücken ohne GPS-Punkte zählen nicht mit. Die zurückgelegte Strecke an anderen Stellen der App stammt aus Googles eigenen Angaben, daher kann jeder der beiden Werte größer sein."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tracked distance adds up the line drawn on this image. Flights and gaps without GPS points are not counted, so it is often shorter than the travelled distance Google reports."
+            "value" : "Tracked distance is the length of the line on this image; flights and gaps without GPS points are not counted. The travelled distance elsewhere in the app uses Google's own figures, so the two can differ either way."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La distancia registrada suma la línea dibujada en esta imagen. No cuenta los vuelos ni los huecos sin puntos GPS, así que suele ser menor que la distancia recorrida que indica Google."
+            "value" : "La distancia registrada es la longitud de la línea de esta imagen; no cuenta los vuelos ni los huecos sin puntos GPS. La distancia recorrida que aparece en otras partes de la app usa las cifras de Google, así que cualquiera de las dos puede ser mayor."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La distance enregistrée additionne la ligne tracée sur cette image. Les vols et les trous sans points GPS ne sont pas comptés : elle est donc souvent plus courte que la distance parcourue indiquée par Google."
+            "value" : "La distance enregistrée est la longueur de la ligne tracée sur cette image ; les vols et les trous sans points GPS ne sont pas comptés. La distance parcourue affichée ailleurs dans l'app vient des chiffres de Google : l'une ou l'autre peut donc être la plus grande."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "दर्ज की गई दूरी इस इमेज पर बनी लाइन को जोड़कर निकलती है। उड़ानें और बिना GPS पॉइंट वाले अंतराल नहीं गिने जाते, इसलिए यह अक्सर Google की बताई तय दूरी से कम होती है।"
+            "value" : "दर्ज की गई दूरी इस इमेज पर बनी लाइन की लंबाई है; उड़ानें और बिना GPS पॉइंट वाले अंतराल नहीं गिने जाते। ऐप में दूसरी जगह दिखने वाली तय दूरी Google के अपने आँकड़ों से आती है, इसलिए दोनों में से कोई भी ज़्यादा हो सकती है।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La distanza registrata somma la linea disegnata su questa immagine. Voli e intervalli senza punti GPS non vengono contati, quindi spesso è inferiore alla distanza percorsa indicata da Google."
+            "value" : "La distanza registrata è la lunghezza della linea su questa immagine; voli e intervalli senza punti GPS non vengono contati. La distanza percorsa mostrata altrove nell'app usa i dati di Google, quindi l'una o l'altra può risultare maggiore."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "記録された距離は、この画像に描かれた線の長さの合計です。飛行機での移動や GPS ポイントのない区間は含まれないため、Google が示す移動距離より短くなることがよくあります。"
+            "value" : "記録された距離は、この画像に描かれた線の長さです。飛行機での移動や GPS ポイントのない区間は含まれません。アプリの他の画面の移動距離は Google 自身の数値を使うため、どちらが長くなることもあります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "기록된 거리는 이 이미지에 그려진 선의 길이를 합한 값입니다. 비행 구간과 GPS 지점이 없는 구간은 포함되지 않으므로 Google이 보여 주는 이동 거리보다 짧은 경우가 많습니다."
+            "value" : "기록된 거리는 이 이미지에 그려진 선의 길이이며, 비행 구간과 GPS 지점이 없는 구간은 포함되지 않습니다. 앱의 다른 곳에 표시되는 이동 거리는 Google 자체 수치를 사용하므로 어느 쪽이 더 길 수도 있습니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De vastgelegde afstand telt de lijn op deze afbeelding op. Vluchten en gaten zonder GPS-punten tellen niet mee, dus hij is vaak korter dan de afgelegde afstand die Google noemt."
+            "value" : "De vastgelegde afstand is de lengte van de lijn op deze afbeelding; vluchten en gaten zonder GPS-punten tellen niet mee. De afgelegde afstand elders in de app komt uit Googles eigen cijfers, dus elk van de twee kan groter zijn."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zarejestrowany dystans to suma linii narysowanej na tym obrazie. Loty i przerwy bez punktów GPS nie są liczone, więc często jest krótszy niż przebyty dystans podawany przez Google."
+            "value" : "Zarejestrowany dystans to długość linii na tym obrazie; loty i przerwy bez punktów GPS nie są liczone. Dystans „w drodze” w innych miejscach aplikacji pochodzi z danych Google, więc każda z tych wartości może być większa."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A distância registrada soma a linha desenhada nesta imagem. Voos e lacunas sem pontos de GPS não entram na conta, então ela costuma ser menor que a distância percorrida informada pelo Google."
+            "value" : "A distância registrada é o comprimento da linha nesta imagem; voos e lacunas sem pontos de GPS não entram na conta. A distância percorrida mostrada em outras partes do app usa os números do próprio Google, então qualquer uma das duas pode ser maior."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Записанное расстояние — это длина линии на этом изображении. Перелёты и промежутки без GPS-точек не учитываются, поэтому оно часто меньше пройденного расстояния, которое показывает Google."
+            "value" : "Записанное расстояние — длина линии на этом изображении; перелёты и промежутки без GPS-точек не учитываются. Расстояние «в пути» в других местах приложения берётся из данных Google, поэтому больше может оказаться любое из двух."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Registrerad sträcka är längden på linjen i den här bilden. Flygresor och luckor utan GPS-punkter räknas inte, så den är ofta kortare än den tillryggalagda sträckan som Google anger."
+            "value" : "Registrerad sträcka är längden på linjen i den här bilden; flygresor och luckor utan GPS-punkter räknas inte. Den tillryggalagda sträckan på andra ställen i appen kommer från Googles egna siffror, så vilken som helst av dem kan vara störst."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kaydedilen mesafe, bu görselde çizilen çizginin toplamıdır. Uçuşlar ve GPS noktası olmayan boşluklar sayılmaz; bu yüzden genellikle Google'ın bildirdiği kat edilen mesafeden kısadır."
+            "value" : "Kaydedilen mesafe, bu görseldeki çizginin uzunluğudur; uçuşlar ve GPS noktası olmayan boşluklar sayılmaz. Uygulamanın başka yerlerinde görünen yol mesafesi Google'ın kendi rakamlarına dayanır, bu yüzden ikisinden herhangi biri daha uzun olabilir."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Записана відстань — це довжина лінії на цьому зображенні. Перельоти й проміжки без GPS-точок не враховуються, тому вона часто менша за пройдену відстань, яку показує Google."
+            "value" : "Записана відстань — довжина лінії на цьому зображенні; перельоти й проміжки без GPS-точок не враховуються. Відстань «у дорозі» в інших місцях застосунку береться з даних Google, тому більшою може виявитися будь-яка з двох."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "记录距离是这张图片上所画线条的总长度。航班和没有 GPS 点的空白段不计入，因此通常比 Google 显示的行程距离短。"
+            "value" : "记录距离是这张图片上所画线条的长度，不计入航班和没有 GPS 点的空白段。应用中其他地方显示的行程距离采用 Google 自己的数据，因此哪一个更长都有可能。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "記錄距離是這張圖片上所畫線條的總長度。航班和沒有 GPS 點的空白段不計入，因此通常比 Google 顯示的行程距離短。"
+            "value" : "記錄距離是這張圖片上所畫線條的長度，不計入航班和沒有 GPS 點的空白段。應用程式中其他地方顯示的行程距離採用 Google 自己的數據，因此哪一個更長都有可能。"
           }
         }
       }
@@ -32612,7 +32612,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Включая ТЦ и аэропорты"
+            "value" : "Включать ТЦ и аэропорты"
           }
         },
         "sv" : {
@@ -32630,7 +32630,7 @@
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Включно з ТЦ та аеропортами"
+            "value" : "Включати ТЦ та аеропорти"
           }
         },
         "zh-Hans" : {
@@ -33216,111 +33216,387 @@
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ نقطة"
+          "variations" : {
+            "plural" : {
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld نقطة"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "نقطة واحدة"
+                }
+              },
+              "two" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "نقطتان"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld نقاط"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld نقطة"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld نقطة"
+                }
+              }
+            }
           }
         },
         "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ Punkte"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld Punkt"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld Punkte"
+                }
+              }
+            }
           }
         },
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ points"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld point"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld points"
+                }
+              }
+            }
           }
         },
         "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ puntos"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punto"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld puntos"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld puntos"
+                }
+              }
+            }
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ points"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld point"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld points"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld points"
+                }
+              }
+            }
           }
         },
         "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ पॉइंट"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld पॉइंट"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld पॉइंट"
+                }
+              }
+            }
           }
         },
         "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ punti"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punto"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punti"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punti"
+                }
+              }
+            }
           }
         },
         "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ ポイント"
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld ポイント"
+                }
+              }
+            }
           }
         },
         "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "포인트 %1$@개"
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "포인트 %1$lld개"
+                }
+              }
+            }
           }
         },
         "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ punten"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punt"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punten"
+                }
+              }
+            }
           }
         },
         "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Punkty: %1$@"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punkt"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punkty"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punktów"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punktu"
+                }
+              }
+            }
           }
         },
         "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ pontos"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld ponto"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld pontos"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld pontos"
+                }
+              }
+            }
           }
         },
         "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ точек"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld точка"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld точки"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld точек"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld точки"
+                }
+              }
+            }
           }
         },
         "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ punkter"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punkt"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld punkter"
+                }
+              }
+            }
           }
         },
         "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ nokta"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld nokta"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld nokta"
+                }
+              }
+            }
           }
         },
         "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ точок"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld точка"
+                }
+              },
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld точки"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld точок"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld точки"
+                }
+              }
+            }
           }
         },
         "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ 个点"
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld 个点"
+                }
+              }
+            }
           }
         },
         "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ 個點"
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$lld 個點"
+                }
+              }
+            }
           }
         }
       }
@@ -39207,109 +39483,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "محدّدة للتصدير: %1$@ من %2$@"
+            "value" : "المحدّدة: %1$@ من %2$@"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum Export markiert: %1$@ von %2$@"
+            "value" : "Markiert: %1$@ von %2$@"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Marked for export: %1$@ of %2$@"
+            "value" : "Marked: %1$@ of %2$@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Marcados para exportar: %1$@ de %2$@"
+            "value" : "Marcados: %1$@ de %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cochés pour l'export : %1$@ sur %2$@"
+            "value" : "Cochés : %1$@ sur %2$@"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "एक्सपोर्ट के लिए चुनी गईं: %2$@ में से %1$@"
+            "value" : "चुनी गईं: %2$@ में से %1$@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Selezionati per l'esportazione: %1$@ di %2$@"
+            "value" : "Selezionati: %1$@ di %2$@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "書き出しに選択済み: %1$@ / %2$@"
+            "value" : "選択済み: %1$@ / %2$@"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "내보내기 선택: %2$@개 중 %1$@개"
+            "value" : "선택: %2$@개 중 %1$@개"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aangevinkt voor export: %1$@ van %2$@"
+            "value" : "Aangevinkt: %1$@ van %2$@"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaznaczone do eksportu: %1$@ z %2$@"
+            "value" : "Zaznaczone: %1$@ z %2$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Marcadas para exportar: %1$@ de %2$@"
+            "value" : "Marcadas: %1$@ de %2$@"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Отмечено для экспорта: %1$@ из %2$@"
+            "value" : "Отмечено: %1$@ из %2$@"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Markerade för export: %1$@ av %2$@"
+            "value" : "Markerade: %1$@ av %2$@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dışa aktarım için işaretli: %1$@ / %2$@"
+            "value" : "İşaretli: %1$@ / %2$@"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Позначено для експорту: %1$@ з %2$@"
+            "value" : "Позначено: %1$@ з %2$@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已选择导出：%1$@ / %2$@"
+            "value" : "已选择：%1$@ / %2$@"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "已選擇匯出：%1$@ / %2$@"
+            "value" : "已選擇：%1$@ / %2$@"
           }
         }
       }

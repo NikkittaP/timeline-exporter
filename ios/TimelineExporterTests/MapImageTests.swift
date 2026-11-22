@@ -199,6 +199,30 @@ final class MapImageLayoutTests: XCTestCase {
         XCTAssertNil(MapImagePreviewFrame.wideSheet(window: landscape, sizeClass: .compact))
     }
 
+    /// The order of a turn: landscape, upright, landscape again. Each window
+    /// gets its own answer, whatever the one before it was; the sheet came
+    /// back to landscape at its upright size when the answer lagged a turn.
+    func testATurnBackToLandscapeAsksForTheWideSheetAgain() {
+        let landscape = CGSize(width: 1180, height: 820)
+        let upright = CGSize(width: 820, height: 1180)
+        let answers = [landscape, upright, landscape].map {
+            MapImagePreviewFrame.wideSheet(window: $0, sizeClass: .regular)
+        }
+        XCTAssertNotNil(answers[0])
+        XCTAssertNil(answers[1])
+        XCTAssertEqual(answers[2], answers[0])
+    }
+
+    /// Before the sheet is in a window there is no live answer, and laying out
+    /// again is a no-op rather than a crash.
+    @MainActor func testASheetHostWithoutASheetDoesNothing() {
+        let host = SheetHost()
+        XCTAssertNil(host.liveWide)
+        host.relayout(wide: CGSize(width: 1080, height: 772), force: true)
+        host.relayout(wide: nil, force: false)
+        XCTAssertNil(host.liveWide)
+    }
+
     func testTheWidePaneKeepsThePictureShapeAndRoomForItsCaption() {
         let pane = CGSize(width: 640, height: 760)
         for aspect in MapImageAspect.allCases {

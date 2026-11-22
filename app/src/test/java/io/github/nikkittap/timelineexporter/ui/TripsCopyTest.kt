@@ -16,8 +16,8 @@ class TripsCopyTest {
         assertEquals(R.string.step_export_trip, exportStepTitle(ContentKind.TRIPS, 1))
         assertEquals(R.string.step_export_trips, exportStepTitle(ContentKind.TRIPS, 0))
         assertEquals(R.string.step_export_trips, exportStepTitle(ContentKind.TRIPS, 2))
-        assertEquals(R.string.content_trip, exportKindLabel(ContentKind.TRIPS, 1))
-        assertEquals(R.string.content_trips, exportKindLabel(ContentKind.TRIPS, 126))
+        // The count says "trip" already: "1 trip", not "Trip — 1 trip".
+        assertEquals(null, exportKindLabel(ContentKind.TRIPS))
     }
 
     @Test
@@ -35,7 +35,8 @@ class TripsCopyTest {
     fun `track and places headings do not depend on the count`() {
         assertEquals(R.string.step_export_track, exportStepTitle(ContentKind.TRACK, 1))
         assertEquals(R.string.step_export_places, exportStepTitle(ContentKind.PLACES, 1))
-        assertEquals(R.string.content_places, exportKindLabel(ContentKind.PLACES, 1))
+        assertEquals(null, exportKindLabel(ContentKind.PLACES))
+        assertEquals(R.string.content_track, exportKindLabel(ContentKind.TRACK))
     }
 
     private val res = listOf(File("src/main/res"), File("app/src/main/res")).first { it.isDirectory }
@@ -69,7 +70,7 @@ class TripsCopyTest {
                 "Untick trips to leave them out of the export.",
             en["trips_hint"],
         )
-        assertEquals("Marked for export: %1\$s of %2\$s", en["trips_checked"])
+        assertEquals("Marked: %1\$s of %2\$s", en["trips_checked"])
         assertEquals("No trips marked for export", en["trips_checked_zero"])
         assertEquals("Show marked trips on map", en["trip_show_checked_on_map"])
         assertEquals("Export trip", en["step_export_trip"])
@@ -94,5 +95,27 @@ class TripsCopyTest {
         assertTrue("one" in plurals(File(res, "values-ru"), "trips_count"))
         assertTrue("few" in plurals(File(res, "values-ru"), "trips_count"))
         assertTrue("many" in plurals(File(res, "values-ru"), "trips_count"))
+    }
+
+    @Test
+    fun `a point count agrees with its number in every locale`() {
+        // Was one string: "Трек — 1 точек", "11 631 точек".
+        val locales = res.listFiles { f -> f.isDirectory && f.name.startsWith("values") && File(f, "strings.xml").exists() }!!
+        for (dir in locales) {
+            assertTrue("${dir.name} points_count is still a plain string", strings(dir)["points_count"] == null)
+            assertTrue("${dir.name} points_count lacks other", "other" in plurals(dir, "points_count"))
+        }
+        for (lang in listOf("values-ru", "values-uk", "values-pl")) {
+            assertEquals(setOf("one", "few", "many", "other"), plurals(File(res, lang), "points_count"))
+        }
+        assertEquals(setOf("one", "other"), plurals(File(res, "values"), "points_count"))
+    }
+
+    @Test
+    fun `russian copy is the reviewed wording`() {
+        val ru = strings(File(res, "values-ru"))
+        assertEquals("Отмечено: %1\$s из %2\$s", ru["trips_checked"])
+        assertEquals("Включать ТЦ и аэропорты", ru["places_include_containers"])
+        assertEquals("Будет экспортировано", ru["export_writes_label"])
     }
 }

@@ -38,6 +38,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LocalContentColor
@@ -66,11 +67,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -448,8 +452,8 @@ private fun MapImageExportContent(
                 }
 
                 OptionRow(stringResource(R.string.map_image_show_stats), showStats, enabled) { showStats = it }
-                // Why Tracked distance is shorter than the travelled figure
-                // elsewhere in the app: flights and gaps are not on the line.
+                // Why Tracked distance and the travelled figure elsewhere in
+                // the app differ: two measures, either can be the larger.
                 if (showStats) Note(stringResource(R.string.map_image_distance_note))
                 OptionRow(stringResource(R.string.map_image_show_endpoints), showEndpoints, enabled) { showEndpoints = it }
                 OptionRow(stringResource(R.string.map_color_by_day), colorByDay, enabled) { colorByDay = it }
@@ -457,7 +461,12 @@ private fun MapImageExportContent(
 
                 StatusLine(state = state, status = status, custom = custom)
 
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Side by side while both labels fit at their full size, Save
+                // above Share where they do not: split in halves, a long label
+                // ("Сохранить изображение") was shrunk to a hard-to-read size.
+                val shareLabel = stringResource(R.string.map_image_share)
+                val saveLabel = stringResource(R.string.map_image_save)
+                val shareButton: @Composable (Modifier) -> Unit = { modifier ->
                     OutlinedButton(
                         onClick = {
                             val spec = outputSpec ?: return@OutlinedButton
@@ -473,10 +482,12 @@ private fun MapImageExportContent(
                         },
                         enabled = ready != null && outputSpec != null && !status.busy,
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.weight(1f),
+                        modifier = modifier,
                     ) {
-                        ButtonLabel(stringResource(R.string.map_image_share))
+                        ButtonLabel(shareLabel)
                     }
+                }
+                val saveButton: @Composable (Modifier) -> Unit = { modifier ->
                     Button(
                         onClick = {
                             when (format) {
@@ -486,9 +497,33 @@ private fun MapImageExportContent(
                         },
                         enabled = ready != null && outputSpec != null && !status.busy,
                         shape = MaterialTheme.shapes.small,
-                        modifier = Modifier.weight(1f),
+                        modifier = modifier,
                     ) {
-                        ButtonLabel(stringResource(R.string.map_image_save))
+                        ButtonLabel(saveLabel)
+                    }
+                }
+                val measurer = rememberTextMeasurer()
+                val labelStyle = MaterialTheme.typography.labelLarge
+                val density = LocalDensity.current
+                BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                    val widest = with(density) {
+                        maxOf(
+                            measurer.measure(shareLabel, labelStyle, maxLines = 1).size.width,
+                            measurer.measure(saveLabel, labelStyle, maxLines = 1).size.width,
+                        ).toDp()
+                    }
+                    // Each half holds its label plus the button's own padding.
+                    val padding = ButtonDefaults.ContentPadding.calculateLeftPadding(LayoutDirection.Ltr) * 2
+                    if (actionsSideBySide(maxWidth, widest, padding, gap = 8.dp)) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            shareButton(Modifier.weight(1f))
+                            saveButton(Modifier.weight(1f))
+                        }
+                    } else {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            saveButton(Modifier.fillMaxWidth())
+                            shareButton(Modifier.fillMaxWidth())
+                        }
                     }
                 }
             }
@@ -737,6 +772,13 @@ private fun StatusLine(state: RenderState, status: OutputStatus, custom: Boolean
         )
     }
 }
+
+/**
+ * Whether Share and Save fit side by side in [available] as two equal
+ * buttons, each holding the [widest] label at its full size plus [padding].
+ */
+internal fun actionsSideBySide(available: Dp, widest: Dp, padding: Dp, gap: Dp): Boolean =
+    (widest + padding) * 2 + gap <= available
 
 /** One line, stepping its size down for a long translation rather than cutting a word. */
 @Composable

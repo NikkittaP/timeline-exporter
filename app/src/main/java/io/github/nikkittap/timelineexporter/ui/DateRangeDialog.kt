@@ -281,7 +281,7 @@ private fun SelectionSummary(
                 val days = (ChronoUnit.DAYS.between(first, last) + 1).toInt()
                 val daysText = pluralStringResource(R.plurals.map_day_count, days, days)
                 if (pointCount != null) {
-                    "$daysText · " + stringResource(R.string.points_count, "%,d".format(pointCount))
+                    "$daysText · " + pluralStringResource(R.plurals.points_count, pointCount, "%,d".format(pointCount))
                 } else {
                     daysText
                 }

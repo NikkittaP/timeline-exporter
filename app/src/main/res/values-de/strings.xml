@@ -43,7 +43,10 @@
     <string name="filter_movement_all_except">Alle außer: %1$s</string>
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">nur in Bewegung</string>
-    <string name="points_count">%1$s Punkte</string>
+    <plurals name="points_count">
+        <item quantity="one">%1$s Punkt</item>
+        <item quantity="other">%1$s Punkte</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="one">%1$s Ort</item>
         <item quantity="other">%1$s Orte</item>
@@ -197,7 +200,7 @@
     <string name="trips_no_home">Die Datei enthält kein Zuhause, daher lassen sich keine Reisen finden.</string>
     <string name="trips_hint">Eine Reise wird erkannt, wenn du dich mehr als 50 km von zu Hause entfernst. Tippe auf eine Reise, um sie auf der Karte anzusehen. Entferne den Haken bei Reisen, die nicht exportiert werden sollen.</string>
     <string name="trip_export_checkbox">Diese Reise exportieren</string>
-    <string name="trips_checked">Zum Export markiert: %1$s von %2$s</string>
+    <string name="trips_checked">Markiert: %1$s von %2$s</string>
     <string name="trips_select_all">Alle auswählen</string>
     <string name="trips_checked_zero">Keine Reisen zum Export markiert</string>
     <string name="trip_show_all_on_map">Alle Reisen auf der Karte zeigen</string>
@@ -233,7 +236,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">Route exportieren</string>
     <string name="step_export_places">Orte exportieren</string>
-    <string name="export_writes_label">Geschrieben wird</string>
+    <string name="export_writes_label">Wird exportiert</string>
 
     <string name="map_recenter">Gesamten Track anzeigen</string>
     <string name="map_scale_m">%1$s m</string>
@@ -292,7 +295,7 @@
     <string name="map_image_rendering_high">Hohe Auflösung wird gerendert…</string>
     <string name="map_image_high_error">Das Bild in hoher Auflösung konnte nicht gerendert werden. Nichts wurde gespeichert; versuche Standard.</string>
     <string name="map_image_stat_distance">Aufgezeichnete Strecke</string>
-    <string name="map_image_distance_note">Die aufgezeichnete Strecke ist die Länge der Linie auf diesem Bild. Flüge und Lücken ohne GPS-Punkte zählen nicht mit, daher ist sie oft kürzer als die von Google angegebene zurückgelegte Strecke.</string>
+    <string name="map_image_distance_note">Die aufgezeichnete Strecke ist die Länge der Linie auf diesem Bild; Flüge und Lücken ohne GPS-Punkte zählen nicht mit. Die zurückgelegte Strecke an anderen Stellen der App stammt aus Googles eigenen Angaben, daher kann jeder der beiden Werte größer sein.</string>
     <string name="map_image_stat_days">Tage</string>
     <string name="map_image_stat_places">Orte</string>
 

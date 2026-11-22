@@ -43,7 +43,11 @@
     <string name="filter_movement_all_except">Tudo exceto: %1$s</string>
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">apenas em movimento</string>
-    <string name="points_count">%1$s pontos</string>
+    <plurals name="points_count">
+        <item quantity="one">%1$s ponto</item>
+        <item quantity="many">%1$s pontos</item>
+        <item quantity="other">%1$s pontos</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="one">%1$s lugar</item>
         <item quantity="many">%1$s lugares</item>
@@ -199,7 +203,7 @@
     <string name="trips_no_home">Este arquivo não indica onde fica sua casa, então não é possível encontrar viagens.</string>
     <string name="trips_hint">Uma viagem é detectada quando você se afasta mais de 50 km de casa. Toque em uma viagem para vê-la no mapa. Desmarque as viagens que não quer exportar.</string>
     <string name="trip_export_checkbox">Exportar esta viagem</string>
-    <string name="trips_checked">Marcadas para exportar: %1$s de %2$s</string>
+    <string name="trips_checked">Marcadas: %1$s de %2$s</string>
     <string name="trips_select_all">Selecionar tudo</string>
     <string name="trips_checked_zero">Nenhuma viagem marcada para exportar</string>
     <string name="trip_show_all_on_map">Mostrar todas as viagens no mapa</string>
@@ -235,7 +239,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">Exportar o trajeto</string>
     <string name="step_export_places">Exportar os lugares</string>
-    <string name="export_writes_label">Será gravado</string>
+    <string name="export_writes_label">Para exportar</string>
 
     <string name="map_recenter">Mostrar todo o trajeto</string>
     <string name="map_scale_m">%1$s m</string>
@@ -294,7 +298,7 @@
     <string name="map_image_rendering_high">Renderizando em alta resolução…</string>
     <string name="map_image_high_error">Não foi possível renderizar a imagem em alta resolução. Nada foi salvo; tente Padrão.</string>
     <string name="map_image_stat_distance">Distância registrada</string>
-    <string name="map_image_distance_note">A distância registrada soma a linha desenhada nesta imagem. Voos e lacunas sem pontos de GPS não entram na conta, então ela costuma ser menor que a distância percorrida informada pelo Google.</string>
+    <string name="map_image_distance_note">A distância registrada é o comprimento da linha nesta imagem; voos e lacunas sem pontos de GPS não entram na conta. A distância percorrida mostrada em outras partes do app usa os números do próprio Google, então qualquer uma das duas pode ser maior.</string>
     <string name="map_image_stat_days">Dias</string>
     <string name="map_image_stat_places">Lugares</string>
 

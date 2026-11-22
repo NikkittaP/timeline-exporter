@@ -2052,11 +2052,11 @@ private fun ContentSwitch(
  */
 @Composable
 private fun ExportSubjectPlaque(contentKind: ContentKind, itemCount: Int) {
-    val kindLabel = stringResource(exportKindLabel(contentKind, itemCount))
+    val kindLabel = exportKindLabel(contentKind)?.let { stringResource(it) }
     // Trips and places are counted in ones, and "1 trips" or "21 мест" read
     // wrong, so those counts are plurals. Points keep their existing string.
     val countLabel = when (contentKind) {
-        ContentKind.TRACK -> stringResource(R.string.points_count, formatGrouped(itemCount))
+        ContentKind.TRACK -> pluralStringResource(R.plurals.points_count, itemCount, formatGrouped(itemCount))
         ContentKind.TRIPS -> pluralStringResource(R.plurals.trips_count, itemCount, formatGrouped(itemCount))
         ContentKind.PLACES -> pluralStringResource(R.plurals.places_count, itemCount, formatGrouped(itemCount))
     }
@@ -2092,11 +2092,8 @@ private fun ExportSubjectPlaque(contentKind: ContentKind, itemCount: Int) {
                     style = MaterialTheme.typography.labelMedium,
                 )
                 Text(
-                    text = stringResource(
-                        R.string.export_writes_value,
-                        kindLabel,
-                        countLabel,
-                    ),
+                    text = kindLabel?.let { stringResource(R.string.export_writes_value, it, countLabel) }
+                        ?: countLabel,
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -2717,11 +2714,14 @@ internal fun exportStepTitle(kind: ContentKind, count: Int): Int = when (kind) {
     ContentKind.PLACES -> R.string.step_export_places
 }
 
-/** The kind in step 4's plaque, singular for exactly one trip ("Trip — 1 trip"). */
-internal fun exportKindLabel(kind: ContentKind, count: Int): Int = when (kind) {
+/**
+ * The kind named before the count in step 4's plaque: only the track's
+ * ("Track — 313 points"). A trip or place count names its kind already, and
+ * "Trip — 1 trip" said it twice.
+ */
+internal fun exportKindLabel(kind: ContentKind): Int? = when (kind) {
     ContentKind.TRACK -> R.string.content_track
-    ContentKind.TRIPS -> if (count == 1) R.string.content_trip else R.string.content_trips
-    ContentKind.PLACES -> R.string.content_places
+    ContentKind.TRIPS, ContentKind.PLACES -> null
 }
 
 // ---------- shared shapes / formatting helpers ----------

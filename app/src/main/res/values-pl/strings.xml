@@ -43,7 +43,12 @@
     <string name="filter_movement_all_except">Wszystko oprócz: %1$s</string>
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">tylko w ruchu</string>
-    <string name="points_count">Punkty: %1$s</string>
+    <plurals name="points_count">
+        <item quantity="one">%1$s punkt</item>
+        <item quantity="few">%1$s punkty</item>
+        <item quantity="many">%1$s punktów</item>
+        <item quantity="other">%1$s punktu</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="one">%1$s miejsce</item>
         <item quantity="few">%1$s miejsca</item>
@@ -201,7 +206,7 @@
     <string name="trips_no_home">Plik nie wskazuje domu, więc nie można znaleźć podróży.</string>
     <string name="trips_hint">Podróż jest wykrywana, gdy oddalasz się od domu o ponad 50 km. Dotknij podróży, aby zobaczyć ją na mapie. Odznacz podróże, których nie chcesz eksportować.</string>
     <string name="trip_export_checkbox">Eksportuj tę podróż</string>
-    <string name="trips_checked">Zaznaczone do eksportu: %1$s z %2$s</string>
+    <string name="trips_checked">Zaznaczone: %1$s z %2$s</string>
     <string name="trips_select_all">Zaznacz wszystko</string>
     <string name="trips_checked_zero">Nie zaznaczono podróży do eksportu</string>
     <string name="trip_show_all_on_map">Pokaż wszystkie podróże na mapie</string>
@@ -237,7 +242,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">Eksport trasy</string>
     <string name="step_export_places">Eksport miejsc</string>
-    <string name="export_writes_label">Zostanie zapisane</string>
+    <string name="export_writes_label">Do eksportu</string>
 
     <string name="map_recenter">Pokaż całą trasę</string>
     <string name="map_scale_m">%1$s m</string>
@@ -296,7 +301,7 @@
     <string name="map_image_rendering_high">Renderowanie w wysokiej rozdzielczości…</string>
     <string name="map_image_high_error">Nie udało się wyrenderować obrazu w wysokiej rozdzielczości. Nic nie zapisano; spróbuj Standardowej.</string>
     <string name="map_image_stat_distance">Zarejestrowany dystans</string>
-    <string name="map_image_distance_note">Zarejestrowany dystans to suma linii narysowanej na tym obrazie. Loty i przerwy bez punktów GPS nie są liczone, więc często jest krótszy niż przebyty dystans podawany przez Google.</string>
+    <string name="map_image_distance_note">Zarejestrowany dystans to długość linii na tym obrazie; loty i przerwy bez punktów GPS nie są liczone. Dystans „w drodze” w innych miejscach aplikacji pochodzi z danych Google, więc każda z tych wartości może być większa.</string>
     <string name="map_image_stat_days">Dni</string>
     <string name="map_image_stat_places">Miejsca</string>
 

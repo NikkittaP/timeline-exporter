@@ -1,18 +1,18 @@
 import SwiftUI
 
 extension TimelineStore {
-    /// What an export writes now, and how much of it: "Trips — 12 trips".
-    /// Shown on the Export bar and again in the sheet, so the two agree.
+    /// What an export writes now, and how much of it: "Track — 313 points",
+    /// "12 trips", "40 places". A trip or place count names its kind already;
+    /// "Trip — 1 trip" said it twice. Shown on the Export bar and again in the
+    /// sheet, so the two agree.
     var exportWritesText: String {
         switch contentKind {
         case .track:
-            return L.f("export_writes_value", L.s("content_track"), L.f("points_count", Fmt.grouped(filteredCount)))
+            return L.f("export_writes_value", L.s("content_track"), L.plural("points_count", filteredCount))
         case .trips:
-            let count = markedTripCount
-            return L.f("export_writes_value", L.s(count == 1 ? "content_trip" : "content_trips"),
-                       L.plural("trips_count", count))
+            return L.plural("trips_count", markedTripCount)
         case .places:
-            return L.f("export_writes_value", L.s("content_places"), L.plural("places_count", places.count))
+            return L.plural("places_count", places.count)
         }
     }
 

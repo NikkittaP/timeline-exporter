@@ -43,7 +43,10 @@
     <string name="filter_movement_all_except">Alles behalve: %1$s</string>
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">alleen onderweg</string>
-    <string name="points_count">%1$s punten</string>
+    <plurals name="points_count">
+        <item quantity="one">%1$s punt</item>
+        <item quantity="other">%1$s punten</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="one">%1$s plaats</item>
         <item quantity="other">%1$s plaatsen</item>
@@ -197,7 +200,7 @@
     <string name="trips_no_home">Dit bestand vermeldt geen thuis, dus er kunnen geen reizen worden gevonden.</string>
     <string name="trips_hint">Een reis wordt herkend als je meer dan 50 km van huis gaat. Tik op een reis om hem op de kaart te bekijken. Vink reizen uit om ze buiten de export te laten.</string>
     <string name="trip_export_checkbox">Deze reis exporteren</string>
-    <string name="trips_checked">Aangevinkt voor export: %1$s van %2$s</string>
+    <string name="trips_checked">Aangevinkt: %1$s van %2$s</string>
     <string name="trips_select_all">Alles selecteren</string>
     <string name="trips_checked_zero">Geen reizen aangevinkt voor export</string>
     <string name="trip_show_all_on_map">Alle reizen op de kaart tonen</string>
@@ -233,7 +236,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">Route exporteren</string>
     <string name="step_export_places">Plaatsen exporteren</string>
-    <string name="export_writes_label">Dit wordt weggeschreven</string>
+    <string name="export_writes_label">Te exporteren</string>
 
     <string name="map_recenter">Hele track tonen</string>
     <string name="map_scale_m">%1$s m</string>
@@ -292,7 +295,7 @@
     <string name="map_image_rendering_high">Hoge resolutie renderen…</string>
     <string name="map_image_high_error">Kan de afbeelding in hoge resolutie niet renderen. Er is niets opgeslagen; probeer Standaard.</string>
     <string name="map_image_stat_distance">Vastgelegde afstand</string>
-    <string name="map_image_distance_note">De vastgelegde afstand telt de lijn op deze afbeelding op. Vluchten en gaten zonder GPS-punten tellen niet mee, dus hij is vaak korter dan de afgelegde afstand die Google noemt.</string>
+    <string name="map_image_distance_note">De vastgelegde afstand is de lengte van de lijn op deze afbeelding; vluchten en gaten zonder GPS-punten tellen niet mee. De afgelegde afstand elders in de app komt uit Googles eigen cijfers, dus elk van de twee kan groter zijn.</string>
     <string name="map_image_stat_days">Dagen</string>
     <string name="map_image_stat_places">Plaatsen</string>
 

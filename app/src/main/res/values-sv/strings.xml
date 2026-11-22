@@ -43,7 +43,10 @@
     <string name="filter_movement_all_except">Alla utom: %1$s</string>
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">bara i rörelse</string>
-    <string name="points_count">%1$s punkter</string>
+    <plurals name="points_count">
+        <item quantity="one">%1$s punkt</item>
+        <item quantity="other">%1$s punkter</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="one">%1$s plats</item>
         <item quantity="other">%1$s platser</item>
@@ -197,7 +200,7 @@
     <string name="trips_no_home">Filen anger inget hem, så inga resor kan hittas.</string>
     <string name="trips_hint">En resa upptäcks när du är mer än 50 km hemifrån. Tryck på en resa för att se den på kartan. Bocka ur resor för att utelämna dem från exporten.</string>
     <string name="trip_export_checkbox">Exportera den här resan</string>
-    <string name="trips_checked">Markerade för export: %1$s av %2$s</string>
+    <string name="trips_checked">Markerade: %1$s av %2$s</string>
     <string name="trips_select_all">Markera alla</string>
     <string name="trips_checked_zero">Inga resor markerade för export</string>
     <string name="trip_show_all_on_map">Visa alla resor på kartan</string>
@@ -233,7 +236,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">Exportera spåret</string>
     <string name="step_export_places">Exportera platserna</string>
-    <string name="export_writes_label">Detta skrivs</string>
+    <string name="export_writes_label">Exporteras</string>
 
     <string name="map_recenter">Visa hela spåret</string>
     <string name="map_scale_m">%1$s m</string>
@@ -292,7 +295,7 @@
     <string name="map_image_rendering_high">Renderar i hög upplösning…</string>
     <string name="map_image_high_error">Det gick inte att rendera bilden i hög upplösning. Inget sparades; prova Standard.</string>
     <string name="map_image_stat_distance">Registrerad sträcka</string>
-    <string name="map_image_distance_note">Registrerad sträcka är längden på linjen i den här bilden. Flygresor och luckor utan GPS-punkter räknas inte, så den är ofta kortare än den tillryggalagda sträckan som Google anger.</string>
+    <string name="map_image_distance_note">Registrerad sträcka är längden på linjen i den här bilden; flygresor och luckor utan GPS-punkter räknas inte. Den tillryggalagda sträckan på andra ställen i appen kommer från Googles egna siffror, så vilken som helst av dem kan vara störst.</string>
     <string name="map_image_stat_days">Dagar</string>
     <string name="map_image_stat_places">Platser</string>
 

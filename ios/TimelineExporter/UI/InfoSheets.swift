@@ -112,8 +112,9 @@ struct FeedbackSheet: View {
             .safeAreaInset(edge: .bottom, spacing: 0) { actionBar }
             .navigationTitle(L.s(kind.titleKey))
             .navigationBarTitleDisplayMode(.inline)
-            // The header says it in large type; the bar keeps it for VoiceOver
-            // and for when the header has scrolled away.
+            // The bar is the one place the title is said. The header under it
+            // repeated it in large type, so the sheet opened with the same
+            // words twice, one under the other.
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(L.s("feedback_dismiss")) { dismiss() }
@@ -224,7 +225,8 @@ struct FeedbackSheet: View {
     }
 }
 
-/// The sheet's own icon, title and a word from the developer.
+/// The sheet's own icon and a word from the developer; the title is the
+/// navigation bar's.
 private struct FeedbackHeader: View {
     let kind: FeedbackKind
 
@@ -236,10 +238,6 @@ private struct FeedbackHeader: View {
                 .frame(width: 64, height: 64)
                 .modifier(HeaderBadge())
                 .accessibilityHidden(true)
-            Text(L.s(kind.titleKey))
-                .font(.title2.weight(.bold))
-                .multilineTextAlignment(.center)
-                .accessibilityAddTraits(.isHeader)
             Text(L.s(kind == .feature ? "ios_suggest_intro" : "ios_problem_intro"))
                 .font(.callout)
                 .foregroundStyle(.secondary)

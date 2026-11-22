@@ -1,5 +1,14 @@
 import SwiftUI
 
+/// Half height on a phone, where the sheet covers the screen and can be
+/// pulled up. On an iPad these open over the Filter sheet, inside its form
+/// sheet: half of that cut the Time of day sheet off below its two pickers,
+/// with the note about local time past the bottom edge and nothing that said
+/// the form scrolls. There they take the whole height they are given.
+func filterSheetDetents(_ sizeClass: UserInterfaceSizeClass?) -> Set<PresentationDetent> {
+    sizeClass == .regular ? [.large] : [.medium, .large]
+}
+
 /// Pick the days to keep: quick presets ending on the file's last day, or two
 /// dates inside the file's span.
 struct DateRangeSheet: View {
@@ -7,6 +16,7 @@ struct DateRangeSheet: View {
     let apply: (ClosedRange<Date>?) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var start: Date
     @State private var end: Date
 
@@ -62,7 +72,7 @@ struct DateRangeSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents(filterSheetDetents(sizeClass))
     }
 
     private func finish(_ range: ClosedRange<Date>?) {
@@ -76,6 +86,7 @@ struct TimeOfDaySheet: View {
     let apply: (TimeWindow?) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var from: Date
     @State private var to: Date
 
@@ -130,7 +141,7 @@ struct TimeOfDaySheet: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents(filterSheetDetents(sizeClass))
     }
 
     private func finish(_ window: TimeWindow?) {

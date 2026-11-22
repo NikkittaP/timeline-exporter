@@ -43,7 +43,9 @@
     <string name="filter_movement_all_except">%1$s以外すべて</string>
     <string name="list_separator">"、"</string>
     <string name="filter_moving_only_short">移動中のみ</string>
-    <string name="points_count">%1$s ポイント</string>
+    <plurals name="points_count">
+        <item quantity="other">%1$s ポイント</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="other">%1$s か所</item>
     </plurals>
@@ -195,7 +197,7 @@
     <string name="trips_no_home">このファイルには自宅が記録されていないため、旅行を見つけられません。</string>
     <string name="trips_hint">自宅から 50 km 以上離れると旅行として検出されます。旅行をタップすると地図でプレビューできます。書き出さない旅行はチェックを外してください。</string>
     <string name="trip_export_checkbox">この旅行を書き出す</string>
-    <string name="trips_checked">書き出しに選択済み: %1$s / %2$s</string>
+    <string name="trips_checked">選択済み: %1$s / %2$s</string>
     <string name="trips_select_all">すべて選択</string>
     <string name="trips_checked_zero">書き出す旅行が選択されていません</string>
     <string name="trip_show_all_on_map">すべての旅行を地図に表示</string>
@@ -231,7 +233,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">経路を書き出す</string>
     <string name="step_export_places">場所を書き出す</string>
-    <string name="export_writes_label">書き出される内容</string>
+    <string name="export_writes_label">書き出す内容</string>
 
     <string name="map_recenter">軌跡全体を表示</string>
     <string name="map_scale_m">%1$s m</string>
@@ -290,7 +292,7 @@
     <string name="map_image_rendering_high">高解像度で描画中…</string>
     <string name="map_image_high_error">高解像度の画像を描画できませんでした。何も保存されていません。標準をお試しください。</string>
     <string name="map_image_stat_distance">記録された距離</string>
-    <string name="map_image_distance_note">記録された距離は、この画像に描かれた線の長さの合計です。飛行機での移動や GPS ポイントのない区間は含まれないため、Google が示す移動距離より短くなることがよくあります。</string>
+    <string name="map_image_distance_note">記録された距離は、この画像に描かれた線の長さです。飛行機での移動や GPS ポイントのない区間は含まれません。アプリの他の画面の移動距離は Google 自身の数値を使うため、どちらが長くなることもあります。</string>
     <string name="map_image_stat_days">日数</string>
     <string name="map_image_stat_places">場所</string>
 

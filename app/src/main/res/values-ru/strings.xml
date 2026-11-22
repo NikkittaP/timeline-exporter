@@ -43,7 +43,12 @@
     <string name="filter_movement_all_except">Все, кроме: %1$s</string>
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">только в движении</string>
-    <string name="points_count">%1$s точек</string>
+    <plurals name="points_count">
+        <item quantity="one">%1$s точка</item>
+        <item quantity="few">%1$s точки</item>
+        <item quantity="many">%1$s точек</item>
+        <item quantity="other">%1$s точки</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="one">%1$s место</item>
         <item quantity="few">%1$s места</item>
@@ -201,7 +206,7 @@
     <string name="trips_no_home">В файле не отмечен дом, поэтому поездки найти нельзя.</string>
     <string name="trips_hint">Поездка начинается, когда вы уезжаете от дома дальше чем на 50 км. Нажмите на поездку, чтобы посмотреть её на карте. Снимите галочку с поездок, которые не нужно экспортировать.</string>
     <string name="trip_export_checkbox">Экспортировать эту поездку</string>
-    <string name="trips_checked">Отмечено для экспорта: %1$s из %2$s</string>
+    <string name="trips_checked">Отмечено: %1$s из %2$s</string>
     <string name="trips_select_all">Выбрать все</string>
     <string name="trips_checked_zero">Не отмечено ни одной поездки для экспорта</string>
     <string name="trip_show_all_on_map">Показать все поездки на карте</string>
@@ -215,7 +220,7 @@
     <string name="places_none_filtered">В выбранном диапазоне дат нет мест.</string>
     <string name="places_visits_label">визитов</string>
     <string name="places_show_all">Показать все %1$s</string>
-    <string name="places_include_containers">Включая ТЦ и аэропорты</string>
+    <string name="places_include_containers">Включать ТЦ и аэропорты</string>
     <string name="places_include_containers_hint">Google записывает и здание, внутри которого находится место. По умолчанию выключено — это дублирует визит, который у вас уже есть.</string>
     <string name="place_unnamed_hint">Нажмите на место на карте или в списке, чтобы найти его. Нажмите ещё раз, чтобы дать название.</string>
     <string name="place_home">Дом</string>
@@ -237,7 +242,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">Экспорт маршрута</string>
     <string name="step_export_places">Экспорт мест</string>
-    <string name="export_writes_label">Будет записано</string>
+    <string name="export_writes_label">Будет экспортировано</string>
 
     <string name="map_recenter">Показать весь маршрут</string>
     <string name="map_scale_m">%1$s м</string>
@@ -296,7 +301,7 @@
     <string name="map_image_rendering_high">Отрисовка в высоком разрешении…</string>
     <string name="map_image_high_error">Не удалось отрисовать изображение в высоком разрешении. Ничего не сохранено; попробуйте стандартное.</string>
     <string name="map_image_stat_distance">Записанное расстояние</string>
-    <string name="map_image_distance_note">Записанное расстояние — это длина линии на этом изображении. Перелёты и промежутки без GPS-точек не учитываются, поэтому оно часто меньше пройденного расстояния, которое показывает Google.</string>
+    <string name="map_image_distance_note">Записанное расстояние — длина линии на этом изображении; перелёты и промежутки без GPS-точек не учитываются. Расстояние «в пути» в других местах приложения берётся из данных Google, поэтому больше может оказаться любое из двух.</string>
     <string name="map_image_stat_days">Дни</string>
     <string name="map_image_stat_places">Места</string>
 

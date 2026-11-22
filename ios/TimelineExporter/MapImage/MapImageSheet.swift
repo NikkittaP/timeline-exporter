@@ -15,7 +15,6 @@ struct MapImageSheet: View {
 
     init(wide: CGSize?) {
         self.wide = wide
-        _askedSize = State(initialValue: wide)
         // Laid out for the size it is about to get, not as a column first.
         if #available(iOS 18, *), let wide {
             _sheetSize = State(initialValue: wide)
@@ -98,11 +97,10 @@ struct MapImageSheet: View {
     /// The whole sheet, as laid out: from outside the action bar, so a status
     /// line appearing in the bar does not resize the picture.
     @State private var sheetSize = CGSize(width: 390, height: 700)
-    /// [wide] as last asked of the presentation. It follows [wide] once the
-    /// turn of the iPad has settled: asked during the turn, the size is lost
-    /// to the form sheet UIKit lays out for the new orientation, and the sheet
-    /// came back to a landscape window at its upright size.
-    @State private var askedSize: CGSize?
+    /// The sheet's own controller and window. The presentation reads the
+    /// window's size from it at the moment UIKit lays the sheet out, rather
+    /// than a size handed down before the turn (see MapImagePresentationSizing).
+    @State private var host = SheetHost()
 
     private var previewSize: CGSize {
         MapImagePreviewFrame.size(ratio: ratio, sheet: sheetSize, heightShare: sizeClass == .regular ? 0.7 : 0.48)
@@ -222,13 +220,26 @@ struct MapImageSheet: View {
                 await renderPreview()
             }
         }
-        .onGeometryChange(for: CGSize.self, of: { $0.size }) { sheetSize = $0 }
-        .modifier(MapImageSheetSizing(wide: askedSize))
-        .task(id: wide) {
-            guard askedSize != wide else { return }
-            try? await Task.sleep(for: .milliseconds(600))
-            guard !Task.isCancelled else { return }
-            askedSize = wide
+        .onGeometryChange(for: CGSize.self, of: { $0.size }) { size in
+            sheetSize = size
+            // Also from here: opened from the Export sheet, [wide] may not
+            // reach this sheet on a turn, but its own size always changes.
+            // After this layout pass, not inside it.
+            if #available(iOS 18, *) {
+                let host = host, wide = wide
+                Task { @MainActor in host.relayout(wide: wide, force: false) }
+            }
+        }
+        .background(SheetHostProbe(host: host))
+        .modifier(MapImageSheetSizing(wide: wide, host: host))
+        // The window changed shape (a turn, Split View, Stage Manager): lay
+        // the presentation out again, so it asks for its size again and grows
+        // back as well as shrinks.
+        .onChange(of: wide) { _, new in
+            if #available(iOS 18, *) {
+                let host = host
+                Task { @MainActor in host.relayout(wide: new, force: true) }
+            }
         }
     }
 
@@ -247,14 +258,17 @@ struct MapImageSheet: View {
                 Text(message).font(.footnote).foregroundStyle(failed ? .red : .green)
             }
             // Side by side where the words fit, Save on top where they do not.
+            // Side by side, Share keeps its own width and Save takes the rest;
+            // split in halves, "Сохранить изображение" was cut short in a bar
+            // wide enough for both labels in full.
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 12) {
-                    shareButton
+                    shareButton(fill: false)
                     saveButton
                 }
                 VStack(spacing: 8) {
                     saveButton
-                    shareButton
+                    shareButton(fill: true)
                 }
             }
             .disabled(busy != nil || content == nil || failedToDraw || spec == nil)
@@ -264,14 +278,16 @@ struct MapImageSheet: View {
         .background(.bar)
     }
 
-    private var shareButton: some View {
+    private func shareButton(fill: Bool) -> some View {
         Button {
             Task { await deliver(share: true) }
         } label: {
             Label(L.s("map_image_share"), systemImage: "square.and.arrow.up")
                 .lineLimit(1)
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: fill ? .infinity : nil)
+                .padding(.horizontal, fill ? 0 : 8)
         }
+        .fixedSize(horizontal: !fill, vertical: false)
         .buttonStyle(.bordered)
         .controlSize(.large)
         .accessibilityIdentifier("mapImageShare")
@@ -486,29 +502,152 @@ enum MapImagePreviewFrame {
     }
 }
 
-/// Asks for [wide] as the sheet's size. Always the same modifier, so a turn of
-/// the iPad resizes the sheet instead of rebuilding what is inside it (once
-/// the turn is over: see MapImageSheet.askedSize). iOS 17
-/// has no way to ask: there the sheet stays the system's, in one column.
+/// Asks for a wide sheet on a wide window. Always the same modifier, so a turn
+/// of the iPad resizes the sheet instead of rebuilding what is inside it. iOS
+/// 17 has no way to ask: there the sheet stays the system's, in one column.
 private struct MapImageSheetSizing: ViewModifier {
     let wide: CGSize?
+    let host: SheetHost
 
     func body(content: Content) -> some View {
         if #available(iOS 18, *) {
-            content.presentationSizing(MapImagePresentationSizing(wide: wide))
+            content.presentationSizing(MapImagePresentationSizing(wide: wide, host: host))
         } else {
             content
         }
     }
 }
 
+/// The size is decided when UIKit lays the presentation out, from the window
+/// the sheet is in at that moment.
+///
+/// Why not from [wide] alone: [wide] comes from the page's size, which reaches
+/// the sheet only after UIKit has laid the presentation out for the new
+/// orientation. Turned upright, the stale landscape size was clamped to the
+/// narrower window, so that half looked right. Turned back, the stale upright
+/// answer (nil: the system's form sheet) was used, and [wide] arriving a
+/// moment later changed nothing, because a new value does not by itself lay
+/// the presentation out again: the sheet stayed upright-sized in a landscape
+/// window. Passing [wide] on 0.6 s later (the earlier attempt) only made the
+/// late value later.
 @available(iOS 18, *)
 private struct MapImagePresentationSizing: PresentationSizing {
+    /// Used until the sheet is in a window: the size its page asked for.
     let wide: CGSize?
+    let host: SheetHost
 
     func proposedSize(for root: PresentationSizingRoot, context: PresentationSizingContext) -> ProposedViewSize {
-        if let wide { return ProposedViewSize(wide) }
+        if let size = currentWide { return ProposedViewSize(size) }
         return AutomaticPresentationSizing.automatic.proposedSize(for: root, context: context)
+    }
+
+    private var currentWide: CGSize? {
+        guard Thread.isMainThread else { return wide }
+        let host = self.host
+        let live: CGSize?? = MainActor.assumeIsolated { host.liveWide }
+        return live ?? wide
+    }
+}
+
+/// The controller UIKit presents the sheet in, and so its window. Filled in by
+/// SheetHostProbe from inside the sheet; only touched on the main thread.
+final class SheetHost: @unchecked Sendable {
+    private weak var controller: UIViewController?
+    /// Whether [relayout] had to set the controller's preferredContentSize.
+    private var sizedByHand = false
+    /// The wide size an unforced [relayout] last tried for, so a sheet that
+    /// cannot grow is not laid out again on every change of its size.
+    private var lastTried: CGSize?
+
+    @MainActor func attach(_ controller: UIViewController) {
+        self.controller = controller
+    }
+
+    /// The wide sheet for the window as it is now: .some(nil) for a window
+    /// that keeps the system's sheet, nil while there is no window yet.
+    @MainActor var liveWide: CGSize?? {
+        guard let window = controller?.view.window else { return nil }
+        let sizeClass = UserInterfaceSizeClass(window.traitCollection.horizontalSizeClass)
+        return .some(MapImagePreviewFrame.wideSheet(window: window.bounds.size, sizeClass: sizeClass))
+    }
+
+    /// Lays the presentation out again, so it asks MapImagePresentationSizing
+    /// for its size now that the window has its new shape. If the sheet still
+    /// does not take the wide size, asks for it the way a UIKit form sheet
+    /// has always been sized: its controller's preferredContentSize.
+    /// Unforced, it does so only while the sheet is narrower than the window
+    /// calls for, once per size.
+    @MainActor func relayout(wide: CGSize?, force: Bool) {
+        guard let sheet = controller, sheet.presentingViewController != nil else { return }
+        let target: CGSize? = liveWide ?? wide
+        if !force {
+            guard let target, sheet.view.bounds.width + 1 < target.width, target != lastTried else { return }
+        }
+        lastTried = target
+        if let container = sheet.presentationController?.containerView {
+            container.setNeedsLayout()
+            container.layoutIfNeeded()
+        }
+        sheet.view.setNeedsLayout()
+        sheet.view.layoutIfNeeded()
+        if let target, sheet.view.bounds.width + 1 < target.width {
+            sizedByHand = true
+            sheet.preferredContentSize = target
+        } else if target == nil, sizedByHand {
+            sizedByHand = false
+            sheet.preferredContentSize = .zero
+        }
+    }
+}
+
+/// Finds the controller the sheet is presented in and hands it to [host].
+private struct SheetHostProbe: UIViewControllerRepresentable {
+    let host: SheetHost
+
+    func makeUIViewController(context: Context) -> ProbeController {
+        ProbeController(host: host)
+    }
+
+    func updateUIViewController(_ controller: ProbeController, context: Context) {
+        controller.attach()
+    }
+
+    final class ProbeController: UIViewController {
+        private let host: SheetHost
+
+        init(host: SheetHost) {
+            self.host = host
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        @available(*, unavailable)
+        required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
+
+        override func loadView() {
+            let view = UIView()
+            view.isUserInteractionEnabled = false
+            view.backgroundColor = .clear
+            self.view = view
+        }
+
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            attach()
+        }
+
+        override func didMove(toParent parent: UIViewController?) {
+            super.didMove(toParent: parent)
+            attach()
+        }
+
+        /// The outermost controller above this one: the one UIKit presented.
+        func attach() {
+            var responder: UIResponder? = view.superview
+            while let r = responder, !(r is UIViewController) { responder = r.next }
+            var sheet: UIViewController? = (responder as? UIViewController) ?? parent
+            while let up = sheet?.parent { sheet = up }
+            if let sheet, sheet !== self { host.attach(sheet) }
+        }
     }
 }
 

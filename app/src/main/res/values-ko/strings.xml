@@ -43,7 +43,9 @@
     <string name="filter_movement_all_except">%1$s 제외 전체</string>
     <string name="list_separator">", "</string>
     <string name="filter_moving_only_short">이동 중만</string>
-    <string name="points_count">포인트 %1$s개</string>
+    <plurals name="points_count">
+        <item quantity="other">포인트 %1$s개</item>
+    </plurals>
     <plurals name="places_count">
         <item quantity="other">장소 %1$s곳</item>
     </plurals>
@@ -195,7 +197,7 @@
     <string name="trips_no_home">이 파일에 집이 기록되어 있지 않아 여행을 찾을 수 없습니다.</string>
     <string name="trips_hint">집에서 50km 넘게 이동하면 여행으로 감지됩니다. 여행을 탭하면 지도에서 미리 볼 수 있습니다. 내보내지 않을 여행은 체크를 해제하세요.</string>
     <string name="trip_export_checkbox">이 여행 내보내기</string>
-    <string name="trips_checked">내보내기 선택: %2$s개 중 %1$s개</string>
+    <string name="trips_checked">선택: %2$s개 중 %1$s개</string>
     <string name="trips_select_all">모두 선택</string>
     <string name="trips_checked_zero">내보낼 여행이 선택되지 않았습니다</string>
     <string name="trip_show_all_on_map">지도에 모든 여행 표시</string>
@@ -231,7 +233,7 @@
     <!-- Export step: what the Track / Places switch will actually write -->
     <string name="step_export_track">경로 내보내기</string>
     <string name="step_export_places">장소 내보내기</string>
-    <string name="export_writes_label">저장될 내용</string>
+    <string name="export_writes_label">내보낼 내용</string>
 
     <string name="map_recenter">전체 경로 보기</string>
     <string name="map_scale_m">%1$s m</string>
@@ -290,7 +292,7 @@
     <string name="map_image_rendering_high">고해상도로 렌더링하는 중…</string>
     <string name="map_image_high_error">고해상도 이미지를 렌더링하지 못했습니다. 저장된 것은 없습니다. 표준을 사용해 보세요.</string>
     <string name="map_image_stat_distance">기록된 거리</string>
-    <string name="map_image_distance_note">기록된 거리는 이 이미지에 그려진 선의 길이를 합한 값입니다. 비행 구간과 GPS 지점이 없는 구간은 포함되지 않으므로 Google이 보여 주는 이동 거리보다 짧은 경우가 많습니다.</string>
+    <string name="map_image_distance_note">기록된 거리는 이 이미지에 그려진 선의 길이이며, 비행 구간과 GPS 지점이 없는 구간은 포함되지 않습니다. 앱의 다른 곳에 표시되는 이동 거리는 Google 자체 수치를 사용하므로 어느 쪽이 더 길 수도 있습니다.</string>
     <string name="map_image_stat_days">일수</string>
     <string name="map_image_stat_places">장소</string>
 
