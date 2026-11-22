@@ -50,7 +50,7 @@
         <item quantity="many">%1$s місць</item>
         <item quantity="other">%1$s місця</item>
     </plurals>
-    <string name="filter_trip_count">%1$s поїздок</string>
+    <string name="filter_trip_count">Відрізків: %1$s</string>
     <string name="filter_movement_total">Усього</string>
     <string name="filter_moving_only">Лише в русі</string>
     <string name="filter_moving_only_hint">Не додавати точки, записані під час зупинок</string>
@@ -116,7 +116,7 @@
 
     <string name="help_notes_title">Примітки</string>
     <string name="help_note_file_location">• Експортований файл називається Timeline.json. Він зберігається туди, куди ви вказали під час експорту — деякі версії Android обмежують доступ до окремих папок (напр., «Завантаження»), тож якщо застосунок не може його прочитати, спробуйте перемістити файл.</string>
-    <string name="help_note_eu_csv">• Через закони про приватність користувачі з ЄС можуть отримати CSV замість JSON. Ця версія застосунку працює лише з JSON.</string>
+    <string name="help_note_missing_days">• Бракує днів? У файлі лише те, що цей телефон зберіг, поки Хронологія була ввімкнена. Перевірте автовидалення Хронології в Google Картах (Ваша хронологія → ⋯ → Налаштування місцезнаходження та конфіденційності). Значок хмари у Вашій хронології — це резервна копія, окреме налаштування.</string>
     <string name="help_note_slow_first">• Перший експорт може зайняти одну-дві хвилини, якщо у вас накопичилися роки історії місцезнаходжень.</string>
 
     <string name="help_dismiss">Зрозуміло</string>
@@ -177,7 +177,6 @@
     <string name="feedback_dismiss">Закрити</string>
     <string name="feedback_toast_no_browser">На пристрої немає застосунку, який відкриє посилання.</string>
     <string name="feedback_toast_no_email">На пристрої немає поштового застосунку.</string>
-    <string name="help_note_csv_local_time">• У CSV є і час UTC, і місцевий час зі зміщенням — якщо у файлі Timeline записано часовий пояс.</string>
     <string name="feedback_prompt_body">Застосунок розвивається за запитами користувачів. Аналітики немає — розкажіть, чого бракує.</string>
     <string name="feedback_prompt_action">Написати, що додати →</string>
 
@@ -231,6 +230,7 @@
     <string name="place_dialog_remove">Прибрати назву</string>
     <string name="place_toast_no_maps">На цьому пристрої немає застосунку, який відкриє посилання на карту.</string>
     <string name="export_success_places">Збережено місць: %1$s — у %2$s</string>
+    <string name="export_saved_folder">Папка: %1$s</string>
     <string name="export_shared_places">Підготовлено місць: %1$s у форматі %2$s</string>
     <string name="export_error_no_places">У поточному діапазоні дат немає місць.</string>
 
@@ -324,6 +324,7 @@
     <string name="metric_distance">Відстань</string>
     <string name="filter_movement_title">Пересування</string>
     <string name="date_preset_all_short">Усі</string>
+    <string name="date_preset_note">Відлік від останнього дня у файлі, %1$s.</string>
     <string name="journey_distance">Еквівалентна відстань: %1$s × довжина екватора Землі.</string>
     <string name="journey_traveler">Не всі мандрівники заблукали. Дехто просто не поспішає.</string>
     <string name="journey_postcard">Кожна подорож розповідає історію.</string>

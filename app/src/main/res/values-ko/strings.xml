@@ -47,7 +47,7 @@
     <plurals name="places_count">
         <item quantity="other">장소 %1$s곳</item>
     </plurals>
-    <string name="filter_trip_count">이동 %1$s회</string>
+    <string name="filter_trip_count">구간 %1$s개</string>
     <string name="filter_movement_total">합계</string>
     <string name="filter_moving_only">이동 중만</string>
     <string name="filter_moving_only_hint">머무는 동안 기록된 지점 제외</string>
@@ -113,7 +113,7 @@
 
     <string name="help_notes_title">참고</string>
     <string name="help_note_file_location">• 내보낸 파일 이름은 Timeline.json입니다. 내보낼 때 선택한 위치에 저장됩니다 — 일부 Android 버전은 특정 폴더(예: 다운로드)에 대한 접근을 제한하므로, 앱이 읽지 못하면 파일을 옮겨 보세요.</string>
-    <string name="help_note_eu_csv">• 개인정보 보호법으로 인해 EU 사용자는 JSON 대신 CSV를 받을 수 있습니다. 이 버전의 앱은 JSON만 처리합니다.</string>
+    <string name="help_note_missing_days">• 빠진 날이 있나요? 파일에는 타임라인이 켜져 있는 동안 이 휴대폰이 저장한 내용만 들어 있습니다. Google 지도에서 타임라인 자동 삭제를 확인하세요(내 타임라인 → ⋯ → 위치 및 개인정보 설정). 내 타임라인의 구름 아이콘은 백업이며 별도의 설정입니다.</string>
     <string name="help_note_slow_first">• 위치 기록이 여러 해 분량이면 첫 내보내기에 1~2분 걸릴 수 있습니다.</string>
 
     <string name="help_dismiss">확인</string>
@@ -174,7 +174,6 @@
     <string name="feedback_dismiss">닫기</string>
     <string name="feedback_toast_no_browser">이 기기에는 링크를 열 수 있는 앱이 없습니다.</string>
     <string name="feedback_toast_no_email">이 기기에는 이메일 앱이 없습니다.</string>
-    <string name="help_note_csv_local_time">• Timeline 파일에 시간대가 기록되어 있으면 CSV에 UTC 시각과 함께 현지 시각 및 UTC 오프셋이 들어갑니다.</string>
     <string name="feedback_prompt_body">이 앱은 사용자 요청으로 자랍니다. 분석 도구가 없으니 무엇이 부족한지 알려주세요.</string>
     <string name="feedback_prompt_action">추가할 기능 알려주기 →</string>
 
@@ -225,6 +224,7 @@
     <string name="place_dialog_remove">이름 삭제</string>
     <string name="place_toast_no_maps">이 기기에서 지도 링크를 열 수 있는 앱이 없습니다.</string>
     <string name="export_success_places">장소 %1$s개를 %2$s에 저장했습니다</string>
+    <string name="export_saved_folder">폴더: %1$s</string>
     <string name="export_shared_places">장소 %1$s개를 %2$s(으)로 준비했습니다</string>
     <string name="export_error_no_places">현재 기간에 장소가 없습니다.</string>
 
@@ -312,6 +312,7 @@
     <string name="metric_distance">거리</string>
     <string name="filter_movement_title">이동 수단</string>
     <string name="date_preset_all_short">전체</string>
+    <string name="date_preset_note">파일의 마지막 날(%1$s)부터 거꾸로 셉니다.</string>
     <string name="journey_distance">환산 거리: 지구 둘레 × %1$s</string>
     <string name="journey_traveler">떠도는 이들이 모두 길을 잃은 것은 아니에요. 천천히 가는 이들도 있죠.</string>
     <string name="journey_postcard">모든 여행에는 이야기가 있어요.</string>

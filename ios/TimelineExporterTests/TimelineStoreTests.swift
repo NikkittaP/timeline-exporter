@@ -66,6 +66,26 @@ final class TimelineStoreTests: XCTestCase {
         }
     }
 
+    func testTheSavedFolderIsNamedOnlyWhenFilesWouldShowThatName() {
+        func folder(_ path: String) -> String? { SavedLocation.folderName(of: URL(fileURLWithPath: path)) }
+        let onMyPhone = "/private/var/mobile/Containers/Shared/AppGroup/0D8E4C1A-6B2F-4E8B-9C3D-2A1B5F7E9D01/File Provider Storage"
+        XCTAssertEqual(folder("\(onMyPhone)/Trips 2026/Timeline.gpx"), "Trips 2026")
+        XCTAssertNil(folder("\(onMyPhone)/Timeline.gpx"))
+        let iCloud = "/private/var/mobile/Library/Mobile Documents/com~apple~CloudDocs"
+        XCTAssertEqual(folder("\(iCloud)/Timeline.gpx"), "iCloud Drive")
+        XCTAssertEqual(folder("\(iCloud)/Downloads/Timeline.gpx"), "Downloads")
+        XCTAssertNil(folder("/x/File Provider Storage/0D8E4C1A-6B2F-4E8B-9C3D-2A1B5F7E9D01/Timeline.gpx"))
+        XCTAssertNil(folder("/x/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/Timeline.gpx"))
+    }
+
+    func testFinishSaveKeepsTheFolder() async throws {
+        let store = TimelineStore(settings: InMemorySettingsStore())
+        await store.open(url: sampleURL)
+        await store.export(.gpx)
+        store.finishSave(savedAs: "a.gpx", folder: "Downloads")
+        XCTAssertEqual(store.exportState, .saved(kind: .track, count: 3, fileName: "a.gpx", folder: "Downloads"))
+    }
+
     func testTheFilterIsRememberedForTheNextFile() async throws {
         let settings = InMemorySettingsStore()
         let store = TimelineStore(settings: settings)

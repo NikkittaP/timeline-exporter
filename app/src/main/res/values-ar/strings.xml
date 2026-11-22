@@ -52,7 +52,7 @@
         <item quantity="many">%1$s مكانًا</item>
         <item quantity="other">%1$s مكان</item>
     </plurals>
-    <string name="filter_trip_count">%1$s رحلات</string>
+    <string name="filter_trip_count">المقاطع: %1$s</string>
     <string name="filter_movement_total">الإجمالي</string>
     <string name="filter_moving_only">أثناء الحركة فقط</string>
     <string name="filter_moving_only_hint">استبعاد النقاط المسجَّلة أثناء التوقف</string>
@@ -118,7 +118,7 @@
 
     <string name="help_notes_title">ملاحظات</string>
     <string name="help_note_file_location">• اسم الملف المُصدَّر هو Timeline.json. يُحفظ في المكان الذي اخترته أثناء التصدير — تقيّد بعض إصدارات Android الوصول إلى مجلدات معيّنة (مثل التنزيلات)، فإذا تعذّر على التطبيق قراءته، جرّب نقله.</string>
-    <string name="help_note_eu_csv">• قد يتلقى مستخدمو الاتحاد الأوروبي ملف CSV بدلاً من JSON لأسباب تتعلق بقوانين الخصوصية. يتعامل هذا الإصدار من التطبيق مع JSON فقط.</string>
+    <string name="help_note_missing_days">• أيام ناقصة؟ لا يحتوي الملف إلا على ما حفظه هذا الهاتف أثناء تفعيل المخطط الزمني. تحقّق من الحذف التلقائي للمخطط الزمني في خرائط Google (مخططك الزمني ← ⋯ ← إعدادات الموقع والخصوصية). أيقونة السحابة في مخططك الزمني هي النسخة الاحتياطية، وهي إعداد منفصل.</string>
     <string name="help_note_slow_first">• قد يستغرق التصدير الأول دقيقة أو دقيقتين إذا كان لديك سنوات من سجل المواقع.</string>
 
     <string name="help_dismiss">حسنًا</string>
@@ -179,7 +179,6 @@
     <string name="feedback_dismiss">إغلاق</string>
     <string name="feedback_toast_no_browser">لا يوجد تطبيق على هذا الجهاز يمكنه فتح الرابط.</string>
     <string name="feedback_toast_no_email">لا يوجد تطبيق بريد إلكتروني على هذا الجهاز.</string>
-    <string name="help_note_csv_local_time">• تحتوي ملفات CSV على التوقيت العالمي والتوقيت المحلي مع فرق التوقيت، إذا كان ملف Timeline يسجّل المنطقة الزمنية.</string>
     <string name="feedback_prompt_body">يتطور التطبيق بناءً على طلبات المستخدمين. لا توجد أي تحليلات — أخبرني بما ينقص.</string>
     <string name="feedback_prompt_action">أخبرني بما يجب إضافته ←</string>
 
@@ -235,6 +234,7 @@
     <string name="place_dialog_remove">إزالة الاسم</string>
     <string name="place_toast_no_maps">لا يوجد تطبيق على هذا الجهاز يمكنه فتح رابط خريطة.</string>
     <string name="export_success_places">تم حفظ %1$s مكانًا في %2$s</string>
+    <string name="export_saved_folder">المجلد: %1$s</string>
     <string name="export_shared_places">تم تحضير %1$s مكانًا بصيغة %2$s</string>
     <string name="export_error_no_places">لا توجد أماكن في النطاق الزمني الحالي.</string>
 
@@ -332,6 +332,7 @@
     <string name="metric_distance">المسافة</string>
     <string name="filter_movement_title">التنقل</string>
     <string name="date_preset_all_short">الكل</string>
+    <string name="date_preset_note">محسوب رجوعًا من آخر يوم في الملف، %1$s.</string>
     <string name="journey_distance">المسافة المكافئة: محيط الأرض × %1$s</string>
     <string name="journey_traveler">ليس كل من يتجول تائهاً. بعضهم يتمهل فقط.</string>
     <string name="journey_postcard">كل رحلة تروي حكاية.</string>

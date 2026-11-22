@@ -61,7 +61,20 @@ struct FiltersSheet: View {
         }
     }
 
+    /// The day chips, and under them the day they count back from: the last
+    /// day in the file, not today, so an old file still gets its last week.
     private func presets(_ core: CoreTimeline) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            presetChips(core)
+            if let last = core.lastPoint {
+                Text(L.f("date_preset_note", Fmt.date(last)))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private func presetChips(_ core: CoreTimeline) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 PresetChip(title: L.s("date_preset_all_short"), selected: store.filter.range == nil) {

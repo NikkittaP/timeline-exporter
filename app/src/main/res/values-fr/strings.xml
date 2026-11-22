@@ -49,7 +49,7 @@
         <item quantity="many">%1$s lieux</item>
         <item quantity="other">%1$s lieux</item>
     </plurals>
-    <string name="filter_trip_count">%1$s trajets</string>
+    <string name="filter_trip_count">%1$s segments</string>
     <string name="filter_movement_total">Total</string>
     <string name="filter_moving_only">En mouvement uniquement</string>
     <string name="filter_moving_only_hint">Ignorer les points enregistrés à l\'arrêt</string>
@@ -115,7 +115,7 @@
 
     <string name="help_notes_title">Remarques</string>
     <string name="help_note_file_location">• Le fichier exporté s\'appelle Timeline.json. Il est enregistré là où vous l\'avez choisi lors de l\'export — certaines versions d\'Android restreignent l\'accès à certains dossiers (par ex. Téléchargements) ; si l\'application ne peut pas le lire, essayez de le déplacer.</string>
-    <string name="help_note_eu_csv">• Pour des raisons de législation sur la vie privée, les utilisateurs de l\'UE peuvent recevoir un CSV au lieu d\'un JSON. Cette version de l\'application ne gère que le JSON.</string>
+    <string name="help_note_missing_days">• Des jours manquent ? Le fichier ne contient que ce que ce téléphone a enregistré pendant que Timeline était activé. Vérifiez la suppression automatique de Timeline dans Google Maps (Votre Timeline → ⋯ → Paramètres de localisation et de confidentialité). L’icône de nuage dans Votre Timeline est la sauvegarde, un réglage distinct.</string>
     <string name="help_note_slow_first">• Le premier export peut prendre une à deux minutes si vous avez des années d\'historique de localisation.</string>
 
     <string name="help_dismiss">Compris</string>
@@ -176,7 +176,6 @@
     <string name="feedback_dismiss">Fermer</string>
     <string name="feedback_toast_no_browser">Aucune application de cet appareil ne peut ouvrir ce lien.</string>
     <string name="feedback_toast_no_email">Aucune application de messagerie n\'est disponible sur cet appareil.</string>
-    <string name="help_note_csv_local_time">• Les CSV contiennent l\'heure UTC et l\'heure locale avec son décalage, si le fichier Timeline enregistre le fuseau horaire.</string>
     <string name="feedback_prompt_body">L\'application évolue selon les demandes des utilisateurs. Aucune analytique : dites-moi ce qui manque.</string>
     <string name="feedback_prompt_action">Dites-moi quoi ajouter →</string>
 
@@ -229,6 +228,7 @@
     <string name="place_dialog_remove">Supprimer le nom</string>
     <string name="place_toast_no_maps">Aucune application de cet appareil ne peut ouvrir un lien de carte.</string>
     <string name="export_success_places">%1$s lieux enregistrés dans %2$s</string>
+    <string name="export_saved_folder">Dossier : %1$s</string>
     <string name="export_shared_places">%1$s lieux préparés au format %2$s</string>
     <string name="export_error_no_places">Aucun lieu dans la période actuelle.</string>
 
@@ -318,6 +318,7 @@
     <string name="metric_distance">Distance</string>
     <string name="filter_movement_title">Déplacements</string>
     <string name="date_preset_all_short">Tout</string>
+    <string name="date_preset_note">Compté à rebours depuis le dernier jour du fichier, %1$s.</string>
     <string name="journey_distance">Distance équivalente : %1$s × la circonférence de la Terre.</string>
     <string name="journey_traveler">Tous ceux qui voyagent ne sont pas perdus. Certains prennent simplement leur temps.</string>
     <string name="journey_postcard">Chaque voyage raconte une histoire.</string>

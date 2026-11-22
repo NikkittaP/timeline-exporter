@@ -4,10 +4,12 @@ import UIKit
 // MARK: Help
 
 /// Where the Timeline file comes from and how it gets here, for someone who
-/// has never exported anything: what must already be true (in bold), turning
-/// Timeline on, saving the file from Google Maps, opening it, and what to do
-/// when a step is missing. The Android steps through system Settings do not
-/// exist on iPhone; Google Maps is the way (support.google.com/maps/answer/6258979).
+/// has never exported anything: what must already be true (in bold), saving
+/// the file from Google Maps straight into this app through the share sheet,
+/// the Save to Files fallback, turning Timeline on, and what to do when a step
+/// is missing. Saving comes before turning Timeline on because most people who
+/// open Help already have it on. The Android steps through system Settings do
+/// not exist on iPhone; Google Maps is the way (support.google.com/maps/answer/6258979).
 struct HelpSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -15,19 +17,8 @@ struct HelpSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    Text(L.s("help_intro"))
-                }
                 Section(L.s("ios_requirements_title")) {
                     Requirements(withDevice: true)
-                }
-                Section {
-                    NumberedSteps(keys: ["ios_maps_profile", "ios_turn_on_step2", "ios_turn_on_step3",
-                                         "ios_turn_on_step4"])
-                } header: {
-                    Text(L.s("ios_turn_on_title"))
-                } footer: {
-                    Text(L.s("ios_turn_on_note"))
                 }
                 Section(L.s("ios_export_title")) {
                     NumberedSteps(keys: ["ios_maps_profile", "ios_export_step2", "ios_export_step3",
@@ -38,7 +29,15 @@ struct HelpSheet: View {
                     }
                 }
                 Section(L.s("ios_import_title")) {
-                    NumberedSteps(keys: ["help_import_step1", "help_import_step2"])
+                    NumberedSteps(keys: ["ios_import_fallback", "help_import_step1", "help_import_step2"])
+                }
+                Section {
+                    NumberedSteps(keys: ["ios_maps_profile", "ios_turn_on_step2", "ios_turn_on_step3",
+                                         "ios_turn_on_step4"])
+                } header: {
+                    Text(L.s("ios_turn_on_title"))
+                } footer: {
+                    Text(L.s("ios_turn_on_note"))
                 }
                 Section(L.s("ios_trouble_title")) {
                     ForEach(["ios_trouble_no_export", "ios_trouble_alt_path", "ios_trouble_few_days",
@@ -47,8 +46,7 @@ struct HelpSheet: View {
                     }
                 }
                 Section(L.s("help_notes_title")) {
-                    ForEach(["help_note_file_location", "help_note_eu_csv", "help_note_slow_first",
-                             "help_note_csv_local_time"], id: \.self) { key in
+                    ForEach(["help_note_file_location", "help_note_slow_first"], id: \.self) { key in
                         Text(L.s(key)).font(.callout)
                     }
                 }

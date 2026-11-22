@@ -40,8 +40,10 @@ private struct ExportPresenter: ViewModifier {
             host.present(vc, animated: true)
         } else {
             let picker = UIDocumentPickerViewController(forExporting: [pending.url], asCopy: true)
-            let delegate = SaveDelegate { savedAs in
-                Task { @MainActor in store.finishSave(savedAs: savedAs) }
+            let delegate = SaveDelegate { url in
+                let name = url?.lastPathComponent
+                let folder = url.flatMap(SavedLocation.folderName)
+                Task { @MainActor in store.finishSave(savedAs: name, folder: folder) }
             }
             picker.delegate = delegate
             // The picker holds its delegate weakly.
@@ -53,14 +55,14 @@ private struct ExportPresenter: ViewModifier {
 
 private final class SaveDelegate: NSObject, UIDocumentPickerDelegate {
     nonisolated(unsafe) static var key: UInt8 = 0
-    private let done: (String?) -> Void
+    private let done: (URL?) -> Void
 
-    init(done: @escaping (String?) -> Void) {
+    init(done: @escaping (URL?) -> Void) {
         self.done = done
     }
 
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        done(urls.first?.lastPathComponent)
+        done(urls.first)
     }
 
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
@@ -78,5 +80,33 @@ extension UIApplication {
             top = presented
         }
         return top
+    }
+}
+
+/// The folder a saved file went to, as the Files app names it, so the
+/// message after saving can say where to look. The save dialog only hands
+/// back a path: its last folder is the name shown in Files, except for the
+/// containers Files gives names of its own (the top of On My iPhone and of
+/// iCloud Drive) and the opaque ids other providers use. Those give nil,
+/// and the message shows the file name alone.
+enum SavedLocation {
+    static func folderName(of url: URL) -> String? {
+        let parent = url.deletingLastPathComponent().lastPathComponent
+        switch parent {
+        case "", "/", "File Provider Storage", "Mobile Documents", "Documents", "tmp":
+            return nil
+        case "com~apple~CloudDocs":
+            return "iCloud Drive"
+        default:
+            return looksLikeAnId(parent) ? nil : parent
+        }
+    }
+
+    /// A UUID or a long run of letters and digits with no spaces: a provider's
+    /// internal id rather than a folder someone named.
+    private static func looksLikeAnId(_ name: String) -> Bool {
+        if UUID(uuidString: name) != nil { return true }
+        let idChars = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
+        return name.count >= 24 && name.unicodeScalars.allSatisfy(idChars.contains)
     }
 }

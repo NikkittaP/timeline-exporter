@@ -10,8 +10,8 @@ BAŞLAMADAN ÖNCE
 
 3 ADIMDA DOSYANIZ
 1. Google Haritalar'da profil fotoğrafınıza dokunun → Ayarlar → Konum ve Gizlilik → Timeline verilerini dışa aktar.
-2. Dosyalar'a Kaydet'e dokunun ve dosyayı iPhone'umda'ya veya iCloud Drive'a kaydedin.
-3. Ana ekranda Zaman çizelgesi dosyası seç'e dokunun ve dosyayı bulun. Genellikle adı Timeline.json olur.
+2. Paylaşım sayfasında Timeline Exporter'a dokunun. Dosya hemen açılır.
+3. Listede yok mu? Dosyalar'a Kaydet'e, ardından ana ekranda Zaman çizelgesi dosyası seç'e dokunun.
 
 Emin değil misiniz? “Örnek verilerle dene” düğmesine dokunun. Uydurma yolculuklar: kendinizinkini dışa aktarmadan önce uygulamanın ne yaptığını görün.
 

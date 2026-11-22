@@ -320,7 +320,8 @@ private struct WorkspaceHeader: View {
 // MARK: Export bar
 
 /// Always under the content: what an export would write now, and the button
-/// that opens the Export sheet.
+/// that opens the Export sheet. With trips listed and none ticked there is
+/// nothing to write, so the button waits and the line says why.
 private struct ExportBar: View {
     @Environment(TimelineStore.self) private var store
     let condensed: Bool
@@ -334,10 +335,17 @@ private struct ExportBar: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                Text(store.exportWritesText)
-                    .font(.subheadline.weight(.medium))
-                    .monospacedDigit()
-                    .lineLimit(2)
+                if store.noTripsMarked {
+                    Text(L.s("trips_checked_zero"))
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.orange)
+                        .lineLimit(2)
+                } else {
+                    Text(store.exportWritesText)
+                        .font(.subheadline.weight(.medium))
+                        .monospacedDigit()
+                        .lineLimit(2)
+                }
             }
             .accessibilityElement(children: .combine)
             .accessibilityIdentifier("exportSummary")
@@ -347,6 +355,7 @@ private struct ExportBar: View {
                     .font(.body.weight(.semibold))
             }
             .buttonStyle(.borderedProminent)
+            .disabled(store.noTripsMarked)
             .accessibilityIdentifier("exportOpen")
         }
         .padding(.horizontal, 16)

@@ -10,8 +10,8 @@ BEFORE YOU START
 
 GET YOUR FILE IN 3 STEPS
 1. In Google Maps tap your profile picture → Settings → Location & Privacy → Export Timeline data.
-2. Tap Save to Files and save the file to On My iPhone or iCloud Drive.
-3. Tap Choose Timeline file on the main screen and find the file. It is usually called Timeline.json.
+2. In the share sheet tap Timeline Exporter. The file opens right away.
+3. Not in the list? Tap Save to Files, then Choose Timeline file on the main screen.
 
 Not sure yet? Tap “Try it with sample data”. Made-up trips: see what the app does before exporting your own.
 

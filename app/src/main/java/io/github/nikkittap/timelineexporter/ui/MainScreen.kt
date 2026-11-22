@@ -1423,6 +1423,13 @@ private fun FilterContent(
             selectedIndex = presets.indexOfFirst { it.first == currentRange },
             onSelect = { index -> presets[index].first?.let(onApply) ?: onClear() },
         )
+        // Said under the chips too, so an old file's "7 days" is not read as
+        // the last week before today.
+        Text(
+            text = stringResource(R.string.date_preset_note, formatLocalDate(dataLast)),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -2213,6 +2220,13 @@ private fun ExportStep(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
             )
+            s.folder?.let { folder ->
+                Text(
+                    text = stringResource(R.string.export_saved_folder, folder),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             PostExportPrompt(ask = postExportAsk, onFeedbackClick = onFeedbackClick)
         }
         is ExportState.Shared -> {

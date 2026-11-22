@@ -48,7 +48,7 @@
         <item quantity="one">%1$s plaats</item>
         <item quantity="other">%1$s plaatsen</item>
     </plurals>
-    <string name="filter_trip_count">%1$s ritten</string>
+    <string name="filter_trip_count">%1$s stukken</string>
     <string name="filter_movement_total">Totaal</string>
     <string name="filter_moving_only">Alleen onderweg</string>
     <string name="filter_moving_only_hint">Punten weglaten die tijdens een stop zijn opgeslagen</string>
@@ -114,7 +114,7 @@
 
     <string name="help_notes_title">Opmerkingen</string>
     <string name="help_note_file_location">• Het geëxporteerde bestand heet Timeline.json. Het komt terecht waar je tijdens het exporteren koos — sommige Android-versies beperken de toegang tot bepaalde mappen (bijv. Downloads), dus als de app het niet kan lezen, probeer het te verplaatsen.</string>
-    <string name="help_note_eu_csv">• EU-gebruikers krijgen vanwege privacywetgeving mogelijk een CSV in plaats van JSON. Deze versie van de app verwerkt alleen JSON.</string>
+    <string name="help_note_missing_days">• Ontbreken er dagen? Het bestand bevat alleen wat deze telefoon heeft bewaard terwijl de tijdlijn aanstond. Controleer in Google Maps het automatisch verwijderen van de tijdlijn (Je tijdlijn → ⋯ → Instellingen voor locatie en privacy). Het wolkje in Je tijdlijn is de back-up, een aparte instelling.</string>
     <string name="help_note_slow_first">• De eerste export kan een à twee minuten duren als je jarenlange locatiegeschiedenis hebt.</string>
 
     <string name="help_dismiss">Begrepen</string>
@@ -175,7 +175,6 @@
     <string name="feedback_dismiss">Sluiten</string>
     <string name="feedback_toast_no_browser">Geen app op dit apparaat kan de link openen.</string>
     <string name="feedback_toast_no_email">Er is geen e-mailapp op dit apparaat.</string>
-    <string name="help_note_csv_local_time">• CSV-bestanden bevatten zowel UTC-tijd als lokale tijd met de UTC-offset, als het Timeline-bestand de tijdzone opslaat.</string>
     <string name="feedback_prompt_body">De app groeit op verzoeken van gebruikers. Er zit geen analytics in — laat weten wat ontbreekt.</string>
     <string name="feedback_prompt_action">Laat weten wat erbij moet →</string>
 
@@ -227,6 +226,7 @@
     <string name="place_dialog_remove">Naam verwijderen</string>
     <string name="place_toast_no_maps">Geen app op dit apparaat kan een kaartlink openen.</string>
     <string name="export_success_places">%1$s plaatsen opgeslagen in %2$s</string>
+    <string name="export_saved_folder">Map: %1$s</string>
     <string name="export_shared_places">%1$s plaatsen voorbereid als %2$s</string>
     <string name="export_error_no_places">Geen plaatsen in het huidige datumbereik.</string>
 
@@ -316,6 +316,7 @@
     <string name="metric_distance">Afstand</string>
     <string name="filter_movement_title">Vervoerswijze</string>
     <string name="date_preset_all_short">Alles</string>
+    <string name="date_preset_note">Teruggeteld vanaf de laatste dag in het bestand, %1$s.</string>
     <string name="journey_distance">Overeenkomstige afstand: %1$s × de omtrek van de aarde.</string>
     <string name="journey_traveler">Niet iedereen die rondreist is verdwaald. Sommigen nemen gewoon hun tijd.</string>
     <string name="journey_postcard">Elke reis vertelt een verhaal.</string>

@@ -47,7 +47,7 @@
     <plurals name="places_count">
         <item quantity="other">%1$s 个地点</item>
     </plurals>
-    <string name="filter_trip_count">%1$s 次行程</string>
+    <string name="filter_trip_count">%1$s 段</string>
     <string name="filter_movement_total">合计</string>
     <string name="filter_moving_only">仅移动中</string>
     <string name="filter_moving_only_hint">不包含停留期间记录的点</string>
@@ -113,7 +113,7 @@
 
     <string name="help_notes_title">备注</string>
     <string name="help_note_file_location">• 导出的文件名为 Timeline.json。它会保存在你导出时选择的位置——某些 Android 版本会限制对特定文件夹（如“下载”）的访问，因此如果应用无法读取，请尝试移动该文件。</string>
-    <string name="help_note_eu_csv">• 出于隐私法规的原因，欧盟用户可能会收到 CSV 而非 JSON。此版本的应用仅支持 JSON。</string>
+    <string name="help_note_missing_days">• 缺了一些日子？文件里只有时间轴开启期间这台手机保存的内容。请在 Google 地图中检查时间轴的自动删除（你的时间轴 → ⋯ → 位置信息和隐私设置）。你的时间轴中的云朵图标是备份，是另一项设置。</string>
     <string name="help_note_slow_first">• 如果你有数年的位置信息记录，首次导出可能需要一两分钟。</string>
 
     <string name="help_dismiss">知道了</string>
@@ -174,7 +174,6 @@
     <string name="feedback_dismiss">关闭</string>
     <string name="feedback_toast_no_browser">此设备上没有可以打开该链接的应用。</string>
     <string name="feedback_toast_no_email">此设备上没有邮件应用。</string>
-    <string name="help_note_csv_local_time">• 如果 Timeline 文件记录了时区，CSV 会同时包含 UTC 时间、当地时间和 UTC 偏移。</string>
     <string name="feedback_prompt_body">这个应用靠用户的需求成长。它没有任何分析统计，请告诉我还缺什么。</string>
     <string name="feedback_prompt_action">告诉我该加什么 →</string>
 
@@ -225,6 +224,7 @@
     <string name="place_dialog_remove">移除名称</string>
     <string name="place_toast_no_maps">此设备上没有应用可以打开地图链接。</string>
     <string name="export_success_places">已将 %1$s 个地点保存到 %2$s</string>
+    <string name="export_saved_folder">文件夹：%1$s</string>
     <string name="export_shared_places">已将 %1$s 个地点准备为 %2$s</string>
     <string name="export_error_no_places">当前日期范围内没有地点。</string>
 
@@ -312,6 +312,7 @@
     <string name="metric_distance">距离</string>
     <string name="filter_movement_title">出行方式</string>
     <string name="date_preset_all_short">全部</string>
+    <string name="date_preset_note">从文件的最后一天（%1$s）往前计算。</string>
     <string name="journey_distance">等效距离：地球周长 × %1$s</string>
     <string name="journey_traveler">漫游的人不一定迷了路，有些人只是慢慢前行。</string>
     <string name="journey_postcard">每段旅程都有一个故事。</string>

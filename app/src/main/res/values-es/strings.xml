@@ -49,7 +49,7 @@
         <item quantity="many">%1$s lugares</item>
         <item quantity="other">%1$s lugares</item>
     </plurals>
-    <string name="filter_trip_count">%1$s trayectos</string>
+    <string name="filter_trip_count">%1$s tramos</string>
     <string name="filter_movement_total">Total</string>
     <string name="filter_moving_only">Solo en movimiento</string>
     <string name="filter_moving_only_hint">Omitir los puntos registrados durante una parada</string>
@@ -115,7 +115,7 @@
 
     <string name="help_notes_title">Notas</string>
     <string name="help_note_file_location">• El archivo exportado se llama Timeline.json. Se guarda donde lo hayas elegido al exportar; algunas versiones de Android restringen el acceso a ciertas carpetas (p. ej. Descargas), así que si la app no puede leerlo, prueba a moverlo.</string>
-    <string name="help_note_eu_csv">• Por motivos de privacidad, los usuarios de la UE pueden recibir un CSV en lugar de JSON. Esta versión de la app solo admite JSON.</string>
+    <string name="help_note_missing_days">• ¿Faltan días? El archivo contiene solo lo que este teléfono guardó mientras la cronología estaba activada. Revisa la eliminación automática de la cronología en Google Maps (Tu cronología → ⋯ → Configuración de ubicación y privacidad). El icono de la nube en Tu cronología es la copia de seguridad, un ajuste aparte.</string>
     <string name="help_note_slow_first">• La primera exportación puede tardar uno o dos minutos si tienes años de historial de ubicaciones.</string>
 
     <string name="help_dismiss">Entendido</string>
@@ -176,7 +176,6 @@
     <string name="feedback_dismiss">Cerrar</string>
     <string name="feedback_toast_no_browser">Ninguna app de este dispositivo puede abrir el enlace.</string>
     <string name="feedback_toast_no_email">No hay ninguna app de correo en este dispositivo.</string>
-    <string name="help_note_csv_local_time">• Los CSV incluyen la hora UTC y la hora local con su desfase, si el archivo de Timeline guarda la zona horaria.</string>
     <string name="feedback_prompt_body">La app crece con las peticiones de quienes la usan. No tiene analítica: dime qué falta.</string>
     <string name="feedback_prompt_action">Dime qué añadir →</string>
 
@@ -229,6 +228,7 @@
     <string name="place_dialog_remove">Quitar el nombre</string>
     <string name="place_toast_no_maps">Ninguna app de este dispositivo puede abrir un enlace de mapa.</string>
     <string name="export_success_places">Se guardaron %1$s lugares en %2$s</string>
+    <string name="export_saved_folder">Carpeta: %1$s</string>
     <string name="export_shared_places">Se prepararon %1$s lugares como %2$s</string>
     <string name="export_error_no_places">No hay lugares en el intervalo de fechas actual.</string>
 
@@ -318,6 +318,7 @@
     <string name="metric_distance">Distancia</string>
     <string name="filter_movement_title">Desplazamientos</string>
     <string name="date_preset_all_short">Todo</string>
+    <string name="date_preset_note">Contado hacia atrás desde el último día del archivo, %1$s.</string>
     <string name="journey_distance">Distancia equivalente: %1$s × la circunferencia de la Tierra.</string>
     <string name="journey_traveler">No todos los que viajan están perdidos. Algunos simplemente se toman su tiempo.</string>
     <string name="journey_postcard">Cada viaje cuenta una historia.</string>

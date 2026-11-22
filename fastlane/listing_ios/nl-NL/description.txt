@@ -10,8 +10,8 @@ VOORDAT JE BEGINT
 
 JE BESTAND IN 3 STAPPEN
 1. Tik in Google Maps op je profielfoto → Instellingen → Locatie en privacy → Timeline-gegevens exporteren.
-2. Tik op Bewaar in Bestanden en bewaar het bestand Op mijn iPhone of in iCloud Drive.
-3. Tik op het hoofdscherm op Kies tijdlijnbestand en zoek het bestand. Meestal heet het Timeline.json.
+2. Tik in het deelmenu op Timeline Exporter. Het bestand opent meteen.
+3. Staat hij er niet bij? Tik op Bewaar in Bestanden en daarna op het hoofdscherm op Kies tijdlijnbestand.
 
 Twijfel je nog? Tik op ‘Probeer met voorbeeldgegevens’. Verzonnen reizen: zie wat de app doet voordat je die van jezelf exporteert.
 

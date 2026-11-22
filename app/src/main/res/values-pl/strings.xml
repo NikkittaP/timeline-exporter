@@ -50,7 +50,7 @@
         <item quantity="many">%1$s miejsc</item>
         <item quantity="other">%1$s miejsca</item>
     </plurals>
-    <string name="filter_trip_count">Podróże: %1$s</string>
+    <string name="filter_trip_count">Odcinki: %1$s</string>
     <string name="filter_movement_total">Razem</string>
     <string name="filter_moving_only">Tylko w ruchu</string>
     <string name="filter_moving_only_hint">Pomiń punkty zapisane podczas postoju</string>
@@ -116,7 +116,7 @@
 
     <string name="help_notes_title">Uwagi</string>
     <string name="help_note_file_location">• Wyeksportowany plik nazywa się Timeline.json. Trafia tam, gdzie wskazałeś podczas eksportu — niektóre wersje Androida ograniczają dostęp do pewnych folderów (np. Pobrane), więc jeśli aplikacja nie może go odczytać, spróbuj go przenieść.</string>
-    <string name="help_note_eu_csv">• Ze względu na przepisy o prywatności użytkownicy z UE mogą otrzymać CSV zamiast JSON. Ta wersja aplikacji obsługuje tylko JSON.</string>
+    <string name="help_note_missing_days">• Brakuje dni? Plik zawiera tylko to, co ten telefon zapisał, gdy oś czasu była włączona. Sprawdź automatyczne usuwanie osi czasu w Mapach Google (Twoja oś czasu → ⋯ → Ustawienia lokalizacji i prywatności). Ikona chmury w Twojej osi czasu to kopia zapasowa, osobne ustawienie.</string>
     <string name="help_note_slow_first">• Pierwszy eksport może potrwać minutę lub dwie, jeśli masz lata historii lokalizacji.</string>
 
     <string name="help_dismiss">OK</string>
@@ -177,7 +177,6 @@
     <string name="feedback_dismiss">Zamknij</string>
     <string name="feedback_toast_no_browser">Żadna aplikacja na tym urządzeniu nie otworzy linku.</string>
     <string name="feedback_toast_no_email">Na tym urządzeniu nie ma aplikacji pocztowej.</string>
-    <string name="help_note_csv_local_time">• Pliki CSV zawierają czas UTC oraz czas lokalny z przesunięciem, jeśli plik Timeline zapisuje strefę czasową.</string>
     <string name="feedback_prompt_body">Aplikacja rozwija się dzięki prośbom użytkowników. Nie ma analityki — napisz, czego brakuje.</string>
     <string name="feedback_prompt_action">Napisz, co dodać →</string>
 
@@ -231,6 +230,7 @@
     <string name="place_dialog_remove">Usuń nazwę</string>
     <string name="place_toast_no_maps">Żadna aplikacja na tym urządzeniu nie otworzy linku do mapy.</string>
     <string name="export_success_places">Zapisano miejsca (%1$s) do %2$s</string>
+    <string name="export_saved_folder">Folder: %1$s</string>
     <string name="export_shared_places">Przygotowano miejsca (%1$s) jako %2$s</string>
     <string name="export_error_no_places">Brak miejsc w bieżącym zakresie dat.</string>
 
@@ -324,6 +324,7 @@
     <string name="metric_distance">Dystans</string>
     <string name="filter_movement_title">Przemieszczanie</string>
     <string name="date_preset_all_short">Wszystko</string>
+    <string name="date_preset_note">Liczone wstecz od ostatniego dnia w pliku, %1$s.</string>
     <string name="journey_distance">Równoważna odległość: %1$s × obwód Ziemi.</string>
     <string name="journey_traveler">Nie wszyscy wędrowcy są zagubieni. Niektórzy po prostu się nie spieszą.</string>
     <string name="journey_postcard">Każda podróż opowiada historię.</string>

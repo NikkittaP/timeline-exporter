@@ -1809,6 +1809,119 @@
         }
       }
     },
+    "date_preset_note" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "محسوب رجوعًا من آخر يوم في الملف، %1$@."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gezählt ab dem letzten Tag in der Datei, %1$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Counted back from the last day in the file, %1$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contado hacia atrás desde el último día del archivo, %1$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compté à rebours depuis le dernier jour du fichier, %1$@."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ाइल के आख़िरी दिन (%1$@) से पीछे की ओर गिना गया।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contati a ritroso dall’ultimo giorno del file, %1$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルの最終日（%1$@）からさかのぼって数えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일의 마지막 날(%1$@)부터 거꾸로 셉니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teruggeteld vanaf de laatste dag in het bestand, %1$@."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liczone wstecz od ostatniego dnia w pliku, %1$@."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contado a partir do último dia do arquivo, %1$@."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отсчёт от последнего дня в файле, %1$@."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Räknat bakåt från den sista dagen i filen, %1$@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dosyadaki son günden geriye sayılır, %1$@."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відлік від останнього дня у файлі, %1$@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "从文件的最后一天（%1$@）往前计算。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "從檔案的最後一天（%1$@）往前計算。"
+          }
+        }
+      }
+    },
     "date_range_value" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -2935,6 +3048,119 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "另存為…"
+          }
+        }
+      }
+    },
+    "export_saved_folder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المجلد: %1$@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordner: %1$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder: %1$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carpeta: %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dossier : %1$@"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "फ़ोल्डर: %1$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartella: %1$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "フォルダ: %1$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "폴더: %1$@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map: %1$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder: %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pasta: %1$@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Папка: %1$@"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapp: %1$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klasör: %1$@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Папка: %1$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件夹：%1$@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "資料夾：%1$@"
           }
         }
       }
@@ -8934,109 +9160,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ رحلات"
+            "value" : "المقاطع: %1$@"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ Fahrten"
+            "value" : "%1$@ Abschnitte"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ trips"
+            "value" : "%1$@ segments"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ trayectos"
+            "value" : "%1$@ tramos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ trajets"
+            "value" : "%1$@ segments"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ यात्राएँ"
+            "value" : "%1$@ हिस्से"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ viaggi"
+            "value" : "%1$@ tratti"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 件の移動"
+            "value" : "%1$@ 区間"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이동 %1$@회"
+            "value" : "구간 %1$@개"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ritten"
+            "value" : "%1$@ stukken"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podróże: %1$@"
+            "value" : "Odcinki: %1$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ trajetos"
+            "value" : "%1$@ trechos"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ поездок"
+            "value" : "Отрезков: %1$@"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ resor"
+            "value" : "%1$@ delar"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ yolculuk"
+            "value" : "%1$@ bölüm"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ поїздок"
+            "value" : "Відрізків: %1$@"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 次行程"
+            "value" : "%1$@ 段"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 趟行程"
+            "value" : "%1$@ 段"
           }
         }
       }
@@ -10064,109 +10290,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "تحتفظ خرائط Google بمخططك الزمني على الهاتف الذي سجّله، لا في حسابك على Google عبر الإنترنت (النسخة الاحتياطية المشفّرة اختيارية)، لذا لا يمكن لتطبيقات أخرى قراءته مباشرة. احفظه مرة واحدة من خرائط Google كملف، ثم افتح ذلك الملف هنا."
+            "value" : "منذ أواخر عام 2024، يحتفظ Google بالمخطط الزمني على جهازك (مع نسخة احتياطية مشفّرة اختيارية) بدلًا من حسابك على Google عبر الإنترنت. لا يوجد خيار Google Takeout ولا يمكن لأي تطبيق آخر قراءته مباشرةً. تصدّره مرة واحدة من إعدادات النظام، ثم تفتح الملف هنا."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps speichert deine Zeitachse auf dem Telefon, das sie aufgezeichnet hat, nicht online in deinem Google-Konto (die verschlüsselte Sicherung ist optional) — andere Apps können sie nicht direkt lesen. Sichere sie einmal aus Google Maps als Datei und öffne diese Datei hier."
+            "value" : "Seit Ende 2024 speichert Google die Timeline auf deinem Gerät (mit optionaler verschlüsselter Sicherung) statt online in deinem Google-Konto. Es gibt keine Google-Takeout-Option, und keine andere App kann sie direkt lesen. Du exportierst sie einmal aus den Systemeinstellungen und öffnest die Datei dann hier."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps keeps your Timeline on the phone that recorded it, not in your Google account online (the encrypted backup is optional), so other apps cannot read it directly. Save it once from Google Maps as a file, then open that file here."
+            "value" : "Since late 2024 Google keeps Timeline on your device (with an optional encrypted backup) rather than in your Google account online. There's no Google Takeout option and no other app can read it directly. You export it once from system Settings, then bring the file here."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps guarda tu cronología en el teléfono que la registró, no en tu cuenta de Google en internet (la copia de seguridad cifrada es opcional), así que otras apps no pueden leerla directamente. Guárdala una vez desde Google Maps como archivo y abre ese archivo aquí."
+            "value" : "Desde finales de 2024, Google guarda la Timeline en tu dispositivo (con una copia de seguridad cifrada opcional) y no en tu cuenta de Google en internet. No hay opción de Google Takeout y ninguna otra app puede leerla directamente. La exportas una vez desde los Ajustes del sistema y luego abres el archivo aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps conserve votre Timeline sur le téléphone qui l'a enregistrée, pas en ligne dans votre compte Google (la sauvegarde chiffrée est facultative) : les autres apps ne peuvent pas la lire directement. Enregistrez-la une fois depuis Google Maps dans un fichier, puis ouvrez ce fichier ici."
+            "value" : "Depuis fin 2024, Google conserve la Timeline sur votre appareil (avec une sauvegarde chiffrée facultative) plutôt qu'en ligne dans votre compte Google. Il n'y a pas d'option Google Takeout et aucune autre application ne peut la lire directement. Vous l'exportez une fois depuis les Paramètres système, puis vous ouvrez le fichier ici."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps आपकी Timeline उसी फ़ोन पर रखता है जिसने उसे रिकॉर्ड किया, ऑनलाइन Google खाते में नहीं (एन्क्रिप्टेड बैकअप वैकल्पिक है), इसलिए दूसरे ऐप उसे सीधे नहीं पढ़ सकते। उसे एक बार Google Maps से फ़ाइल के रूप में सहेजें, फिर वह फ़ाइल यहाँ खोलें।"
+            "value" : "2024 के अंत से Google, Timeline को ऑनलाइन Google खाते में नहीं, बल्कि आपके डिवाइस पर रखता है (वैकल्पिक एन्क्रिप्टेड बैकअप के साथ)। न तो Google Takeout विकल्प है और न ही कोई दूसरा ऐप इसे सीधे पढ़ सकता है। आप इसे एक बार सिस्टम सेटिंग से एक्सपोर्ट करते हैं, फिर फ़ाइल यहाँ खोलते हैं।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps conserva la Timeline sul telefono che l'ha registrata, non online nel tuo account Google (il backup crittografato è facoltativo), quindi le altre app non possono leggerla direttamente. Salvala una volta da Google Maps come file e apri quel file qui."
+            "value" : "Da fine 2024 Google conserva la Timeline sul tuo dispositivo (con un backup crittografato facoltativo) anziché online nel tuo account Google. Non c'è l'opzione Google Takeout e nessun'altra app può leggerla direttamente. La esporti una volta dalle Impostazioni di sistema, poi apri il file qui."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google マップはタイムラインをオンラインの Google アカウントではなく、記録したスマートフォンに保存します（暗号化バックアップは任意）。そのため他のアプリは直接読めません。Google マップから一度ファイルとして保存し、そのファイルをここで開いてください。"
+            "value" : "2024 年後半以降、Google はタイムラインをオンラインの Google アカウントではなく、お使いの端末に保存します（暗号化バックアップは任意）。Google Takeout のオプションはなく、他のアプリが直接読み取ることもできません。システムの設定から一度エクスポートし、そのファイルをここで開きます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google 지도는 타임라인을 온라인 Google 계정이 아니라 기록한 휴대폰에 보관합니다(암호화된 백업은 선택 사항). 그래서 다른 앱은 직접 읽을 수 없습니다. Google 지도에서 한 번 파일로 저장한 뒤 그 파일을 여기에서 여세요."
+            "value" : "2024년 말부터 Google은 타임라인을 온라인 Google 계정이 아닌 기기에 보관합니다(암호화된 백업은 선택 사항). Google Takeout 옵션이 없고 다른 앱이 직접 읽을 수도 없습니다. 시스템 설정에서 한 번 내보낸 뒤 그 파일을 여기서 엽니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps bewaart je tijdlijn op de telefoon die hem heeft vastgelegd, niet online in je Google-account (de versleutelde back-up is optioneel), dus andere apps kunnen hem niet direct lezen. Bewaar hem één keer uit Google Maps als bestand en open dat bestand hier."
+            "value" : "Sinds eind 2024 bewaart Google de Timeline op je apparaat (met een optionele versleutelde back-up) in plaats van online in je Google-account. Er is geen Google Takeout-optie en geen andere app kan hem rechtstreeks lezen. Je exporteert hem één keer via de systeeminstellingen en opent het bestand daarna hier."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mapy Google przechowują oś czasu na telefonie, który ją zapisał, a nie online na koncie Google (zaszyfrowana kopia zapasowa jest opcjonalna), więc inne aplikacje nie odczytają jej bezpośrednio. Zapisz ją raz z Map Google jako plik i otwórz ten plik tutaj."
+            "value" : "Od końca 2024 r. Google przechowuje Timeline na Twoim urządzeniu (z opcjonalną zaszyfrowaną kopią zapasową), a nie online na koncie Google. Nie ma opcji Google Takeout i żadna inna aplikacja nie odczyta jej bezpośrednio. Eksportujesz dane raz z ustawień systemowych, a potem otwierasz plik tutaj."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Google Maps guarda a Linha do tempo no celular que a registrou, não na sua Conta do Google on-line (o backup criptografado é opcional), então outros apps não conseguem lê-la diretamente. Salve-a uma vez pelo Google Maps como arquivo e abra esse arquivo aqui."
+            "value" : "Desde o fim de 2024, o Google guarda o Timeline no seu dispositivo (com um backup criptografado opcional), e não na sua Conta do Google on-line. Não há opção no Google Takeout e nenhum outro app consegue lê-lo diretamente. Você o exporta uma vez nas Configurações do sistema e depois abre o arquivo aqui."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Карты хранят Хронологию на телефоне, который её записал, а не в аккаунте Google в интернете (зашифрованная резервная копия необязательна), поэтому другие приложения не могут прочитать её напрямую. Один раз сохраните её из Google Карт в файл и откройте этот файл здесь."
+            "value" : "С конца 2024 года Google хранит Timeline на вашем устройстве (с необязательной зашифрованной резервной копией), а не в аккаунте Google в интернете. Выгрузки через Google Takeout нет, и другие приложения не могут прочитать её напрямую. Вы один раз экспортируете данные из системных настроек, а затем открываете файл здесь."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Maps sparar din tidslinje på telefonen som registrerade den, inte online i ditt Google-konto (den krypterade säkerhetskopian är valfri), så andra appar kan inte läsa den direkt. Spara den en gång från Google Maps som en fil och öppna filen här."
+            "value" : "Sedan slutet av 2024 sparar Google Timeline på din enhet (med en valfri krypterad säkerhetskopia) i stället för online i ditt Google-konto. Det finns inget Google Takeout-alternativ och ingen annan app kan läsa den direkt. Du exporterar den en gång från systeminställningarna och öppnar sedan filen här."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Haritalar Zaman çizelgenizi çevrim içi Google hesabınızda değil, onu kaydeden telefonda tutar (şifreli yedek isteğe bağlıdır); bu yüzden diğer uygulamalar onu doğrudan okuyamaz. Onu bir kez Google Haritalar'dan dosya olarak kaydedin ve bu dosyayı burada açın."
+            "value" : "2024 sonundan beri Google, Timeline'ı çevrim içi Google hesabınızda değil, cihazınızda saklıyor (isteğe bağlı şifreli yedekle). Google Takeout seçeneği yok ve başka hiçbir uygulama onu doğrudan okuyamaz. Verileri sistem Ayarları'ndan bir kez dışa aktarır, ardından dosyayı burada açarsınız."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google Карти зберігають Хронологію на телефоні, який її записав, а не в акаунті Google в інтернеті (зашифрована резервна копія необов'язкова), тому інші застосунки не можуть прочитати її напряму. Один раз збережіть її з Google Карт у файл і відкрийте цей файл тут."
+            "value" : "З кінця 2024 року Google зберігає Timeline на вашому пристрої (з необов'язковою зашифрованою резервною копією), а не в акаунті Google в інтернеті. Вивантаження через Google Takeout немає, і інші застосунки не можуть прочитати її напряму. Ви один раз експортуєте дані із системних налаштувань, а потім відкриваєте файл тут."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google 地图把时间轴保存在记录它的手机上，而不是在线保存在 Google 账号中（加密备份是可选的），所以其他应用无法直接读取。只需从 Google 地图把它保存成文件一次，然后在这里打开该文件。"
+            "value" : "自 2024 年底起，Google 将时间轴保存在你的设备上（可选加密备份），而不是在线保存在 Google 账号中。没有 Google Takeout 选项，其他应用也无法直接读取。你从系统设置中导出一次，然后在这里打开该文件。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Google 地圖把時間軸儲存在記錄它的手機上，而不是線上儲存在 Google 帳戶中（加密備份是選用的），所以其他應用程式無法直接讀取。只需從 Google 地圖把它儲存成檔案一次，然後在這裡開啟該檔案。"
+            "value" : "自 2024 年底起，Google 將時間軸儲存在你的裝置上（可選加密備份），而不是線上儲存在 Google 帳戶中。沒有 Google Takeout 選項，其他應用程式也無法直接讀取。你從系統設定匯出一次，然後在這裡開啟該檔案。"
           }
         }
       }
@@ -11979,341 +12205,228 @@
         }
       }
     },
-    "help_note_csv_local_time" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• تحتوي ملفات CSV على التوقيت العالمي والتوقيت المحلي مع فرق التوقيت، إذا كان ملف Timeline يسجّل المنطقة الزمنية."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• CSV-Dateien enthalten UTC-Zeit und Ortszeit mit UTC-Offset — sofern die Timeline-Datei die Zeitzone speichert."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• CSV files carry both UTC time and local time (with the UTC offset), when the Timeline file records the timezone."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Los CSV incluyen la hora UTC y la hora local con su desfase, si el archivo de Timeline guarda la zona horaria."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Les CSV contiennent l'heure UTC et l'heure locale avec son décalage, si le fichier Timeline enregistre le fuseau horaire."
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• अगर Timeline फ़ाइल में टाइम ज़ोन दर्ज है, तो CSV में UTC समय के साथ स्थानीय समय और UTC ऑफ़सेट भी रहता है।"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• I file CSV contengono l'ora UTC e l'ora locale con lo scostamento, se il file Timeline registra il fuso orario."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Timelineファイルにタイムゾーンが記録されていれば、CSVにはUTC時刻に加えて現地時刻とUTCオフセットが入ります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Timeline 파일에 시간대가 기록되어 있으면 CSV에 UTC 시각과 함께 현지 시각 및 UTC 오프셋이 들어갑니다."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• CSV-bestanden bevatten zowel UTC-tijd als lokale tijd met de UTC-offset, als het Timeline-bestand de tijdzone opslaat."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Pliki CSV zawierają czas UTC oraz czas lokalny z przesunięciem, jeśli plik Timeline zapisuje strefę czasową."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Os CSVs trazem hora UTC e hora local com o deslocamento, quando o arquivo do Timeline registra o fuso horário."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• В CSV есть и время UTC, и местное время со смещением — если в файле Timeline записан часовой пояс."
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• CSV-filer innehåller både UTC-tid och lokal tid med UTC-offset, om Timeline-filen sparar tidszonen."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Timeline dosyası saat dilimini kaydettiğinde CSV dosyaları hem UTC saatini hem de yerel saati (UTC farkıyla) içerir."
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• У CSV є і час UTC, і місцевий час зі зміщенням — якщо у файлі Timeline записано часовий пояс."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• 如果 Timeline 文件记录了时区，CSV 会同时包含 UTC 时间、当地时间和 UTC 偏移。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• 若 Timeline 檔案有記錄時區，CSV 會同時包含 UTC 時間、當地時間與 UTC 偏移。"
-          }
-        }
-      }
-    },
-    "help_note_eu_csv" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• قد يتلقى مستخدمو الاتحاد الأوروبي ملف CSV بدلاً من JSON لأسباب تتعلق بقوانين الخصوصية. يتعامل هذا الإصدار من التطبيق مع JSON فقط."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• EU-Nutzer erhalten aus Datenschutzgründen evtl. eine CSV statt JSON. Diese App-Version verarbeitet nur JSON."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• EU users may receive a CSV instead of JSON for privacy-law reasons. This version of the app only handles JSON."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Por motivos de privacidad, los usuarios de la UE pueden recibir un CSV en lugar de JSON. Esta versión de la app solo admite JSON."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Pour des raisons de législation sur la vie privée, les utilisateurs de l'UE peuvent recevoir un CSV au lieu d'un JSON. Cette version de l'application ne gère que le JSON."
-          }
-        },
-        "hi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• गोपनीयता क़ानूनों के कारण EU उपयोगकर्ताओं को JSON के बजाय CSV मिल सकता है। ऐप का यह संस्करण केवल JSON संभालता है।"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Per motivi di privacy gli utenti dell'UE potrebbero ricevere un CSV invece del JSON. Questa versione dell'app gestisce solo JSON."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• プライバシー法の関係で、EU のユーザーには JSON ではなく CSV が提供される場合があります。このバージョンのアプリは JSON のみに対応しています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• 개인정보 보호법으로 인해 EU 사용자는 JSON 대신 CSV를 받을 수 있습니다. 이 버전의 앱은 JSON만 처리합니다."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• EU-gebruikers krijgen vanwege privacywetgeving mogelijk een CSV in plaats van JSON. Deze versie van de app verwerkt alleen JSON."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Ze względu na przepisy o prywatności użytkownicy z UE mogą otrzymać CSV zamiast JSON. Ta wersja aplikacji obsługuje tylko JSON."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Por motivos de leis de privacidade, usuários da UE podem receber um CSV em vez de JSON. Esta versão do app só processa JSON."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Пользователи из ЕС из-за законов о приватности могут получить CSV вместо JSON. Эта версия приложения работает только с JSON."
-          }
-        },
-        "sv" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• EU-användare kan av integritetsskäl få en CSV i stället för JSON. Den här versionen av appen hanterar bara JSON."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Gizlilik yasaları nedeniyle AB kullanıcıları JSON yerine CSV alabilir. Uygulamanın bu sürümü yalnızca JSON'u işler."
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• Через закони про приватність користувачі з ЄС можуть отримати CSV замість JSON. Ця версія застосунку працює лише з JSON."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• 出于隐私法规的原因，欧盟用户可能会收到 CSV 而非 JSON。此版本的应用仅支持 JSON。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "• 基於隱私法規，歐盟使用者可能會收到 CSV 而非 JSON。此版本的應用程式僅支援 JSON。"
-          }
-        }
-      }
-    },
     "help_note_file_location" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• يُسمّى الملف عادةً Timeline.json. التصديرات الأقدم من الـ iPhone تُسمّى location-history.json. كلاهما يُفتح هنا."
+            "value" : "• عادةً يكون اسم الملف Timeline.json؛ وفي بعض أجهزة iPhone يكون location-history.json. كلاهما يُفتح هنا."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Die Datei heißt meist Timeline.json. Ältere Exporte vom iPhone heißen location-history.json. Beide lassen sich hier öffnen."
+            "value" : "• Die Datei heißt meist Timeline.json; manche iPhones nennen sie location-history.json. Beide lassen sich hier öffnen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• The file is usually called Timeline.json. Older exports from iPhone are called location-history.json. Both open here."
+            "value" : "• The file is usually called Timeline.json; some iPhones name it location-history.json. Both open here."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• El archivo suele llamarse Timeline.json. Las exportaciones antiguas del iPhone se llaman location-history.json. Los dos se abren aquí."
+            "value" : "• El archivo suele llamarse Timeline.json; algunos iPhone lo llaman location-history.json. Ambos se abren aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Le fichier s'appelle généralement Timeline.json. Les anciens exports depuis l'iPhone s'appellent location-history.json. Les deux s'ouvrent ici."
+            "value" : "• Le fichier s’appelle généralement Timeline.json ; certains iPhone le nomment location-history.json. Les deux s’ouvrent ici."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• फ़ाइल का नाम आमतौर पर Timeline.json होता है। iPhone से पुराने एक्सपोर्ट का नाम location-history.json होता है। दोनों यहाँ खुलती हैं।"
+            "value" : "• फ़ाइल का नाम आमतौर पर Timeline.json होता है; कुछ iPhone पर location-history.json। दोनों यहाँ खुलती हैं।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Di solito il file si chiama Timeline.json. Le esportazioni meno recenti da iPhone si chiamano location-history.json. Si aprono entrambi qui."
+            "value" : "• Il file di solito si chiama Timeline.json; alcuni iPhone lo chiamano location-history.json. Si aprono entrambi qui."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• ファイル名は通常 Timeline.json です。iPhone からの以前のエクスポートは location-history.json です。どちらもここで開けます。"
+            "value" : "• ファイル名は通常 Timeline.json です。iPhone によっては location-history.json になります。どちらもここで開けます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 파일 이름은 보통 Timeline.json입니다. iPhone에서 예전에 내보낸 파일은 location-history.json입니다. 둘 다 여기서 열립니다."
+            "value" : "• 파일 이름은 보통 Timeline.json이며, 일부 iPhone에서는 location-history.json입니다. 둘 다 여기서 열립니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Het bestand heet meestal Timeline.json. Oudere exports van de iPhone heten location-history.json. Beide openen hier."
+            "value" : "• Het bestand heet meestal Timeline.json; sommige iPhones noemen het location-history.json. Beide openen hier."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Plik zwykle nazywa się Timeline.json. Starsze eksporty z iPhone'a nazywają się location-history.json. Oba otwierają się tutaj."
+            "value" : "• Plik zwykle nazywa się Timeline.json; niektóre iPhone’y nazywają go location-history.json. Oba otworzą się tutaj."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• O arquivo normalmente se chama Timeline.json. Exportações mais antigas do iPhone se chamam location-history.json. Os dois abrem aqui."
+            "value" : "• O arquivo geralmente se chama Timeline.json; alguns iPhones o chamam de location-history.json. Os dois abrem aqui."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Обычно файл называется Timeline.json. Более старые выгрузки с iPhone называются location-history.json. Здесь открываются оба."
+            "value" : "• Обычно файл называется Timeline.json; на некоторых iPhone — location-history.json. Здесь открываются оба."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Filen heter oftast Timeline.json. Äldre exporter från iPhone heter location-history.json. Båda kan öppnas här."
+            "value" : "• Filen heter oftast Timeline.json; vissa iPhone kallar den location-history.json. Båda öppnas här."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Dosyanın adı genellikle Timeline.json'dır. iPhone'dan yapılan eski dışa aktarmaların adı location-history.json'dır. İkisi de burada açılır."
+            "value" : "• Dosyanın adı genellikle Timeline.json'dır; bazı iPhone'larda location-history.json olur. İkisi de burada açılır."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• Зазвичай файл називається Timeline.json. Старіші експорти з iPhone називаються location-history.json. Тут відкриваються обидва."
+            "value" : "• Зазвичай файл називається Timeline.json; на деяких iPhone — location-history.json. Тут відкриваються обидва."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 文件名通常为 Timeline.json。iPhone 上较早的导出文件名为 location-history.json。两者都能在这里打开。"
+            "value" : "• 文件通常名为 Timeline.json；有些 iPhone 上名为 location-history.json。两者都能在这里打开。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "• 檔名通常為 Timeline.json。iPhone 上較早的匯出檔名為 location-history.json。兩者都能在這裡開啟。"
+            "value" : "• 檔案通常名為 Timeline.json；有些 iPhone 上名為 location-history.json。兩者都能在這裡開啟。"
+          }
+        }
+      }
+    },
+    "help_note_missing_days" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• أيام ناقصة؟ لا يحتوي الملف إلا على ما حفظه هذا الهاتف أثناء تفعيل المخطط الزمني. تحقّق من الحذف التلقائي للمخطط الزمني في خرائط Google (مخططك الزمني ← ⋯ ← إعدادات الموقع والخصوصية). أيقونة السحابة في مخططك الزمني هي النسخة الاحتياطية، وهي إعداد منفصل."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Fehlen Tage? Die Datei enthält nur, was dieses Telefon bei aktivierter Zeitachse gespeichert hat. Prüfe in Google Maps das automatische Löschen der Zeitachse (Deine Zeitachse → ⋯ → Einstellungen für Standort und Datenschutz). Das Wolkensymbol in „Deine Zeitachse“ ist die Sicherung, eine eigene Einstellung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Some days missing? The file holds only what this phone saved while Timeline was on. Check Auto-delete Timeline in Google Maps (Your Timeline → ⋯ → Location and privacy settings). The cloud icon in Your Timeline is the backup, a separate setting."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• ¿Faltan días? El archivo contiene solo lo que este teléfono guardó mientras la cronología estaba activada. Revisa la eliminación automática de la cronología en Google Maps (Tu cronología → ⋯ → Configuración de ubicación y privacidad). El icono de la nube en Tu cronología es la copia de seguridad, un ajuste aparte."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Des jours manquent ? Le fichier ne contient que ce que ce téléphone a enregistré pendant que Timeline était activé. Vérifiez la suppression automatique de Timeline dans Google Maps (Votre Timeline → ⋯ → Paramètres de localisation et de confidentialité). L’icône de nuage dans Votre Timeline est la sauvegarde, un réglage distinct."
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• कुछ दिन ग़ायब हैं? फ़ाइल में सिर्फ़ वही है जो Timeline चालू रहते इस फ़ोन ने सहेजा। Google Maps में Timeline का अपने-आप मिटना जाँचें (आपकी Timeline → ⋯ → स्थान और गोपनीयता सेटिंग)। आपकी Timeline में बादल वाला आइकन बैकअप है, एक अलग सेटिंग।"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Mancano dei giorni? Il file contiene solo ciò che questo telefono ha salvato mentre Timeline era attiva. Controlla l’eliminazione automatica di Timeline in Google Maps (La tua Timeline → ⋯ → Impostazioni su posizione e privacy). L’icona della nuvola in La tua Timeline è il backup, un’impostazione separata."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• 日が抜けている？ ファイルには、タイムラインがオンの間にこのスマートフォンが保存したものしか入っていません。Google マップでタイムラインの自動削除を確認してください（タイムライン → ⋯ → 位置情報とプライバシーの設定）。タイムラインの雲のアイコンはバックアップで、別の設定です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• 빠진 날이 있나요? 파일에는 타임라인이 켜져 있는 동안 이 휴대폰이 저장한 내용만 들어 있습니다. Google 지도에서 타임라인 자동 삭제를 확인하세요(내 타임라인 → ⋯ → 위치 및 개인정보 설정). 내 타임라인의 구름 아이콘은 백업이며 별도의 설정입니다."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Ontbreken er dagen? Het bestand bevat alleen wat deze telefoon heeft bewaard terwijl de tijdlijn aanstond. Controleer in Google Maps het automatisch verwijderen van de tijdlijn (Je tijdlijn → ⋯ → Instellingen voor locatie en privacy). Het wolkje in Je tijdlijn is de back-up, een aparte instelling."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Brakuje dni? Plik zawiera tylko to, co ten telefon zapisał, gdy oś czasu była włączona. Sprawdź automatyczne usuwanie osi czasu w Mapach Google (Twoja oś czasu → ⋯ → Ustawienia lokalizacji i prywatności). Ikona chmury w Twojej osi czasu to kopia zapasowa, osobne ustawienie."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Faltam dias? O arquivo tem só o que este telefone salvou enquanto a Linha do tempo estava ativada. Confira a exclusão automática da Linha do tempo no Google Maps (Sua linha do tempo → ⋯ → Configurações de localização e privacidade). O ícone de nuvem em Sua linha do tempo é o backup, uma configuração separada."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Не хватает дней? В файле только то, что этот телефон сохранил, пока Хронология была включена. Проверьте автоудаление Хронологии в Google Картах (Хронология → ⋯ → Настройки местоположения и конфиденциальности). Значок облака в Хронологии — это резервная копия, отдельная настройка."
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Saknas dagar? Filen innehåller bara det som den här telefonen sparade medan tidslinjen var på. Kontrollera automatisk radering av tidslinjen i Google Maps (Din tidslinje → ⋯ → Inställningar för plats och integritet). Molnikonen i Din tidslinje är säkerhetskopian, en separat inställning."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Eksik günler mi var? Dosya yalnızca Zaman çizelgesi açıkken bu telefonun kaydettiklerini içerir. Google Haritalar'da Zaman çizelgesinin otomatik silinmesini kontrol edin (Zaman çizelgeniz → ⋯ → Konum ve gizlilik ayarları). Zaman çizelgenizdeki bulut simgesi yedeklemedir, ayrı bir ayardır."
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• Бракує днів? У файлі лише те, що цей телефон зберіг, поки Хронологія була ввімкнена. Перевірте автовидалення Хронології в Google Картах (Ваша хронологія → ⋯ → Налаштування місцезнаходження та конфіденційності). Значок хмари у Вашій хронології — це резервна копія, окреме налаштування."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• 缺了一些日子？文件里只有时间轴开启期间这台手机保存的内容。请在 Google 地图中检查时间轴的自动删除（你的时间轴 → ⋯ → 位置信息和隐私设置）。你的时间轴中的云朵图标是备份，是另一项设置。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• 少了一些日子？檔案裡只有時間軸開啟期間這支手機儲存的內容。請在 Google 地圖中檢查時間軸的自動刪除（你的時間軸 → ⋯ → 位置與隱私設定）。你的時間軸中的雲朵圖示是備份，是另一項設定。"
           }
         }
       }
@@ -14019,109 +14132,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "انقر على **حفظ في الملفات**، واختر «على الـ iPhone» أو iCloud Drive، ثم انقر على **حفظ**"
+            "value" : "في ورقة المشاركة انقر على **Timeline Exporter** (ضمن **المزيد** إن لم يكن في الصف). يُفتح الملف هنا."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe auf **In „Dateien“ sichern**, wähle „Auf meinem iPhone“ oder iCloud Drive und tippe auf **Sichern**"
+            "value" : "Tippe im Teilen-Menü auf **Timeline Exporter** (unter **Mehr**, falls es nicht in der Reihe ist). Die Datei öffnet sich hier."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap **Save to Files**, choose On My iPhone or iCloud Drive, then tap **Save**"
+            "value" : "In the share sheet tap **Timeline Exporter** (under **More** if it is not in the row). The file opens here."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca **Guardar en Archivos**, elige En mi iPhone o iCloud Drive y toca **Guardar**"
+            "value" : "En el menú Compartir toca **Timeline Exporter** (en **Más** si no aparece en la fila). El archivo se abre aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez **Enregistrer dans Fichiers**, choisissez Sur mon iPhone ou iCloud Drive, puis touchez **Enregistrer**"
+            "value" : "Dans la feuille de partage, touchez **Timeline Exporter** (sous **Plus** s’il n’est pas dans la rangée). Le fichier s’ouvre ici."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**फ़ाइलें में सहेजें** पर टैप करें, “मेरे iPhone पर” या iCloud Drive चुनें, फिर **सहेजें** पर टैप करें"
+            "value" : "शेयर शीट में **Timeline Exporter** पर टैप करें (पंक्ति में न हो तो **अधिक** में)। फ़ाइल यहीं खुलती है।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocca **Salva su File**, scegli Su iPhone o iCloud Drive, poi tocca **Salva**"
+            "value" : "Nel menu di condivisione tocca **Timeline Exporter** (in **Altro** se non è nella riga). Il file si apre qui."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**“ファイル”に保存** をタップし、「このiPhone内」または iCloud Drive を選んで **保存** をタップ"
+            "value" : "共有シートで **Timeline Exporter** をタップします（列にない場合は **その他** から）。ファイルがここで開きます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**파일에 저장**을 탭하고 ‘나의 iPhone’ 또는 iCloud Drive를 선택한 뒤 **저장**을 탭합니다"
+            "value" : "공유 시트에서 **Timeline Exporter**를 탭합니다(줄에 없으면 **더 보기**에서). 파일이 여기서 열립니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tik op **Bewaar in Bestanden**, kies Op mijn iPhone of iCloud Drive en tik op **Bewaar**"
+            "value" : "Tik in het deelmenu op **Timeline Exporter** (onder **Meer** als hij niet in de rij staat). Het bestand opent hier."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dotknij **Zachowaj w Plikach**, wybierz Na moim iPhonie lub iCloud Drive i dotknij **Zachowaj**"
+            "value" : "W menu udostępniania dotknij **Timeline Exporter** (w **Więcej**, jeśli nie ma go w rzędzie). Plik otworzy się tutaj."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque em **Salvar em Arquivos**, escolha No Meu iPhone ou iCloud Drive e toque em **Salvar**"
+            "value" : "Na planilha de compartilhamento, toque em **Timeline Exporter** (em **Mais** se não estiver na fileira). O arquivo abre aqui."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нажмите **Сохранить в «Файлы»**, выберите «На iPhone» или iCloud Drive и нажмите **Сохранить**"
+            "value" : "В меню «Поделиться» нажмите **Timeline Exporter** (если его нет в ряду — в **Ещё**). Файл откроется здесь."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tryck på **Spara i Filer**, välj På min iPhone eller iCloud Drive och tryck på **Spara**"
+            "value" : "Tryck på **Timeline Exporter** i delningsbladet (under **Mer** om den inte finns i raden). Filen öppnas här."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Dosyalar'a Kaydet**'e dokunun, iPhone'umda veya iCloud Drive'ı seçin ve **Kaydet**'e dokunun"
+            "value" : "Paylaşım sayfasında **Timeline Exporter**'a dokunun (sırada yoksa **Diğer** altında). Dosya burada açılır."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Торкніться **Зберегти у «Файли»**, виберіть «На iPhone» або iCloud Drive і торкніться **Зберегти**"
+            "value" : "У меню «Поширити» торкніться **Timeline Exporter** (якщо його немає в ряду — у **Більше**). Файл відкриється тут."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "点按 **存储到“文件”**，选择“我的 iPhone”或 iCloud 云盘，然后点按 **存储**"
+            "value" : "在共享表单中点按 **Timeline Exporter**（如果不在那一行，就在 **更多** 里）。文件会在这里打开。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輕觸 **儲存到「檔案」**，選擇「我的 iPhone」或 iCloud 雲碟，然後輕觸 **儲存**"
+            "value" : "在分享表單中輕觸 **Timeline Exporter**（如果不在那一列，就在 **更多** 裡）。檔案會在這裡開啟。"
           }
         }
       }
@@ -14132,109 +14245,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. احفظ مخططك الزمني كملف"
+            "value" : "احفظ مخططك الزمني كملف"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Zeitachse als Datei sichern"
+            "value" : "Zeitachse als Datei sichern"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Save your Timeline as a file"
+            "value" : "Save your Timeline as a file"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Guarda tu cronología como archivo"
+            "value" : "Guarda tu cronología como archivo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Enregistrer votre Timeline dans un fichier"
+            "value" : "Enregistrer votre Timeline dans un fichier"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. अपनी Timeline को फ़ाइल के रूप में सहेजें"
+            "value" : "अपनी Timeline को फ़ाइल के रूप में सहेजें"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Salva la Timeline come file"
+            "value" : "Salva la Timeline come file"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. タイムラインをファイルとして保存"
+            "value" : "タイムラインをファイルとして保存"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. 타임라인을 파일로 저장"
+            "value" : "타임라인을 파일로 저장"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Bewaar je tijdlijn als bestand"
+            "value" : "Bewaar je tijdlijn als bestand"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Zapisz oś czasu jako plik"
+            "value" : "Zapisz oś czasu jako plik"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Salve sua Linha do tempo como arquivo"
+            "value" : "Salve sua Linha do tempo como arquivo"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Сохраните Хронологию в файл"
+            "value" : "Сохраните Хронологию в файл"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Spara tidslinjen som en fil"
+            "value" : "Spara tidslinjen som en fil"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Zaman çizelgenizi dosya olarak kaydedin"
+            "value" : "Zaman çizelgenizi dosya olarak kaydedin"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. Збережіть Хронологію у файл"
+            "value" : "Збережіть Хронологію у файл"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. 将时间轴保存为文件"
+            "value" : "将时间轴保存为文件"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2. 將時間軸儲存為檔案"
+            "value" : "將時間軸儲存為檔案"
           }
         }
       }
@@ -14917,115 +15030,228 @@
         }
       }
     },
+    "ios_import_fallback" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "انقر على **حفظ في الملفات** في ورقة المشاركة واحفظ الملف"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe im Teilen-Menü auf **In „Dateien“ sichern** und sichere die Datei"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap **Save to Files** in the share sheet and save the file"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca **Guardar en Archivos** en el menú Compartir y guarda el archivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez **Enregistrer dans Fichiers** dans la feuille de partage et enregistrez le fichier"
+          }
+        },
+        "hi" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "शेयर शीट में **फ़ाइलें में सहेजें** पर टैप करें और फ़ाइल सहेजें"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca **Salva su File** nel menu di condivisione e salva il file"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有シートで **“ファイル”に保存** をタップしてファイルを保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유 시트에서 **파일에 저장**을 탭하고 파일을 저장합니다"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tik in het deelmenu op **Bewaar in Bestanden** en bewaar het bestand"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dotknij **Zachowaj w Plikach** w menu udostępniania i zapisz plik"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque em **Salvar em Arquivos** na planilha de compartilhamento e salve o arquivo"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажмите в меню «Поделиться» **Сохранить в «Файлы»** и сохраните файл"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tryck på **Spara i Filer** i delningsbladet och spara filen"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paylaşım sayfasında **Dosyalar'a Kaydet**'e dokunun ve dosyayı kaydedin"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Торкніться в меню «Поширити» **Зберегти у «Файли»** і збережіть файл"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在共享表单中点按 **存储到“文件”** 并保存文件"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在分享表單中輕觸 **儲存到「檔案」** 並儲存檔案"
+          }
+        }
+      }
+    },
     "ios_import_title" : {
       "extractionState" : "manual",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. افتح الملف هنا"
+            "value" : "لا يظهر Timeline Exporter في ورقة المشاركة؟"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Datei hier öffnen"
+            "value" : "Kein Timeline Exporter im Teilen-Menü?"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Open the file here"
+            "value" : "No Timeline Exporter in the share sheet?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Abre el archivo aquí"
+            "value" : "¿No aparece Timeline Exporter en el menú Compartir?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Ouvrir le fichier ici"
+            "value" : "Pas de Timeline Exporter dans la feuille de partage ?"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. फ़ाइल यहाँ खोलें"
+            "value" : "शेयर शीट में Timeline Exporter नहीं है?"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Apri il file qui"
+            "value" : "Timeline Exporter non c’è nel menu di condivisione?"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. ここでファイルを開く"
+            "value" : "共有シートに Timeline Exporter がない場合"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. 여기에서 파일 열기"
+            "value" : "공유 시트에 Timeline Exporter가 없나요?"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Open het bestand hier"
+            "value" : "Geen Timeline Exporter in het deelmenu?"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Otwórz plik tutaj"
+            "value" : "Brak Timeline Exporter w menu udostępniania?"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Abra o arquivo aqui"
+            "value" : "Timeline Exporter não aparece no compartilhamento?"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Откройте файл здесь"
+            "value" : "Нет Timeline Exporter в меню «Поделиться»?"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Öppna filen här"
+            "value" : "Ingen Timeline Exporter i delningsbladet?"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Dosyayı burada açın"
+            "value" : "Paylaşım sayfasında Timeline Exporter yok mu?"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. Відкрийте файл тут"
+            "value" : "Немає Timeline Exporter у меню «Поширити»?"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. 在这里打开文件"
+            "value" : "共享表单里没有 Timeline Exporter？"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "3. 在這裡開啟檔案"
+            "value" : "分享表單裡沒有 Timeline Exporter？"
           }
         }
       }
@@ -16844,109 +17070,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "انقر على **حفظ في الملفات** واحفظ الملف في «على الـ iPhone» أو iCloud Drive."
+            "value" : "في ورقة المشاركة انقر على **Timeline Exporter**. يُفتح الملف فورًا."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe auf **In „Dateien“ sichern** und sichere die Datei unter „Auf meinem iPhone“ oder in iCloud Drive."
+            "value" : "Tippe im Teilen-Menü auf **Timeline Exporter**. Die Datei öffnet sich sofort."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tap **Save to Files** and save the file to On My iPhone or iCloud Drive."
+            "value" : "In the share sheet tap **Timeline Exporter**. The file opens right away."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca **Guardar en Archivos** y guarda el archivo En mi iPhone o en iCloud Drive."
+            "value" : "En el menú Compartir toca **Timeline Exporter**. El archivo se abre al momento."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez **Enregistrer dans Fichiers** et enregistrez le fichier Sur mon iPhone ou dans iCloud Drive."
+            "value" : "Dans la feuille de partage, touchez **Timeline Exporter**. Le fichier s’ouvre aussitôt."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**फ़ाइलें में सहेजें** पर टैप करें और फ़ाइल को “मेरे iPhone पर” या iCloud Drive में सहेजें।"
+            "value" : "शेयर शीट में **Timeline Exporter** पर टैप करें। फ़ाइल तुरंत खुल जाती है।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tocca **Salva su File** e salva il file Su iPhone o in iCloud Drive."
+            "value" : "Nel menu di condivisione tocca **Timeline Exporter**. Il file si apre subito."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**“ファイル”に保存** をタップし、「このiPhone内」または iCloud Drive に保存します。"
+            "value" : "共有シートで **Timeline Exporter** をタップします。ファイルがすぐに開きます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**파일에 저장**을 탭하고 ‘나의 iPhone’ 또는 iCloud Drive에 저장합니다."
+            "value" : "공유 시트에서 **Timeline Exporter**를 탭합니다. 파일이 바로 열립니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tik op **Bewaar in Bestanden** en bewaar het bestand Op mijn iPhone of in iCloud Drive."
+            "value" : "Tik in het deelmenu op **Timeline Exporter**. Het bestand opent meteen."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dotknij **Zachowaj w Plikach** i zapisz plik Na moim iPhonie lub w iCloud Drive."
+            "value" : "W menu udostępniania dotknij **Timeline Exporter**. Plik od razu się otworzy."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque em **Salvar em Arquivos** e salve o arquivo No Meu iPhone ou no iCloud Drive."
+            "value" : "Na planilha de compartilhamento, toque em **Timeline Exporter**. O arquivo abre na hora."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Нажмите **Сохранить в «Файлы»** и сохраните файл в «На iPhone» или iCloud Drive."
+            "value" : "В меню «Поделиться» нажмите **Timeline Exporter**. Файл сразу откроется."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tryck på **Spara i Filer** och spara filen På min iPhone eller i iCloud Drive."
+            "value" : "Tryck på **Timeline Exporter** i delningsbladet. Filen öppnas direkt."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Dosyalar'a Kaydet**'e dokunun ve dosyayı iPhone'umda'ya veya iCloud Drive'a kaydedin."
+            "value" : "Paylaşım sayfasında **Timeline Exporter**'a dokunun. Dosya hemen açılır."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Торкніться **Зберегти у «Файли»** і збережіть файл у «На iPhone» або iCloud Drive."
+            "value" : "У меню «Поширити» торкніться **Timeline Exporter**. Файл одразу відкриється."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "点按 **存储到“文件”**，将文件保存到“我的 iPhone”或 iCloud 云盘。"
+            "value" : "在共享表单中点按 **Timeline Exporter**。文件会立即打开。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "輕觸 **儲存到「檔案」**，將檔案儲存到「我的 iPhone」或 iCloud 雲碟。"
+            "value" : "在分享表單中輕觸 **Timeline Exporter**。檔案會立即開啟。"
           }
         }
       }
@@ -16957,109 +17183,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "عُد إلى هنا وانقر على **اختيار ملف المخطط الزمني** أدناه."
+            "value" : "ليس في القائمة؟ انقر على **حفظ في الملفات** ثم على **اختيار ملف المخطط الزمني** في الشاشة الرئيسية."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Komm hierher zurück und tippe unten auf **Zeitachsen-Datei wählen**."
+            "value" : "Nicht in der Liste? Tippe auf **In „Dateien“ sichern**, dann auf dem Hauptbildschirm auf **Zeitachsen-Datei wählen**."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Come back here and tap **Choose Timeline file** below."
+            "value" : "Not in the list? Tap **Save to Files**, then **Choose Timeline file** on the main screen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vuelve aquí y toca **Elegir archivo de cronología** abajo."
+            "value" : "¿No está en la lista? Toca **Guardar en Archivos** y luego **Elegir archivo de cronología** en la pantalla principal."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revenez ici et touchez **Choisir le fichier Timeline** ci-dessous."
+            "value" : "Absent de la liste ? Touchez **Enregistrer dans Fichiers**, puis **Choisir le fichier Timeline** sur l’écran principal."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "यहाँ वापस आएँ और नीचे **Timeline फ़ाइल चुनें** पर टैप करें।"
+            "value" : "सूची में नहीं है? **फ़ाइलें में सहेजें** पर टैप करें, फिर मुख्य स्क्रीन पर **Timeline फ़ाइल चुनें** पर।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Torna qui e tocca **Scegli file Timeline** qui sotto."
+            "value" : "Non è nell’elenco? Tocca **Salva su File**, poi **Scegli file Timeline** nella schermata principale."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ここに戻り、下の **タイムラインファイルを選択** をタップします。"
+            "value" : "一覧にない場合は **“ファイル”に保存** をタップし、メイン画面の **タイムラインファイルを選択** をタップします。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "여기로 돌아와 아래의 **타임라인 파일 선택**을 탭합니다."
+            "value" : "목록에 없나요? **파일에 저장**을 탭한 다음 메인 화면에서 **타임라인 파일 선택**을 탭합니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kom hier terug en tik hieronder op **Kies tijdlijnbestand**."
+            "value" : "Staat hij er niet bij? Tik op **Bewaar in Bestanden** en daarna op het hoofdscherm op **Kies tijdlijnbestand**."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wróć tutaj i dotknij **Wybierz plik osi czasu** poniżej."
+            "value" : "Nie ma na liście? Dotknij **Zachowaj w Plikach**, a potem **Wybierz plik osi czasu** na ekranie głównym."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volte aqui e toque em **Escolher arquivo da Linha do tempo** abaixo."
+            "value" : "Não está na lista? Toque em **Salvar em Arquivos** e depois em **Escolher arquivo da Linha do tempo** na tela principal."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Вернитесь сюда и нажмите **Выбрать файл Хронологии** ниже."
+            "value" : "Нет в списке? Нажмите **Сохранить в «Файлы»**, затем **Выбрать файл Хронологии** на главном экране."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kom tillbaka hit och tryck på **Välj tidslinjefil** nedan."
+            "value" : "Finns den inte i listan? Tryck på **Spara i Filer** och sedan på **Välj tidslinjefil** på huvudskärmen."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Buraya dönün ve aşağıdaki **Zaman çizelgesi dosyası seç**'e dokunun."
+            "value" : "Listede yok mu? **Dosyalar'a Kaydet**'e, ardından ana ekranda **Zaman çizelgesi dosyası seç**'e dokunun."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Поверніться сюди й торкніться **Вибрати файл Хронології** нижче."
+            "value" : "Немає в списку? Торкніться **Зберегти у «Файли»**, потім **Вибрати файл Хронології** на головному екрані."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回到这里，点按下方的 **选择时间轴文件**。"
+            "value" : "列表里没有？点按 **存储到“文件”**，然后在主屏幕点按 **选择时间轴文件**。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "回到這裡，輕觸下方的 **選擇時間軸檔案**。"
+            "value" : "清單裡沒有？輕觸 **儲存到「檔案」**，然後在主畫面輕觸 **選擇時間軸檔案**。"
           }
         }
       }
@@ -17635,109 +17861,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**يجب أن يكون المخطط الزمني قيد التشغيل.** تحفظ Google الأيام منذ تشغيله فقط، ولا يمكن لأي تطبيق إضافة الأيام التي سبقت ذلك."
+            "value" : "**يجب أن يكون المخطط الزمني مفعّلًا ليسجّل.** يحفظ Google الأيام منذ تفعيله فقط، ولا يمكن لأي تطبيق إضافة الأيام التي قبلها. الملف الذي حفظته من قبل يُفتح في كل الأحوال."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Die Zeitachse muss eingeschaltet sein.** Google speichert nur die Tage seit der Aktivierung, und keine App kann die Tage davor ergänzen."
+            "value" : "**Die Zeitachse muss zum Aufzeichnen eingeschaltet sein.** Google speichert nur die Tage seit der Aktivierung, und keine App kann die Tage davor ergänzen. Eine bereits gesicherte Datei lässt sich trotzdem öffnen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Timeline has to be on.** Google saves only the days since it was turned on, and no app can add the days before that."
+            "value" : "**Timeline has to be on to record.** Google saves only the days since it was turned on, and no app can add the days before that. A file you have already saved opens either way."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**La cronología tiene que estar activada.** Google solo guarda los días desde que se activó, y ninguna app puede añadir los días anteriores."
+            "value" : "**La cronología tiene que estar activada para registrar.** Google guarda solo los días desde que se activó, y ninguna app puede añadir los días anteriores. Un archivo que ya guardaste se abre igualmente."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Timeline doit être activée.** Google n'enregistre que les jours depuis son activation, et aucune app ne peut ajouter les jours d'avant."
+            "value" : "**Timeline doit être activé pour enregistrer.** Google ne conserve que les jours depuis son activation, et aucune app ne peut ajouter les jours d’avant. Un fichier déjà enregistré s’ouvre dans tous les cas."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Timeline चालू होनी चाहिए।** Google सिर्फ़ चालू करने के बाद के दिन सहेजता है, और कोई भी ऐप उससे पहले के दिन नहीं जोड़ सकता।"
+            "value" : "**रिकॉर्ड करने के लिए Timeline चालू होनी चाहिए।** Google सिर्फ़ चालू करने के बाद के दिन सहेजता है, और कोई भी ऐप उससे पहले के दिन नहीं जोड़ सकता। पहले से सहेजी गई फ़ाइल हर हाल में खुलती है।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**La Timeline deve essere attiva.** Google salva solo i giorni da quando è stata attivata, e nessuna app può aggiungere quelli precedenti."
+            "value" : "**Timeline deve essere attiva per registrare.** Google salva solo i giorni da quando è stata attivata, e nessuna app può aggiungere i giorni precedenti. Un file già salvato si apre comunque."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**タイムラインがオンになっている必要があります。** Google はオンにした日以降しか保存せず、それより前の日をアプリで追加することはできません。"
+            "value" : "**記録するにはタイムラインをオンにする必要があります。** Google はオンにした日以降しか保存せず、それより前の日をアプリで追加することはできません。すでに保存したファイルはどちらでも開けます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**타임라인이 켜져 있어야 합니다.** Google은 켠 날 이후만 저장하며, 그 이전 날짜는 어떤 앱도 추가할 수 없습니다."
+            "value" : "**기록하려면 타임라인이 켜져 있어야 합니다.** Google은 켠 날 이후만 저장하며, 그 이전 날짜는 어떤 앱도 추가할 수 없습니다. 이미 저장한 파일은 어느 쪽이든 열립니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**De tijdlijn moet aanstaan.** Google bewaart alleen de dagen sinds hij aan is gezet, en geen app kan de dagen daarvoor toevoegen."
+            "value" : "**De tijdlijn moet aanstaan om op te nemen.** Google bewaart alleen de dagen sinds hij is aangezet, en geen app kan de dagen daarvoor toevoegen. Een bestand dat je al hebt bewaard, opent hoe dan ook."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Oś czasu musi być włączona.** Google zapisuje tylko dni od jej włączenia i żadna aplikacja nie doda dni sprzed tego momentu."
+            "value" : "**Oś czasu musi być włączona, by nagrywać.** Google zapisuje tylko dni od jej włączenia i żadna aplikacja nie doda dni wcześniejszych. Plik, który już zapisano, otworzy się tak czy inaczej."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**A Linha do tempo precisa estar ativada.** O Google só salva os dias desde a ativação, e nenhum app consegue adicionar os dias anteriores."
+            "value" : "**A Linha do tempo precisa estar ativada para registrar.** O Google salva só os dias desde a ativação, e nenhum app consegue adicionar os dias anteriores. Um arquivo que você já salvou abre de qualquer forma."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Хронология должна быть включена.** Google сохраняет только дни после её включения, и никакое приложение не добавит дни до этого."
+            "value" : "**Хронология должна быть включена, чтобы записывать.** Google сохраняет только дни после её включения, и никакое приложение не добавит дни до этого. Уже сохранённый файл откроется в любом случае."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Tidslinjen måste vara på.** Google sparar bara dagarna sedan den slogs på, och ingen app kan lägga till dagarna innan dess."
+            "value" : "**Tidslinjen måste vara på för att spela in.** Google sparar bara dagarna sedan den slogs på, och ingen app kan lägga till dagarna före. En fil du redan har sparat öppnas ändå."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Zaman çizelgesi açık olmalıdır.** Google yalnızca açıldığı günden sonraki günleri kaydeder ve hiçbir uygulama önceki günleri ekleyemez."
+            "value" : "**Kayıt için Zaman çizelgesi açık olmalı.** Google yalnızca açıldığı günden sonraki günleri kaydeder ve hiçbir uygulama önceki günleri ekleyemez. Daha önce kaydettiğiniz bir dosya yine de açılır."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Хронологія має бути ввімкнена.** Google зберігає лише дні після її ввімкнення, і жоден застосунок не додасть дні до цього."
+            "value" : "**Хронологія має бути ввімкнена, щоб записувати.** Google зберігає лише дні після її ввімкнення, і жоден застосунок не додасть дні до цього. Уже збережений файл відкриється в будь-якому разі."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**时间轴必须处于开启状态。** Google 只保存开启之后的日子，任何应用都无法补上之前的日子。"
+            "value" : "**时间轴必须开启才能记录。** Google 只保存开启之后的日子，任何应用都无法补上之前的日子。已经保存的文件无论如何都能打开。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**時間軸必須處於開啟狀態。** Google 只儲存開啟之後的日子，任何應用程式都無法補上之前的日子。"
+            "value" : "**時間軸必須開啟才能記錄。** Google 只會儲存開啟之後的日子，任何 App 都無法補上之前的日子。已經儲存的檔案無論如何都能開啟。"
           }
         }
       }
@@ -19104,109 +19330,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**بضعة أيام فقط في الملف؟** تحتفظ Google فقط بما سجّله هذا الهاتف أثناء تشغيل المخطط الزمني. تحقّق أيضًا من إيقاف الحذف التلقائي (أيقونة السحابة في مخططك الزمني)."
+            "value" : "**أيام ناقصة؟** لا يحتوي الملف إلا على ما حفظته خرائط Google على هذا الهاتف أثناء تفعيل المخطط الزمني. تحقّق من الحذف التلقائي للمخطط الزمني (مخططك الزمني ← ⋯ ← إعدادات الموقع والخصوصية). أيقونة السحابة في مخططك الزمني هي النسخة الاحتياطية، وهي إعداد منفصل."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Nur wenige Tage in der Datei?** Google behält nur, was dieses Telefon bei aktivierter Zeitachse aufgezeichnet hat. Prüfe auch, ob automatisches Löschen aus ist (Wolkensymbol in „Deine Zeitachse“)."
+            "value" : "**Fehlen Tage?** Die Datei enthält nur, was Google Maps auf diesem Telefon bei aktivierter Zeitachse gespeichert hat. Prüfe das automatische Löschen der Zeitachse (Deine Zeitachse → ⋯ → Einstellungen für Standort und Datenschutz). Das Wolkensymbol in „Deine Zeitachse“ ist die Sicherung, eine eigene Einstellung."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Only a few days in the file?** Google keeps only what this phone recorded while Timeline was on. Also check that auto-delete is off (the cloud icon in Your Timeline)."
+            "value" : "**Some days missing?** The file holds only what Google Maps saved on this phone while Timeline was on. Check **Auto-delete Timeline data** (Your Timeline → ⋯ → Location & privacy settings). The cloud icon in Your Timeline is the backup, a separate setting."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**¿Solo unos pocos días en el archivo?** Google solo conserva lo que este teléfono registró con la cronología activada. Comprueba también que la eliminación automática está desactivada (icono de nube en Tu cronología)."
+            "value" : "**¿Faltan días?** El archivo contiene solo lo que Google Maps guardó en este teléfono mientras la cronología estaba activada. Revisa la eliminación automática de la cronología (Tu cronología → ⋯ → Configuración de ubicación y privacidad). El icono de la nube en Tu cronología es la copia de seguridad, un ajuste aparte."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Seulement quelques jours dans le fichier ?** Google ne garde que ce que ce téléphone a enregistré pendant que Timeline était activée. Vérifiez aussi que la suppression automatique est désactivée (icône de nuage dans Votre Timeline)."
+            "value" : "**Des jours manquent ?** Le fichier ne contient que ce que Google Maps a enregistré sur ce téléphone pendant que Timeline était activé. Vérifiez la suppression automatique de Timeline (Votre Timeline → ⋯ → Paramètres de localisation et de confidentialité). L’icône de nuage dans Votre Timeline est la sauvegarde, un réglage distinct."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**फ़ाइल में सिर्फ़ कुछ दिन?** Google सिर्फ़ वही रखता है जो इस फ़ोन ने Timeline चालू रहते रिकॉर्ड किया। यह भी जाँचें कि ऑटो-डिलीट बंद है (आपकी Timeline में बादल वाला आइकन)।"
+            "value" : "**कुछ दिन ग़ायब हैं?** फ़ाइल में सिर्फ़ वही है जो Timeline चालू रहते Google Maps ने इस फ़ोन पर सहेजा। Timeline का अपने-आप मिटना जाँचें (आपकी Timeline → ⋯ → स्थान और गोपनीयता सेटिंग)। आपकी Timeline में बादल वाला आइकन बैकअप है, एक अलग सेटिंग।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Solo pochi giorni nel file?** Google conserva solo ciò che questo telefono ha registrato con la Timeline attiva. Controlla anche che l'eliminazione automatica sia disattivata (icona della nuvola in La tua Timeline)."
+            "value" : "**Mancano dei giorni?** Il file contiene solo ciò che Google Maps ha salvato su questo telefono mentre Timeline era attiva. Controlla l’eliminazione automatica di Timeline (La tua Timeline → ⋯ → Impostazioni su posizione e privacy). L’icona della nuvola in La tua Timeline è il backup, un’impostazione separata."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**ファイルに数日分しかない？** Google はタイムラインがオンの間にこのスマートフォンが記録したものしか保存しません。自動削除がオフかどうかも確認してください（タイムラインの雲のアイコン）。"
+            "value" : "**日が抜けている？** ファイルには、タイムラインがオンの間に Google マップがこのスマートフォンで保存したものしか入っていません。タイムラインの自動削除を確認してください（タイムライン → ⋯ → 位置情報とプライバシーの設定）。タイムラインの雲のアイコンはバックアップで、別の設定です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**파일에 며칠만 있나요?** Google은 타임라인이 켜져 있는 동안 이 휴대폰이 기록한 것만 보관합니다. 자동 삭제가 꺼져 있는지도 확인하세요(내 타임라인의 구름 아이콘)."
+            "value" : "**빠진 날이 있나요?** 파일에는 타임라인이 켜져 있는 동안 Google 지도가 이 휴대폰에 저장한 내용만 들어 있습니다. 타임라인 자동 삭제를 확인하세요(내 타임라인 → ⋯ → 위치 및 개인정보 설정). 내 타임라인의 구름 아이콘은 백업이며 별도의 설정입니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Maar een paar dagen in het bestand?** Google bewaart alleen wat deze telefoon vastlegde terwijl de tijdlijn aanstond. Controleer ook of automatisch verwijderen uitstaat (wolkicoon in Je tijdlijn)."
+            "value" : "**Ontbreken er dagen?** Het bestand bevat alleen wat Google Maps op deze telefoon heeft bewaard terwijl de tijdlijn aanstond. Controleer het automatisch verwijderen van de tijdlijn (Je tijdlijn → ⋯ → Instellingen voor locatie en privacy). Het wolkje in Je tijdlijn is de back-up, een aparte instelling."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**W pliku tylko kilka dni?** Google przechowuje tylko to, co ten telefon zapisał przy włączonej osi czasu. Sprawdź też, czy automatyczne usuwanie jest wyłączone (ikona chmury w Twojej osi czasu)."
+            "value" : "**Brakuje dni?** Plik zawiera tylko to, co Mapy Google zapisały na tym telefonie, gdy oś czasu była włączona. Sprawdź automatyczne usuwanie osi czasu (Twoja oś czasu → ⋯ → Ustawienia lokalizacji i prywatności). Ikona chmury w Twojej osi czasu to kopia zapasowa, osobne ustawienie."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Só alguns dias no arquivo?** O Google guarda apenas o que este celular registrou com a Linha do tempo ativa. Confira também se a exclusão automática está desativada (ícone de nuvem em Sua linha do tempo)."
+            "value" : "**Faltam dias?** O arquivo tem só o que o Google Maps salvou neste telefone enquanto a Linha do tempo estava ativada. Confira a exclusão automática da Linha do tempo (Sua linha do tempo → ⋯ → Configurações de localização e privacidade). O ícone de nuvem em Sua linha do tempo é o backup, uma configuração separada."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**В файле всего несколько дней?** Google хранит только то, что этот телефон записал, пока Хронология была включена. Проверьте также, что автоудаление выключено (значок облака в Хронологии)."
+            "value" : "**Не хватает дней?** В файле только то, что Google Карты сохранили на этом телефоне, пока Хронология была включена. Проверьте автоудаление Хронологии (Хронология → ⋯ → Настройки местоположения и конфиденциальности). Значок облака в Хронологии — это резервная копия, отдельная настройка."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Bara några dagar i filen?** Google sparar bara det den här telefonen registrerade medan tidslinjen var på. Kontrollera också att automatisk radering är av (molnikonen i Din tidslinje)."
+            "value" : "**Saknas dagar?** Filen innehåller bara det som Google Maps sparade på den här telefonen medan tidslinjen var på. Kontrollera automatisk radering av tidslinjen (Din tidslinje → ⋯ → Inställningar för plats och integritet). Molnikonen i Din tidslinje är säkerhetskopian, en separat inställning."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Dosyada yalnızca birkaç gün mü var?** Google yalnızca bu telefonun, Zaman çizelgesi açıkken kaydettiklerini tutar. Otomatik silmenin kapalı olduğunu da kontrol edin (Zaman çizelgeniz'deki bulut simgesi)."
+            "value" : "**Eksik günler mi var?** Dosya yalnızca Zaman çizelgesi açıkken Google Haritalar'ın bu telefonda kaydettiklerini içerir. Zaman çizelgesinin otomatik silinmesini kontrol edin (Zaman çizelgeniz → ⋯ → Konum ve gizlilik ayarları). Zaman çizelgenizdeki bulut simgesi yedeklemedir, ayrı bir ayardır."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**У файлі лише кілька днів?** Google зберігає тільки те, що цей телефон записав, поки Хронологію було ввімкнено. Перевірте також, що автовидалення вимкнено (значок хмари в Хронології)."
+            "value" : "**Бракує днів?** У файлі лише те, що Google Карти зберегли на цьому телефоні, поки Хронологія була ввімкнена. Перевірте автовидалення Хронології (Ваша хронологія → ⋯ → Налаштування місцезнаходження та конфіденційності). Значок хмари у Вашій хронології — це резервна копія, окреме налаштування."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**文件里只有几天？** Google 只保留这部手机在时间轴开启期间记录的内容。另请确认自动删除已关闭（“你的时间轴”中的云朵图标）。"
+            "value" : "**缺了一些日子？** 文件里只有时间轴开启期间 Google 地图在这台手机上保存的内容。请检查时间轴的自动删除（你的时间轴 → ⋯ → 位置信息和隐私设置）。你的时间轴中的云朵图标是备份，是另一项设置。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**檔案裡只有幾天？** Google 只保留這支手機在時間軸開啟期間記錄的內容。另請確認自動刪除已關閉（「你的時間軸」中的雲朵圖示）。"
+            "value" : "**少了一些日子？** 檔案裡只有時間軸開啟期間 Google 地圖在這支手機上儲存的內容。請檢查時間軸的自動刪除（你的時間軸 → ⋯ → 位置與隱私設定）。你的時間軸中的雲朵圖示是備份，是另一項設定。"
           }
         }
       }
@@ -19217,109 +19443,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**لا يوجد «تصدير بيانات المخطط الزمني»؟** تأكد من تسجيل الدخول في خرائط Google ومن تشغيل المخطط الزمني (الخطوة 1). يظهر الخيار بعد أن يحفظ المخطط الزمني شيئًا."
+            "value" : "**لا يوجد «تصدير بيانات المخطط الزمني»؟** تأكد من تسجيل الدخول في خرائط Google ومن تشغيل المخطط الزمني. يظهر الخيار بعد أن يحفظ المخطط الزمني شيئًا."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Kein „Timeline-Daten exportieren“?** Prüfe, ob du in Google Maps angemeldet bist und die Zeitachse aktiviert ist (Schritt 1). Die Option erscheint, sobald die Zeitachse etwas gespeichert hat."
+            "value" : "**Kein „Timeline-Daten exportieren“?** Prüfe, ob du in Google Maps angemeldet bist und die Zeitachse aktiviert ist. Die Option erscheint, sobald die Zeitachse etwas gespeichert hat."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**No “Export Timeline data”?** Check that you are signed in to Google Maps and that Timeline is on (step 1). The option appears once Timeline has saved something."
+            "value" : "**No “Export Timeline data”?** Check that you are signed in to Google Maps and that Timeline is on. The option appears once Timeline has saved something."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**¿No aparece «Exportar datos de Timeline»?** Comprueba que has iniciado sesión en Google Maps y que la cronología está activada (paso 1). La opción aparece cuando la cronología ha guardado algo."
+            "value" : "**¿No aparece «Exportar datos de Timeline»?** Comprueba que has iniciado sesión en Google Maps y que la cronología está activada. La opción aparece cuando la cronología ha guardado algo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Pas d'option « Exporter les données Timeline » ?** Vérifiez que vous êtes connecté à Google Maps et que Timeline est activée (étape 1). L'option apparaît dès que Timeline a enregistré quelque chose."
+            "value" : "**Pas d'option « Exporter les données Timeline » ?** Vérifiez que vous êtes connecté à Google Maps et que Timeline est activée. L'option apparaît dès que Timeline a enregistré quelque chose."
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**“Timeline डेटा एक्सपोर्ट करें” नहीं दिख रहा?** जाँचें कि आप Google Maps में साइन इन हैं और Timeline चालू है (चरण 1)। Timeline में कुछ सहेजे जाने के बाद यह विकल्प दिखता है।"
+            "value" : "**“Timeline डेटा एक्सपोर्ट करें” नहीं दिख रहा?** जाँचें कि आप Google Maps में साइन इन हैं और Timeline चालू है। Timeline में कुछ सहेजे जाने के बाद यह विकल्प दिखता है।"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Manca «Esporta dati Timeline»?** Controlla di aver effettuato l'accesso a Google Maps e che la Timeline sia attiva (passaggio 1). L'opzione compare quando la Timeline ha salvato qualcosa."
+            "value" : "**Manca «Esporta dati Timeline»?** Controlla di aver effettuato l'accesso a Google Maps e che la Timeline sia attiva. L'opzione compare quando la Timeline ha salvato qualcosa."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**「タイムラインデータをエクスポート」がない？** Google マップにログインしていて、タイムラインがオンか確認してください（ステップ 1）。タイムラインに何か保存されると表示されます。"
+            "value" : "**「タイムラインデータをエクスポート」がない？** Google マップにログインしていて、タイムラインがオンか確認してください。タイムラインに何か保存されると表示されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**‘타임라인 데이터 내보내기’가 없나요?** Google 지도에 로그인했는지, 타임라인이 켜져 있는지 확인하세요(1단계). 타임라인에 무언가 저장되면 나타납니다."
+            "value" : "**‘타임라인 데이터 내보내기’가 없나요?** Google 지도에 로그인했는지, 타임라인이 켜져 있는지 확인하세요. 타임라인에 무언가 저장되면 나타납니다."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Geen ‘Timeline-gegevens exporteren’?** Controleer of je bent ingelogd in Google Maps en of de tijdlijn aanstaat (stap 1). De optie verschijnt zodra de tijdlijn iets heeft bewaard."
+            "value" : "**Geen ‘Timeline-gegevens exporteren’?** Controleer of je bent ingelogd in Google Maps en of de tijdlijn aanstaat. De optie verschijnt zodra de tijdlijn iets heeft bewaard."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Brak opcji „Eksportuj dane Timeline”?** Sprawdź, czy jesteś zalogowany w Mapach Google i czy oś czasu jest włączona (krok 1). Opcja pojawi się, gdy oś czasu coś zapisze."
+            "value" : "**Brak opcji „Eksportuj dane Timeline”?** Sprawdź, czy jesteś zalogowany w Mapach Google i czy oś czasu jest włączona. Opcja pojawi się, gdy oś czasu coś zapisze."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Não aparece “Exportar dados da Linha do tempo”?** Confira se você entrou na sua conta no Google Maps e se a Linha do tempo está ativa (passo 1). A opção aparece quando a Linha do tempo já salvou algo."
+            "value" : "**Não aparece “Exportar dados da Linha do tempo”?** Confira se você entrou na sua conta no Google Maps e se a Linha do tempo está ativa. A opção aparece quando a Linha do tempo já salvou algo."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Нет пункта «Экспортировать данные Хронологии»?** Проверьте, что вы вошли в аккаунт в Google Картах и Хронология включена (шаг 1). Пункт появится, когда Хронология что-нибудь сохранит."
+            "value" : "**Нет пункта «Экспортировать данные Хронологии»?** Проверьте, что вы вошли в аккаунт в Google Картах и Хронология включена. Пункт появится, когда Хронология что-нибудь сохранит."
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Inget ”Exportera Timeline-data”?** Kontrollera att du är inloggad i Google Maps och att tidslinjen är på (steg 1). Alternativet visas när tidslinjen har sparat något."
+            "value" : "**Inget ”Exportera Timeline-data”?** Kontrollera att du är inloggad i Google Maps och att tidslinjen är på. Alternativet visas när tidslinjen har sparat något."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**“Timeline verilerini dışa aktar” yok mu?** Google Haritalar'da oturum açtığınızı ve Zaman çizelgesinin açık olduğunu kontrol edin (1. adım). Seçenek, Zaman çizelgesi bir şey kaydettiğinde görünür."
+            "value" : "**“Timeline verilerini dışa aktar” yok mu?** Google Haritalar'da oturum açtığınızı ve Zaman çizelgesinin açık olduğunu kontrol edin. Seçenek, Zaman çizelgesi bir şey kaydettiğinde görünür."
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**Немає пункту «Експортувати дані Timeline»?** Перевірте, що ви ввійшли в акаунт у Google Картах і Хронологію ввімкнено (крок 1). Пункт з'явиться, коли Хронологія щось збереже."
+            "value" : "**Немає пункту «Експортувати дані Timeline»?** Перевірте, що ви ввійшли в акаунт у Google Картах і Хронологію ввімкнено. Пункт з'явиться, коли Хронологія щось збереже."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**没有“导出时间轴数据”？** 请确认已在 Google 地图中登录且时间轴已开启（第 1 步）。时间轴保存了内容后该选项才会出现。"
+            "value" : "**没有“导出时间轴数据”？** 请确认已在 Google 地图中登录且时间轴已开启。时间轴保存了内容后该选项才会出现。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "**沒有「匯出時間軸資料」？** 請確認已在 Google 地圖中登入且時間軸已開啟（第 1 步）。時間軸儲存了內容後該選項才會出現。"
+            "value" : "**沒有「匯出時間軸資料」？** 請確認已在 Google 地圖中登入且時間軸已開啟。時間軸儲存了內容後該選項才會出現。"
           }
         }
       }
@@ -20008,109 +20234,109 @@
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. شغّل المخطط الزمني (تخطَّ إن كان يعمل)"
+            "value" : "شغّل المخطط الزمني (تخطَّ إن كان يعمل)"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Zeitachse aktivieren (überspringen, wenn sie an ist)"
+            "value" : "Zeitachse aktivieren (überspringen, wenn sie an ist)"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Turn on Timeline (skip if it is on)"
+            "value" : "Turn on Timeline (skip if it is on)"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Activa la cronología (sáltalo si ya está activada)"
+            "value" : "Activa la cronología (sáltalo si ya está activada)"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Activer Timeline (à sauter si elle est activée)"
+            "value" : "Activer Timeline (à sauter si elle est activée)"
           }
         },
         "hi" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Timeline चालू करें (चालू हो तो छोड़ दें)"
+            "value" : "Timeline चालू करें (चालू हो तो छोड़ दें)"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Attiva la Timeline (salta se è già attiva)"
+            "value" : "Attiva la Timeline (salta se è già attiva)"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. タイムラインをオンにする（オンなら不要）"
+            "value" : "タイムラインをオンにする（オンなら不要）"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. 타임라인 켜기 (켜져 있으면 건너뛰기)"
+            "value" : "타임라인 켜기 (켜져 있으면 건너뛰기)"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Zet de tijdlijn aan (overslaan als hij aanstaat)"
+            "value" : "Zet de tijdlijn aan (overslaan als hij aanstaat)"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Włącz oś czasu (pomiń, jeśli jest włączona)"
+            "value" : "Włącz oś czasu (pomiń, jeśli jest włączona)"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Ative a Linha do tempo (pule se já estiver ativa)"
+            "value" : "Ative a Linha do tempo (pule se já estiver ativa)"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Включите Хронологию (если уже включена — пропустите)"
+            "value" : "Включите Хронологию (если уже включена — пропустите)"
           }
         },
         "sv" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Slå på tidslinjen (hoppa över om den är på)"
+            "value" : "Slå på tidslinjen (hoppa över om den är på)"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Zaman çizelgesini açın (açıksa atlayın)"
+            "value" : "Zaman çizelgesini açın (açıksa atlayın)"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. Увімкніть Хронологію (якщо вже ввімкнена — пропустіть)"
+            "value" : "Увімкніть Хронологію (якщо вже ввімкнена — пропустіть)"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. 开启时间轴（已开启可跳过）"
+            "value" : "开启时间轴（已开启可跳过）"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1. 開啟時間軸（已開啟可略過）"
+            "value" : "開啟時間軸（已開啟可略過）"
           }
         }
       }

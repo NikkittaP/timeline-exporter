@@ -18,8 +18,9 @@ final class TimelineStore {
     enum ExportState: Equatable {
         case idle
         case working
-        /// Saved where the user picked; [fileName] is what they named it.
-        case saved(kind: ContentKind, count: Int, fileName: String?)
+        /// Saved where the user picked; [fileName] is what they named it and
+        /// [folder] the folder it went to, when the path gives a readable name.
+        case saved(kind: ContentKind, count: Int, fileName: String?, folder: String? = nil)
         /// Handed to the share sheet; nothing was saved by us.
         case shared(kind: ContentKind, count: Int, formatName: String)
         /// Nothing to write: no points, no trips or no places.
@@ -515,11 +516,13 @@ final class TimelineStore {
     }
 
     /// The save dialog closed: [savedAs] is the name the user gave the file,
-    /// nil when they cancelled.
-    func finishSave(savedAs: String?) {
+    /// nil when they cancelled; [folder] is where it went (see SavedLocation).
+    func finishSave(savedAs: String?, folder: String? = nil) {
         guard let pending = pendingExport else { return }
         pendingExport = nil
-        exportState = savedAs.map { .saved(kind: pending.kind, count: pending.count, fileName: $0) } ?? .idle
+        exportState = savedAs.map {
+            .saved(kind: pending.kind, count: pending.count, fileName: $0, folder: folder)
+        } ?? .idle
         try? FileManager.default.removeItem(at: pending.url)
     }
 

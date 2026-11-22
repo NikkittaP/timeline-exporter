@@ -16,6 +16,12 @@ extension TimelineStore {
         }
     }
 
+    /// Trips listed, none ticked: there is nothing to write until one is.
+    /// The Export bar's button and the sheet's run button both wait for it.
+    var noTripsMarked: Bool {
+        contentKind == .trips && !visibleTrips.isEmpty && markedTripCount == 0
+    }
+
     /// "Export track", "Export trips", "Export trip", "Export places".
     var exportTitle: String {
         switch contentKind {
@@ -146,9 +152,16 @@ struct ExportSheet: View {
                 ProgressView()
                 Text(L.s("export_writing"))
             }
-        case .saved(let kind, let count, let fileName):
-            Text(L.f(Self.key("export_success", kind), Fmt.grouped(count), fileName ?? L.s("export_fallback_filename")))
-                .foregroundStyle(.green)
+        case .saved(let kind, let count, let fileName, let folder):
+            VStack(alignment: .leading, spacing: 2) {
+                Text(L.f(Self.key("export_success", kind), Fmt.grouped(count), fileName ?? L.s("export_fallback_filename")))
+                    .foregroundStyle(.green)
+                if let folder {
+                    Text(L.f("export_saved_folder", folder))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
         case .shared(let kind, let count, let formatName):
             Text(L.f(Self.key("export_shared", kind), Fmt.grouped(count), formatName))
         case .nothing(let kind):
@@ -159,10 +172,7 @@ struct ExportSheet: View {
         }
     }
 
-    /// Trips listed, none ticked: there is nothing to write until one is.
-    private var noTripsMarked: Bool {
-        store.contentKind == .trips && !store.visibleTrips.isEmpty && store.markedTripCount == 0
-    }
+    private var noTripsMarked: Bool { store.noTripsMarked }
 
     /// export_success, export_success_trips, export_success_places and the like.
     private static func key(_ base: String, _ kind: ContentKind) -> String {

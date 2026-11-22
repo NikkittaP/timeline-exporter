@@ -48,7 +48,7 @@
         <item quantity="one">%1$s plats</item>
         <item quantity="other">%1$s platser</item>
     </plurals>
-    <string name="filter_trip_count">%1$s resor</string>
+    <string name="filter_trip_count">%1$s delar</string>
     <string name="filter_movement_total">Totalt</string>
     <string name="filter_moving_only">Bara i rörelse</string>
     <string name="filter_moving_only_hint">Utelämna punkter som spelats in vid stillastående</string>
@@ -114,7 +114,7 @@
 
     <string name="help_notes_title">Anmärkningar</string>
     <string name="help_note_file_location">• Den exporterade filen heter Timeline.json. Den hamnar där du valde vid exporten — vissa Android-versioner begränsar åtkomsten till vissa mappar (t.ex. Nedladdningar), så om appen inte kan läsa den, prova att flytta den.</string>
-    <string name="help_note_eu_csv">• EU-användare kan av integritetsskäl få en CSV i stället för JSON. Den här versionen av appen hanterar bara JSON.</string>
+    <string name="help_note_missing_days">• Saknas dagar? Filen innehåller bara det som den här telefonen sparade medan tidslinjen var på. Kontrollera automatisk radering av tidslinjen i Google Maps (Din tidslinje → ⋯ → Inställningar för plats och integritet). Molnikonen i Din tidslinje är säkerhetskopian, en separat inställning.</string>
     <string name="help_note_slow_first">• Den första exporten kan ta en eller två minuter om du har flera års platshistorik.</string>
 
     <string name="help_dismiss">Uppfattat</string>
@@ -175,7 +175,6 @@
     <string name="feedback_dismiss">Stäng</string>
     <string name="feedback_toast_no_browser">Ingen app på enheten kan öppna länken.</string>
     <string name="feedback_toast_no_email">Det finns ingen e-postapp på enheten.</string>
-    <string name="help_note_csv_local_time">• CSV-filer innehåller både UTC-tid och lokal tid med UTC-offset, om Timeline-filen sparar tidszonen.</string>
     <string name="feedback_prompt_body">Appen växer med användarnas önskemål. Den har ingen analys — berätta vad som saknas.</string>
     <string name="feedback_prompt_action">Berätta vad som saknas →</string>
 
@@ -227,6 +226,7 @@
     <string name="place_dialog_remove">Ta bort namnet</string>
     <string name="place_toast_no_maps">Ingen app på den här enheten kan öppna en kartlänk.</string>
     <string name="export_success_places">Sparade %1$s platser till %2$s</string>
+    <string name="export_saved_folder">Mapp: %1$s</string>
     <string name="export_shared_places">Förberedde %1$s platser som %2$s</string>
     <string name="export_error_no_places">Inga platser i det aktuella datumintervallet.</string>
 
@@ -316,6 +316,7 @@
     <string name="metric_distance">Sträcka</string>
     <string name="filter_movement_title">Färdsätt</string>
     <string name="date_preset_all_short">Alla</string>
+    <string name="date_preset_note">Räknat bakåt från den sista dagen i filen, %1$s.</string>
     <string name="journey_distance">Motsvarande sträcka: %1$s × jordens omkrets.</string>
     <string name="journey_traveler">Alla som vandrar är inte vilse. En del tar bara god tid på sig.</string>
     <string name="journey_postcard">Varje resa berättar en historia.</string>

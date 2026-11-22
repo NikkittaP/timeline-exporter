@@ -68,7 +68,7 @@
         <item quantity="one">%1$s place</item>
         <item quantity="other">%1$s places</item>
     </plurals>
-    <string name="filter_trip_count">%1$s trips</string>
+    <string name="filter_trip_count">%1$s segments</string>
     <string name="filter_movement_total">Total</string>
     <string name="filter_moving_only">Only while moving</string>
     <string name="filter_moving_only_hint">Leave out points recorded while stopped somewhere</string>
@@ -153,9 +153,8 @@
 
     <string name="help_notes_title">Notes</string>
     <string name="help_note_file_location">• The exported file is named Timeline.json. It lands wherever you chose during export — some Android versions restrict access to certain folders (e.g. Downloads), so if this app can\'t read it, try moving it.</string>
-    <string name="help_note_eu_csv">• EU users may receive a CSV instead of JSON for privacy-law reasons. This version of the app only handles JSON.</string>
+    <string name="help_note_missing_days">• Some days missing? The file holds only what this phone saved while Timeline was on. Check Auto-delete Timeline in Google Maps (Your Timeline → ⋯ → Location and privacy settings). The cloud icon in Your Timeline is the backup, a separate setting.</string>
     <string name="help_note_slow_first">• The first export can take a minute or two if you have years of location history.</string>
-    <string name="help_note_csv_local_time">• CSV files carry both UTC time and local time (with the UTC offset), when the Timeline file records the timezone.</string>
 
     <string name="help_dismiss">Got it</string>
     <string name="help_toast_no_location_settings">Could not open Location settings on this device.</string>
@@ -285,6 +284,7 @@
     <string name="place_dialog_remove">Remove name</string>
     <string name="place_toast_no_maps">No app on this device can open a map link.</string>
     <string name="export_success_places">Saved %1$s places to %2$s</string>
+    <string name="export_saved_folder">Folder: %1$s</string>
     <string name="export_shared_places">Prepared %1$s places as %2$s</string>
     <string name="export_error_no_places">No places in the current date range.</string>
     <string name="track_name_places" translatable="false">Google Timeline places %1$s</string>
@@ -405,6 +405,7 @@
          that fits as the fourth of four equal date presets. -->
     <string name="filter_movement_title">Movement</string>
     <string name="date_preset_all_short">All</string>
+    <string name="date_preset_note">Counted back from the last day in the file, %1$s.</string>
     <string name="date_range_value" translatable="false">%1$s – %2$s</string>
     <string name="journey_distance">Equivalent distance: %1$s × the Earth’s circumference.</string>
     <string name="journey_traveler">Not all who wander are lost. Some are just taking their time.</string>

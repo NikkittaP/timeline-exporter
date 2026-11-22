@@ -3,20 +3,22 @@ layout: privacy
 ---
 # Privacy Policy — Timeline Exporter
 
-**Last updated:** 2026-11-07
+**Last updated:** 2026-11-22
 
 This policy covers Timeline Exporter for Android and for iPhone / iPad.
 
 ## Summary
 
-Timeline Exporter does not collect, transmit, or store any personally
-identifying information on remote servers. Everything you do in the app
-happens on your device.
+Timeline Exporter does not collect, transmit, or store any personal data on
+remote servers, and the developer receives nothing from the app. Your
+Timeline file is read and converted on your device. The only network
+requests the app makes are for map tiles and, on Android, the Google Play
+services described below.
 
 ## What the app processes
 
-- **The Timeline file you choose** (`Timeline.json`; older iPhone exports are
-  called `location-history.json`). The app reads it locally to extract
+- **The Timeline file you choose** (usually `Timeline.json`; some iPhones name
+  it `location-history.json`). The app reads it locally to extract
   GPS points. The file is never uploaded anywhere.
 - **The exported file you save.** Saved through the system file picker
   (Android's Storage Access Framework, the Files app on iOS) to the location
@@ -30,6 +32,12 @@ happens on your device.
   visible to any HTTPS server. No user account, no device ID, no Timeline
   data is sent. See [OpenFreeMap's policy](https://openfreemap.org/) for
   what they log on their end.
+- **Google Play (Android only).** Tips are bought through Google Play
+  Billing, and the app asks Google Play whether a newer version is
+  available. Both go through the Google Play app on your device under
+  Google's own [privacy policy](https://policies.google.com/privacy); the
+  app receives only whether a purchase went through and whether an update
+  exists, and no Timeline data is part of either request.
 
 ## What the app does NOT collect
 
@@ -43,7 +51,8 @@ happens on your device.
 
 ## Permissions
 
-- **Internet** — used only to fetch map tiles from `tiles.openfreemap.org`.
+- **Internet** — used to fetch map tiles from `tiles.openfreemap.org` (and,
+  on Android, by the Google Play services above).
 
 On iPhone and iPad, if you choose Save Image for a map picture, iOS asks
 once whether the app may add photos to your library (add only: the app

@@ -48,7 +48,7 @@
         <item quantity="one">%1$s yer</item>
         <item quantity="other">%1$s yer</item>
     </plurals>
-    <string name="filter_trip_count">%1$s yolculuk</string>
+    <string name="filter_trip_count">%1$s bölüm</string>
     <string name="filter_movement_total">Toplam</string>
     <string name="filter_moving_only">Yalnızca hareket hâlinde</string>
     <string name="filter_moving_only_hint">Durakta kaydedilen noktaları dışarıda bırak</string>
@@ -114,7 +114,7 @@
 
     <string name="help_notes_title">Notlar</string>
     <string name="help_note_file_location">• Dışa aktarılan dosyanın adı Timeline.json\'dur. Dışa aktarırken seçtiğiniz yere kaydedilir — bazı Android sürümleri belirli klasörlere (ör. İndirilenler) erişimi kısıtlar; uygulama okuyamıyorsa dosyayı taşımayı deneyin.</string>
-    <string name="help_note_eu_csv">• Gizlilik yasaları nedeniyle AB kullanıcıları JSON yerine CSV alabilir. Uygulamanın bu sürümü yalnızca JSON\'u işler.</string>
+    <string name="help_note_missing_days">• Eksik günler mi var? Dosya yalnızca Zaman çizelgesi açıkken bu telefonun kaydettiklerini içerir. Google Haritalar\'da Zaman çizelgesinin otomatik silinmesini kontrol edin (Zaman çizelgeniz → ⋯ → Konum ve gizlilik ayarları). Zaman çizelgenizdeki bulut simgesi yedeklemedir, ayrı bir ayardır.</string>
     <string name="help_note_slow_first">• Yıllarca konum geçmişiniz varsa ilk dışa aktarma bir iki dakika sürebilir.</string>
 
     <string name="help_dismiss">Anladım</string>
@@ -175,7 +175,6 @@
     <string name="feedback_dismiss">Kapat</string>
     <string name="feedback_toast_no_browser">Bu cihazda bağlantıyı açabilecek bir uygulama yok.</string>
     <string name="feedback_toast_no_email">Bu cihazda e-posta uygulaması yok.</string>
-    <string name="help_note_csv_local_time">• Timeline dosyası saat dilimini kaydettiğinde CSV dosyaları hem UTC saatini hem de yerel saati (UTC farkıyla) içerir.</string>
     <string name="feedback_prompt_body">Uygulama kullanıcı istekleriyle büyüyor. Analitik yok — neyin eksik olduğunu yazın.</string>
     <string name="feedback_prompt_action">Ne eklememi istediğinizi yazın →</string>
 
@@ -227,6 +226,7 @@
     <string name="place_dialog_remove">Adı kaldır</string>
     <string name="place_toast_no_maps">Bu cihazdaki hiçbir uygulama harita bağlantısını açamıyor.</string>
     <string name="export_success_places">%1$s yer %2$s dosyasına kaydedildi</string>
+    <string name="export_saved_folder">Klasör: %1$s</string>
     <string name="export_shared_places">%1$s yer %2$s olarak hazırlandı</string>
     <string name="export_error_no_places">Geçerli tarih aralığında yer yok.</string>
 
@@ -316,6 +316,7 @@
     <string name="metric_distance">Mesafe</string>
     <string name="filter_movement_title">Hareket</string>
     <string name="date_preset_all_short">Tümü</string>
+    <string name="date_preset_note">Dosyadaki son günden geriye sayılır, %1$s.</string>
     <string name="journey_distance">Eşdeğer mesafe: %1$s × Dünya’nın çevresi.</string>
     <string name="journey_traveler">Dolaşan herkes kaybolmuş değildir. Bazıları sadece acele etmez.</string>
     <string name="journey_postcard">Her yolculuk bir hikâye anlatır.</string>

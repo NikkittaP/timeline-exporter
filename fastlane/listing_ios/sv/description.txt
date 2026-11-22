@@ -10,8 +10,8 @@ INNAN DU BÖRJAR
 
 DIN FIL I 3 STEG
 1. I Google Maps trycker du på din profilbild → Inställningar → Plats och integritet → Exportera Timeline-data.
-2. Tryck på Spara i Filer och spara filen På min iPhone eller i iCloud Drive.
-3. Tryck på Välj tidslinjefil på huvudskärmen och leta upp filen. Den heter oftast Timeline.json.
+2. Tryck på Timeline Exporter i delningsbladet. Filen öppnas direkt.
+3. Finns den inte i listan? Tryck på Spara i Filer och sedan på Välj tidslinjefil på huvudskärmen.
 
 Osäker? Tryck på ”Prova med exempeldata”. Påhittade resor: se vad appen gör innan du exporterar dina egna.
 

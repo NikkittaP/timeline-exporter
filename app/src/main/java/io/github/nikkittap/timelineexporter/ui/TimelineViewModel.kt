@@ -2,6 +2,7 @@ package io.github.nikkittap.timelineexporter.ui
 
 import android.content.ContentResolver
 import android.net.Uri
+import android.provider.DocumentsContract
 import android.provider.OpenableColumns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -98,12 +99,14 @@ sealed interface ExportState {
      * and only the UI can produce a translated, correctly pluralised string,
      * so the state carries the number and the kind and nothing else.
      *
-     * [displayName] may be null if the content provider didn't expose one.
+     * [displayName] may be null if the content provider didn't expose one;
+     * [folder] is null unless the URI names it (see savedFolderName).
      */
     data class Success(
         val itemCount: Int,
         val kind: ContentKind,
         val displayName: String?,
+        val folder: String? = null,
     ) : ExportState
 
     /**
@@ -484,6 +487,7 @@ class TimelineViewModel(
                         itemCount = content.size,
                         kind = content.kind,
                         displayName = queryDisplayName(uri, contentResolver),
+                        folder = savedFolderName(uri.authority, documentIdOrNull(uri)),
                     )
                 } catch (e: Exception) {
                     ExportState.Failure.Generic(
@@ -617,6 +621,12 @@ private fun queryFileSize(uri: Uri, resolver: ContentResolver): Long? = try {
         val idx = cursor.getColumnIndex(OpenableColumns.SIZE)
         if (idx >= 0 && cursor.moveToFirst() && !cursor.isNull(idx)) cursor.getLong(idx) else null
     }
+} catch (_: Exception) {
+    null
+}
+
+private fun documentIdOrNull(uri: Uri): String? = try {
+    DocumentsContract.getDocumentId(uri)
 } catch (_: Exception) {
     null
 }

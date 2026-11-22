@@ -48,7 +48,7 @@
         <item quantity="one">%1$s जगह</item>
         <item quantity="other">%1$s जगहें</item>
     </plurals>
-    <string name="filter_trip_count">%1$s यात्राएँ</string>
+    <string name="filter_trip_count">%1$s हिस्से</string>
     <string name="filter_movement_total">कुल</string>
     <string name="filter_moving_only">केवल चलते समय</string>
     <string name="filter_moving_only_hint">रुकने के दौरान दर्ज बिंदु छोड़ दें</string>
@@ -114,7 +114,7 @@
 
     <string name="help_notes_title">नोट</string>
     <string name="help_note_file_location">• एक्सपोर्ट की गई फ़ाइल का नाम Timeline.json है। यह वहीं सहेजी जाती है जहाँ आपने एक्सपोर्ट के समय चुना — कुछ Android संस्करण कुछ फ़ोल्डर (जैसे Downloads) तक पहुँच सीमित करते हैं, इसलिए अगर ऐप इसे न पढ़ पाए तो इसे ले जाकर देखें।</string>
-    <string name="help_note_eu_csv">• गोपनीयता क़ानूनों के कारण EU उपयोगकर्ताओं को JSON के बजाय CSV मिल सकता है। ऐप का यह संस्करण केवल JSON संभालता है।</string>
+    <string name="help_note_missing_days">• कुछ दिन ग़ायब हैं? फ़ाइल में सिर्फ़ वही है जो Timeline चालू रहते इस फ़ोन ने सहेजा। Google Maps में Timeline का अपने-आप मिटना जाँचें (आपकी Timeline → ⋯ → स्थान और गोपनीयता सेटिंग)। आपकी Timeline में बादल वाला आइकन बैकअप है, एक अलग सेटिंग।</string>
     <string name="help_note_slow_first">• अगर आपके पास वर्षों का स्थान इतिहास है, तो पहला एक्सपोर्ट एक–दो मिनट ले सकता है।</string>
 
     <string name="help_dismiss">ठीक है</string>
@@ -175,7 +175,6 @@
     <string name="feedback_dismiss">बंद करें</string>
     <string name="feedback_toast_no_browser">इस डिवाइस पर लिंक खोलने वाला कोई ऐप नहीं है।</string>
     <string name="feedback_toast_no_email">इस डिवाइस पर कोई ईमेल ऐप नहीं है।</string>
-    <string name="help_note_csv_local_time">• अगर Timeline फ़ाइल में टाइम ज़ोन दर्ज है, तो CSV में UTC समय के साथ स्थानीय समय और UTC ऑफ़सेट भी रहता है।</string>
     <string name="feedback_prompt_body">यह ऐप उपयोगकर्ताओं के अनुरोध पर बढ़ता है। इसमें कोई एनालिटिक्स नहीं है — बताइए क्या कमी है।</string>
     <string name="feedback_prompt_action">बताइए क्या जोड़ना है →</string>
 
@@ -227,6 +226,7 @@
     <string name="place_dialog_remove">नाम हटाएँ</string>
     <string name="place_toast_no_maps">इस डिवाइस पर कोई ऐप मैप लिंक नहीं खोल सकता।</string>
     <string name="export_success_places">%1$s जगहें %2$s में सहेजी गईं</string>
+    <string name="export_saved_folder">फ़ोल्डर: %1$s</string>
     <string name="export_shared_places">%1$s जगहें %2$s के रूप में तैयार की गईं</string>
     <string name="export_error_no_places">मौजूदा तारीख़ सीमा में कोई जगह नहीं है।</string>
 
@@ -316,6 +316,7 @@
     <string name="metric_distance">दूरी</string>
     <string name="filter_movement_title">आवाजाही</string>
     <string name="date_preset_all_short">सभी</string>
+    <string name="date_preset_note">फ़ाइल के आख़िरी दिन (%1$s) से पीछे की ओर गिना गया।</string>
     <string name="journey_distance">समतुल्य दूरी: पृथ्वी की परिधि × %1$s</string>
     <string name="journey_traveler">घूमने वाले सभी लोग खोए नहीं होते। कुछ बस आराम से चलते हैं।</string>
     <string name="journey_postcard">हर यात्रा एक कहानी कहती है।</string>
